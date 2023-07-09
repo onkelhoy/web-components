@@ -1,42 +1,26 @@
 // utils 
-import { html, property } from "@circular-tools/utils";
+import { html, property, FormatNumber } from "@circular-tools/utils";
+
+// atoms
+import "@circular/typography/wc"
 
 // templates
 import { BaseTemplate } from "@circular-templates/base";
+import "@circular-templates/box/wc"
 
 // local 
-import { style } from "./style";
-import { Foo, ClickEvent } from "./types";
+import { style } from './style';
 
 export class Badge extends BaseTemplate {
     static style = style;
 
-    @property() foo:Foo = "bar";
-    @property({ type: Number }) bajs?:number;
-    @property({ type: Boolean }) fooLaa:boolean = true;
-
-    // event handlers
-    private handleMainClick() {
-        this.dispatchEvent(new CustomEvent<ClickEvent>("main-click", { detail: { foo: this.foo } }));
-    }
+    @property({ type: Number}) count: number = 0;
 
     render() {
         return html`
-            <header part="header">
-                <slot name="header">
-                    <h1>llama drama trauma</h1>
-                </slot>
-            </header>
-            <main onclick=${this.handleMainClick}>
-                <slot>
-                    <p>Why did the llama go to therapy? Because it had a lot of spitting issues!</p>
-                </slot>
-            </main>
-            <footer part="footer">
-                <slot name="footer">
-                    <p>Why did the llama enter the door? To attend the llamazing party inside!</p>
-                </slot>
-            </footer>
+            <o-box-template radius="circular">
+                <o-typography variant="C4">${FormatNumber(this.count)}</o-typography>
+            </o-box-template>
         `
     }
 }

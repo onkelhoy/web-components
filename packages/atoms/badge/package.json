@@ -25,17 +25,19 @@
     "author": "Henry Pap",
     "license": "ISC",
     "dependencies": {
+        "@circular-templates/base": "^1.0.0",
+        "@circular-templates/box": "^1.0.0",
         "@circular-tools/utils": "^1.0.0",
-        "@circular-templates/base": "^1.0.0"
+        "@circular/typography": "^1.0.0"
     },
     "devDependencies": {
         "@circular-tools/doc": "^1.0.0",
         "@circular/icon": "^1.0.0",
         "esbuild": "^0.17.18",
-        "tslib": "^2.5.0",
+        "node-html-parser": "^6.1.5",
         "node-sass": "^8.0.0",
-        "typescript": "^5.0.4",
-        "node-html-parser": "^6.1.5"
+        "tslib": "^2.5.0",
+        "typescript": "^5.0.4"
     },
     "keywords": [
         "web-component",
