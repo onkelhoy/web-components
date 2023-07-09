@@ -1,0 +1,48 @@
+{
+    "name": "@circular/popup",
+    "version": "1.0.0",
+    "scripts": {
+        "init": "sh .scripts/init.sh",
+        "test": ".scripts/test.sh",
+        "build": ".scripts/build.sh",
+        "watch": ".scripts/watch.sh",
+        "combine": ".scripts/combine.sh && .scripts/start.sh combined",
+        "start": ".scripts/start.sh",
+        "interactive": "sh .scripts/helper/build-interactive.sh",
+        "variations": "sh .scripts/helper/build-variations.sh",
+        "component:add": "sh .scripts/helper/add-component.sh"
+    },
+    "main": "dist/src/index.js",
+    "files": [
+        "asset"
+    ],
+    "exports": {
+        ".": "./dist/src/index.js",
+        "./wc": "./dist/src/register.js",
+        "./esm": "./dist/index.mjs",
+        "./bundle-wc": "./dist/register.bundle.mjs"
+    },
+    "author": "Henry Pap",
+    "license": "ISC",
+    "dependencies": {
+        "@circular-tools/utils": "^1.0.0",
+        "@circular-templates/base": "^1.0.0"
+    },
+    "devDependencies": {
+        "@circular-tools/doc": "^1.0.0",
+        "@circular/icon": "^1.0.0",
+        "esbuild": "^0.17.18",
+        "tslib": "^2.5.0",
+        "node-sass": "^8.0.0",
+        "typescript": "^5.0.4",
+        "node-html-parser": "^6.1.5"
+    },
+    "keywords": [
+        "web-component",
+        "typescript",
+        "demoing",
+        "testing",
+        "sass"
+    ],
+    "description": ""
+}
