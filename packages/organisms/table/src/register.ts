@@ -1,3 +1,4 @@
+import { Menu } from './components/menu';
 import { CellTitle } from './components/cell-title';
 import { Cell } from './components/cell';
 import { Table } from './component.js';
@@ -17,4 +18,7 @@ if (!cElements.get('o-cell')) {
 }
 if (!cElements.get('o-cell-title')) {
   cElements.define('o-cell-title', CellTitle);
+}
+if (!cElements.get('o-menu')) {
+  cElements.define('o-menu', Menu);
 }

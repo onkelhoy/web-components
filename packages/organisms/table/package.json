@@ -26,6 +26,8 @@
     "license": "ISC",
     "dependencies": {
         "@circular-templates/base": "^1.0.0",
+        "@circular-templates/box": "^1.0.0",
+        "@circular-templates/popover": "^1.0.0",
         "@circular-tools/utils": "^1.0.0",
         "@circular/button": "^1.0.0",
         "@circular/input": "^1.0.0",

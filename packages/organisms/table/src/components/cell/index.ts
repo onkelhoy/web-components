@@ -28,13 +28,13 @@ export class Cell extends BaseTemplate {
   constructor() {
     super();
 
-    this.addEventListener('dblclick', this.handledoubleclick);
+    this.addEventListener('click', this.handleclick);
     this.addEventListener("blur", this.handleblur); // NOTE this should have been taken care by base...
     this.addEventListener('keyup', this.handlekeyup);
   }
 
   // event handlers 
-  private handledoubleclick = () => {
+  private handleclick = () => {
     if (this.allowEdit)
     {
       this.mode = "edit";
@@ -46,7 +46,7 @@ export class Cell extends BaseTemplate {
   private handlekeyup = (e:KeyboardEvent) => {
     if (this.hasFocus && e.code === "Enter")
     {
-      this.handledoubleclick();
+      this.handleclick();
     }
   }
   protected handleblur = () => {

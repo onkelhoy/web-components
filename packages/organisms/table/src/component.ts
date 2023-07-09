@@ -90,14 +90,15 @@ export class Table extends BaseTemplate {
     }
 
     render() {
-        console.log('size is', this.config.pagination?.size || this.rows.length)
         return html`
             <table cellspacing="0" cellpadding="0">
                 ${this.getRows()}
             </table>
-            ${this.config.pagination ? html`<footer class="pagination">
+            <footer>
+                ${this.config.pagination ? html`
                 <o-pagination perpage="5" total="${this.config.pagination.size || this.rows.length}"></o-pagination> 
-            </footer>` : ''}
+                ` : ''}
+            </footer>
         `
     }
 }
