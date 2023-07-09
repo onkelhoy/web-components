@@ -1,119 +1,85 @@
 :root {
-  /* FONT SIZE*/
-  --o-font-size-100: .625rem;
-  --o-font-size-200: .75rem;
-  --o-font-size-300: .875rem;
-  --o-font-size-400: 1rem;
-  --o-font-size-500: 1.5rem;
-  --o-font-size-600: 2rem;
-  --o-font-size-700: 2.5rem;
-  --o-font-size-800: 3rem;
-  --o-font-size-900: 3.5rem;
-  --o-font-size-1000: 4rem;
-  --o-font-size-1100: 4.5rem;
-  --o-font-size-1200: 5.5rem;
-  --o-font-size-1300: 8.75rem;
-
-  /* FONT SIZE - DESIGN NAMES */
-  --o-font-size-2x-small: var(--o-font-size-100);
-  --o-font-size-x-small: var(--o-font-size-200);
-  --o-font-size-small: var(--o-font-size-300);
-  --o-font-size-medium: var(--o-font-size-400);
-  --o-font-size-large: var(--o-font-size-500);
-  --o-font-size-x-large: var(--o-font-size-600);
-  --o-font-size-2x-large: var(--o-font-size-700);
-  --o-font-size-3x-large: var(--o-font-size-800);
-  --o-font-size-4x-large: var(--o-font-size-900);
-  --o-font-size-5x-large: var(--o-font-size-1000);
-  --o-font-size-6x-large: var(--o-font-size-1100);
-  --o-font-size-7x-large: var(--o-font-size-1200);
-  --o-font-size-8x-large: var(--o-font-size-1300);
-
-  /* FONT FAMILY */
   --default-fontfamily: 'Poppins', sans-serif;
 
-  /* TYPOGRAPHY VARIABLES  */
   --typography-h1-fontfamily: var(--default-fontfamily);
-  --typography-h1-fontsize: var(--o-font-size-8x-large);
+  --typography-h1-fontsize: 140px;
   --typography-h1-fontweight: 800;
   --typography-h1-lineheight: 168px;
   --typography-h1-letterspacing: 0em;
 
   --typography-h2-fontfamily: var(--default-fontfamily);
-  --typography-h2-fontsize: var(--o-font-size-7x-large);
+  --typography-h2-fontsize: 88px;
   --typography-h2-fontweight: 800;
   --typography-h2-lineheight: 106px;
   --typography-h2-letterspacing: 0em;
 
   --typography-h3-fontfamily: var(--default-fontfamily);
-  --typography-h3-fontsize: var(--o-font-size-6x-large);
+  --typography-h3-fontsize: 72px;
   --typography-h3-fontweight: 700;
   --typography-h3-lineheight: 86px;
   --typography-h3-letterspacing: 0em;
 
   --typography-h4-fontfamily: var(--default-fontfamily);
-  --typography-h4-fontsize: var(--o-font-size-5x-large);
+  --typography-h4-fontsize: 64px;
   --typography-h4-fontweight: 700;
   --typography-h4-lineheight: 77px;
   --typography-h4-letterspacing: 0em;
 
   --typography-h5-fontfamily: var(--default-fontfamily);
-  --typography-h5-fontsize: var(--o-font-size-4x-large);
+  --typography-h5-fontsize: 56px;
   --typography-h5-fontweight: 700;
   --typography-h5-lineheight: 67px;
   --typography-h5-letterspacing: 0em;
 
   --typography-t1-fontfamily: var(--default-fontfamily);
-  --typography-t1-fontsize: var(--o-font-size-3x-large);
+  --typography-t1-fontsize: 48px;
   --typography-t1-fontweight: 700;
   --typography-t1-lineheight: 58px;
   --typography-t1-letterspacing: 0em;
 
   --typography-t2-fontfamily: var(--default-fontfamily);
-  --typography-t2-fontsize: var(--o-font-size-2x-large);
+  --typography-t2-fontsize: 40px;
   --typography-t2-fontweight: 700;
   --typography-t2-lineheight: 56px;
   --typography-t2-letterspacing: 0em;
 
   --typography-t3-fontfamily: var(--default-fontfamily);
-  --typography-t3-fontsize: var(--o-font-size-x-large);
+  --typography-t3-fontsize: 32px;
   --typography-t3-fontweight: 600;
   --typography-t3-lineheight: 38px;
   --typography-t3-letterspacing: 0em;
 
   --typography-t4-fontfamily: var(--default-fontfamily);
-  --typography-t4-fontsize: var(--o-font-size-large);
+  --typography-t4-fontsize: 24px;
   --typography-t4-fontweight: 600;
   --typography-t4-lineheight: 34px;
   --typography-t4-letterspacing: 0em;
 
   --typography-c1-fontfamily: var(--default-fontfamily);
-  --typography-c1-fontsize: var(--o-font-size-large);
+  --typography-c1-fontsize: 24px;
   --typography-c1-fontweight: 500;
   --typography-c1-lineheight: 34px;
   --typography-c1-letterspacing: 0.01em;
 
   --typography-c2-fontfamily: var(--default-fontfamily);
-  --typography-c2-fontsize: var(--o-font-size-medium);
+  --typography-c2-fontsize: 16px;
   --typography-c2-fontweight: 600;
   --typography-c2-lineheight: 22px;
   --typography-c2-letterspacing: 0.01em;
 
   --typography-c3-fontfamily: var(--default-fontfamily);
-  --typography-c3-fontsize: var(--o-font-size-medium);
+  --typography-c3-fontsize: 16px;
   --typography-c3-fontweight: 400;
   --typography-c3-lineheight: 24px;
   --typography-c3-letterspacing: 0.01em;
 
   --typography-c4-fontfamily: var(--default-fontfamily);
-  --typography-c4-fontsize: var(--o-font-size-small);
+  --typography-c4-fontsize: 14px;
   --typography-c4-fontweight: 400;
   --typography-c4-lineheight: 20px;
   --typography-c4-letterspacing: 0.01em;
 }
 
-/** CLASSES *******************/
-/******************************/
 /* HEADINGS */
 .typography-heading1,
 .typography-h1 {
@@ -252,6 +218,92 @@
   line-height: var(--typography-c4-lineheight);
   letter-spacing: var(--typography-c4-letterspacing);
 }
+:root {
+  /* PRIMARY COLORS */
+  --o-color-primary-50: #F0FAFF;
+  --o-color-primary-100: #E0F5FE;
+  --o-color-primary-200: #B9ECFE;
+  --o-color-primary-300: #7CDEFD;
+  --o-color-primary-400: #36CEFA;
+  --o-color-primary-500: #0CB9EB;
+  --o-color-primary-600: #009DD3;
+  --o-color-primary-700: #0177A3;
+  --o-color-primary-800: #066486;
+  --o-color-primary-900: #0B526F;
+  --o-color-primary-950: #07354A;
+
+  /* SUCCESS COLORS */
+  --o-color-success-50: #F0FBEA;
+  --o-color-success-100: #DDF7D0;
+  --o-color-success-200: #CAF2B8;
+  --o-color-success-300: #94E274;
+  --o-color-success-400: #6ED348;
+  --o-color-success-500: #4FB82A;
+  --o-color-success-600: #3A931D;
+  --o-color-success-700: #2E701B;
+  --o-color-success-800: #29591B;
+  --o-color-success-900: #244C1B;
+  --o-color-success-950: #0F2A09;
+  
+  /* WARNING COLORS */
+  --o-color-warnings-50: #FFFDEA;
+  --o-color-warnings-100: #FFF6C5;
+  --o-color-warnings-200: #FFED85;
+  --o-color-warnings-300: #FFDD46;
+  --o-color-warnings-400: #FFCE00;
+  --o-color-warnings-500: #FFA800;
+  --o-color-warnings-600: #E27F00;
+  --o-color-warnings-700: #BB5802;
+  --o-color-warnings-800: #984308;
+  --o-color-warnings-900: #7C370B;
+  --o-color-warnings-950: #481B00;
+  
+  /* DANGER COLORS */
+  --o-color-danger-50: #FFF1F2;
+  --o-color-danger-100: #FFE0E3;
+  --o-color-danger-200: #FFC6CB;
+  --o-color-danger-300: #FF9EA7;
+  --o-color-danger-400: #FF6674;
+  --o-color-danger-500: #FD3649;
+  --o-color-danger-600: #EB172B;
+  --o-color-danger-700: #B70E1E;
+  --o-color-danger-800: #A3111F;
+  --o-color-danger-900: #871520;
+  --o-color-danger-950: #4A050C;
+  
+  /* NEUTRAL COLORS */
+  --o-color-neutral-0: #FFFFFF;
+  --o-color-neutral-50: #FFFFFF;
+  --o-color-neutral-100: #EFEFEF;
+  --o-color-neutral-200: #DCDCDC;
+  --o-color-neutral-300: #BDBDBD;
+  --o-color-neutral-400: #989898;
+  --o-color-neutral-500: #7C7C7C;
+  --o-color-neutral-600: #656565;
+  --o-color-neutral-700: #525252;
+  --o-color-neutral-800: #464646;
+  --o-color-neutral-900: #292929;
+  --o-color-neutral-950: #000000;
+  --o-color-neutral-1000: #000000;
+
+
+  /* CANVAS COLORS */
+  --o-color-canvas-50: #F6F7F8;
+  --o-color-canvas-100: #EAEBEF;
+  --o-color-canvas-200: #DADDE3;
+  --o-color-canvas-300: #C7CBD4;
+  --o-color-canvas-400: #C7CBD4;
+  --o-color-canvas-500: #8C91A5;
+  --o-color-canvas-600: #7B7F95;
+  --o-color-canvas-700: #6E7087;
+  --o-color-canvas-800: #5D5E70;
+  --o-color-canvas-900: #4D4E5B;
+  --o-color-canvas-950: #31323A;
+  
+  /* BLACK/WHITE COLORS */
+  --o-color-white: var(--o-color-neutral-0);
+  --o-color-black: var(--o-color-neutral-1000);
+}  
 :root {
   /* NEUTRAL COLORS */
   --color-neutral-100: #FFFFFF;
