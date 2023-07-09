@@ -1,3 +1,4 @@
+import { MenuItem } from './components/menu-item';
 import { Menu } from './component.js';
 
 // Register the element with the browser
@@ -9,4 +10,7 @@ if (!cElements) {
 
 if (!cElements.get('o-menu')) {
   cElements.define('o-menu', Menu);
+}
+if (!cElements.get('o-menu-item')) {
+  cElements.define('o-menu-item', MenuItem);
 }

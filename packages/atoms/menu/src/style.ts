@@ -1,0 +1,19 @@
+export const style = `:host {
+  --background: var(--o-color-white);
+  --color: var(--o-color-black); }
+  :host o-button {
+    background-color: var(--background);
+    color: var(--color); }
+  :host o-popover-template {
+    display: inline-block; }
+  :host o-box-template {
+    display: block;
+    padding-block: var(--padding-small);
+    min-width: 150px;
+    background-color: var(--background); }
+
+:host([open="true"]) o-button o-icon[name="caret"] {
+  transform: rotate(180deg); }
+
+:host([open="false"]) o-button o-icon[name="caret"] {
+  transform: rotate(0); }`;
