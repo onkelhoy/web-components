@@ -1,3 +1,4 @@
+import { Language } from './components/language';
 import { Header } from './component.js';
 
 // Register the element with the browser
@@ -9,4 +10,7 @@ if (!cElements) {
 
 if (!cElements.get('o-header')) {
   cElements.define('o-header', Header);
+}
+if (!cElements.get('o-language')) {
+  cElements.define('o-language', Language);
 }

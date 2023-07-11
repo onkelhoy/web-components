@@ -5,8 +5,8 @@ import '@circular-tools/doc/wc';
 import '@circular/header/wc';
 
 window.onload = () => {
-    console.log('[demo]: window loaded');
-    setTimeout(() => {
+    console.log('[language]: window loaded');
+    window.LANG_INIT.onclick = () => {
         window.oTranslation.loadAll([
             { id: "SE", name: "Sweden", translations: { 
                 "Sweden": "Sverige",
@@ -336,9 +336,11 @@ window.onload = () => {
                 "Yemen": "اليمن"
             } },
         ])
-        
-    }, 1000);
-    document.querySelector('o-header').user = {
-        firstname: 'Oskar'
+    }
+
+    const LANGARR = ["SE", "DE", "FE", "UK", "TU", "SU", "TA", "SP", "SK", "SL", "PE", "NE", "NO", "NK", "CH", "PO", "NS", "YE"];
+
+    window.LANG_RND.onclick = () => {
+        window.oTranslation.change(LANGARR[~~(Math.random() * (LANGARR.length - 1))])
     }
 }
