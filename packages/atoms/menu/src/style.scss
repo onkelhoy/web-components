@@ -5,6 +5,16 @@
     o-button {
         background-color: var(--background);
         color: var(--color);
+        padding: var(--padding-small, 8px);
+        gap: var(--padding-small, 8px);
+
+        span.caret-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+        }
     }
 
     o-popover-template {
@@ -15,8 +25,10 @@
         display: block;
         // padding: 1rem 1.5rem;
         padding-block: var(--padding-small);
-        min-width: 150px;
+        min-width: 180px;
         background-color: var(--background);
+        max-height: 20rem;
+        overflow-y: auto;
     }
 }
 

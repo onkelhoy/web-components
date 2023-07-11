@@ -22,10 +22,18 @@ export class Menu extends BaseTemplate {
     @property() placement: Placement = "bottom-center";
 
     private current?: MenuItem;
+    private items: MenuItem[] = [];
 
     // public functions
     public get value () {
-        return this.current?.getvalue();
+        return this.current?.getvalue() || '';
+    }
+    public set value (value:string) {
+        const item = this.items.find(i => i.getvalue() === value);
+        if (item)
+        {
+            item.click();
+        }
     }
     public get text () {
         return this.current?.gettext();
@@ -43,6 +51,7 @@ export class Menu extends BaseTemplate {
                     {
                         item.addEventListener('select', this.handleitemselected);
                         item.setAttribute('data-menu-init', 'true');
+                        this.items.push(item);
                     }
                 }
             })
@@ -51,7 +60,7 @@ export class Menu extends BaseTemplate {
     private handleitemselected = (e:Event) => {
         if (e.target instanceof MenuItem)
         {
-            if (this.current)
+            if (this.current && e.target !== this.current)
             {
                 this.current.checked = false;
             }
@@ -69,12 +78,16 @@ export class Menu extends BaseTemplate {
     render() {
         return html`
             <o-popover-template @hide="${this.handlehide}" @show="${this.handleshow}" revealby="click" hideonoutsideclick placement="${this.placement}">
-                <o-button slot="target" size="large">
-                    <slot slot="prefix" name="prefix"></slot>
-                    <slot name="header-content"></slot>
-                    <o-icon customSize="15" slot="suffix" name="caret">v</o-icon>
+                <o-button part="button" slot="target" size="large">
+                    <slot name="button-prefix" slot="prefix"></slot>
+                    <slot name="button-content"></slot>
+                    <slot name="button-suffix" slot="suffix">
+                        <span class="caret-wrapper">
+                            <o-icon customSize="15" name="caret">v</o-icon>
+                        </span>
+                    </slot>
                 </o-button>
-                <o-box-template class="options" radius="small" elevation="small">
+                <o-box-template part="box" class="options" radius="small" elevation="small">
                     <slot @slotchange="${this.handleslotchange}">
                         <o-menu-item>Missing Items</o-menu-item>
                     </slot>

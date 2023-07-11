@@ -3,6 +3,7 @@ import { html, property, ExtractSlotValue } from "@circular-tools/utils";
 
 // templates
 import { BaseTemplate } from "@circular-templates/base";
+import "@circular-templates/box/wc";
 
 import { style } from "./style";
 
@@ -20,6 +21,11 @@ export class MenuItem extends BaseTemplate {
     return this.slottext;
   }
 
+  constructor() {
+    super();
+    this.addEventListener('click', this.handleclick);
+  }
+
   // event handlers
   private handleclick = () => {
     this.checked = true; // can only select
@@ -35,10 +41,10 @@ export class MenuItem extends BaseTemplate {
 
   render() {
     return html`
-      <o-button variant="clear" @click="${this.handleclick}" radius="none" mode="fill">
+      <div>
         <o-icon name="check" slot="prefix"></o-icon>
         <slot @slotchange="${this.handleslotchange}"></slot>
-      </o-button>
+      </div>
     `
   }
 }
