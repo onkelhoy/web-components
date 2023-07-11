@@ -1,12 +1,12 @@
 // utils 
-import { html, property } from "@circular-tools/utils";
+import { html } from "@circular-tools/utils";
 
 // templates
 import { BaseTemplate } from "@circular-templates/base";
 
 // local 
 import { style } from "./style";
-import { load, loadAll, change, subscribe, unsubscribe } from "./translator";
+import { InitTranslations } from "./translator";
 
 export class Translator extends BaseTemplate {
     static style = style;
@@ -37,16 +37,7 @@ export class Translator extends BaseTemplate {
     // class functions 
     connectedCallback(): void {
         super.connectedCallback();
-
-        window.oTranslation = window.oTranslation || {};
-        window.oTranslation.load = window.oTranslation.load || load;
-        window.oTranslation.change = window.oTranslation.change || change;
-        window.oTranslation.loadAll = window.oTranslation.loadAll || loadAll;
-        window.oTranslation.subscribe = window.oTranslation.subscribe || subscribe;
-        window.oTranslation.unsubscribe = window.oTranslation.unsubscribe || unsubscribe;
-        window.oTranslation.current = window.oTranslation.current || {};
-        window.oTranslation.map = window.oTranslation.map || new Map();
-
+        InitTranslations();
         window.oTranslation?.subscribe(this.updateText);
     }
   

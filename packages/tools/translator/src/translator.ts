@@ -6,7 +6,6 @@ type EventCallback = (event: Event) => void;
 export interface LanguageSet {
   id: string;
   name: string;
-  html?: string;
   translations: TranslationObject;
 }
 export interface Translation {
@@ -58,14 +57,13 @@ export function subscribe(callback: EventCallback) {
 export function unsubscribe(callback: EventCallback) {
   window.removeEventListener(TRANSLATION_CHANGE_EVENTNAME, callback);
 }
-
-// console.log('loading it all')
-
-// window.oTranslation = window.oTranslation || {};
-// window.oTranslation.load = window.oTranslation.load || load;
-// window.oTranslation.change = window.oTranslation.change || change;
-// window.oTranslation.loadAll = window.oTranslation.loadAll || loadAll;
-// window.oTranslation.subscribe = window.oTranslation.subscribe || subscribe;
-// window.oTranslation.unsubscribe = window.oTranslation.unsubscribe || unsubscribe;
-// window.oTranslation.current = window.oTranslation.current || {};
-// window.oTranslation.map = window.oTranslation.map || new Map();
+export function InitTranslations() {
+  window.oTranslation = window.oTranslation || {};
+  window.oTranslation.load = window.oTranslation.load || load;
+  window.oTranslation.change = window.oTranslation.change || change;
+  window.oTranslation.loadAll = window.oTranslation.loadAll || loadAll;
+  window.oTranslation.subscribe = window.oTranslation.subscribe || subscribe;
+  window.oTranslation.unsubscribe = window.oTranslation.unsubscribe || unsubscribe;
+  window.oTranslation.current = window.oTranslation.current || {};
+  window.oTranslation.map = window.oTranslation.map || new Map();
+}
