@@ -6,9 +6,32 @@ import '@circular/header/wc';
 
 window.onload = () => {
     console.log('[demo]: window loaded');
+
     setTimeout(() => {
         window.oTranslation.loadAll([
+            { id: "HU", name: "Hungary", translations: {
+                "Hungary": "Magyarország",
+                "Sweden": "Svédország",
+                "Germany": "Németország",
+                "France": "Franciaország",
+                "United Kingdom": "Egyesült Királyság",
+                "Tuvalu": "Tuvalu",
+                "Suriname": "Suriname",
+                "Taiwan": "Tajvan",
+                "Spain": "Spanyolország",
+                "South Korea": "Dél-Korea",
+                "Slovenia": "Szlovénia",
+                "Peru": "Peru",
+                "Nepal": "Nepál",
+                "Norway": "Norvégia",
+                "North Korea": "Észak-Korea",
+                "China": "Kína",
+                "Portugal": "Portugália",
+                "Netherlands": "Hollandia",
+                "Yemen": "Jemen"
+            } },
             { id: "SE", name: "Sweden", translations: { 
+                "Hungary": "Ungern",
                 "Sweden": "Sverige",
                 "Germany": "Tyskland",
                 "France": "Frankrike",
@@ -30,6 +53,7 @@ window.onload = () => {
                 "set random language": "HAR DU BAJS I RUMPAN?"
             } },
             { id: "DE", name: "Germany", translations: {
+                "Hungary": "Ungarn",
                 "Sweden": "Schweden",
                 "Germany": "Deutschland",
                 "France": "Frankreich",
@@ -50,6 +74,7 @@ window.onload = () => {
                 "Yemen": "Jemen"
             } },
             { id: "FE", name: "France", translations: {
+                "Hungary": "Hongrie",
                 "Sweden": "Suède",
                 "Germany": "Allemagne",
                 "France": "France",
@@ -73,6 +98,7 @@ window.onload = () => {
             { id: "UK", name: "United Kingdom", translations: {} },
             { id: "TU", name: "Tuvalu", translations: {} },
             { id: "SU", name: "Suriname", translations: {
+                "Hungary": "Hongarije",
                 "Sweden": "Zweden",
                 "Germany": "Duitsland",
                 "France": "Frankrijk",
@@ -94,6 +120,7 @@ window.onload = () => {
 
             } },
             { id: "TA", name: "Taiwan", translations: {
+                "Hungary": "匈牙利",
                 "Sweden": "瑞典",
                 "Germany": "德國",
                 "France": "法國",
@@ -115,6 +142,7 @@ window.onload = () => {
 
             } },
             { id: "SP", name: "Spain", translations: {
+                "Hungary": "Hungría",
                 "Sweden": "Suecia",
                 "Germany": "Alemania",
                 "France": "Francia",
@@ -136,6 +164,7 @@ window.onload = () => {
 
             } },
             { id: "SK", name: "South Korea", translations: {
+                "Hungary": "헝가리",
                 "Sweden": "스웨덴",
                 "Germany": "독일",
                 "France": "프랑스",
@@ -156,6 +185,7 @@ window.onload = () => {
                 "Yemen": "예멘"
             } },
             { id: "SL", name: "Slovenia", translations: {
+                "Hungary": "Madžarska",
                 "Sweden": "Švedska",
                 "Germany": "Nemčija",
                 "France": "Francija",
@@ -176,6 +206,7 @@ window.onload = () => {
                 "Yemen": "Jemen"
             } },
             { id: "PE", name: "Peru", translations: {
+                "Hungary": "Hungría",
                 "Sweden": "Suecia",
                 "Germany": "Alemania",
                 "France": "Francia",
@@ -196,6 +227,7 @@ window.onload = () => {
                 "Yemen": "Yemen"
             } },
             { id: "NE", name: "Nepal", translations: {
+                "Hungary": "Hongrie",
                 "Sweden": "स्वीडेन",
                 "Germany": "जर्मनी",
                 "France": "फ्रान्स",
@@ -216,6 +248,7 @@ window.onload = () => {
                 "Yemen": "येमेन"
             } },
             { id: "NO", name: "Norway", translations: {
+                "Hungary": "Ungarn",
                 "Sweden": "Sverige",
                 "Germany": "Tyskland",
                 "France": "Frankrike",
@@ -236,6 +269,7 @@ window.onload = () => {
                 "Yemen": "Jemen",
             } },
             { id: "NK", name: "North Korea", translations: {
+                "Hungary": "헝가리",
                 "Sweden": "스웨덴",
                 "Germany": "독일",
                 "France": "프랑스",
@@ -256,6 +290,7 @@ window.onload = () => {
                 "Yemen": "예멘"
             } },
             { id: "CH", name: "China", translations: {
+                "Hungary": "匈牙利",
                 "Sweden": "瑞典",
                 "Germany": "德国",
                 "France": "法国",
@@ -276,6 +311,7 @@ window.onload = () => {
                 "Yemen": "也门"
             } },
             { id: "PO", name: "Portugal", translations: {
+                "Hungary": "Hongrie",
                 "Sweden": "Suécia",
                 "Germany": "Alemanha",
                 "France": "França",
@@ -296,6 +332,7 @@ window.onload = () => {
                 "Yemen": "Iêmen"
             } },
             { id: "NS", name: "Netherlands", translations: {
+                "Hungary": "Hongrie",
                 "Sweden": "Zweden",
                 "Germany": "Duitsland",
                 "France": "Frankrijk",
@@ -316,6 +353,7 @@ window.onload = () => {
                 "Yemen": "Jemen"
             } },
             { id: "YE", name: "Yemen", translations: {
+                "Hungary": "المجر",
                 "Sweden": "السويد",
                 "Germany": "ألمانيا",
                 "France": "فرنسا",
