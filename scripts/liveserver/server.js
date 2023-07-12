@@ -152,6 +152,11 @@ async function getFile(url) {
             const file = fs.readFileSync(path.resolve(SCRIPT_DIR, '../../design-tokens/tokens.css'))
             return [200, file]
         }
+        if (/\.(jpe?g|png|gif)$/i.test(url))
+        {
+            const image = fs.readFileSync(path.join(viewfolder, url));
+            return [200, image];
+        }
         if (!url.endsWith('.js') && !url.endsWith('.css'))
         {
             const file = fs.readFileSync(path.join(viewfolder, url), 'utf-8');
