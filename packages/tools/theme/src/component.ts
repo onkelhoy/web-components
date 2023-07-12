@@ -44,6 +44,6 @@ export class ThemeTool extends BaseTemplate {
 
 declare global {
     interface HTMLElementTagNameMap {
-        "o-theme-tool": ThemeTool;
+        "o-theme-provider": ThemeTool;
     }
 }

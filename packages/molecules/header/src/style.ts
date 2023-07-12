@@ -7,4 +7,30 @@ export const style = `:host,
 :host {
   justify-content: space-between; }
   :host o-menu::part(box) {
-    min-width: 15rem; }`;
+    min-width: 15rem; }
+  :host div.icon-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px; }
+
+@media (prefers-color-scheme: light) {
+  :host o-icon[name="dark-mode"] {
+    display: none; } }
+
+@media (prefers-color-scheme: dark) {
+  :host o-icon[name="light-mode"] {
+    display: none; } }
+
+:host(.dark-mode) o-icon[name="light-mode"] {
+  display: none; }
+
+:host(.dark-mode) o-icon[name="dark-mode"] {
+  display: initial; }
+
+:host(.light-mode) o-icon[name="dark-mode"] {
+  display: none; }
+
+:host(.light-mode) o-icon[name="light-mode"] {
+  display: initial; }`;

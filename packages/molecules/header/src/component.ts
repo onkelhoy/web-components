@@ -25,7 +25,11 @@ export class Header extends BaseTemplate {
     private handleuserselect = (e:Event) => {
         if (e.target instanceof Menu)
         {
-            console.log('user related menu', e.target.value);
+            this.classList.remove('light-mode', 'dark-mode');
+            if (e.target.value !== "auto") 
+            {
+                this.classList.add(`${e.target.value}-mode`);
+            }
         }
     }
 
@@ -41,9 +45,24 @@ export class Header extends BaseTemplate {
             <div class="suffix">
                 <o-language></o-language>
                 <o-menu placement="bottom-left" @select="${this.handleuserselect}">
-                    <img src="${avatarlink}" alt="${this.user?.firstname || "no-name"} profile picture" />
-                    <o-typography>${this.user?.firstname || "no-name"}</o-typography>
+                    <div class="icon-wrapper" slot="button-content">
+                        <o-icon name="light-mode"></o-icon>
+                        <o-icon name="dark-mode"></o-icon>
+                    </div>
 
+                    <o-menu-item value="dark">
+                        <o-typography><o-translator>Dark Mode</o-translator></o-typography>
+                    </o-menu-item>
+                    <o-menu-item value="light">
+                        <o-typography><o-translator>Light Mode</o-translator></o-typography>
+                    </o-menu-item>
+                    <o-menu-item value="auto">
+                        <o-typography><o-translator>Auto Mode</o-translator></o-typography>
+                    </o-menu-item>
+                </o-menu>
+                <o-menu placement="bottom-left" @select="${this.handleuserselect}">
+                    <img slot="button-prefix" src="${avatarlink}" alt="${this.user?.firstname || "no-name"} profile picture" />
+                    <o-typography slot="button">${this.user?.firstname || "no-name"}</o-typography>
 
                     <o-menu-item value="settings">
                         <o-typography><o-translator>User Settings</o-translator></o-typography>

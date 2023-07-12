@@ -1,3 +1,4 @@
+import { Theme } from './components/theme';
 import { Language } from './components/language';
 import { Header } from './component.js';
 
@@ -13,4 +14,7 @@ if (!cElements.get('o-header')) {
 }
 if (!cElements.get('o-language')) {
   cElements.define('o-language', Language);
+}
+if (!cElements.get('o-theme')) {
+  cElements.define('o-theme', Theme);
 }

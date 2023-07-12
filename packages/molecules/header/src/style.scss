@@ -8,15 +8,48 @@
 :host {
     justify-content: space-between;
 
-    
-
     o-menu::part(box) {
         min-width: 15rem;
     }
+
+    div.icon-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 40px;
+        height: 40px;
+    }
 }
 
+@media (prefers-color-scheme: light) {
+    :host {
+        o-icon[name="dark-mode"] {
+            display: none;
+        }
+    }
+}
 @media (prefers-color-scheme: dark) {
     :host {
-        
+        o-icon[name="light-mode"] {
+            display: none;
+        }
+    }
+}
+
+// overriding 
+:host(.dark-mode) {
+    o-icon[name="light-mode"] {
+        display: none;
+    }
+    o-icon[name="dark-mode"] {
+        display: initial;
+    }
+}
+:host(.light-mode) {
+    o-icon[name="dark-mode"] {
+        display: none;
+    }
+    o-icon[name="light-mode"] {
+        display: initial;
     }
 }
