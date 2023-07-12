@@ -12,8 +12,13 @@ export const style = `:host,
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 40px;
-    height: 40px; }
+    width: var(--icon-container-size);
+    height: var(--icon-container-size); }
+
+img.avatar {
+  width: var(--icon-container-size);
+  height: var(--icon-container-size);
+  border-radius: 50%; }
 
 @media (prefers-color-scheme: light) {
   :host o-icon[name="dark-mode"] {

@@ -61,8 +61,8 @@ export class Header extends BaseTemplate {
                     </o-menu-item>
                 </o-menu>
                 <o-menu placement="bottom-left" @select="${this.handleuserselect}">
-                    <img slot="button-prefix" src="${avatarlink}" alt="${this.user?.firstname || "no-name"} profile picture" />
-                    <o-typography slot="button">${this.user?.firstname || "no-name"}</o-typography>
+                    <img class="avatar" slot="button-prefix" src="${avatarlink}" alt="${this.user?.firstname || "no-name"} profile picture" />
+                    <o-typography slot="button-content">${this.user?.firstname || "no-name"}</o-typography>
 
                     <o-menu-item value="settings">
                         <o-typography><o-translator>User Settings</o-translator></o-typography>
