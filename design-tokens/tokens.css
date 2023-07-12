@@ -1,6 +1,9 @@
 :root {
-  --default-fontfamily: 'Poppins', sans-serif;
+  --icon-container-size: 40px;
 
+  /* FONT RELATED */
+  --default-fontfamily: 'Poppins', sans-serif;
+  
   --typography-h1-fontfamily: var(--default-fontfamily);
   --typography-h1-fontsize: 140px;
   --typography-h1-fontweight: 800;
@@ -372,6 +375,7 @@
   --margin-medium: 16px;
   --margin-large: 24px;
 
+  /* GAPS */
   --gap-small: 8px;
   --gap-medium: 16px;
   --gap-large: 24px;
