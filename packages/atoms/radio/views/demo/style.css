@@ -13,8 +13,11 @@
 }
 
 body {
-  background-color: var(--html-background);
-  color: var(--html-color);
+  /* background-color: var(--html-background);
+  color: var(--html-color); */
+
+  background-color: var(--color-one);
+  color: var(--color-two);
 }
 
 body {

@@ -1,4 +1,5 @@
-.circular-theme-light {
+:root,
+.theme-light {
   color-scheme: light;
 
   /*
@@ -212,7 +213,7 @@
   --o-color-white: var(--o-color-neutral-0);
   --o-color-black: var(--o-color-neutral-1000);
 }
-.circular-theme-dark {
+.theme-dark {
   color-scheme: dark;
 
   /*
@@ -531,7 +532,8 @@
   --o-color-white: var(--o-color-neutral-0);
   --o-color-black: var(--o-color-neutral-1000);
 }
-@media (prefers-color-scheme: light) {
+
+/* @media (prefers-color-scheme: light) {
   :root {
     color-scheme: light;
   }
@@ -540,4 +542,4 @@
   :root {
     color-scheme: dark;
   }
-}
+} */
