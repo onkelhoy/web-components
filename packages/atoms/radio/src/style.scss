@@ -1,0 +1,16 @@
+:host {
+    display: block;
+    padding: 1rem;
+    --background: var(--radio-light-background-color, var(--colors-netural-white, white));
+    --color: var(--radio-light-text-color, var(--colors-netural-black, black));
+
+    background-color: var(--background);
+    color: var(--color);
+}
+
+@media (prefers-color-scheme: dark) {
+    :host {
+        --background: var(--radio-dark-background-color, var(--colors-netural-black, black));
+        --color: var(--radio-dark-text-color, var(--colors-netural-white, white));
+    }
+}
