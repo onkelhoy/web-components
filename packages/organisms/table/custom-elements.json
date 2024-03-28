@@ -1,4 +1,2176 @@
 {
-  "sub": {},
-  "main": null
+  "sub": {
+    "TableMenu": {
+      "decorators": {
+        "property": {
+          "headerTitle": true
+        },
+        "query": {},
+        "context": {}
+      },
+      "imports": {
+        "/Users/henry/Developer/projects/web-components/packages/organisms/table": [
+          {
+            "name": "Aside",
+            "from": "@pap-it/aside"
+          },
+          {
+            "name": "style",
+            "from": "./style"
+          }
+        ],
+        "/Users/henry/Developer/projects/web-components/packages/molecules/aside": [
+          {
+            "name": "Box",
+            "from": "@pap-it/templates-box"
+          },
+          {
+            "name": "style",
+            "from": "./style"
+          }
+        ],
+        "/Users/henry/Developer/projects/web-components/packages/templates/box": [
+          {
+            "name": "style",
+            "from": "./style"
+          }
+        ]
+      },
+      "public_functions": [],
+      "events": [],
+      "folder": "/Users/henry/Developer/projects/web-components/packages/organisms/table/src/components/table-menu",
+      "className": "TableMenu",
+      "properties": [
+        {
+          "name": "headerTitle",
+          "type": "string",
+          "type_value": null,
+          "primitive": true,
+          "conditional": true
+        }
+      ],
+      "extend_class": {
+        "decorators": {
+          "property": {
+            "backdrop": true,
+            "hideonoutsideclick": true,
+            "open": true,
+            "placement": true,
+            "radius": true,
+            "mode": true,
+            "width": true
+          },
+          "query": {},
+          "context": {}
+        },
+        "imports": {
+          "/Users/henry/Developer/projects/web-components/packages/molecules/aside": [
+            {
+              "name": "Box",
+              "from": "@pap-it/templates-box"
+            },
+            {
+              "name": "style",
+              "from": "./style"
+            }
+          ],
+          "/Users/henry/Developer/projects/web-components/packages/templates/box": [
+            {
+              "name": "style",
+              "from": "./style"
+            }
+          ]
+        },
+        "public_functions": [],
+        "events": [
+          {
+            "type": "Event",
+            "name": "hide"
+          },
+          {
+            "type": "Event",
+            "name": "show"
+          }
+        ],
+        "folder": "/Users/henry/Developer/projects/web-components/packages/molecules/aside/src",
+        "className": "Aside",
+        "properties": [
+          {
+            "name": "backdrop",
+            "type": "boolean",
+            "default_value": true,
+            "type_value": null,
+            "primitive": true,
+            "conditional": false
+          },
+          {
+            "name": "hideonoutsideclick",
+            "type": "boolean",
+            "default_value": true,
+            "type_value": null,
+            "primitive": true,
+            "conditional": false
+          },
+          {
+            "name": "open",
+            "type": "boolean",
+            "default_value": false,
+            "type_value": null,
+            "primitive": true,
+            "conditional": false
+          },
+          {
+            "name": "placement",
+            "type": "Placement",
+            "default_value": "right",
+            "type_value": [
+              "left",
+              "right",
+              "top",
+              "bottom"
+            ],
+            "primitive": false,
+            "conditional": false
+          },
+          {
+            "name": "radius",
+            "type": "Radius",
+            "default_value": "medium",
+            "type_value": [
+              "none",
+              "small",
+              "medium",
+              "large",
+              "circular"
+            ],
+            "primitive": false,
+            "conditional": false
+          },
+          {
+            "name": "mode",
+            "type": "Mode",
+            "default_value": "normal",
+            "type_value": [
+              "normal",
+              "fixed"
+            ],
+            "primitive": false,
+            "conditional": false
+          },
+          {
+            "name": "width",
+            "type": "string",
+            "type_value": null,
+            "primitive": true,
+            "conditional": true
+          }
+        ],
+        "extend_class": {
+          "decorators": {
+            "property": {
+              "radius": true,
+              "elevation": true,
+              "elevationdirection": true
+            },
+            "query": {},
+            "context": {}
+          },
+          "imports": {
+            "/Users/henry/Developer/projects/web-components/packages/templates/box": [
+              {
+                "name": "style",
+                "from": "./style"
+              }
+            ]
+          },
+          "public_functions": [],
+          "events": [],
+          "folder": "/Users/henry/Developer/projects/web-components/packages/templates/box/src",
+          "className": "Box",
+          "properties": [
+            {
+              "name": "radius",
+              "type": "Radius",
+              "default_value": "circular",
+              "type_value": [
+                "none",
+                "small",
+                "medium",
+                "large",
+                "circular"
+              ],
+              "primitive": false,
+              "conditional": false
+            },
+            {
+              "name": "elevation",
+              "type": "Elevation",
+              "default_value": "none",
+              "type_value": [
+                "none",
+                "small",
+                "medium",
+                "large",
+                "x-large"
+              ],
+              "primitive": false,
+              "conditional": false
+            },
+            {
+              "name": "elevationdirection",
+              "type": "alternative",
+              "default_value": "vertical",
+              "type_value": [
+                "vertical",
+                "horizontal"
+              ],
+              "primitive": true,
+              "conditional": false
+            }
+          ],
+          "extend_class": null,
+          "dist_filepath": "/Users/henry/Developer/projects/web-components/packages/templates/box/dist/src/component.js",
+          "html": {
+            "slots": [
+              {
+                "name": "default",
+                "html": ""
+              }
+            ],
+            "parts": [],
+            "tagName": "pap-box-template"
+          },
+          "allproperties": [
+            {
+              "type": "Radius",
+              "typeName": "String",
+              "propertyKey": "radius",
+              "attribute": true,
+              "name": "radius",
+              "default_value": "circular",
+              "type_value": [
+                "none",
+                "small",
+                "medium",
+                "large",
+                "circular"
+              ],
+              "primitive": false,
+              "conditional": false
+            },
+            {
+              "type": "Elevation",
+              "typeName": "String",
+              "propertyKey": "elevation",
+              "attribute": true,
+              "name": "elevation",
+              "default_value": "none",
+              "type_value": [
+                "none",
+                "small",
+                "medium",
+                "large",
+                "x-large"
+              ],
+              "primitive": false,
+              "conditional": false
+            },
+            {
+              "type": "alternative",
+              "typeName": "String",
+              "propertyKey": "elevationdirection",
+              "attribute": "elevation-direction",
+              "name": "elevationdirection",
+              "default_value": "vertical",
+              "type_value": [
+                "vertical",
+                "horizontal"
+              ],
+              "primitive": true,
+              "conditional": false
+            }
+          ],
+          "allevents": []
+        },
+        "dist_filepath": "/Users/henry/Developer/projects/web-components/packages/molecules/aside/dist/src/component.js",
+        "html": {
+          "slots": [
+            {
+              "name": "default",
+              "html": ""
+            }
+          ],
+          "parts": [
+            {
+              "name": "wrapper",
+              "tag": "PAP-BOX-TEMPLATE"
+            },
+            {
+              "name": "accordion",
+              "tag": "PAP-ACCORDION"
+            },
+            {
+              "name": "content",
+              "tag": "DIV"
+            }
+          ],
+          "tagName": "pap-aside"
+        },
+        "allproperties": [
+          {
+            "attribute": "backdrop",
+            "propertyKey": "backdrop",
+            "type": "boolean",
+            "typeName": "Boolean",
+            "name": "backdrop",
+            "default_value": true,
+            "type_value": null,
+            "primitive": true,
+            "conditional": false
+          },
+          {
+            "attribute": "hideonoutsideclick",
+            "propertyKey": "hideonoutsideclick",
+            "type": "boolean",
+            "typeName": "Boolean",
+            "name": "hideonoutsideclick",
+            "default_value": true,
+            "type_value": null,
+            "primitive": true,
+            "conditional": false
+          },
+          {
+            "attribute": "open",
+            "propertyKey": "open",
+            "type": "boolean",
+            "typeName": "Boolean",
+            "name": "open",
+            "default_value": false,
+            "type_value": null,
+            "primitive": true,
+            "conditional": false
+          },
+          {
+            "attribute": "placement",
+            "propertyKey": "placement",
+            "type": "Placement",
+            "typeName": "String",
+            "name": "placement",
+            "default_value": "right",
+            "type_value": [
+              "left",
+              "right",
+              "top",
+              "bottom"
+            ],
+            "primitive": false,
+            "conditional": false
+          },
+          {
+            "attribute": "radius",
+            "propertyKey": "radius",
+            "type": "Radius",
+            "typeName": "String",
+            "name": "radius",
+            "default_value": "medium",
+            "type_value": [
+              "none",
+              "small",
+              "medium",
+              "large",
+              "circular"
+            ],
+            "primitive": false,
+            "conditional": false
+          },
+          {
+            "attribute": "mode",
+            "propertyKey": "mode",
+            "type": "Mode",
+            "typeName": "String",
+            "name": "mode",
+            "default_value": "normal",
+            "type_value": [
+              "normal",
+              "fixed"
+            ],
+            "primitive": false,
+            "conditional": false
+          },
+          {
+            "attribute": "width",
+            "propertyKey": "width",
+            "type": "string",
+            "typeName": "String",
+            "name": "width",
+            "type_value": null,
+            "primitive": true,
+            "conditional": true
+          },
+          {
+            "attribute": "elevation",
+            "propertyKey": "elevation",
+            "type": "Elevation",
+            "typeName": "String",
+            "name": "elevation",
+            "default_value": "none",
+            "type_value": [
+              "none",
+              "small",
+              "medium",
+              "large",
+              "x-large"
+            ],
+            "primitive": false,
+            "conditional": false
+          },
+          {
+            "attribute": "elevation-direction",
+            "propertyKey": "elevationdirection",
+            "type": "alternative",
+            "typeName": "String",
+            "name": "elevationdirection",
+            "default_value": "vertical",
+            "type_value": [
+              "vertical",
+              "horizontal"
+            ],
+            "primitive": true,
+            "conditional": false
+          }
+        ],
+        "allevents": [
+          {
+            "type": "Event",
+            "name": "hide"
+          },
+          {
+            "type": "Event",
+            "name": "show"
+          }
+        ]
+      },
+      "dist_filepath": "/Users/henry/Developer/projects/web-components/packages/organisms/table/dist/src/components/table-menu/index.js",
+      "html": {
+        "slots": [
+          {
+            "name": "title",
+            "html": "\n            <pap-typography nowrap=\"true\" variant=\"T4\">\n              </pap-typography>\n          "
+          },
+          {
+            "name": "default",
+            "html": ""
+          }
+        ],
+        "parts": [
+          {
+            "name": "wrapper",
+            "tag": "PAP-BOX-TEMPLATE"
+          },
+          {
+            "name": "accordion",
+            "tag": "PAP-ACCORDION"
+          },
+          {
+            "name": "content",
+            "tag": "DIV"
+          },
+          {
+            "name": "header",
+            "tag": "HEADER"
+          },
+          {
+            "name": "title",
+            "tag": "SPAN"
+          },
+          {
+            "name": "close",
+            "tag": "PAP-BUTTON"
+          },
+          {
+            "name": "main",
+            "tag": "MAIN"
+          }
+        ],
+        "tagName": "pap-table-menu"
+      },
+      "allproperties": [
+        {
+          "attribute": "header-title",
+          "propertyKey": "headerTitle",
+          "type": "string",
+          "typeName": "String",
+          "name": "headerTitle",
+          "type_value": null,
+          "primitive": true,
+          "conditional": true
+        },
+        {
+          "attribute": "backdrop",
+          "propertyKey": "backdrop",
+          "type": "boolean",
+          "typeName": "Boolean",
+          "name": "backdrop",
+          "default_value": true,
+          "type_value": null,
+          "primitive": true,
+          "conditional": false
+        },
+        {
+          "attribute": "hideonoutsideclick",
+          "propertyKey": "hideonoutsideclick",
+          "type": "boolean",
+          "typeName": "Boolean",
+          "name": "hideonoutsideclick",
+          "default_value": true,
+          "type_value": null,
+          "primitive": true,
+          "conditional": false
+        },
+        {
+          "attribute": "open",
+          "propertyKey": "open",
+          "type": "boolean",
+          "typeName": "Boolean",
+          "name": "open",
+          "default_value": false,
+          "type_value": null,
+          "primitive": true,
+          "conditional": false
+        },
+        {
+          "attribute": "placement",
+          "propertyKey": "placement",
+          "type": "Placement",
+          "typeName": "String",
+          "name": "placement",
+          "default_value": "right",
+          "type_value": [
+            "left",
+            "right",
+            "top",
+            "bottom"
+          ],
+          "primitive": false,
+          "conditional": false
+        },
+        {
+          "attribute": "radius",
+          "propertyKey": "radius",
+          "type": "Radius",
+          "typeName": "String",
+          "name": "radius",
+          "default_value": "medium",
+          "type_value": [
+            "none",
+            "small",
+            "medium",
+            "large",
+            "circular"
+          ],
+          "primitive": false,
+          "conditional": false
+        },
+        {
+          "attribute": "mode",
+          "propertyKey": "mode",
+          "type": "Mode",
+          "typeName": "String",
+          "name": "mode",
+          "default_value": "normal",
+          "type_value": [
+            "normal",
+            "fixed"
+          ],
+          "primitive": false,
+          "conditional": false
+        },
+        {
+          "attribute": "width",
+          "propertyKey": "width",
+          "type": "string",
+          "typeName": "String",
+          "name": "width",
+          "type_value": null,
+          "primitive": true,
+          "conditional": true
+        },
+        {
+          "attribute": "elevation",
+          "propertyKey": "elevation",
+          "type": "Elevation",
+          "typeName": "String",
+          "name": "elevation",
+          "default_value": "none",
+          "type_value": [
+            "none",
+            "small",
+            "medium",
+            "large",
+            "x-large"
+          ],
+          "primitive": false,
+          "conditional": false
+        },
+        {
+          "attribute": "elevation-direction",
+          "propertyKey": "elevationdirection",
+          "type": "alternative",
+          "typeName": "String",
+          "name": "elevationdirection",
+          "default_value": "vertical",
+          "type_value": [
+            "vertical",
+            "horizontal"
+          ],
+          "primitive": true,
+          "conditional": false
+        }
+      ],
+      "allevents": [
+        {
+          "type": "Event",
+          "name": "hide"
+        },
+        {
+          "type": "Event",
+          "name": "show"
+        }
+      ]
+    },
+    "TableSheets": {
+      "decorators": {
+        "property": {
+          "list": true,
+          "selected": true
+        },
+        "query": {},
+        "context": {}
+      },
+      "imports": {
+        "/Users/henry/Developer/projects/web-components/packages/organisms/table": [
+          {
+            "name": "Translator",
+            "from": "@pap-it/tools-translator"
+          },
+          {
+            "name": "style",
+            "from": "./style"
+          }
+        ],
+        "/Users/henry/Developer/projects/web-components/packages/tools/translator": [
+          {
+            "name": "style",
+            "from": "./style"
+          },
+          {
+            "name": "init",
+            "from": "./translator"
+          }
+        ]
+      },
+      "public_functions": [],
+      "events": [],
+      "folder": "/Users/henry/Developer/projects/web-components/packages/organisms/table/src/components/table-sheets",
+      "className": "TableSheets",
+      "properties": [
+        {
+          "name": "list",
+          "type_value": null,
+          "primitive": false,
+          "conditional": false
+        },
+        {
+          "name": "selected",
+          "type": "string",
+          "type_value": null,
+          "primitive": true,
+          "conditional": true
+        }
+      ],
+      "extend_class": {
+        "decorators": {
+          "property": {
+            "scope": true
+          },
+          "query": {},
+          "context": {}
+        },
+        "imports": {
+          "/Users/henry/Developer/projects/web-components/packages/tools/translator": [
+            {
+              "name": "style",
+              "from": "./style"
+            },
+            {
+              "name": "init",
+              "from": "./translator"
+            }
+          ]
+        },
+        "public_functions": [],
+        "events": [],
+        "folder": "/Users/henry/Developer/projects/web-components/packages/tools/translator/src",
+        "className": "Translator",
+        "properties": [
+          {
+            "name": "scope",
+            "type": "string",
+            "type_value": null,
+            "primitive": true,
+            "conditional": true
+          }
+        ],
+        "extend_class": null,
+        "dist_filepath": "/Users/henry/Developer/projects/web-components/packages/tools/translator/dist/src/component.js",
+        "html": {
+          "slots": [
+            {
+              "name": "default",
+              "html": ""
+            }
+          ],
+          "parts": [],
+          "tagName": "pap-translator"
+        },
+        "allproperties": [
+          {
+            "type": "string",
+            "typeName": "String",
+            "propertyKey": "scope",
+            "attribute": true,
+            "name": "scope",
+            "type_value": null,
+            "primitive": true,
+            "conditional": true
+          }
+        ],
+        "allevents": []
+      },
+      "dist_filepath": "/Users/henry/Developer/projects/web-components/packages/organisms/table/dist/src/components/table-sheets/index.js",
+      "html": {
+        "slots": [],
+        "parts": [],
+        "tagName": "pap-table-sheets"
+      },
+      "allproperties": [
+        {
+          "attribute": false,
+          "propertyKey": "list",
+          "typeName": "Array",
+          "name": "list",
+          "type_value": null,
+          "primitive": false,
+          "conditional": false
+        },
+        {
+          "attribute": "selected",
+          "propertyKey": "selected",
+          "type": "string",
+          "typeName": "String",
+          "name": "selected",
+          "type_value": null,
+          "primitive": true,
+          "conditional": true
+        },
+        {
+          "attribute": "scope",
+          "propertyKey": "scope",
+          "type": "string",
+          "typeName": "String",
+          "name": "scope",
+          "type_value": null,
+          "primitive": true,
+          "conditional": true
+        }
+      ],
+      "allevents": []
+    },
+    "Column": {
+      "decorators": {
+        "property": {
+          "size": true,
+          "align": true,
+          "value": true,
+          "sort": true,
+          "subtitle": true,
+          "columntitle": true,
+          "databaseicon": true
+        },
+        "query": {},
+        "context": {}
+      },
+      "imports": {
+        "/Users/henry/Developer/projects/web-components/packages/organisms/table": [
+          {
+            "name": "style",
+            "from": "./style"
+          }
+        ]
+      },
+      "public_functions": [],
+      "events": [],
+      "folder": "/Users/henry/Developer/projects/web-components/packages/organisms/table/src/components/table-column",
+      "className": "Column",
+      "properties": [
+        {
+          "name": "size",
+          "type": "Size",
+          "default_value": "medium",
+          "type_value": [
+            "small",
+            "medium",
+            "large"
+          ],
+          "primitive": false,
+          "conditional": false
+        },
+        {
+          "name": "align",
+          "type": "Alignment",
+          "default_value": "left",
+          "type_value": [
+            "left",
+            "center",
+            "right"
+          ],
+          "primitive": false,
+          "conditional": false
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "default_value": "",
+          "type_value": null,
+          "primitive": true,
+          "conditional": false
+        },
+        {
+          "name": "sort",
+          "type": "Sorting",
+          "type_value": [
+            "none",
+            "desc",
+            "asc"
+          ],
+          "primitive": false,
+          "conditional": true
+        },
+        {
+          "name": "subtitle",
+          "type": "string",
+          "type_value": null,
+          "primitive": true,
+          "conditional": true
+        },
+        {
+          "name": "columntitle",
+          "type": "string",
+          "type_value": null,
+          "primitive": true,
+          "conditional": true
+        },
+        {
+          "name": "databaseicon",
+          "type": "string",
+          "type_value": null,
+          "primitive": true,
+          "conditional": true
+        }
+      ],
+      "extend_class": null,
+      "dist_filepath": "/Users/henry/Developer/projects/web-components/packages/organisms/table/dist/src/components/table-column/index.js",
+      "html": {
+        "slots": [],
+        "parts": [],
+        "tagName": "pap-table-column"
+      },
+      "allproperties": [
+        {
+          "attribute": "size",
+          "propertyKey": "size",
+          "type": "Size",
+          "typeName": "String",
+          "name": "size",
+          "default_value": "medium",
+          "type_value": [
+            "small",
+            "medium",
+            "large"
+          ],
+          "primitive": false,
+          "conditional": false
+        },
+        {
+          "attribute": "align",
+          "propertyKey": "align",
+          "type": "Alignment",
+          "typeName": "String",
+          "name": "align",
+          "default_value": "left",
+          "type_value": [
+            "left",
+            "center",
+            "right"
+          ],
+          "primitive": false,
+          "conditional": false
+        },
+        {
+          "attribute": "value",
+          "propertyKey": "value",
+          "type": "string",
+          "typeName": "String",
+          "name": "value",
+          "default_value": "",
+          "type_value": null,
+          "primitive": true,
+          "conditional": false
+        },
+        {
+          "attribute": "sort",
+          "propertyKey": "sort",
+          "type": "Sorting",
+          "typeName": "String",
+          "name": "sort",
+          "type_value": [
+            "none",
+            "desc",
+            "asc"
+          ],
+          "primitive": false,
+          "conditional": true
+        },
+        {
+          "attribute": "sub-title",
+          "propertyKey": "subtitle",
+          "type": "string",
+          "typeName": "String",
+          "name": "subtitle",
+          "type_value": null,
+          "primitive": true,
+          "conditional": true
+        },
+        {
+          "attribute": "column-title",
+          "propertyKey": "columntitle",
+          "type": "string",
+          "typeName": "String",
+          "name": "columntitle",
+          "type_value": null,
+          "primitive": true,
+          "conditional": true
+        },
+        {
+          "attribute": "database-icon",
+          "propertyKey": "databaseicon",
+          "type": "string",
+          "typeName": "String",
+          "name": "databaseicon",
+          "type_value": null,
+          "primitive": true,
+          "conditional": true
+        }
+      ],
+      "allevents": []
+    },
+    "TableFilterIndividual": {
+      "decorators": {
+        "property": {
+          "columns": true
+        },
+        "query": {
+          "selectElement": true,
+          "templateElement": true,
+          "fieldsElement": true
+        },
+        "context": {}
+      },
+      "imports": {
+        "/Users/henry/Developer/projects/web-components/packages/organisms/table": [
+          {
+            "name": "Translator",
+            "from": "@pap-it/tools-translator"
+          },
+          {
+            "name": "style",
+            "from": "./style"
+          }
+        ],
+        "/Users/henry/Developer/projects/web-components/packages/tools/translator": [
+          {
+            "name": "style",
+            "from": "./style"
+          },
+          {
+            "name": "init",
+            "from": "./translator"
+          }
+        ]
+      },
+      "public_functions": [],
+      "events": [
+        {
+          "type": "Event",
+          "name": "remove"
+        },
+        {
+          "type": "CustomEvent",
+          "custom": "FilterChangeEvent",
+          "name": "change",
+          "data": {
+            "object": "{ detail: { column: this.Column, filters: currentFilters } }))",
+            "properties": [
+              "column",
+              "filters"
+            ]
+          }
+        }
+      ],
+      "folder": "/Users/henry/Developer/projects/web-components/packages/organisms/table/src/components/table-filter-individual",
+      "className": "TableFilterIndividual",
+      "properties": [
+        {
+          "name": "columns",
+          "type_value": null,
+          "primitive": false,
+          "conditional": false
+        }
+      ],
+      "extend_class": {
+        "decorators": {
+          "property": {
+            "scope": true
+          },
+          "query": {},
+          "context": {}
+        },
+        "imports": {
+          "/Users/henry/Developer/projects/web-components/packages/tools/translator": [
+            {
+              "name": "style",
+              "from": "./style"
+            },
+            {
+              "name": "init",
+              "from": "./translator"
+            }
+          ]
+        },
+        "public_functions": [],
+        "events": [],
+        "folder": "/Users/henry/Developer/projects/web-components/packages/tools/translator/src",
+        "className": "Translator",
+        "properties": [
+          {
+            "name": "scope",
+            "type": "string",
+            "type_value": null,
+            "primitive": true,
+            "conditional": true
+          }
+        ],
+        "extend_class": null,
+        "dist_filepath": "/Users/henry/Developer/projects/web-components/packages/tools/translator/dist/src/component.js",
+        "html": {
+          "slots": [
+            {
+              "name": "default",
+              "html": ""
+            }
+          ],
+          "parts": [],
+          "tagName": "pap-translator"
+        },
+        "allproperties": [
+          {
+            "type": "string",
+            "typeName": "String",
+            "propertyKey": "scope",
+            "attribute": true,
+            "name": "scope",
+            "type_value": null,
+            "primitive": true,
+            "conditional": true
+          }
+        ],
+        "allevents": []
+      },
+      "dist_filepath": "/Users/henry/Developer/projects/web-components/packages/organisms/table/dist/src/components/table-filter-individual/index.js",
+      "html": {
+        "slots": [],
+        "parts": [],
+        "tagName": "pap-table-filter-individual"
+      },
+      "allproperties": [
+        {
+          "attribute": false,
+          "propertyKey": "columns",
+          "typeName": "Array",
+          "name": "columns",
+          "type_value": null,
+          "primitive": false,
+          "conditional": false
+        },
+        {
+          "attribute": "scope",
+          "propertyKey": "scope",
+          "type": "string",
+          "typeName": "String",
+          "name": "scope",
+          "type_value": null,
+          "primitive": true,
+          "conditional": true
+        }
+      ],
+      "allevents": [
+        {
+          "type": "Event",
+          "name": "remove"
+        },
+        {
+          "type": "CustomEvent",
+          "custom": "FilterChangeEvent",
+          "name": "change",
+          "data": {
+            "object": "{ detail: { column: this.Column, filters: currentFilters } }))",
+            "properties": [
+              "column",
+              "filters"
+            ]
+          }
+        }
+      ]
+    },
+    "TableActionMenu": {
+      "decorators": {
+        "property": {},
+        "query": {},
+        "context": {}
+      },
+      "imports": {
+        "/Users/henry/Developer/projects/web-components/packages/organisms/table": [
+          {
+            "name": "style",
+            "from": "./style"
+          }
+        ]
+      },
+      "public_functions": [],
+      "events": [],
+      "folder": "/Users/henry/Developer/projects/web-components/packages/organisms/table/src/components/table-action-menu",
+      "className": "TableActionMenu",
+      "properties": [],
+      "extend_class": null,
+      "dist_filepath": "/Users/henry/Developer/projects/web-components/packages/organisms/table/dist/src/components/table-action-menu/index.js",
+      "html": {
+        "slots": [
+          {
+            "name": "filters",
+            "html": "\n            lalalal im the filter now\n          "
+          }
+        ],
+        "parts": [],
+        "tagName": "pap-table-action-menu"
+      },
+      "allproperties": [],
+      "allevents": []
+    },
+    "TableFilter": {
+      "decorators": {
+        "property": {
+          "iscustomfilters": true
+        },
+        "query": {
+          "filtersElement": true,
+          "templateElement": true
+        },
+        "context": {
+          "columns": true
+        }
+      },
+      "imports": {
+        "/Users/henry/Developer/projects/web-components/packages/organisms/table": [
+          {
+            "name": "Translator",
+            "from": "@pap-it/tools-translator"
+          },
+          {
+            "name": "style",
+            "from": "./style"
+          }
+        ],
+        "/Users/henry/Developer/projects/web-components/packages/tools/translator": [
+          {
+            "name": "style",
+            "from": "./style"
+          },
+          {
+            "name": "init",
+            "from": "./translator"
+          }
+        ]
+      },
+      "public_functions": [],
+      "events": [
+        {
+          "type": "CustomEvent",
+          "name": "apply",
+          "data": {
+            "object": "{ detail: { filters } }",
+            "properties": []
+          }
+        }
+      ],
+      "folder": "/Users/henry/Developer/projects/web-components/packages/organisms/table/src/components/table-filter",
+      "className": "TableFilter",
+      "properties": [
+        {
+          "name": "iscustomfilters",
+          "type": "boolean",
+          "default_value": false,
+          "type_value": null,
+          "primitive": true,
+          "conditional": false
+        }
+      ],
+      "extend_class": {
+        "decorators": {
+          "property": {
+            "scope": true
+          },
+          "query": {},
+          "context": {}
+        },
+        "imports": {
+          "/Users/henry/Developer/projects/web-components/packages/tools/translator": [
+            {
+              "name": "style",
+              "from": "./style"
+            },
+            {
+              "name": "init",
+              "from": "./translator"
+            }
+          ]
+        },
+        "public_functions": [],
+        "events": [],
+        "folder": "/Users/henry/Developer/projects/web-components/packages/tools/translator/src",
+        "className": "Translator",
+        "properties": [
+          {
+            "name": "scope",
+            "type": "string",
+            "type_value": null,
+            "primitive": true,
+            "conditional": true
+          }
+        ],
+        "extend_class": null,
+        "dist_filepath": "/Users/henry/Developer/projects/web-components/packages/tools/translator/dist/src/component.js",
+        "html": {
+          "slots": [
+            {
+              "name": "default",
+              "html": ""
+            }
+          ],
+          "parts": [],
+          "tagName": "pap-translator"
+        },
+        "allproperties": [
+          {
+            "type": "string",
+            "typeName": "String",
+            "propertyKey": "scope",
+            "attribute": true,
+            "name": "scope",
+            "type_value": null,
+            "primitive": true,
+            "conditional": true
+          }
+        ],
+        "allevents": []
+      },
+      "dist_filepath": "/Users/henry/Developer/projects/web-components/packages/organisms/table/dist/src/components/table-filter/index.js",
+      "html": {
+        "slots": [
+          {
+            "name": "default",
+            "html": ""
+          }
+        ],
+        "parts": [],
+        "tagName": "pap-table-filter"
+      },
+      "allproperties": [
+        {
+          "attribute": "is-custom-filter",
+          "propertyKey": "iscustomfilters",
+          "type": "boolean",
+          "typeName": "Boolean",
+          "name": "iscustomfilters",
+          "default_value": false,
+          "type_value": null,
+          "primitive": true,
+          "conditional": false
+        },
+        {
+          "attribute": "scope",
+          "propertyKey": "scope",
+          "type": "string",
+          "typeName": "String",
+          "name": "scope",
+          "type_value": null,
+          "primitive": true,
+          "conditional": true
+        }
+      ],
+      "allevents": [
+        {
+          "type": "CustomEvent",
+          "name": "apply",
+          "data": {
+            "object": "{ detail: { filters } }",
+            "properties": []
+          }
+        }
+      ]
+    },
+    "TableManage": {
+      "decorators": {
+        "property": {},
+        "query": {},
+        "context": {
+          "columns": true,
+          "config": true
+        }
+      },
+      "imports": {
+        "/Users/henry/Developer/projects/web-components/packages/organisms/table": [
+          {
+            "name": "Translator",
+            "from": "@pap-it/tools-translator"
+          },
+          {
+            "name": "style",
+            "from": "./style"
+          },
+          {
+            "name": "DefaultConfig",
+            "from": "../../types"
+          }
+        ],
+        "/Users/henry/Developer/projects/web-components/packages/tools/translator": [
+          {
+            "name": "style",
+            "from": "./style"
+          },
+          {
+            "name": "init",
+            "from": "./translator"
+          }
+        ]
+      },
+      "public_functions": [],
+      "events": [
+        {
+          "type": "Event",
+          "name": "add"
+        }
+      ],
+      "folder": "/Users/henry/Developer/projects/web-components/packages/organisms/table/src/components/table-manage",
+      "className": "TableManage",
+      "properties": [],
+      "extend_class": {
+        "decorators": {
+          "property": {
+            "scope": true
+          },
+          "query": {},
+          "context": {}
+        },
+        "imports": {
+          "/Users/henry/Developer/projects/web-components/packages/tools/translator": [
+            {
+              "name": "style",
+              "from": "./style"
+            },
+            {
+              "name": "init",
+              "from": "./translator"
+            }
+          ]
+        },
+        "public_functions": [],
+        "events": [],
+        "folder": "/Users/henry/Developer/projects/web-components/packages/tools/translator/src",
+        "className": "Translator",
+        "properties": [
+          {
+            "name": "scope",
+            "type": "string",
+            "type_value": null,
+            "primitive": true,
+            "conditional": true
+          }
+        ],
+        "extend_class": null,
+        "dist_filepath": "/Users/henry/Developer/projects/web-components/packages/tools/translator/dist/src/component.js",
+        "html": {
+          "slots": [
+            {
+              "name": "default",
+              "html": ""
+            }
+          ],
+          "parts": [],
+          "tagName": "pap-translator"
+        },
+        "allproperties": [
+          {
+            "type": "string",
+            "typeName": "String",
+            "propertyKey": "scope",
+            "attribute": true,
+            "name": "scope",
+            "type_value": null,
+            "primitive": true,
+            "conditional": true
+          }
+        ],
+        "allevents": []
+      },
+      "dist_filepath": "/Users/henry/Developer/projects/web-components/packages/organisms/table/dist/src/components/table-manage/index.js",
+      "html": {
+        "slots": [],
+        "parts": [],
+        "tagName": "pap-table-manage"
+      },
+      "allproperties": [
+        {
+          "attribute": "scope",
+          "propertyKey": "scope",
+          "type": "string",
+          "typeName": "String",
+          "name": "scope",
+          "type_value": null,
+          "primitive": true,
+          "conditional": true
+        }
+      ],
+      "allevents": [
+        {
+          "type": "Event",
+          "name": "add"
+        }
+      ]
+    },
+    "TableHeader": {
+      "decorators": {
+        "property": {},
+        "query": {},
+        "context": {
+          "config": true,
+          "tableTitle": true
+        }
+      },
+      "imports": {
+        "/Users/henry/Developer/projects/web-components/packages/organisms/table": [
+          {
+            "name": "Translator",
+            "from": "@pap-it/tools-translator"
+          },
+          {
+            "name": "style",
+            "from": "./style"
+          },
+          {
+            "name": "DefaultConfig",
+            "from": "../../types"
+          }
+        ],
+        "/Users/henry/Developer/projects/web-components/packages/tools/translator": [
+          {
+            "name": "style",
+            "from": "./style"
+          },
+          {
+            "name": "init",
+            "from": "./translator"
+          }
+        ]
+      },
+      "public_functions": [],
+      "events": [
+        {
+          "type": "Event",
+          "name": "save"
+        },
+        {
+          "type": "CustomEvent",
+          "custom": "HeaderSearch",
+          "name": "search",
+          "data": {
+            "object": "{ detail: { value: e.target.value as string } }",
+            "properties": [
+              "value"
+            ]
+          }
+        },
+        {
+          "type": "CustomEvent",
+          "custom": "HeaderActionClick",
+          "name": "action",
+          "data": {
+            "object": "{ detail: { type } }))",
+            "properties": []
+          }
+        }
+      ],
+      "folder": "/Users/henry/Developer/projects/web-components/packages/organisms/table/src/components/table-header",
+      "className": "TableHeader",
+      "properties": [],
+      "extend_class": {
+        "decorators": {
+          "property": {
+            "scope": true
+          },
+          "query": {},
+          "context": {}
+        },
+        "imports": {
+          "/Users/henry/Developer/projects/web-components/packages/tools/translator": [
+            {
+              "name": "style",
+              "from": "./style"
+            },
+            {
+              "name": "init",
+              "from": "./translator"
+            }
+          ]
+        },
+        "public_functions": [],
+        "events": [],
+        "folder": "/Users/henry/Developer/projects/web-components/packages/tools/translator/src",
+        "className": "Translator",
+        "properties": [
+          {
+            "name": "scope",
+            "type": "string",
+            "type_value": null,
+            "primitive": true,
+            "conditional": true
+          }
+        ],
+        "extend_class": null,
+        "dist_filepath": "/Users/henry/Developer/projects/web-components/packages/tools/translator/dist/src/component.js",
+        "html": {
+          "slots": [
+            {
+              "name": "default",
+              "html": ""
+            }
+          ],
+          "parts": [],
+          "tagName": "pap-translator"
+        },
+        "allproperties": [
+          {
+            "type": "string",
+            "typeName": "String",
+            "propertyKey": "scope",
+            "attribute": true,
+            "name": "scope",
+            "type_value": null,
+            "primitive": true,
+            "conditional": true
+          }
+        ],
+        "allevents": []
+      },
+      "dist_filepath": "/Users/henry/Developer/projects/web-components/packages/organisms/table/dist/src/components/table-header/index.js",
+      "html": {
+        "slots": [],
+        "parts": [],
+        "tagName": "pap-table-header"
+      },
+      "allproperties": [
+        {
+          "attribute": "scope",
+          "propertyKey": "scope",
+          "type": "string",
+          "typeName": "String",
+          "name": "scope",
+          "type_value": null,
+          "primitive": true,
+          "conditional": true
+        }
+      ],
+      "allevents": [
+        {
+          "type": "Event",
+          "name": "save"
+        },
+        {
+          "type": "CustomEvent",
+          "custom": "HeaderSearch",
+          "name": "search",
+          "data": {
+            "object": "{ detail: { value: e.target.value as string } }",
+            "properties": [
+              "value"
+            ]
+          }
+        },
+        {
+          "type": "CustomEvent",
+          "custom": "HeaderActionClick",
+          "name": "action",
+          "data": {
+            "object": "{ detail: { type } }))",
+            "properties": []
+          }
+        }
+      ]
+    },
+    "TableFormMenu": {
+      "decorators": {
+        "property": {},
+        "query": {},
+        "context": {}
+      },
+      "imports": {
+        "/Users/henry/Developer/projects/web-components/packages/organisms/table": [
+          {
+            "name": "style",
+            "from": "./style"
+          },
+          {
+            "name": "TableMenu",
+            "from": "../table-menu"
+          }
+        ]
+      },
+      "public_functions": [],
+      "events": [],
+      "folder": "/Users/henry/Developer/projects/web-components/packages/organisms/table/src/components/table-form-menu",
+      "className": "TableFormMenu",
+      "properties": [],
+      "extend_class": null,
+      "dist_filepath": "/Users/henry/Developer/projects/web-components/packages/organisms/table/dist/src/components/table-form-menu/index.js",
+      "html": {
+        "slots": [
+          {
+            "name": "title",
+            "html": "\n            <pap-typography nowrap=\"true\" variant=\"T4\">\n              </pap-typography>\n          "
+          },
+          {
+            "name": "default",
+            "html": ""
+          },
+          {
+            "name": "default",
+            "html": ""
+          }
+        ],
+        "parts": [
+          {
+            "name": "wrapper",
+            "tag": "PAP-BOX-TEMPLATE"
+          },
+          {
+            "name": "accordion",
+            "tag": "PAP-ACCORDION"
+          },
+          {
+            "name": "content",
+            "tag": "DIV"
+          },
+          {
+            "name": "header",
+            "tag": "HEADER"
+          },
+          {
+            "name": "title",
+            "tag": "SPAN"
+          },
+          {
+            "name": "close",
+            "tag": "PAP-BUTTON"
+          },
+          {
+            "name": "main",
+            "tag": "MAIN"
+          },
+          {
+            "name": "form",
+            "tag": "PAP-FORM"
+          },
+          {
+            "name": "footer",
+            "tag": "FOOTER"
+          }
+        ],
+        "tagName": "pap-table-form-menu"
+      },
+      "allproperties": [],
+      "allevents": []
+    },
+    "Cell": {
+      "decorators": {
+        "property": {
+          "size": true,
+          "align": true,
+          "editable": true,
+          "mode": true,
+          "value": true
+        },
+        "query": {},
+        "context": {
+          "config": true,
+          "columns": true,
+          "edit": true
+        }
+      },
+      "imports": {
+        "/Users/henry/Developer/projects/web-components/packages/organisms/table": [
+          {
+            "name": "style",
+            "from": "./style"
+          },
+          {
+            "name": "DefaultConfig",
+            "from": "../../types"
+          }
+        ]
+      },
+      "public_functions": [],
+      "events": [],
+      "folder": "/Users/henry/Developer/projects/web-components/packages/organisms/table/src/components/table-cell",
+      "className": "Cell",
+      "properties": [
+        {
+          "name": "size",
+          "type": "Size",
+          "default_value": "medium",
+          "type_value": [
+            "small",
+            "medium",
+            "large"
+          ],
+          "primitive": false,
+          "conditional": false
+        },
+        {
+          "name": "align",
+          "type": "Alignment",
+          "default_value": "left",
+          "type_value": [
+            "left",
+            "center",
+            "right"
+          ],
+          "primitive": false,
+          "conditional": false
+        },
+        {
+          "name": "editable",
+          "type": "boolean",
+          "default_value": false,
+          "type_value": null,
+          "primitive": true,
+          "conditional": false
+        },
+        {
+          "name": "mode",
+          "type": "alternative",
+          "default_value": "default",
+          "type_value": [
+            "default",
+            "edit"
+          ],
+          "primitive": true,
+          "conditional": false
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "default_value": "",
+          "type_value": null,
+          "primitive": true,
+          "conditional": false
+        }
+      ],
+      "extend_class": null,
+      "dist_filepath": "/Users/henry/Developer/projects/web-components/packages/organisms/table/dist/src/components/table-cell/index.js",
+      "html": {
+        "slots": [],
+        "parts": [
+          {
+            "name": "content",
+            "tag": "DIV"
+          },
+          {
+            "name": "edit",
+            "tag": "DIV"
+          }
+        ],
+        "tagName": "pap-table-cell"
+      },
+      "allproperties": [
+        {
+          "attribute": "size",
+          "propertyKey": "size",
+          "type": "Size",
+          "typeName": "String",
+          "name": "size",
+          "default_value": "medium",
+          "type_value": [
+            "small",
+            "medium",
+            "large"
+          ],
+          "primitive": false,
+          "conditional": false
+        },
+        {
+          "attribute": "align",
+          "propertyKey": "align",
+          "type": "Alignment",
+          "typeName": "String",
+          "name": "align",
+          "default_value": "left",
+          "type_value": [
+            "left",
+            "center",
+            "right"
+          ],
+          "primitive": false,
+          "conditional": false
+        },
+        {
+          "attribute": "editable",
+          "propertyKey": "editable",
+          "type": "boolean",
+          "typeName": "Boolean",
+          "name": "editable",
+          "default_value": false,
+          "type_value": null,
+          "primitive": true,
+          "conditional": false
+        },
+        {
+          "attribute": "mode",
+          "propertyKey": "mode",
+          "type": "alternative",
+          "typeName": "String",
+          "name": "mode",
+          "default_value": "default",
+          "type_value": [
+            "default",
+            "edit"
+          ],
+          "primitive": true,
+          "conditional": false
+        },
+        {
+          "attribute": "value",
+          "propertyKey": "value",
+          "type": "string",
+          "typeName": "String",
+          "name": "value",
+          "default_value": "",
+          "type_value": null,
+          "primitive": true,
+          "conditional": false
+        }
+      ],
+      "allevents": []
+    }
+  },
+  "main": {
+    "decorators": {
+      "property": {
+        "tableTitle": true,
+        "config": true,
+        "columns": true,
+        "data": true,
+        "edit": true,
+        "size": true
+      },
+      "query": {
+        "paginationElement": true,
+        "tablemenuElement": true,
+        "tableheaderElement": true
+      },
+      "context": {}
+    },
+    "imports": {
+      "/Users/henry/Developer/projects/web-components/packages/organisms/table": [
+        {
+          "name": "Translator",
+          "from": "@pap-it/tools-translator"
+        },
+        {
+          "name": "style",
+          "from": "./style"
+        },
+        {
+          "name": "DefaultConfig",
+          "from": "./types"
+        },
+        {
+          "name": "DefaultCell",
+          "from": "./types"
+        }
+      ],
+      "/Users/henry/Developer/projects/web-components/packages/tools/translator": [
+        {
+          "name": "style",
+          "from": "./style"
+        },
+        {
+          "name": "init",
+          "from": "./translator"
+        }
+      ]
+    },
+    "public_functions": [],
+    "events": [],
+    "folder": "/Users/henry/Developer/projects/web-components/packages/organisms/table/src",
+    "className": "Table",
+    "properties": [
+      {
+        "name": "tableTitle",
+        "type": "string",
+        "type_value": null,
+        "primitive": true,
+        "conditional": true
+      },
+      {
+        "name": "config",
+        "type": "Config",
+        "default_value": "DefaultConfig",
+        "type_value": {
+          "edit": null,
+          "pagination": [
+            null,
+            {
+              "total": null,
+              "page": null
+            }
+          ],
+          "sort": null,
+          "search": null,
+          "actions": null
+        },
+        "primitive": false,
+        "conditional": false
+      },
+      {
+        "name": "columns",
+        "type_value": null,
+        "primitive": false,
+        "conditional": false
+      },
+      {
+        "name": "data",
+        "type_value": null,
+        "primitive": false,
+        "conditional": false
+      },
+      {
+        "name": "edit",
+        "type": "boolean",
+        "default_value": false,
+        "type_value": null,
+        "primitive": true,
+        "conditional": false
+      },
+      {
+        "name": "size",
+        "type": "number",
+        "default_value": 0,
+        "type_value": null,
+        "primitive": true,
+        "conditional": false
+      }
+    ],
+    "extend_class": {
+      "decorators": {
+        "property": {
+          "scope": true
+        },
+        "query": {},
+        "context": {}
+      },
+      "imports": {
+        "/Users/henry/Developer/projects/web-components/packages/tools/translator": [
+          {
+            "name": "style",
+            "from": "./style"
+          },
+          {
+            "name": "init",
+            "from": "./translator"
+          }
+        ]
+      },
+      "public_functions": [],
+      "events": [],
+      "folder": "/Users/henry/Developer/projects/web-components/packages/tools/translator/src",
+      "className": "Translator",
+      "properties": [
+        {
+          "name": "scope",
+          "type": "string",
+          "type_value": null,
+          "primitive": true,
+          "conditional": true
+        }
+      ],
+      "extend_class": null,
+      "dist_filepath": "/Users/henry/Developer/projects/web-components/packages/tools/translator/dist/src/component.js",
+      "html": {
+        "slots": [
+          {
+            "name": "default",
+            "html": ""
+          }
+        ],
+        "parts": [],
+        "tagName": "pap-translator"
+      },
+      "allproperties": [
+        {
+          "type": "string",
+          "typeName": "String",
+          "propertyKey": "scope",
+          "attribute": true,
+          "name": "scope",
+          "type_value": null,
+          "primitive": true,
+          "conditional": true
+        }
+      ],
+      "allevents": []
+    },
+    "dist_filepath": "/Users/henry/Developer/projects/web-components/packages/organisms/table/dist/src/component.js",
+    "html": {
+      "slots": [
+        {
+          "name": "default",
+          "html": ""
+        }
+      ],
+      "parts": [
+        {
+          "name": "header",
+          "tag": "PAP-TABLE-HEADER"
+        },
+        {
+          "name": "wrapper",
+          "tag": "PAP-BOX-TEMPLATE"
+        },
+        {
+          "name": "table",
+          "tag": "TABLE"
+        },
+        {
+          "name": "footer",
+          "tag": "FOOTER"
+        }
+      ],
+      "tagName": "pap-table"
+    },
+    "allproperties": [
+      {
+        "attribute": "table-title",
+        "propertyKey": "tableTitle",
+        "type": "string",
+        "typeName": "String",
+        "name": "tableTitle",
+        "type_value": null,
+        "primitive": true,
+        "conditional": true
+      },
+      {
+        "attribute": false,
+        "propertyKey": "config",
+        "type": "Config",
+        "typeName": "Object",
+        "name": "config",
+        "default_value": "DefaultConfig",
+        "type_value": {
+          "edit": null,
+          "pagination": [
+            null,
+            {
+              "total": null,
+              "page": null
+            }
+          ],
+          "sort": null,
+          "search": null,
+          "actions": null
+        },
+        "primitive": false,
+        "conditional": false
+      },
+      {
+        "attribute": false,
+        "propertyKey": "columns",
+        "typeName": "Array",
+        "name": "columns",
+        "type_value": null,
+        "primitive": false,
+        "conditional": false
+      },
+      {
+        "attribute": false,
+        "propertyKey": "data",
+        "typeName": "Array",
+        "name": "data",
+        "type_value": null,
+        "primitive": false,
+        "conditional": false
+      },
+      {
+        "attribute": "edit",
+        "propertyKey": "edit",
+        "type": "boolean",
+        "typeName": "Boolean",
+        "name": "edit",
+        "default_value": false,
+        "type_value": null,
+        "primitive": true,
+        "conditional": false
+      },
+      {
+        "attribute": "size",
+        "propertyKey": "size",
+        "type": "number",
+        "typeName": "Number",
+        "name": "size",
+        "default_value": 0,
+        "type_value": null,
+        "primitive": true,
+        "conditional": false
+      },
+      {
+        "attribute": "scope",
+        "propertyKey": "scope",
+        "type": "string",
+        "typeName": "String",
+        "name": "scope",
+        "type_value": null,
+        "primitive": true,
+        "conditional": true
+      }
+    ],
+    "allevents": []
+  }
 }

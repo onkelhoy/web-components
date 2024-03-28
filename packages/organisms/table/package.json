@@ -1,6 +1,6 @@
 {
   "name": "@pap-it/table",
-  "version": "1.0.28",
+  "version": "1.0.29",
   "scripts": {
     "init": "sh .scripts/init.sh",
     "test": ".scripts/test.sh",
