@@ -1,6 +1,6 @@
-# Themes in the `@pap-it Ecosystem`: Flexibility and Order
+# Themes in the `@papit Ecosystem`: Flexibility and Order
 
-The theme structure within the `@pap-it Ecosystem` is designed to embrace flexibility while adhering to a core principle of order, particularly when it comes to the compilation of theme assets into a cohesive `tokens.css` file. Unlike traditional rigid theme structures, `@pap-it` allows for a more fluid arrangement of CSS files within each theme folder, ensuring that developers can structure their theme assets in a way that best suits their workflow and organizational preferences.
+The theme structure within the `@papit Ecosystem` is designed to embrace flexibility while adhering to a core principle of order, particularly when it comes to the compilation of theme assets into a cohesive `tokens.css` file. Unlike traditional rigid theme structures, `@papit` allows for a more fluid arrangement of CSS files within each theme folder, ensuring that developers can structure their theme assets in a way that best suits their workflow and organizational preferences.
 
 ## Theme Compilation Script Explained
 
@@ -18,13 +18,13 @@ At the heart of this flexible approach is a sophisticated build script that inte
 
 ## Developer Freedom with Structured Order
 
-This build script exemplifies the `@pap-it Ecosystem`'s balance between developer freedom and the need for structured order. By automating the prioritization of foundational styles and seamlessly integrating diverse theme elements, the script supports a broad spectrum of theming approaches. Whether developers prefer to meticulously segment their CSS files or lean towards a more consolidated style definition, the outcome is a harmoniously compiled `tokens.css` that upholds the visual integrity and customizability of the ecosystem's components.
+This build script exemplifies the `@papit Ecosystem`'s balance between developer freedom and the need for structured order. By automating the prioritization of foundational styles and seamlessly integrating diverse theme elements, the script supports a broad spectrum of theming approaches. Whether developers prefer to meticulously segment their CSS files or lean towards a more consolidated style definition, the outcome is a harmoniously compiled `tokens.css` that upholds the visual integrity and customizability of the ecosystem's components.
 
-In essence, the `@pap-it Ecosystem`'s thematic framework and its underlying build script offer a testament to the philosophy that flexibility in structure should not come at the expense of coherence and reliability in the final product. This approach not only enhances the theming experience but also propels the ecosystem towards its vision of offering a versatile, developer-friendly platform for web component development.
+In essence, the `@papit Ecosystem`'s thematic framework and its underlying build script offer a testament to the philosophy that flexibility in structure should not come at the expense of coherence and reliability in the final product. This approach not only enhances the theming experience but also propels the ecosystem towards its vision of offering a versatile, developer-friendly platform for web component development.
 
 ## Adding a New Theme: A Practical Example
 
-The process of introducing a new theme within the `@pap-it Ecosystem` is designed to be as straightforward as it is flexible, allowing developers to seamlessly expand the thematic range of the ecosystem to suit diverse design requirements. Here's a step-by-step guide to adding a new theme, illustrated with a practical example:
+The process of introducing a new theme within the `@papit Ecosystem` is designed to be as straightforward as it is flexible, allowing developers to seamlessly expand the thematic range of the ecosystem to suit diverse design requirements. Here's a step-by-step guide to adding a new theme, illustrated with a practical example:
 
 ### Step 1: Create the New Theme Folder
 
@@ -56,11 +56,11 @@ This command activates the theme compilation script, specifying `example` as the
 
 Upon completion, all CSS files within the `example` theme folder are combined into the `tokens.css` file, which now serves as the singular source of truth for the theme's styles. This file can be easily referenced and utilized across the ecosystem, ensuring that your components are consistently themed according to your design specifications.
 
-Through this example, it's evident that adding and developing new themes within the `@pap-it Ecosystem` is not only intuitive but also adaptable to the unique design philosophies of different projects. This process underscores the ecosystem's dedication to empowering developers with the tools and flexibility needed to craft visually cohesive and engaging web experiences.
+Through this example, it's evident that adding and developing new themes within the `@papit Ecosystem` is not only intuitive but also adaptable to the unique design philosophies of different projects. This process underscores the ecosystem's dedication to empowering developers with the tools and flexibility needed to craft visually cohesive and engaging web experiences.
 
 ## Ensuring Comprehensive Theming with Fallback Values
 
-When introducing a new theme to the `@pap-it Ecosystem`, it's crucial for developers to consider the integration of fallback values to enhance the appearance and consistency of web components, especially when these components are utilized as third-party elements in various projects. A robust approach to achieving this is by leveraging both the `base` theme and your custom theme in tandem.
+When introducing a new theme to the `@papit Ecosystem`, it's crucial for developers to consider the integration of fallback values to enhance the appearance and consistency of web components, especially when these components are utilized as third-party elements in various projects. A robust approach to achieving this is by leveraging both the `base` theme and your custom theme in tandem.
 
 ### Best Practices for Theme Development
 
@@ -70,9 +70,9 @@ The `base` theme, with its comprehensive set of design tokens and styles, serves
 
 #### Integration in Development and Third-party Use
 
-While the `@pap-it` dev server automatically handles the merging of the `base` theme with any custom theme during development, ensuring seamless fallbacks and a unified styling experience, this automation might not cover all use cases, especially when components venture beyond the ecosystem's immediate environment.
+While the `@papit` dev server automatically handles the merging of the `base` theme with any custom theme during development, ensuring seamless fallbacks and a unified styling experience, this automation might not cover all use cases, especially when components venture beyond the ecosystem's immediate environment.
 
-For projects where `@pap-it` components are incorporated as third-party elements, developers should explicitly include both the `base` and the custom theme. This inclusion ensures that components have access to a complete set of tokens, thus maintaining their designed appearance and functionality across different deployment contexts.
+For projects where `@papit` components are incorporated as third-party elements, developers should explicitly include both the `base` and the custom theme. This inclusion ensures that components have access to a complete set of tokens, thus maintaining their designed appearance and functionality across different deployment contexts.
 
 ### Implementing Dual Theme Support
 
@@ -89,4 +89,4 @@ This setup ensures that all base tokens are available as fallbacks, providing a 
 
 ### Conclusion
 
-By conscientiously layering the `base` theme with custom themes, developers can significantly enhance the adaptability and visual integrity of their web components, particularly in diverse deployment scenarios. This practice not only enriches the user experience but also exemplifies the meticulous attention to detail that characterizes the `@pap-it Ecosystem`'s approach to web component development and theming.
+By conscientiously layering the `base` theme with custom themes, developers can significantly enhance the adaptability and visual integrity of their web components, particularly in diverse deployment scenarios. This practice not only enriches the user experience but also exemplifies the meticulous attention to detail that characterizes the `@papit Ecosystem`'s approach to web component development and theming.

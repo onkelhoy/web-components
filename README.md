@@ -1,4 +1,4 @@
-# @pap-it Ecosystem: An Overview
+# @papit Ecosystem: An Overview
 
 Welcome to the `@pap-framework` ecosystem, an innovative framework designed to revolutionize the development and deployment of web components. Developed by Henry Pap, this ecosystem is built on a zero-dependency philosophy in production environments, promoting modular development, performance enhancement, and security. It offers a comprehensive toolkit for developers, encouraging efficiency and creativity in web application development.
 
@@ -41,9 +41,9 @@ For further guidance on developing components, managing assets, and utilizing fr
 
 ## Abstract
 
-The `@pap-it` ecosystem exemplifies the strength of community collaboration and open-source innovation. By minimizing external dependencies, it ensures lean and efficient applications while providing developers the freedom to build, customize, and extend web components effortlessly. This document aims to be your detailed guide through the `@pap-it` landscape, from understanding its structure to creating, developing, and publishing your web components.
+The `@papit` ecosystem exemplifies the strength of community collaboration and open-source innovation. By minimizing external dependencies, it ensures lean and efficient applications while providing developers the freedom to build, customize, and extend web components effortlessly. This document aims to be your detailed guide through the `@papit` landscape, from understanding its structure to creating, developing, and publishing your web components.
 
-Dive into the following sections for a deep dive into `@pap-it`, and join us in shaping the future of web development.
+Dive into the following sections for a deep dive into `@papit`, and join us in shaping the future of web development.
 
 ## Contributions
 
@@ -51,7 +51,7 @@ We welcome community contributions, including bug reports, suggestions for impro
 
 ## License
 
-`@pap-it` is licensed under the MIT License. This permissive license allows for maximum flexibility in using, modifying, and distributing the software, provided attribution is given, and liability is not assumed. See the [LICENSE file](./LICENSE) for details.
+`@papit` is licensed under the MIT License. This permissive license allows for maximum flexibility in using, modifying, and distributing the software, provided attribution is given, and liability is not assumed. See the [LICENSE file](./LICENSE) for details.
 
 ## Acknowledgments
 
@@ -59,10 +59,10 @@ Special thanks to everyone who supported this project. Notably, **Vilcini, Adrie
 
 ## Further Reading
 
-Enhance your understanding and utilization of the `@pap-it` ecosystem with these resources:
+Enhance your understanding and utilization of the `@papit` ecosystem with these resources:
 
-1. [How to Use `@pap-it`](./documentation/how-to-use.md)
-2. [A Closer Look at `@pap-it`](./documentation/global.md)
+1. [How to Use `@papit`](./documentation/how-to-use.md)
+2. [A Closer Look at `@papit`](./documentation/global.md)
 3. [Individual Packages Overview](./documentation/package.md)
-4. [Theming with `@pap-it`](./themes/README.md)
-5. [Understanding Versioning in `@pap-it`](./scripts/versioning/README.md)
+4. [Theming with `@papit`](./themes/README.md)
+5. [Understanding Versioning in `@papit`](./scripts/versioning/README.md)
