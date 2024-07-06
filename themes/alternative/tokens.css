@@ -1,0 +1,125 @@
+
+@media (prefers-color-scheme: light) {
+ .theme-opposite {
+
+  color-scheme: dark;
+
+  /* Text - Using a lighter shade for contrast against dark backgrounds */
+  --pap-color-text: #FFDAA5;
+  /* Light orange for text, ensuring readability on dark backgrounds */
+
+  /* Background - Different shades of dark orange/brown for background */
+  --pap-color-bg: #FF8C00;
+  /* DarkOrange */
+  --pap-color-bg-secondary: #FFA54F;
+  /* A slightly lighter shade of DarkOrange */
+  --pap-color-bg-canvas: #FF4500;
+  /* OrangeRed for a deeper contrast */
+
+  /* Icon - Reusing the light orange for consistency with text */
+  --pap-color-icon: #FFDAA5;
+ }
+ 	:root {
+
+  color-scheme: light;
+
+  /* Text - Using a darker shade for contrast */
+  --pap-color-text: #1F2A44;
+  /* Darker blue for text to ensure readability */
+
+  /* Background - Gradation of 'cornflowerblue' for background */
+  --pap-color-bg: #6495ED;
+  /* CornflowerBlue */
+  --pap-color-bg-secondary: #91ADEF;
+  /* Lighter shade of CornflowerBlue */
+  --pap-color-bg-canvas: #BDD7FF;
+  /* Even lighter shade for canvas backgrounds */
+
+  /* Icon - Reusing the dark blue for consistency with text */
+  --pap-color-icon: #1F2A44;
+  }
+}
+@media (prefers-color-scheme: dark) {
+ .theme-opposite {
+
+  color-scheme: light;
+
+  /* Text - Using a darker shade for contrast */
+  --pap-color-text: #1F2A44;
+  /* Darker blue for text to ensure readability */
+
+  /* Background - Gradation of 'cornflowerblue' for background */
+  --pap-color-bg: #6495ED;
+  /* CornflowerBlue */
+  --pap-color-bg-secondary: #91ADEF;
+  /* Lighter shade of CornflowerBlue */
+  --pap-color-bg-canvas: #BDD7FF;
+  /* Even lighter shade for canvas backgrounds */
+
+  /* Icon - Reusing the dark blue for consistency with text */
+  --pap-color-icon: #1F2A44;
+ }
+ 	:root {
+
+  color-scheme: dark;
+
+  /* Text - Using a lighter shade for contrast against dark backgrounds */
+  --pap-color-text: #FFDAA5;
+  /* Light orange for text, ensuring readability on dark backgrounds */
+
+  /* Background - Different shades of dark orange/brown for background */
+  --pap-color-bg: #FF8C00;
+  /* DarkOrange */
+  --pap-color-bg-secondary: #FFA54F;
+  /* A slightly lighter shade of DarkOrange */
+  --pap-color-bg-canvas: #FF4500;
+  /* OrangeRed for a deeper contrast */
+
+  /* Icon - Reusing the light orange for consistency with text */
+  --pap-color-icon: #FFDAA5;
+  }
+}
+
+.theme-light {
+
+  color-scheme: light;
+
+  /* Text - Using a darker shade for contrast */
+  --pap-color-text: #1F2A44;
+  /* Darker blue for text to ensure readability */
+
+  /* Background - Gradation of 'cornflowerblue' for background */
+  --pap-color-bg: #6495ED;
+  /* CornflowerBlue */
+  --pap-color-bg-secondary: #91ADEF;
+  /* Lighter shade of CornflowerBlue */
+  --pap-color-bg-canvas: #BDD7FF;
+  /* Even lighter shade for canvas backgrounds */
+
+  /* Icon - Reusing the dark blue for consistency with text */
+  --pap-color-icon: #1F2A44;
+}
+
+
+
+.theme-dark {
+
+  color-scheme: dark;
+
+  /* Text - Using a lighter shade for contrast against dark backgrounds */
+  --pap-color-text: #FFDAA5;
+  /* Light orange for text, ensuring readability on dark backgrounds */
+
+  /* Background - Different shades of dark orange/brown for background */
+  --pap-color-bg: #FF8C00;
+  /* DarkOrange */
+  --pap-color-bg-secondary: #FFA54F;
+  /* A slightly lighter shade of DarkOrange */
+  --pap-color-bg-canvas: #FF4500;
+  /* OrangeRed for a deeper contrast */
+
+  /* Icon - Reusing the light orange for consistency with text */
+  --pap-color-icon: #FFDAA5;
+}
+
+

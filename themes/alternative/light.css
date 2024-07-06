@@ -1,0 +1,18 @@
+:root {
+  color-scheme: light;
+
+  /* Text - Using a darker shade for contrast */
+  --pap-color-text: #1F2A44;
+  /* Darker blue for text to ensure readability */
+
+  /* Background - Gradation of 'cornflowerblue' for background */
+  --pap-color-bg: #6495ED;
+  /* CornflowerBlue */
+  --pap-color-bg-secondary: #91ADEF;
+  /* Lighter shade of CornflowerBlue */
+  --pap-color-bg-canvas: #BDD7FF;
+  /* Even lighter shade for canvas backgrounds */
+
+  /* Icon - Reusing the dark blue for consistency with text */
+  --pap-color-icon: #1F2A44;
+}

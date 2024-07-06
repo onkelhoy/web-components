@@ -1,0 +1,18 @@
+:root {
+  color-scheme: dark;
+
+  /* Text - Using a lighter shade for contrast against dark backgrounds */
+  --pap-color-text: #FFDAA5;
+  /* Light orange for text, ensuring readability on dark backgrounds */
+
+  /* Background - Different shades of dark orange/brown for background */
+  --pap-color-bg: #FF8C00;
+  /* DarkOrange */
+  --pap-color-bg-secondary: #FFA54F;
+  /* A slightly lighter shade of DarkOrange */
+  --pap-color-bg-canvas: #FF4500;
+  /* OrangeRed for a deeper contrast */
+
+  /* Icon - Reusing the light orange for consistency with text */
+  --pap-color-icon: #FFDAA5;
+}

@@ -1,0 +1,12 @@
+:root {
+  --shadow-s: 0 2px 4px var(--pap-color-shadow);
+  --shadow-m: 0 4px 6px var(--pap-color-shadow);
+  --shadow-l: 0 8px 12px var(--pap-color-shadow);
+  --shadow-xl: 0 16px 20px var(--pap-color-shadow);
+
+  /* edge case for sidebar (for now) */
+  --shadow-horizontal-s: 2px 0 4px var(--pap-color-shadow);
+  --shadow-horizontal-m: 4px 0 6px var(--pap-color-shadow);
+  --shadow-horizontal-l: 8px 0 12px var(--pap-color-shadow);
+  --shadow-horizontal-xl: 16px 0 20px var(--pap-color-shadow);
+}

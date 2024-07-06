@@ -1,0 +1,60 @@
+:root {
+  /* UNITS */
+  --unit-size1: 4px;
+  --unit-size2: 8px;
+  --unit-size3: 16px;
+  --unit-size4: 24px;
+  --unit-size5: 32px;
+  --unit-size6: 40px;
+  --unit-size7: 48px;
+  --unit-size8: 56px;
+
+  /* PADDINGS */
+  --padding-smaller: var(--unit-size1);
+  --padding-small: var(--unit-size2);
+  --padding-medium: var(--unit-size3);
+  --padding-large: var(--unit-size4);
+
+  /* MARGINS */
+  --margin-smaller: var(--unit-size1);
+  --margin-small: var(--unit-size2);
+  --margin-medium: var(--unit-size3);
+  --margin-large: var(--unit-size4);
+
+  /* GAPS */
+  --gap-smaller: var(--unit-size1);
+  --gap-small: var(--unit-size2);
+  --gap-medium: var(--unit-size3);
+  --gap-large: var(--unit-size4);
+
+  /* field-size */
+  --field-size-smaller: var(--unit-size4);
+  --field-size-small: var(--unit-size5);
+  --field-size-medium: var(--unit-size6);
+  --field-size-large: var(--unit-size7);
+  --field-size-larger: var(--unit-size8);
+
+  /* TIMINGS */
+  --timing-fast: 80ms;
+  --timing-normal: 120ms;
+  --timing-slow: 180ms;
+
+  /* BORDER RADIUS */
+  --radius-small: var(--unit-size1);
+  --radius-medium: var(--unit-size2);
+  --radius-large: var(--unit-size3);
+  --radius-max: 1000px;
+
+  /* BREAKPOINTS */
+  --breakpoint-mobile: 320px;
+  --breakpoint-pad: 768px;
+  --breakpoint-laptop: 1024px;
+  --breakpoint-desktop: 1440px;
+
+  /* Z-INDEX */
+  --z-index-small: 1;
+  --z-index-medium: 2;
+  --z-index-large: 3;
+  /* should not be used */
+  --z-index-max: 1000;
+}
