@@ -1,4 +1,4 @@
-# TEMPLATE_CLASSNAME
+# TEMPLATE_CLASS_NAME
 
 Layer Type: TEMPLATE_LAYER_TYPE
 
@@ -9,27 +9,27 @@ Version: 0.0.0
 ### installation
 
 ```bash
-npm install @TEMPLATE_PROJECTSCOPE/TEMPLATE_PACKAGENAMETEMPLATE_NAME
+npm install TEMPLATE_FULL_NAME
 ```
 
 ### to use in **html**
 
 ```html
 <script type="module" defer>
-  import "@TEMPLATE_PROJECTSCOPE/TEMPLATE_PACKAGENAMETEMPLATE_NAME/wc"
+  import "TEMPLATE_FULL_NAME";
 </script>
 
-<TEMPLATE_PREFIXNAME></TEMPLATE_PREFIXNAME>
+<TEMPLATE_HTML_NAME></TEMPLATE_HTML_NAME>
 ```
 
 ### to use in **react**
 
 ```jsx
-import { TEMPLATE_CLASSNAME } from "@TEMPLATE_PROJECTSCOPE/TEMPLATE_PACKAGENAMETEMPLATE_NAME/react";
+import { TEMPLATE_CLASS_NAME } from "TEMPLATE_FULL_NAME/react";
 
 function Component() {
   return (
-    <TEMPLATE_CLASSNAME /> 
+    <TEMPLATE_CLASS_NAME /> 
   )
 }
 ```

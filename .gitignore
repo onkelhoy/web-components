@@ -6,6 +6,8 @@ web/
 .temp/
 .npm/
 
+temp/
+
 # Ignore OS-specific files
 Thumbs.db
 .DS_Store

@@ -66,13 +66,15 @@ else
   echo "folder-name & targer-name: $FOLDER_NAME"
   read -p "override target-name: " TARGET_NAME
 
+  if [ -z "$TARGET_NAME" ]; then 
+    TARGET_NAME="$FOLDER_NAME"
+  fi 
+
   # fix empty spaces
   TARGET_NAME=$(echo "$TARGET_NAME" | tr ' ' '-')
 
-  read -p "Include in prefix (y/n): " INCLUDE_IN_PREFIX
-  INCLUDE_IN_PREFIX=$(echo "$INCLUDE_IN_PREFIX" | tr '[:upper:]' '[:lower:]')
-  
-  if [[ "$INCLUDE_IN_PREFIX" == "y" || "$INCLUDE_IN_PREFIX" == "yes" ]]; then
+  read -p "include in prefix [1/0]: " INCLUDE_IN_PREFIX
+  if [ "$INCLUDE_IN_PREFIX" == "1" ]; then
     INCLUDE_IN_PREFIX=true
   else 
     INCLUDE_IN_PREFIX=false
@@ -86,10 +88,8 @@ else
   echo ""
 
   echo "Confirm creating of new layer"
-  read -p "at: [$TARGET_FOLDER] (y/n): " confirm_folder
-  
-  confirm_folder=$(echo "$confirm_folder" | tr '[:upper:]' '[:lower:]')
-  if [[ "$confirm_folder" == "n" || "$confirm_folder" == "no" ]]; then
+  read -p "at: [$TARGET_FOLDER] [1/0]: " confirm_folder
+  if [ "$confirm_folder" == "0" ]; then
     echo "you choose to abort ❎" 
     exit 1
   fi 
@@ -102,7 +102,8 @@ else
   echo "TARGET_NAME=$TARGET_NAME" >> $TARGET_FOLDER/config.env
   echo "INCLUDE_IN_PREFIX=$INCLUDE_IN_PREFIX" >> $TARGET_FOLDER/config.env
 
-  echo "\nLayer successfully created" 
+  echo "\nLayer successfully created ✅" 
+  echo ""
 fi
 
 TARGET_FOLDER="$ROOTDIR/packages/$FOLDER_NAME"
@@ -130,7 +131,7 @@ if [ -n "$NEW_PREFIX" ]; then
   echo "prefix is then: $NEW_PREFIX"
   PREFIX=$NEW_PREFIX
 else 
-  ehco "prefix will remain: $PREFIX"
+  echo "prefix will remain: $PREFIX"
 fi 
 
 # successfully choosen folder
@@ -180,7 +181,7 @@ while true; do
   fi
 done
 
-echo "Package name '$FULL_NAME' is available."
+echo "package name '$FULL_NAME' is available."
 
 echo ""
 echo "name: $NAME"
@@ -189,14 +190,16 @@ echo "prefix-name: $HTML_NAME"
 echo "full-name: $FULL_NAME"
 echo ""
 
-read -p "Confirm creation of new package (y/n): " confirm_package
-confirm_package=$(echo "$confirm_package" | tr '[:upper:]' '[:lower:]')
-if [[ "$confirm_package" == "n" || "$confirm_package" == "no" ]]; then
+read -p "Confirm creation of new package [1/0]: " confirm_package
+if [ "$confirm_package" == "0" ]; then
   echo "you choose to abort ❎" 
   exit 1
 fi 
 
-destination="$TARGET_FOLDER/$PACKAGE_NAME"
+echo ""
+echo "Awesomesauce, package is being created!" 
+
+destination="$TARGET_FOLDER/$NAME"
 
 mkdir "$destination"
 rsync -a --exclude='*DS_Store' "$SCRIPTDIR/template/package/" "$destination"
@@ -229,9 +232,8 @@ npm run init
 cd "$ROOTDIR"     # and out 
 
 
-read -p "[npm install] do you wish to install the package? (y/n): " confirm_install
-confirm_install=$(echo "$confirm_install" | tr '[:upper:]' '[:lower:]')
-if [[ "$confirm_install" == "n" || "$confirm_install" == "no" ]]; then
+read -p "[npm install] do you wish to install the package? [1/0]: " confirm_install
+if [ "$confirm_install" == "0" ]; then
   echo "you choose not to install" 
 else 
   # installing the component 
@@ -239,9 +241,8 @@ else
 fi 
 
 echo ""
-read -p "[git] do you wish to init with git?: (y/n) " git_ans
-git_ans=$(echo "$git_ans" | tr '[:upper:]' '[:lower:]')
-if [[ "$git_ans" == "n" || "$git_ans" == "no" ]]; then
+read -p "[git] do you wish to init with git? [1/0]: " git_ans
+if [ "$git_ans" == "0" ]; then
   echo "you choose not to commit"
 else 
   git add $destination
