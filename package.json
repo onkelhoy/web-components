@@ -1,27 +1,19 @@
 {
-  "name": "@pap/framework",
+  "name": "@papit/web-framework",
   "version": "1.0.10",
-  "description": "Pap framework",
+  "description": "Pap web framework",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/onkelhoy/pap-web.git"
+    "url": "https://github.com/onkelhoy/web-components.git"
   },
   "scripts": {
-    "init": "sh ./scripts/init.sh",
-    "init:workspaces": "npm run init --workspaces",
-    "build:workspaces": "npm run build --workspaces",
-    "publish": "bash ./scripts/publish/run.sh",
-    "create": "sh ./scripts/generator/copy.sh",
-    "clean": "sh ./scripts/clean.sh",
-    "build": "npm run publish -- --force",
-    "ecosystem:build": "sh ./scripts/ecosystem/build.sh",
-    "ecosystem:start": "sh ./scripts/ecosystem/start.sh",
-    "start": "npm run ecosystem:build & npm run ecosystem:start",
-    "theme:build": "sh ./scripts/theme/run.sh",
-    "project": "sh ./scripts/project/run.sh",
-    "showcase": "sh ./scripts/showcase/run.sh",
-    "document": ""
+    "create": "sh ./scripts/create/run.sh",
+    "create:package": "sh ./scripts/create/run.sh --package",
+    "create:sub": "sh ./scripts/create/run.sh --sub-package",
+    "create:project": "sh ./scripts/create/run.sh --project",
+    "clean": "sh ./scripts/_utils/clean.sh",
+    "init": "sh ./scripts/_utils/init.sh"
   },
   "keywords": [
     "web-component",
@@ -29,12 +21,11 @@
     "sass"
   ],
   "author": "Henry Pap",
-  "license": "ISC",
+  "license": "MIT",
   "workspaces": [
     "packages/**/*"
   ],
   "devDependencies": {
-    "eslint": "^8.53.0",
     "playwright": "^1.34.3",
     "node-html-parser": "^6.1.11"
   }
