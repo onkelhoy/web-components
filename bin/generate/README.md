@@ -1,4 +1,4 @@
-# create script 
+# generate script 
 
 The start of it all, 
 

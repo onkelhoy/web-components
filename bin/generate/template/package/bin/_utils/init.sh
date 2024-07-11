@@ -14,3 +14,6 @@ chmod +x ./bin/watch.sh
 chmod +x ./bin/_utils/sass.sh
 chmod +x ./bin/_utils/preversion.sh
 chmod +x ./bin/_utils/postversion.sh
+
+# NOTE: this might be risky (but lazy)
+# find ./bin -name "*.sh" | while read -r file; do chmod +x "$file"; done

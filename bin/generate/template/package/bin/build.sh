@@ -9,9 +9,6 @@ fi
 if [ -z "$PROD" ]; then 
   PROD=false
 fi 
-if [ -z "$ASK" ]; then 
-  ASK=false
-fi 
 if [ -z "$BUNDLE" ]; then 
   BUNDLE=false
 fi 
@@ -22,8 +19,6 @@ do
   # check: --prod flag
   if [[ $arg == "--prod" ]]; then
     PROD=true
-  elif [[ $arg == "--ask" ]]; then
-    ASK=true
   elif [[ $arg == "--dev" ]]; then
     DEV=true
   elif [[ $arg == "--bundle" ]]; then
@@ -31,14 +26,14 @@ do
   fi
 done
 
-if [ "$ASK" == true ]; then 
+if [ "$PROD" == false ] && [ "$DEV" == false ] && [ "$BUNDLE" == false ]; then 
   echo "Choose wich build option you want" 
   echo "1. develpment"
   echo "2. production"
   echo ""
   read -p "choose: " build_type
   if [ "$build_type" == "1" ]; then 
-    DEV=true
+    DEV=true 
   else 
     PROD=true 
   fi 
