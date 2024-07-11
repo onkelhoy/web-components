@@ -2,12 +2,10 @@
   "name": "TEMPLATE_FULL_NAME",
   "version": "0.0.0",
   "scripts": {
-    "build:dev": "./bin/build.sh --dev",
-    "build:prod": "./bin/build.sh --prod",
-    "build:bundle": "./bin/build.sh --bundle",
-    "build:sass": "./bin/_utils/sass.sh",
-    "build": "./bin/build.sh --ask",
-    "watch": "./bin/watch.sh",
+    "build:sass": "sh ./bin/_utils/sass.sh",
+    "build:react": "sh ./bin/_utils/react.sh",
+    "build": "sh ./bin/build.sh",
+    "watch": "sh ./bin/watch.sh",
     "init": "sh ./bin/_utils/init.sh"
   },
   "main": "./dist/bundle.js",

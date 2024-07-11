@@ -1,19 +1,16 @@
 {
-  "name": "@papit/web-framework",
+  "name": "@papit/web",
   "version": "1.0.10",
-  "description": "Pap web framework",
+  "description": "web component - framework/ecosystem",
   "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "scripts": {
-    "create": "sh ./scripts/create/run.sh",
-    "create:package": "sh ./scripts/create/run.sh --package",
-    "create:sub": "sh ./scripts/create/run.sh --sub-package",
-    "create:project": "sh ./scripts/create/run.sh --project",
-    "clean": "sh ./scripts/_utils/clean.sh",
-    "init": "sh ./scripts/_utils/init.sh"
+    "generate": "sh ./bin/generate/run.sh",
+    "clean": "sh ./bin/_utils/clean.sh",
+    "init": "sh ./bin/_utils/init.sh"
   },
   "keywords": [
     "web-component",
