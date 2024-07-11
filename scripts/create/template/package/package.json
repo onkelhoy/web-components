@@ -5,7 +5,9 @@
     "build:dev": "./bin/build.sh --dev",
     "build:prod": "./bin/build.sh --prod",
     "build:bundle": "./bin/build.sh --bundle",
+    "build:sass": "./bin/_utils/sass.sh",
     "build": "./bin/build.sh --ask",
+    "watch": "./bin/watch.sh",
     "init": "sh ./bin/_utils/init.sh"
   },
   "main": "./dist/bundle.js",
@@ -41,6 +43,7 @@
     "@papit/typography": "^1.0.0",
     "@papit/icon": "^1.0.0",
     "esbuild": "^0.17.18",
+    "chokidar": "^3.6.0",
     "sass": "^1.70.0",
     "typescript": "^5.0.4",
     "node-html-parser": "^6.1.5"

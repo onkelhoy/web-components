@@ -26,7 +26,8 @@
     "packages/**/*"
   ],
   "devDependencies": {
-    "playwright": "^1.34.3",
-    "node-html-parser": "^6.1.11"
+    "node-html-parser": "^6.1.11",
+    "chokidar": "^3.6.0",
+    "playwright": "^1.34.3"
   }
 }

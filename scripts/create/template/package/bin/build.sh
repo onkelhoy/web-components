@@ -2,10 +2,19 @@
 
 SCRIPTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-DEV=false
-PROD=false
-ASK=false
-BUNDLE=false
+# we allow for global flags (mostly watch)
+if [ -z "$DEV" ]; then 
+  DEV=false
+fi 
+if [ -z "$PROD" ]; then 
+  PROD=false
+fi 
+if [ -z "$ASK" ]; then 
+  ASK=false
+fi 
+if [ -z "$BUNDLE" ]; then 
+  BUNDLE=false
+fi 
 
 # check for flags 
 for arg in "$@"
