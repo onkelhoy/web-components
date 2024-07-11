@@ -115,6 +115,24 @@ else
   exit 1
 fi
 
+source "$ROOTDIR/config.pap"
+
+if [ -z "$PREFIX" ]; then 
+  PREFIX="$PROJECTSCOPE"
+fi 
+
+
+echo ""
+echo "current prefix is: $PREFIX, would you like to override it?"
+read -p "new name: " NEW_PREFIX
+
+if [ -n "$NEW_PREFIX" ]; then 
+  echo "prefix is then: $NEW_PREFIX"
+  PREFIX=$NEW_PREFIX
+else 
+  ehco "prefix will remain: $PREFIX"
+fi 
+
 # successfully choosen folder
 echo ""
 echo "proceeding to next step" 
@@ -135,7 +153,7 @@ function read_packagename() {
     PACKAGE_NAME="$TARGET_NAME-$NAME"
   fi 
 
-  HTML_NAME="$PROJECTSCOPE-$PACKAGE_NAME"
+  HTML_NAME="$PREFIX-$PACKAGE_NAME"
   FULL_NAME="@$PROJECTSCOPE/$PACKAGE_NAME"
 }
 
