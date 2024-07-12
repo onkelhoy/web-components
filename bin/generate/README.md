@@ -1,39 +1,35 @@
-# generate script 
+# Flow of package and component scripts 
 
-The start of it all, 
+This documentation exists because of developing the two it became very messy in my head.. 
 
-this create script has 3 main parts 
-(more might come who knows)
+## Problem formulation 
+so lets start by defining what the desired outcome is, 
 
-1. create a new package 
-2. create a sub-package 
-3. create new project 
+the package script should be responsible for creating the package itself
+it should receive a name and do the layer stuff 
 
-## Creating a new **package** 
+once this is established, the package script should call the component script with a name in place 
+(this name is the one used to create the package itself)
 
-This is creating with flexibility in mind, 
-it scans the current "packages" folder to determine which "categories/layers" to show 
-the developer. This is because in most cases we want to reuse those to create further packages to them 
-but sometimes we want to create new "categories/layers". 
+the full package name needs to be in place 
+::full package name consists of "@project-scope/(layertype-)?name"
 
-Each "categories/layers" will come with a config.env where certain rules are set
-example, if its name should appear in the package itself (example: "button-atom" | "button")
-but also if the name should be different from the folder name, 
-example folder name: "atoms" and the used name can be "atom" - notice the plural (s) on the foldername. 
+## Package Script 
+need to establish 
+1. layer-type 
+2. package name 
 
-then the process is simple, 
-1. get name for package 
-2. check if package already exists or not 
-3. copy over template files 
-4. init new package into system 
+## Component Script 
+need to establish 
+1. template-type 
+2. component name 
+3. class name (layer_name-component_name)
+4. prefix - if template-type is of web-component
+5. view - if template-type has view 
+501. html-name
+6. test - if template-type has test 
 
-## Crearting a new **sub package**
-
-Creating a new sub package is pretty streight forward, 
-1. first we need to figure out which package is the target
-2. we then copy over the template files 
-3. last we update target package to include the the sub-package 
-
-## Creating new project 
-
-This mode exists for so we can simply create a new project with the entire structure (omitting packages and themes)
+all the names be passed via flags 
+1. component-name
+2. class-name
+3. html-name
