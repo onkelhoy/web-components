@@ -17,13 +17,13 @@ for arg in "$@"
 do
   # call script with all arguments 
   if [[ $arg == "--project" ]]; then
-    sh "$SCRIPTDIR/project.sh" "$@"
+    sh "$SCRIPTDIR/project/run.sh" "$@"
     exit 0
-  elif [[ $arg == "--sub-package" ]]; then
-    sh "$SCRIPTDIR/sub-package.sh" "$@"
+  elif [[ $arg == "--component" ]]; then
+    sh "$SCRIPTDIR/component/run.sh" "$@"
     exit 0
   elif [[ $arg == "--package" ]]; then
-    sh "$SCRIPTDIR/package.sh" "$@"
+    sh "$SCRIPTDIR/package/run.sh" "$@"
     exit 0
   fi
 done
@@ -31,8 +31,7 @@ done
 # if we are here means no flag detected 
 echo "Choose one of the options"
 echo "1. package"
-echo "2. sub-package"
-echo "3. project"
+echo "2. project"
 echo ""
 read -p "option: " option_answer
 
@@ -43,13 +42,10 @@ done
 echo ""
 
 if [[ $option_answer == 1 || $option_answer == "package" ]]; then 
-  sh "$SCRIPTDIR/package.sh" "$@"
+  sh "$SCRIPTDIR/package/run.sh" "$@"
   exit 0
-elif [[ $option_answer == 2 || $option_answer == "sub-package" ]]; then 
-  sh "$SCRIPTDIR/sub-package.sh" "$@"
-  exit 0
-else
-  sh "$SCRIPTDIR/project.sh" "$@"
+else 
+  sh "$SCRIPTDIR/project/run.sh" "$@"
   exit 0
 fi 
 
