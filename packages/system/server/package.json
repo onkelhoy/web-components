@@ -1,5 +1,5 @@
 {
-  "name": "PLACEHOLDER_FULL_NAME",
+  "name": "@papit/server",
   "version": "0.0.0",
   "scripts": {
     "build:sass": "sh ./.bin/_utils/sass.sh",
@@ -7,43 +7,42 @@
     "build": "sh ./.bin/build.sh",
     "watch": "sh ./.bin/watch.sh",
     "init": "sh ./.bin/_utils/init.sh",
-    "start": "sh ./.bin/start.sh"
+    "start": "sh ./.bin/start.sh",
+    "test": "sh ./.bin/test.sh"
   },
   "main": "./build/bundle.js",
   "files": [
     "asset/",
-    "build/"
+    "build/",
+    ".bin/cli.sh"
   ],
   "exports": {
-    "./react": "./build/react/index.js",
     ".": "./build/bundle.js"
   },
-  "author": "GITNAME",
+  "bin": {
+    "server": "sh ./.bin/cli.sh"
+  },
+  "author": "Henry",
   "private": false,
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "license": "PROJECTLICENSE",
+  "license": "",
   "repository": {
     "type": "git",
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
-    "@papit/web": "^0.0.0",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@papit/codeblock": "^0.0.0",
-    "@papit/server": "^0.0.0",
-    "@papit/card": "^0.0.0",
-    "@papit/typography": "^0.0.0",
-    "@papit/icon": "^0.0.0",
-    "esbuild": "^0.17.18",
+    "@types/node": "^20.14.10",
     "chokidar": "^3.6.0",
+    "esbuild": "^0.17.18",
+    "node-html-parser": "^6.1.5",
     "sass": "^1.70.0",
-    "typescript": "^5.0.4",
-    "node-html-parser": "^6.1.5"
+    "typescript": "^5.0.4"
   },
   "keywords": [
     "web-component",

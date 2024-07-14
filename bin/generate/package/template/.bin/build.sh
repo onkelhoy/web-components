@@ -14,8 +14,7 @@ if [ -z "$BUNDLE" ]; then
 fi 
 
 # check for flags 
-for arg in "$@"
-do
+for arg in "$@"; do
   # check: --prod flag
   if [[ $arg == "--prod" ]]; then
     PROD=true
@@ -51,17 +50,17 @@ fi
 # in a local mode we want to load the environment, (but in CI/CD pipeline we dont)
 if [ -z "$ROOTDIR" ]; then 
   # get environment variables
-  source .env
+  source .config
   
   # create rootdir (now based on relative paths)
   export ROOTDIR=$(realpath $ROOTDIR_RELATIVE)
 fi
 
-# Remove the dist directory
-rm -rf dist
+# Remove the build directory
+rm -rf build
 
 # then re-create it 
-mkdir dist
+mkdir build
 
 # compile the styles 
 bash "$SCRIPTDIR/_utils/sass.sh"
@@ -74,7 +73,7 @@ if [ "$DEV" == true ]; then
       const pkg = require('$ROOTDIR/package.json');
       [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.devDependencies || {})].join(',')
     ")
-    esbuild "./src/index.ts" --bundle --allow-overwrite --outfile="./dist/bundle.js" --external:$DEPENDENCIES
+    esbuild "./src/index.ts" --bundle --allow-overwrite --outfile="./build/bundle.js" --external:$DEPENDENCIES
   else
     tsc 
   fi
@@ -86,30 +85,33 @@ elif [ "$PROD" == true ]; then
       const pkg = require('$ROOTDIR/package.json');
       [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.devDependencies || {})].join(',')
     ")
-    esbuild "./src/index.ts" --bundle --minify --allow-overwrite --outfile="./dist/bundle.js" --tsconfig=tsconfig.prod.json --external:$DEPENDENCIES
+    esbuild "./src/index.ts" --bundle --minify --allow-overwrite --outfile="./build/bundle.js" --tsconfig=tsconfig.prod.json --external:$DEPENDENCIES
   else 
     # NOTE this was the old build method but im not sure if its needed anymore
     tsc -p tsconfig.prod.json
 
-    # Find all .js files in the dist directory and its subdirectories
-    find ./dist -name 'style.d.ts' -type f | while read file; do
+    # Find all .js files in the build directory and its subdirectories
+    find ./build -name 'style.d.ts' -type f | while read file; do
       # Use esbuild to minify each .js file and overwrite the original file
       rm "$file"
     done
 
-    # Find all .js files in the dist directory and its subdirectories
-    find ./dist -name '*.js' -type f | while read file; do
+    # Find all .js files in the build directory and its subdirectories
+    find ./build -name '*.js' -type f | while read file; do
       # Use esbuild to minify each .js file and overwrite the original file
       esbuild "$file" --minify --allow-overwrite --outfile="$file" &> /dev/null
     done
   fi 
 fi
 
-if [ -f "./react/declerations.d.ts" ] && [ -d "./dist/react/" ]; then 
-  cp "./react/declerations.d.ts" "./dist/react/"
+if [ -f "./react/declerations.d.ts" ] && [ -d "./build/react/" ]; then 
+  cp "./react/declerations.d.ts" "./build/react/"
 fi 
+
+# Find all files that do not end with .js, .ts, or .config and copy them to the destination directory
+rsync -a --exclude='*.js' --exclude="*.ts" --exclude="*.config"  --prune-empty-dirs "./src/" "./build"
 
 echo ""
 
 # clear the console
-echo "$CLASS_NAME successfully built"
+echo "\x1b[32m$CLASS_NAME successfully built\x1b[0m"

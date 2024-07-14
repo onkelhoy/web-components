@@ -31,8 +31,7 @@ export QUICK=false
 export INITIAL_PACKAGE=false
 
 # check for flags 
-for arg in "$@"
-do
+for arg in "$@"; do
   # check: --prod flag
   if [ $arg == "--quick" ]; then
     export QUICK=true
@@ -40,7 +39,7 @@ do
   if [ $arg == "--package" ]; then
     export INITIAL_PACKAGE=true
   fi
-  if [ $arg == "--type=*" ]; then 
+  if [ $arg == --type=* ]; then 
     export COMPONENT_TYPE="${arg#*=}"
   fi 
 done

@@ -1,0 +1,64 @@
+<script defer>
+  const ws = new WebSocket('ws://localhost:PORT'); // NOTE port is probably a misstake but browser is smart and defaults to same origin..
+  ws.onerror = (error) => {
+    console.error('live-server socket error:', error);
+  }
+  ws.onopen = () => {
+    console.log('live-server socket connected');
+  }
+  ws.onmessage = (message) => {
+    const data = JSON.parse(message.data);
+
+    switch (data.action) {
+      case "update":
+        window.location.reload();
+        break;
+      case "error":
+        console.log('wonk wonk an error..');
+        window.currentliveservererrorfile = data.filename;
+        window.liveservererrorpopup.querySelector('div.content').innerHTML = data.error.map(error => `<p>${error}</p>`).join('');
+        window.liveservererrorpopup.showModal();
+        break;
+      default:
+        console.log('incomming message from server', data, message);
+        break;
+    }
+  }
+
+  window.currentliveservererrorfile = null;
+  window.addEventListener("load", () => {
+    const popup = document.createElement('dialog');
+    popup.setAttribute('id', 'liveservererrorpopup');
+
+    const errorspan = document.createElement('span')
+    errorspan.innerText = 'ERROR'
+    popup.appendChild(errorspan);
+
+    const content = document.createElement('div');
+    content.className = 'content';
+    popup.appendChild(content);
+
+    document.body.appendChild(popup);
+  });
+</script>
+<style>
+  dialog#liveservererrorpopup {
+    border: none;
+    background: none;
+    width: 100%;
+    height: 100%;
+    color: white;
+    font-size: 16pt;
+  }
+
+  dialog#liveservererrorpopup>span {
+    background-color: rgba(255, 0, 0, 0.584);
+    font-weight: bold;
+    padding: 0.1rem 0.5rem;
+    letter-spacing: 0.1rem;
+  }
+
+  dialog#liveservererrorpopup::backdrop {
+    background-color: rgba(0, 0, 0, 0.63);
+  }
+</style>

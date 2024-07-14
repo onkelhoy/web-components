@@ -10,7 +10,6 @@
       "dom.iterable",
       "esnext"
     ],
-    "jsx": "react-jsx",
     "strict": true,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,

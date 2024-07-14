@@ -24,7 +24,7 @@ We welcome community contributions, including bug reports, suggestions for impro
 
 ## License
 
-`@papit` is licensed under the MIT License. This permissive license allows for maximum flexibility in using, modifying, and distributing the software, provided attribution is given, and liability is not assumed. See the [LICENSE file](./LICENSE) for details.
+`@papit` is licensed under the MIT License. This permissive license allows for maximum flexibility in using, modifying, and buildributing the software, provided attribution is given, and liability is not assumed. See the [LICENSE file](./LICENSE) for details.
 
 ## Further Reading
 
