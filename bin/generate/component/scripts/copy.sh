@@ -59,6 +59,7 @@ fi
 
 # replace placeholders 
 find "$PACKAGE_LOCATION" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_FULL_NAME#${COMPONENT_FULL_NAME}#g" {} \;
+find "$PACKAGE_LOCATION" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_PACKAGE_NAME#${COMPONENT_FULL_NAME}#g" {} \;
 find "$PACKAGE_LOCATION" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_HTML_NAME#${COMPONENT_HTML_NAME}#g" {} \;
 find "$PACKAGE_LOCATION" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_CLASS_NAME#${COMPONENT_CLASS_NAME}#g" {} \;
 find "$PACKAGE_LOCATION" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_NAME#${COMPONENT_NAME}#g" {} \;

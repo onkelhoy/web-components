@@ -2,10 +2,9 @@
 node_modules/
 build/
 isolated/
+web/
 .temp/
 .npm/
-
-temp/
 
 # Ignore OS-specific files
 Thumbs.db
