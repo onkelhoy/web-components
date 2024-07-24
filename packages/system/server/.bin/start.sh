@@ -26,7 +26,7 @@ npm run watch &
 watch_pid=$!
 
 # npx @papit/server --verbose --package=$package --view=$view --live $@ &
-sh ./.bin/cli.sh --verbose --package=$package --view=$view --live $@ &
+sh .bin/cli.sh --verbose --package=$package --view=$view --live $@ &
 server_pid=$!
 
 # final 
@@ -46,4 +46,4 @@ wait
 # npm run build -- --prod --bundle
 # # npm run build -- --dev
 
-# sh ./.bin/cli.sh --verbose --package=$package --view=$view --live $@
+# sh .bin/cli.sh --verbose --package=$package --view=$view --live $@

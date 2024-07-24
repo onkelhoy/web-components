@@ -2,12 +2,16 @@
   "name": "PLACEHOLDER_FULL_NAME",
   "version": "0.0.0",
   "scripts": {
-    "build:sass": "sh ./.bin/_utils/sass.sh",
-    "build:react": "sh ./.bin/_utils/react.sh",
-    "build": "sh ./.bin/build.sh",
-    "watch": "sh ./.bin/watch.sh",
-    "init": "sh ./.bin/_utils/init.sh",
-    "start": "sh ./.bin/start.sh"
+    "build:sass": "sh .bin/_utils/sass.sh",
+    "build:react": "sh .bin/_utils/react.sh",
+    "build": ".bin/build.sh",
+    "watch": ".bin/watch.sh",
+    "init": "sh .bin/_utils/init.sh",
+    "start": ".bin/start.sh",
+    "preversion": ".bin/_utils/preversion.sh",
+    "postversion": ".bin/_utils/postversion.sh",
+    "publish:manual": ".bin/publish.sh",
+    "test": ".bin/test.sh"
   },
   "main": "./build/bundle.js",
   "files": [

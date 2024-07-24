@@ -3,13 +3,13 @@
 SCRIPTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # we allow for global flags (mostly watch)
-if [ -z "$DEV" ]; then 
+if [[ -z "$DEV" ]]; then 
   DEV=false
 fi 
-if [ -z "$PROD" ]; then 
+if [[ -z "$PROD" ]]; then 
   PROD=false
 fi 
-if [ -z "$BUNDLE" ]; then 
+if [[ -z "$BUNDLE" ]]; then 
   BUNDLE=false
 fi 
 
@@ -25,7 +25,7 @@ for arg in "$@"; do
   fi
 done
 
-if [ "$PROD" == false ] && [ "$DEV" == false ] && [ "$BUNDLE" == false ]; then 
+if [[ "$PROD" == false && "$DEV" == false ]]; then 
   echo "Choose wich build option you want" 
   echo "1. develpment"
   echo "2. production"
@@ -48,7 +48,7 @@ if [ "$PROD" == false ] && [ "$DEV" == false ] && [ "$BUNDLE" == false ]; then
 fi 
 
 # in a local mode we want to load the environment, (but in CI/CD pipeline we dont)
-if [ -z "$ROOTDIR" ]; then 
+if [[ -z "$ROOTDIR" ]]; then 
   # get environment variables
   source .config
   
@@ -65,9 +65,9 @@ mkdir build
 # compile the styles 
 bash "$SCRIPTDIR/_utils/sass.sh"
 
-if [ "$DEV" == true ]; then
+if [[ "$DEV" == true ]]; then
 # DEVELOPMENT BUILD
-  if [ "$BUNDLE" == true ]; then
+  if [[ "$BUNDLE" == true ]]; then
     # Extract dependencies and devDependencies using Node.js
     DEPENDENCIES=$(node -pe "
       const pkg = require('$ROOTDIR/package.json');
@@ -77,9 +77,9 @@ if [ "$DEV" == true ]; then
   else
     tsc 
   fi
-elif [ "$PROD" == true ]; then 
+elif [[ "$PROD" == true ]]; then 
 # PRODUCTION BUILD
-  if [ "$BUNDLE" == true ]; then 
+  if [[ "$BUNDLE" == true ]]; then 
     # Extract dependencies and devDependencies using Node.js
     DEPENDENCIES=$(node -pe "
       const pkg = require('$ROOTDIR/package.json');
@@ -104,7 +104,7 @@ elif [ "$PROD" == true ]; then
   fi 
 fi
 
-if [ -f "./react/declerations.d.ts" ] && [ -d "./build/react/" ]; then 
+if [[ -f "./react/declerations.d.ts" ]] && [[ -d "./build/react/" ]]; then 
   cp "./react/declerations.d.ts" "./build/react/"
 fi 
 

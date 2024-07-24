@@ -1,6 +1,6 @@
 {
   "name": "@papit/web",
-  "version": "1.0.10",
+  "version": "0.0.0",
   "description": "web component - framework/ecosystem",
   "private": true,
   "repository": {
@@ -8,9 +8,10 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "scripts": {
-    "generate": "sh /.bin/generate/run.sh",
-    "clean": "sh /.bin/_utils/clean.sh",
-    "init": "sh /.bin/_utils/init.sh"
+    "generate": "sh bin/generate/run.sh",
+    "clean": "sh bin/_utils/clean.sh",
+    "init": "sh bin/_utils/init.sh",
+    "publish": "bash bin/publish/run.sh"
   },
   "keywords": [
     "web-component",
