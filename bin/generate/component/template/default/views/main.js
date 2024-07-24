@@ -1,4 +1,4 @@
-// tools
+// core
 import '@papit/web';
 
 // component

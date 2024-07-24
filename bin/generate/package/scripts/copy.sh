@@ -33,7 +33,7 @@ find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name
 find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s/PLACEHOLDER_LAYER_FOLDER/${LAYER_FOLDER}/g" {} \;
 # package info
 find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_FULL_NAME#${FULL_NAME}#g" {} \;
-find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s/PLACEHOLDER_PACKAGE_NAME/${PACKAGE_NAME}/g" {} \;
+find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_PACKAGE_NAME#${PACKAGE_NAME}#g" {} \;
 # main component
 find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_CLASS_NAME#${CLASS_NAME}#g" {} \;
 find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_NAME#${NAME}#g" {} \;

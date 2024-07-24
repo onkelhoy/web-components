@@ -38,12 +38,12 @@ if [[ "$PROD" == false && "$DEV" == false ]]; then
   fi 
 
   echo ""
-  read -p "bundle?: (y/n) " do_bundle
+  read -p "bundle [1/0]: " do_bundle
   do_bundle=$(echo "$do_bundle" | tr '[:upper:]' '[:lower:]')
-  if [[ "$do_bundle" == "y" || "$do_bundle" == "yes" ]]; then 
-    BUNDLE=true
-  else 
-    echo "no bundle choosen"
+  if [[ "$do_bundle" == "0" ]]; then 
+    BUNDLE=false
+  else
+    BUNDLE=true 
   fi 
 fi 
 
@@ -114,4 +114,4 @@ rsync -a --exclude='*.js' --exclude="*.ts" --exclude="*.config" --prune-empty-di
 # echo ""
 
 # clear the console
-echo "\x1b[32m$CLASS_NAME successfully built\x1b[0m"
+echo "$CLASS_NAME successfully built"
