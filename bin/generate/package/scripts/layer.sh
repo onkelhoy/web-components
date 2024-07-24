@@ -5,7 +5,7 @@ CREATING=false
 # Array to hold subfolder names
 declare -a SUBFOLDERS
 
-if [ -d "$ROOTDIR/packages"/*/ ]; then 
+if [[ -d "$ROOTDIR/packages" ]]; then 
   # Counter for displaying options
   COUNTER=1
 

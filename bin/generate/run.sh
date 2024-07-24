@@ -24,6 +24,9 @@ for arg in "$@"; do
   elif [[ $arg == "--component" ]]; then
     sh "$SCRIPTDIR/component/run.sh" "$@"
     exit 0
+  elif [[ $arg == "--theme" ]]; then
+    sh "$SCRIPTDIR/theme/run.sh" "$@"
+    exit 0
   elif [[ $arg == "--package" ]]; then
     sh "$SCRIPTDIR/package/run.sh" "$@"
     exit 0
@@ -33,7 +36,8 @@ done
 # if we are here means no flag detected 
 echo "Choose one of the options"
 echo "1. package"
-echo "2. project"
+echo "2. theme"
+echo "3. project"
 echo ""
 read -p "option: " option_answer
 
@@ -45,6 +49,9 @@ echo ""
 
 if [[ $option_answer == 1 || $option_answer == "package" ]]; then 
   sh "$SCRIPTDIR/package/run.sh" "$@"
+  exit 0
+elif [[ $option_answer == 2 || $option_answer == "theme" ]]; then 
+  sh "$SCRIPTDIR/theme/run.sh" "$@"
   exit 0
 else 
   sh "$SCRIPTDIR/project/run.sh" "$@"

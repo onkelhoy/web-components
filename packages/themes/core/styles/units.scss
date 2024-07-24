@@ -1,0 +1,50 @@
+:root {
+  /* BASIC */
+  --unit-1: 0.5rem;
+  --unit-2: 1rem;
+  --unit-3: 1.5rem;
+  --unit-4: 2rem;
+  --unit-5: 2.5rem;
+  --unit-6: 3rem;
+
+  /* Z-INDEX */
+  --z-index-small: 1;
+  --z-index-medium: 2;
+  --z-index-large: 3;
+
+  /* RADIUS */
+  --radius-small: var(--unit-1);
+  --radius-medium: var(--unit-2);
+  --radius-large: var(--unit-3);
+
+  /* PADDING */
+  --padding-small: var(--unit-1);
+  --padding-medium: var(--unit-2);
+  --padding-large: var(--unit-3);
+
+  /* MARGIN */
+  --margin-small: var(--unit-1);
+  --margin-medium: var(--unit-2);
+  --margin-large: var(--unit-3);
+
+  /* MARGIN */
+  --gap-small: var(--unit-1);
+  --gap-medium: var(--unit-2);
+  --gap-large: var(--unit-3);
+
+  /* FIELD */
+  --field-small: var(--unit-4);
+  --field-medium: var(--unit-5);
+  --field-large: var(--unit-6);
+
+  /* TIMINGS */
+  --timing-fast: 80ms;
+  --timing-normal: 120ms;
+  --timing-slow: 180ms;
+
+  /* BREAKPOINTS */
+  --breakpoint-mobile: 320px;
+  --breakpoint-pad: 768px;
+  --breakpoint-laptop: 1024px;
+  --breakpoint-desktop: 1440px;
+}

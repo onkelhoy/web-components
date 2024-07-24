@@ -19,7 +19,7 @@ function get_network_data() {
     sleep 1
     ((counter++))
 
-    # Check if the process has completed
+    # Check if the process has completedj
     if ! kill -0 $pid 2>/dev/null; then
       break
     fi
@@ -37,7 +37,9 @@ function get_network_data() {
 }
 
 function get_npm_version_data() {
-  output=$(get_network_data 10 "npm search --searchlimit=100 @pap-it --json")
+  local SCOPE=$1
+
+  output=$(get_network_data 10 "npm search --searchlimit=100 @$SCOPE --json")
   if [ "$output" != "__timeout__" ]; then 
     # extracted=$(node -pe "JSON.parse(process.argv[1]).map(d => \`\${d.name}=\${d.version}\`).join('\n')" "$output_escaped")
     extracted=$(echo "$output" | node "$SCRIPTDIR/extract-npm.js")

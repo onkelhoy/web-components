@@ -11,7 +11,8 @@
     "generate": "sh bin/generate/run.sh",
     "clean": "sh bin/_utils/clean.sh",
     "init": "sh bin/_utils/init.sh",
-    "publish": "bash bin/publish/run.sh"
+    "publish": "bash bin/publish/run.sh",
+    "build": "sh bin/build/run.sh"
   },
   "keywords": [
     "web-component",

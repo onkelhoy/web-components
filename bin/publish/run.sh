@@ -22,6 +22,9 @@ export PROJECTSCOPE=$(echo "$PROJECTSCOPE" | cut -d'/' -f1 | awk -F'@' '{print $
 for arg in "$@"; do
   if [ "$arg" == "--ci" ]; then
     CI_FLAG=1
+  elif [ "$arg" == "--skip-semantic" ]; then 
+    SKIP_SEMANTIC=true
+    echo "SKIP_SEMANTIC=\"true\"" >> "$ROOTDIR/bin/version/.config"
   elif [ "$arg" == "--force" ]; then
     export FORCE=true
     echo "FORCE=\"true\"" >> "$ROOTDIR/bin/version/.config"
@@ -35,16 +38,20 @@ for arg in "$@"; do
 done
 
 # If the flag is set, run the command
-if [ -z "$CI_FLAG" ]; then
-  echo "Global semantic versioning?"
-  echo "answer:"
-  echo "[0] none"
-  echo "[1] patch"
-  echo "[2] minor"
-  echo "[3] major"
+if [[ -z "$CI_FLAG"  ]]; then
+  if [[ $SKIP_SEMANTIC == false ]]; then
+    echo "Global semantic versioning?"
+    echo "answer:"
+    echo "[0] none"
+    echo "[1] patch"
+    echo "[2] minor"
+    echo "[3] major"
 
-  read -p "Enter the number corresponding to your choice: " choice
-  export SEMANTIC_VERSION="$choice"
+    read -p "Enter the number corresponding to your choice: " choice
+    export SEMANTIC_VERSION="$choice"
+  else 
+    export SEMANTIC_VERSION=0
+  fi
 
   npm search --searchlimit=100 @$PROJECTSCOPE --json | node $SCRIPTDIR/main.js
 else

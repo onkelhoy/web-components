@@ -11,7 +11,7 @@ cleanup() {
 trap cleanup INT
 
 # then we watch css
-node ./.bin/_utils/watch-sass.js &
+node ./.bin/_utils/watch-sass.cjs &
 watch_css_pid=$!
 
 tsc -w --preserveWatchOutput &

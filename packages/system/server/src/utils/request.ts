@@ -95,7 +95,7 @@ async function handleFile(req: http.IncomingMessage, res: http.ServerResponse) {
     res.statusCode = 200;
     res.setHeader("Content-Type", getContentType(file.url));
 
-    if (file.url.endsWith(".js") || !file.url.includes('.temp')) {
+    if (file.url.endsWith(".js") && !file.url.includes('.temp')) {
       if (process.env.LIVE) {
         await watch(file.url);
       }
@@ -110,8 +110,6 @@ async function handleFile(req: http.IncomingMessage, res: http.ServerResponse) {
         res.end(JSON.stringify({ "error": `esbuild went wrong: "${req.url}"` }));
         return;
       }
-
-      res.setHeader("Content-Type", "text/javascript");
     }
 
     res.end(file.data);

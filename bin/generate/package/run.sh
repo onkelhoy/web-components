@@ -25,7 +25,6 @@ trap cleanup EXIT
 ############### END #################
 #endregion SETUP
 
-
 # region VARIABLES
 ############### START ###############
 PACKAGE_PREFIX=""

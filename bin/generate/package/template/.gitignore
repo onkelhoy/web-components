@@ -1,8 +1,10 @@
 # directories
 node_modules/
 build/
+dist/
 isolated/
 web/
+types/
 .temp/
 .npm/
 

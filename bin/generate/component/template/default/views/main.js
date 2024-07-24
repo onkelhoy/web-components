@@ -2,7 +2,7 @@
 import '@papit/web';
 
 // component
-import 'PLACEHOLDER_PACKAGE_NAME';
+import 'PLACEHOLDER_FULL_NAME';
 
 window.onload = () => {
   console.log('[demo]: window loaded');

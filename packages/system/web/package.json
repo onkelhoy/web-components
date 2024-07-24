@@ -13,9 +13,12 @@
     "publish:manual": ".bin/publish.sh",
     "test": ".bin/test.sh"
   },
-  "main": "./build/bundle.js",
+  "type": "module",
+  "types": "./types/src/index.d.ts",
+  "main": "./build/src/index.js",
   "files": [
     "asset/",
+    "types/",
     "build/"
   ],
   "exports": {
@@ -37,7 +40,7 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@papit/server": "^0.0.1",
+    "@papit/server": "0.0.4",
     "esbuild": "^0.17.18",
     "chokidar": "^3.6.0",
     "sass": "^1.70.0",

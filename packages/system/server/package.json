@@ -1,6 +1,6 @@
 {
   "name": "@papit/server",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "scripts": {
     "build:sass": "sh .bin/_utils/sass.sh",
     "build:react": "sh .bin/_utils/react.sh",
@@ -37,13 +37,12 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
-    "tslib": "^2.5.0"
+    "chokidar": "^3.6.0",
+    "esbuild": "^0.17.18",
+    "node-html-parser": "^6.1.5"
   },
   "devDependencies": {
     "@types/node": "^20.14.10",
-    "chokidar": "^3.6.0",
-    "esbuild": "^0.17.18",
-    "node-html-parser": "^6.1.5",
     "sass": "^1.70.0",
     "typescript": "^5.0.4"
   },

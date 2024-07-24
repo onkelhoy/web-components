@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Icon prototype</title>
+
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+
+  <script defer src="main.js"></script>
+</head>
+
+<body>
+  <doc-card>
+    <pap-typographt variant="C1" slot="header">Normal</pap-typographt>
+    <pap-codeblock display="both">
+      <pap-icon asset-base="public/icons" name="circle" cache="false">
+        fallback
+      </pap-icon>
+    </pap-codeblock>
+  </doc-card>
+
+  <doc-card>
+    <pap-typographt variant="C1" slot="header">Sizing</pap-typographt>
+    <pap-typographt>Size</pap-typographt>
+    <pap-codeblock display="both">
+      <pap-icon name="box" size="small"></pap-icon>
+      <pap-icon name="box" size="medium"></pap-icon>
+      <pap-icon name="box" size="large"></pap-icon>
+    </pap-codeblock>
+
+    <pap-typographt>Container</pap-typographt>
+    <pap-codeblock display="both">
+      <pap-icon name="box" container="smaller"></pap-icon>
+      <pap-icon name="box" container="small"></pap-icon>
+      <pap-icon name="box" container="medium"></pap-icon>
+      <pap-icon name="box" container="large"></pap-icon>
+    </pap-codeblock>
+  </doc-card>
+
+  <doc-card>
+    <pap-typographt variant="C1" slot="header">Funcase</pap-typographt>
+    <pap-codeblock display="both">
+      <pap-icon custom-size="200" id="animation" cache="true" color="orange" name="circle">
+        fallback
+      </pap-icon>
+    </pap-codeblock>
+  </doc-card>
+
+  <doc-card>
+    <pap-typographt variant="C1" slot="header">With fallback</pap-typographt>
+    <pap-codeblock display="both">
+      <pap-icon name="notfoundicon">fallback</pap-icon>
+    </pap-codeblock>
+  </doc-card>
+
+  <doc-card>
+    <pap-typographt variant="C1" slot="header">Flag Emojis</pap-typographt>
+    <pap-codeblock display="both">
+      <pap-icon country-flag="hu"></pap-icon>
+      <pap-icon country-flag="se"></pap-icon>
+      <pap-icon country-flag="cn"></pap-icon>
+      <pap-icon country-flag="gb"></pap-icon>
+    </pap-codeblock>
+  </doc-card>
+</body>
+
+</html>

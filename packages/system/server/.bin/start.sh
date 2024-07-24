@@ -14,12 +14,13 @@ done
 cleanup() {
   echo "[start] cleanup"
   kill $watch_pid $server_pid
+
+  npm run build -- --prod --bundle
   exit 0
 }
 trap cleanup INT
 
-# init
-npm run build -- --prod --bundle
+npm run build -- --dev
 
 # runners
 npm run watch &
@@ -31,19 +32,3 @@ server_pid=$!
 
 # final 
 wait 
-
-# #!/bin/bash
-
-# package=$(pwd)
-# view=${1:-server}
-
-# for arg in "$@"; do
-#   if [[ $arg == --view=* ]]; then 
-#     view="${arg#*=}"
-#   fi 
-# done
-
-# npm run build -- --prod --bundle
-# # npm run build -- --dev
-
-# sh .bin/cli.sh --verbose --package=$package --view=$view --live $@
