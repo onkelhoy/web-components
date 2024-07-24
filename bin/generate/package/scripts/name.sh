@@ -21,7 +21,7 @@ function read_packagename() {
 
 function check_packagename() {
   if [ ! -f $ROOTDIR/package-lock.json ]; then 
-    echo "0" 
+    echo "2" 
     return 
   fi 
 
@@ -34,10 +34,19 @@ while true; do
   read_packagename
   check=$(check_packagename "$FULL_NAME")
 
-  echo "package exists - $check"
-
   if [[ "$check" == "1" ]]; then
     break
+  elif [[ "$check" == "2" ]]; then 
+    echo ""
+    echo "package-lock.json missing, cannot determine if package exists already: [$FULL_NAME]"
+    read -p "would you like to continue anyway [1/0]: " continue_ans
+
+    if [ $continue_ans == 1 ]; then 
+      break
+    else   
+      echo "aborting ❎"
+      exit 1
+    fi 
   else
     echo "[error] package '$FULL_NAME' already exists. Please choose another name."
     echo ""

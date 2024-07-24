@@ -4,6 +4,9 @@
 export ROOTDIR=$(pwd)
 export SCRIPTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+source "$ROOTDIR/.config"
+loadcolors
+
 # extract project-scope variable 
 PROJECTSCOPE=$(node -pe "require('$ROOTDIR/package.json').name")
 export PROJECTSCOPE=$(echo "$PROJECTSCOPE" | cut -d'/' -f1 | awk -F'@' '{print $2}')
@@ -13,8 +16,7 @@ GITNAME=$(git config --global user.name)
 export GITNAME=${GITNAME:-anonymous} # if empty then anonymous will be default author name
 
 # check flags 
-for arg in "$@"
-do
+for arg in "$@"; do
   # call script with all arguments 
   if [[ $arg == "--project" ]]; then
     sh "$SCRIPTDIR/project/run.sh" "$@"
@@ -36,7 +38,7 @@ echo ""
 read -p "option: " option_answer
 
 while [ -z "$option_answer" ]; do
-  echo "must choose a option"
+  logwarn "must choose a option"
   read -p "option: " option_answer
 done
 echo ""
@@ -49,4 +51,4 @@ else
   exit 0
 fi 
 
-echo "something went wrong.." 
+logerror "something went wrong.." 

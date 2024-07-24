@@ -1,0 +1,94 @@
+<link href="/themes/papit.css" rel="stylesheet" />
+
+<script>
+  // window.addEventListener('load', () => {
+  //   tryagain("papTranslation", fetchLanguages);
+  //   tryagain("papTheme", fetchThemes);
+  // });
+
+  // window.customElements.whenDefined('pap-translation').then(() => tryagain("papTranslation", fetchLanguages));
+  // window.customElements.whenDefined('pap-theme').then(() => tryagain("papTheme", fetchThemes));
+
+  // async function fetchResource(resource) {
+  //   try {
+  //     const res = await fetch(`/asset-info/${resource}`);
+  //     const json = await res.json();
+
+  //     return json || [];
+  //   }
+  //   catch (e) {
+  //     console.warn(`Could not fetch resource: ${resource}`);
+  //     return [];
+  //   }
+  // }
+
+  // let attempts = {
+  //   papTranslation: {
+  //     tries: 0,
+  //     timer: null
+  //   },
+  //   papTheme: {
+  //     tries: 0,
+  //     timer: null
+  //   },
+  // }
+
+  // function tryagain(name, callback) {
+  //   if (attempts[name].tries < 5) {
+  //     if (attempts[name].timer !== null) clearTimeout(attempts[name].timer);
+  //     attempts[name].timer = setTimeout(callback, 100 + 50 * attempts[name].tries);
+  //     attempts[name].tries++;
+  //   }
+  //   else {
+  //     console.warn(`no ${name} object available in window`);
+  //   }
+  // }
+
+  // async function fetchLanguages() {
+  //   if (window.papLocalization) {
+  //     const files = await fetchResource("translations");
+  //     let langs = [];
+  //     files.forEach(file => {
+  //       // NOTE if someone manually appends a language that matches this we might have a problem but lets solve that
+  //       // once it comes..
+  //       langs.push({
+  //         id: file.name,
+  //         url: file.path,
+  //         meta: file.meta,
+  //       });
+  //     });
+
+  //     window.papLocalization.addAll(langs);
+  //   }
+  //   else {
+  //     tryagain("papTranslation", fetchLanguages);
+  //   }
+  // }
+
+  // async function fetchThemes() {
+  //   if (window.papTheme) {
+  //     const files = await fetchResource("themes");
+
+  //     const standardThemeColors = {
+  //       "base": "var(--pap-color-bg-brand, #009DD3)",
+  //       "alternative": "var(--pap-color-bg-accent-01, #FFCE00)",
+  //     }
+
+  //     files.forEach(file => {
+  //       let color = standardThemeColors[file.name] || `hsl(${Math.floor(Math.random() * 360)}, 100%, 50%)`
+  //       window.papTheme.add({
+  //         href: file.path,
+  //         representColor: color,
+  //         name: file.name,
+  //       })
+  //     });
+
+  //     // NOTE BASE THEME IS SET HERE !
+  //     window.papTheme.change("base");
+  //   }
+  //   else {
+  //     console.warn("no papTheme object available in window");
+  //     tryagain("papTheme", fetchThemes);
+  //   }
+  // }
+</script>

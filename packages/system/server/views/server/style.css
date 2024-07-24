@@ -1,0 +1,10 @@
+h5 {
+  color: cornflowerblue;
+}
+
+button {
+  background-color: cornflowerblue;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+}

@@ -1,6 +1,6 @@
 # directories
 node_modules/
-dist/
+build/
 isolated/
 web/
 .temp/
