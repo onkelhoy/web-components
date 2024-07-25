@@ -14,8 +14,11 @@
     "test": ".bin/test.sh"
   },
   "main": "./build/bundle.js",
+  "types": "./types/src/index.d.ts",
+  "type": "module",
   "files": [
     "asset/",
+    "types/",
     "build/"
   ],
   "exports": {

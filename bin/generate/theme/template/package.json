@@ -1,0 +1,37 @@
+{
+  "name": "PLACEHOLDER_FULL_NAME",
+  "version": "0.0.0",
+  "scripts": {
+    "build": ".bin/build.sh",
+    "init": "sh .bin/_utils/init.sh",
+    "start": ".bin/start.sh",
+    "preversion": ".bin/_utils/preversion.sh",
+    "postversion": ".bin/_utils/postversion.sh",
+    "publish:manual": ".bin/publish.sh"
+  },
+  "main": "./style.css",
+  "author": "GITNAME",
+  "private": false,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "license": "PROJECTLICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onkelhoy/web-components.git"
+  },
+  "dependencies": {
+    "@papit/theme-core": "^0.0.0"
+  },
+  "devDependencies": {
+    "sass": "^1.70.0",
+    "typescript": "^5.0.4",
+    "node-html-parser": "^6.1.5"
+  },
+  "keywords": [
+    "theme",
+    "css"
+  ],
+  "description": ""
+}

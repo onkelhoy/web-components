@@ -1,6 +1,7 @@
 # directories
 node_modules/
 build/
+types/
 isolated/
 web/
 .temp/

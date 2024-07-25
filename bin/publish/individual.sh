@@ -6,6 +6,7 @@ REMOTE_VERSION=$2
 
 # execute logic
 cd $PACKAGE 
+source $PACKAGE/.config
 
 # Extract name and version from package.json
 CURRENT_VERSION=$(node -p "require('./package.json').version")
@@ -50,10 +51,14 @@ else
     # run build 
     npm run build -- --prod --bundle
     
-    # publish 
-    npm publish --access public --registry https://registry.npmjs.org/ --//registry.npmjs.org/:_authToken=${NPM_TOKEN} --verbose
-    
-    # npm publish --access public --registry https://registry.npmjs.org/ --//registry.npmjs.org/:_authToken=${NPM_TOKEN} --verbose --dry-run
+    if [[ "$CAN_PUBLISH" == "true" ]]; then 
+      # publish 
+      npm publish --access public --registry https://registry.npmjs.org/ --//registry.npmjs.org/:_authToken=${NPM_TOKEN} --verbose
+      
+      # npm publish --access public --registry https://registry.npmjs.org/ --//registry.npmjs.org/:_authToken=${NPM_TOKEN} --verbose --dry-run
+    else 
+      echo "[individual]: skipped"
+    fi 
   else 
 
     # run build 

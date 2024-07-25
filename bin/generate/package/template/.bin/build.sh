@@ -9,9 +9,6 @@ fi
 if [[ -z "$PROD" ]]; then 
   PROD=false
 fi 
-if [[ -z "$BUNDLE" ]]; then 
-  BUNDLE=false
-fi 
 
 # check for flags 
 for arg in "$@"; do
@@ -20,8 +17,6 @@ for arg in "$@"; do
     PROD=true
   elif [[ $arg == "--dev" ]]; then
     DEV=true
-  elif [[ $arg == "--bundle" ]]; then
-    BUNDLE=true
   fi
 done
 
@@ -36,15 +31,6 @@ if [[ "$PROD" == false && "$DEV" == false ]]; then
   else 
     PROD=true 
   fi 
-
-  echo ""
-  read -p "bundle [1/0]: " do_bundle
-  do_bundle=$(echo "$do_bundle" | tr '[:upper:]' '[:lower:]')
-  if [[ "$do_bundle" == "0" ]]; then 
-    BUNDLE=false
-  else
-    BUNDLE=true 
-  fi 
 fi 
 
 # in a local mode we want to load the environment, (but in CI/CD pipeline we dont)
@@ -58,6 +44,7 @@ fi
 
 # Remove the build directory
 rm -rf build
+rm -rf types
 
 # then re-create it 
 mkdir build
@@ -65,43 +52,24 @@ mkdir build
 # compile the styles 
 bash "$SCRIPTDIR/_utils/sass.sh"
 
+# Extract dependencies and devDependencies using Node.js
+DEPENDENCIES=$(node -pe "
+  const pkg = require('$ROOTDIR/package.json');
+  [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.devDependencies || {})].join(',')
+")
+
 if [[ "$DEV" == true ]]; then
-# DEVELOPMENT BUILD
-  if [[ "$BUNDLE" == true ]]; then
-    # Extract dependencies and devDependencies using Node.js
-    DEPENDENCIES=$(node -pe "
-      const pkg = require('$ROOTDIR/package.json');
-      [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.devDependencies || {})].join(',')
-    ")
-    esbuild "./src/index.ts" --bundle --allow-overwrite --outfile="./build/bundle.js" --external:$DEPENDENCIES
-  else
-    tsc 
-  fi
+  # typescript part : making sure we have types 
+  tsc --emitDeclarationOnly
+  
+  # esbuild part
+  esbuild --format=esm "./src/index.ts" --bundle --allow-overwrite --outfile="./build/bundle.js" --external:$DEPENDENCIES
 elif [[ "$PROD" == true ]]; then 
-# PRODUCTION BUILD
-  if [[ "$BUNDLE" == true ]]; then 
-    # Extract dependencies and devDependencies using Node.js
-    DEPENDENCIES=$(node -pe "
-      const pkg = require('$ROOTDIR/package.json');
-      [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.devDependencies || {})].join(',')
-    ")
-    esbuild "./src/index.ts" --bundle --minify --allow-overwrite --outfile="./build/bundle.js" --tsconfig=tsconfig.prod.json --external:$DEPENDENCIES
-  else 
-    # NOTE this was the old build method but im not sure if its needed anymore
-    tsc -p tsconfig.prod.json
+  # typescript part : making sure we have types 
+  tsc --emitDeclarationOnly -p tsconfig.prod.json
 
-    # Find all .js files in the build directory and its subdirectories
-    find ./build -name 'style.d.ts' -type f | while read file; do
-      # Use esbuild to minify each .js file and overwrite the original file
-      rm "$file"
-    done
-
-    # Find all .js files in the build directory and its subdirectories
-    find ./build -name '*.js' -type f | while read file; do
-      # Use esbuild to minify each .js file and overwrite the original file
-      esbuild "$file" --minify --allow-overwrite --outfile="$file" &> /dev/null
-    done
-  fi 
+  # esbuild part
+  esbuild --format=esm "./src/index.ts" --bundle --minify --allow-overwrite --outfile="./build/bundle.js" --tsconfig=tsconfig.prod.json --external:$DEPENDENCIES
 fi
 
 if [[ -f "./react/declerations.d.ts" ]] && [[ -d "./build/react/" ]]; then 

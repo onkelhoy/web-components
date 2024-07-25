@@ -22,6 +22,7 @@
     "rootDir": "./",
     "allowJs": true,
     "declaration": true,
+    "declarationDir": "./types",
     "incremental": true,
     "resolveJsonModule": true
   },

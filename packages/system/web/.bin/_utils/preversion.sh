@@ -17,12 +17,13 @@ fi
 
 # Using node to execute a one-liner that prints both name and version, separated by a space
 read -r name localversion <<< $(node -pe "let pkg=require('./package.json'); pkg.name + ' ' + pkg.version")
+export PROJECTSCOPE=$(echo "$name" | cut -d'/' -f1 | awk -F'@' '{print $2}')
 
 if [ -z "$INITIATOR" ]; then
   echo "INITIATOR=\"$name\"" >> "$ROOTDIR/bin/version/.config"
   INITIATOR="$name"
 
-  npminfo=$(get_npm_version_data) 
+  npminfo=$(get_npm_version_data $PROJECTSCOPE) 
   if [ "$npminfo" != "__timeout__" ]; then 
     echo "[NET] npm search success"
     echo "$npminfo" >> "$ROOTDIR/bin/version/.config"
@@ -90,4 +91,8 @@ if [ "$localversion" == "$remoteversion" ]; then
   exit 0
 fi
 
-# exit 3
+if [ "$INITIATOR" == "$name" ]; then
+  # cleanup
+  rm "$ROOTDIR/bin/version/.config"
+fi 
+exit 3
