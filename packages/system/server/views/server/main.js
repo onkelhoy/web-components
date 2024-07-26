@@ -1,3 +1,5 @@
+import "@papit/icon";
+
 window.onload = () => {
   const btn = document.querySelector("button");
 

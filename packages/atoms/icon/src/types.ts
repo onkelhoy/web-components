@@ -1,4 +1,4 @@
-import { Size } from "@papit/web";
+import { Size } from "@papit/core";
 
 export type Container = Size | 'smaller';
 

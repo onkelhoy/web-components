@@ -1,0 +1,55 @@
+{
+  "name": "@papit/core",
+  "version": "0.0.0",
+  "scripts": {
+    "build:sass": "sh bin/_utils/sass.sh",
+    "build:react": "sh bin/_utils/react.sh",
+    "build": "bin/build.sh",
+    "watch": "bin/watch.sh",
+    "init": "sh bin/_utils/init.sh",
+    "start": "bin/start.sh",
+    "preversion": "bin/_utils/preversion.sh",
+    "postversion": "bin/_utils/postversion.sh",
+    "publish:manual": "bin/publish.sh",
+    "test": "npx playwright test -c tests/playwright.config.ts",
+    "test:update-snapshots": "npx playwright test --update-snapshots -c tests/playwright.config.ts"
+  },
+  "type": "module",
+  "types": "./lib/types/index.d.ts",
+  "main": "./lib/bundle.js",
+  "files": [
+    "asset/",
+    "lib/"
+  ],
+  "exports": {
+    "./react": "./lib/react/index.js",
+    ".": "./lib/bundle.js"
+  },
+  "author": "Henry",
+  "private": false,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "license": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onkelhoy/web-components.git"
+  },
+  "dependencies": {
+    "tslib": "^2.5.0"
+  },
+  "devDependencies": {
+    "chokidar": "^3.6.0",
+    "esbuild": "^0.17.18",
+    "node-html-parser": "^6.1.5",
+    "sass": "^1.70.0",
+    "typescript": "^5.0.4"
+  },
+  "keywords": [
+    "web-component",
+    "typescript",
+    "sass"
+  ],
+  "description": ""
+}

@@ -16,19 +16,19 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "outDir": "build",
+    "outDir": "lib",
     "sourceMap": true,
     "inlineSources": true,
     "rootDir": "./",
     "allowJs": true,
-    "declarationDir": "types",
+    "declarationDir": "lib/types",
     "declaration": true,
     "incremental": true,
     "resolveJsonModule": true
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.d.ts"
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts"
   ]
 }

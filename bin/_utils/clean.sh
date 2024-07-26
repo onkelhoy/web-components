@@ -1,19 +1,28 @@
 #!/bin/bash
 
-read -p "Delete generated views?: (y/n) " gen
-gen=$(echo "$gen" | tr '[:upper:]' '[:lower:]')
-if [[ "$gen" != "n" && "$gen" != "no" ]]; then
+read -p "Delete builds?: [1/0] " builds
+if [[ "$builds" != "0" ]]; then
+  find packages -type d -path "*/build" -exec rm -rf {} +
+  find packages -type d -path "*/lib" -exec rm -rf {} +
+fi
+
+read -p "Delete generated views?: [1/0] " gen
+if [[ "$gen" != "0" ]]; then
   find packages -type d -path "*/views/generated" -exec rm -rf {} +
 fi
 
-# read -p "Delete showcase?: (y/n) " showcase
-# showcase=$(echo "$showcase" | tr '[:upper:]' '[:lower:]')
-# if [[ "$showcase" != "n" && "$showcase" != "no" ]]; then
+read -p "Delete test reports & results?: [1/0] " rr
+if [[ "$rr" != "0" ]]; then
+  find packages -type d -path "*/tests/test-reports" -exec rm -rf {} +
+  find packages -type d -path "*/tests/test-results" -exec rm -rf {} +
+fi
+
+# read -p "Delete showcase?: [1/0] " showcase
+# if [[ "$showcase" != "0" ]]; then
 #   rm -rf showcase
 # fi
 
-read -p "Delete analysis?: (y/n) " analysis
-analysis=$(echo "$analysis" | tr '[:upper:]' '[:lower:]')
-if [[ "$analysis" != "n" && "$analysis" != "no" ]]; then
+read -p "Delete analysis?: [1/0] " analysis
+if [[ "$analysis" != "0" ]]; then
   find packages -type f -path "*/custom-elements.json" -delete
 fi

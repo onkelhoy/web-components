@@ -70,11 +70,11 @@ svg {
 }
 
 :host([data-hide-slot="false"]) {
+  width: fit-content;
+
   svg {
     display: none;
   }
-
-  width: fit-content;
 }
 
 :host([country-flag]) {

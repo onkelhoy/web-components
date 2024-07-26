@@ -23,7 +23,7 @@ function mergeLanguage(output: MergeOutput, level: Level, languages: Language) {
 
 export function init() {
   // create the folder first
-  fs.mkdirSync(path.join(process.env.VIEWDIR as string, '.temp/translations'));
+  fs.mkdirSync(path.join(process.env.LOCATION as string, '.temp/translations'));
 
   const languages: Language = {};
   merge("translations", (output, save) => {

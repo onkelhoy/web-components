@@ -1,5 +1,5 @@
 // core
-import '@papit/web';
+import '@papit/core';
 
 // component
 import 'asset';

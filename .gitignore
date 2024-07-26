@@ -1,11 +1,12 @@
 # directories
 node_modules/
-build/
+packages/**/lib/
+packages/**/build/
 isolated/
 .temp/
 .npm/
-
 temp/
+
 
 # Ignore OS-specific files
 Thumbs.db

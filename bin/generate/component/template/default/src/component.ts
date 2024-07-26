@@ -1,6 +1,6 @@
 // import statements 
 // system 
-import { CustomElement, html, property } from "@papit/web";
+import { CustomElement, html, property } from "@papit/core";
 
 // local 
 import { style } from "./style";

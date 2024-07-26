@@ -23,17 +23,17 @@ fi
 # copy over the src 
 if [ "$INITIAL_PACKAGE" == true ]; then 
   mkdir "$PACKAGE_LOCATION/src"
-  mkdir "$PACKAGE_LOCATION/test"
+  mkdir "$PACKAGE_LOCATION/tests"
 
   TARGET_SRC="$PACKAGE_LOCATION/src"
-  TARGET_TEST="$PACKAGE_LOCATION/test"
+  TARGET_TEST="$PACKAGE_LOCATION/tests"
 else
   # create folders 
   mkdir -p "$PACKAGE_LOCATION/src/components/$COMPONENT_NAME"
-  mkdir -p "$PACKAGE_LOCATION/test/$COMPONENT_NAME"
+  mkdir -p "$PACKAGE_LOCATION/tests/$COMPONENT_NAME"
 
   TARGET_SRC="$PACKAGE_LOCATION/src/components/$COMPONENT_NAME"
-  TARGET_TEST="$PACKAGE_LOCATION/test/$COMPONENT_NAME"
+  TARGET_TEST="$PACKAGE_LOCATION/tests/$COMPONENT_NAME"
 fi
 
 TARGET_VIEW="$PACKAGE_LOCATION/views/$COMPONENT_NAME"
@@ -48,8 +48,8 @@ if [ -d "$ROOTDIR/bin/generate/component/template/$COMPONENT_TYPE/views" ]; then
 fi 
 
 # TEST 
-if [ -d "$SCRIPTDIR/component/template/$COMPONENT_TYPE/test" ]; then 
-  rsync -a --exclude='*DS_Store' "$SCRIPTDIR/component/template/$COMPONENT_TYPE/test/" "$TARGET_TEST"
+if [ -d "$SCRIPTDIR/component/template/$COMPONENT_TYPE/tests" ]; then 
+  rsync -a --exclude='*DS_Store' "$SCRIPTDIR/component/template/$COMPONENT_TYPE/tests/" "$TARGET_TEST"
 fi
 
 # README

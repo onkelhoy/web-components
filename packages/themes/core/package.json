@@ -2,12 +2,13 @@
   "name": "@papit/theme-core",
   "version": "0.0.0",
   "scripts": {
-    "build": ".bin/build.sh",
-    "init": "sh .bin/_utils/init.sh",
-    "start": ".bin/start.sh",
-    "preversion": ".bin/_utils/preversion.sh",
-    "postversion": ".bin/_utils/postversion.sh",
-    "publish:manual": ".bin/publish.sh"
+    "build": "bin/build.sh",
+    "init": "sh bin/_utils/init.sh",
+    "start": "bin/start.sh",
+    "preversion": "bin/_utils/preversion.sh",
+    "postversion": "bin/_utils/postversion.sh",
+    "publish:manual": "bin/publish.sh",
+    "test": "npx playwright test -c tests/playwright.config.ts"
   },
   "main": "./style.css",
   "author": "Henry",
@@ -25,7 +26,9 @@
   "devDependencies": {
     "sass": "^1.70.0",
     "typescript": "^5.0.4",
-    "node-html-parser": "^6.1.5"
+    "node-html-parser": "^6.1.5",
+    "@playwright/test": "^1.45.3",
+    "playwright": "^1.45.3"
   },
   "keywords": [
     "theme",

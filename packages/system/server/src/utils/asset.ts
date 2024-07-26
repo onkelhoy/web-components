@@ -7,6 +7,7 @@ import { IASSETS, ASSET_TYPE, ASSET_OBJECT } from "./asset.types";
 import { Meta } from "./language.type";
 
 export const TRANSLATION_META: Record<string, Meta> = {};
+const ASSET_FOLDERS = (process.env.ASSET_DIRS || "").split(' ');
 
 export const ASSETS: IASSETS = {
   map: {},
@@ -93,7 +94,9 @@ function add(directory: string, package_type: string, dependency_name: string | 
   }
   catch (e) {
     // no assets found
-    if (package_type !== 'dependency') console.log(`No ${package_type} assets found`);
+    if (package_type !== 'dependency' && ["debug", "verbose"].includes(process.env.LOGLEVEL || "")) {
+      console.log(`no ${package_type} assets found`);
+    }
   }
 }
 
@@ -115,7 +118,7 @@ function add_themes() {
  * @param {string} content
  */
 function savefile(name: string, content: string) {
-  fs.writeFileSync(path.join(process.env.VIEWDIR as string, '.temp', name), content);
+  fs.writeFileSync(path.join(process.env.LOCATION as string, '.temp', name), content);
 }
 
 // module.exports = {
@@ -132,17 +135,20 @@ function savefile(name: string, content: string) {
 // ==== EXPORTS ====================
 
 export function init() {
-  // first append the view public 
-  add(path.join(process.env.VIEWDIR as string, ".temp"), 'temp');
+  // first append the temp folder - just in case..
+  add(path.join(process.env.LOCATION as string, ".temp"), 'temp');
 
-  // then append the view public 
-  add(path.join(process.env.VIEWDIR as string, "public"), 'view');
+  // then append all asset folders 
+  ASSET_FOLDERS.forEach(folder => add(folder, 'asset-folder'));
 
-  // then append the local assets 
-  add(path.join(process.env.PACKAGE as string, "asset"), 'local');
+  // // then append the view public 
+  // add(path.join(process.env.LOCATION as string, "public"), 'view');
 
-  // then append the global assets 
-  add(path.join(process.env.ROOTDIR as string, "asset"), 'global');
+  // // then append the local assets 
+  // add(path.join(process.env.PACKAGE as string, "asset"), 'local');
+
+  // // then append the global assets 
+  // add(path.join(process.env.ROOTDIR as string, "asset"), 'global');
 
   // then we append each dependency
   for (let name in DEPENDENCY) {
@@ -198,7 +204,7 @@ export function merge(folder_path: Function | string, merger: MergeCallback) {
 
   paths.global = path.join(process.env.ROOTDIR as string, 'asset', paths.global);
   paths.package = path.join(process.env.PACKAGE as string, 'asset', paths.package);
-  paths.view = path.join(process.env.VIEWDIR as string, 'public', paths.view);
+  paths.view = path.join(process.env.LOCATION as string, 'public', paths.view);
 
   const output: MergeOutput = {};
   for (let level in paths) {
