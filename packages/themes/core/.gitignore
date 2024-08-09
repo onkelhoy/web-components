@@ -8,6 +8,10 @@ types/
 .temp/
 .npm/
 
+# test
+test-results/
+test-reports/
+
 # Ignore OS-specific files
 Thumbs.db
 .DS_Store

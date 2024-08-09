@@ -22,7 +22,7 @@ export function upgrade(this: http.Server, req: http.IncomingMessage, socket: Du
   const socketid = randomUUID();
   connectedClients.set(socketid, socket);
 
-  if (process.env.VERBOSE === 'true') console.log("\x1b[31m", 'client connected', "\x1b[0m");
+  if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log("\x1b[31m", 'client connected', "\x1b[0m");
 
   // events 
   socket.on('error', handleError.bind(socket, socketid));
@@ -33,22 +33,22 @@ export function upgrade(this: http.Server, req: http.IncomingMessage, socket: Du
 // event handlers 
 function handleError(this: Duplex, socketid: string, error: any) {
   if ('code' in error && error.code === 'ECONNRESET') {
-    if (process.env.VERBOSE === 'true') console.log("\x1b[31m", 'client disconnected', "\x1b[0m");
+    if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log("\x1b[31m", 'client disconnected', "\x1b[0m");
     connectedClients.delete(socketid);
   }
-  else {
-    console.log('error', socketid, error);
+  else if (process.env.LOGLEVEL !== "none") {
+    console.log('socket-error', socketid, error);
   }
 }
 function handleData(this: Duplex, socketid: string, buffer: Buffer) {
   const message = buffer.toString();
-  if (process.env.VERBOSE === 'true') console.log("\x1b[34m", 'Received: ', message, "\x1b[0m");
+  if (["debug"].includes(process.env.LOGLEVEL || "")) console.log("\x1b[34m", 'Received: ', message, "\x1b[0m");
 
   // Echoing back the received message (simplified, not handling actual WebSocket frames)
   this.write(frameWebSocketMessage(message));
 }
 function handleEnd(this: Duplex, socketid: string) {
-  if (process.env.VERBOSE === 'true') console.log("\x1b[31m", 'client disconnected', "\x1b[0m");
+  if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log("\x1b[31m", 'client disconnected', "\x1b[0m");
 
   // TODO: have to find the client-id to be removed so we can remove it from the connectedClients list 
   connectedClients.delete(socketid);
@@ -58,14 +58,14 @@ function handleEnd(this: Duplex, socketid: string) {
 export function update(filename: string, content: string) {
   // notify all clients 
   if (connectedClients.size === 0) {
-    if (process.env.VERBOSE === 'true') console.log('No clients connected to send update!');
+    if (["debug"].includes(process.env.LOGLEVEL || "")) console.log('No clients connected to send update!');
     return
   }
 
   const message = frameWebSocketMessage({ action: 'update', filename, content });
   connectedClients.forEach((client) => {
     if (!client) {
-      console.log('hey?', client);
+      if (["debug"].includes(process.env.LOGLEVEL || "")) console.log('socket-error: [update] could not find client');
     } else {
       client.write(message);
     }
@@ -74,7 +74,7 @@ export function update(filename: string, content: string) {
 export function error(filename: string, errors: any[]) {
   // notify all clients 
   if (connectedClients.size === 0) {
-    if (process.env.VERBOSE === 'true') console.log('No clients connected to send error!');
+    if (["debug"].includes(process.env.LOGLEVEL || "")) console.log('No clients connected to send error!');
   }
 
   // connectedClients.forEach(client => {
@@ -85,7 +85,7 @@ export function error(filename: string, errors: any[]) {
   const message = frameWebSocketMessage({ action: 'error', filename, error: errors });
   connectedClients.forEach((client) => {
     if (!client) {
-      console.log('errorina?');
+      if (["debug"].includes(process.env.LOGLEVEL || "")) console.log('socket-error: [error] could not find client');
     } else {
       client.write(message);
     }

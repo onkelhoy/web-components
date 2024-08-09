@@ -1,4 +1,4 @@
-import { property, html, Size, query, CustomElement } from '@papit/web';
+import { property, html, Size, query, CustomElement } from '@papit/core';
 import { Asset } from '@papit/asset';
 
 import { style } from './style.js';

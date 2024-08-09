@@ -9,6 +9,6 @@
   "exclude": [
     "**/*.test.ts",
     "**/*.spec.ts",
-    "build/*.tsbuildinfo"
+    "lib/*.tsbuildinfo"
   ]
 }

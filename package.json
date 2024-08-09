@@ -1,5 +1,5 @@
 {
-  "name": "@papit/web",
+  "name": "@papit/core",
   "version": "0.0.0",
   "description": "web component - framework/ecosystem",
   "private": true,
@@ -12,7 +12,7 @@
     "clean": "sh bin/_utils/clean.sh",
     "init": "sh bin/_utils/init.sh",
     "publish": "bash bin/publish/run.sh",
-    "build": "sh bin/build/run.sh"
+    "build": "sh bin/lib/run.sh"
   },
   "keywords": [
     "web-component",
@@ -23,10 +23,5 @@
   "license": "MIT",
   "workspaces": [
     "packages/**/*"
-  ],
-  "devDependencies": {
-    "node-html-parser": "^6.1.11",
-    "chokidar": "^3.6.0",
-    "playwright": "^1.34.3"
-  }
+  ]
 }

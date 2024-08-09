@@ -2,6 +2,7 @@
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
+import { URL } from "node:url";
 
 // external package imports
 import { parse, HTMLElement } from "node-html-parser";
@@ -9,16 +10,14 @@ import { parse, HTMLElement } from "node-html-parser";
 // local imports
 import { build, watch } from "./esbuild";
 import { DEPENDENCY } from "./dependency";
-// import { URL } from "node:url";
+import { route as handleHTML } from "./html";
 
-const templateHTML: Record<"common" | "live", null | HTMLElement> = {
-  common: null,
-  live: null,
-}
+const ASSET_FOLDERS = (process.env.ASSET_DIRS || "").split(' ');
+
 
 export function request(req: http.IncomingMessage, res: http.ServerResponse) {
   if (req.method !== "GET") {
-    if (process.env.VERBOSE === "true") console.log("\x1b[31mno get request\x1b[0m");
+    if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log("\x1b[31mno get request\x1b[0m");
     res.statusCode = 500;
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify({ error: `only accept get requests: ${req.method}`, code: "no-get" }));
@@ -26,13 +25,13 @@ export function request(req: http.IncomingMessage, res: http.ServerResponse) {
   }
 
   if (!req.url) {
-    if (process.env.VERBOSE === "true") console.log("\x1b[31mno url provided\x1b[0m");
+    if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log("\x1b[31mno url provided\x1b[0m");
     res.statusCode = 500;
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify({ error: "no url provided", code: "no-url" }));
     return;
   }
-  if (process.env.VERBOSE === "true") console.log("\x1b[36mincomming request\x1b[0m", req.url);
+  if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log("\x1b[36mincomming request\x1b[0m", req.url);
 
   // serve the html
   // this regex will look for hello/ or hello or hello.index
@@ -52,39 +51,13 @@ export function request(req: http.IncomingMessage, res: http.ServerResponse) {
 }
 
 // route functions 
-function handleHTML(req: http.IncomingMessage, res: http.ServerResponse) {
-  let filepath = req.url as string;
-  if (!filepath.endsWith(".html")) {
-    filepath = "index.html";
-  }
-  try {
-    let file = fs.readFileSync(path.join(process.env.VIEWDIR as string, filepath), 'utf-8');
-    const document = parse(file);
-    if (document) {
-      if (process.env.LIVE) {
-        document.querySelector('head')?.appendChild(getHTML("live"));
-      }
-      document.querySelector('head')?.appendChild(getHTML("common"));
-      file = document.toString();
-    }
-
-    res.statusCode = 200;
-    res.setHeader("Content-Type", "text/html");
-    res.end(file)
-  }
-  catch (error) {
-    res.statusCode = 500;
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify(error));
-  }
-}
 function handleInfo(req: http.IncomingMessage, res: http.ServerResponse) {
   res.statusCode = 200;
   res.setHeader("Content-Type", "text/html");
   res.end("<h1>hello asset</h1>")
 }
 async function handleFile(req: http.IncomingMessage, res: http.ServerResponse) {
-  let file = getFILE(req.url as string);
+  let file = getFILE(req);
 
   if (file === null) {
     res.statusCode = 404;
@@ -103,7 +76,7 @@ async function handleFile(req: http.IncomingMessage, res: http.ServerResponse) {
         await build(file.url);
       }
 
-      file = getFILE(req.url as string);
+      file = getFILE(req);
       if (file === null) {
         res.statusCode = 500;
         res.setHeader("Content-Type", "application/json");
@@ -117,44 +90,70 @@ async function handleFile(req: http.IncomingMessage, res: http.ServerResponse) {
 }
 
 // helper functions 
-function getHTML(type: "common" | "live"): HTMLElement {
-  if (templateHTML[type] === null) {
-    let file = fs.readFileSync(path.join(process.env.SCRIPTDIR as string, `template/${type}.html`), 'utf-8');
-    if (type === "live") {
-      file = file.replace('PORT', process.env.PORT as string);
+function getBaseUrl(req: http.IncomingMessage) {
+  let preurl = "";
+
+  // Ensure referer header is present
+  if (req.headers.referer) {
+    // Parse the referer URL
+    const refererUrl = new URL(req.headers.referer);
+
+    // Get the pathname from the URL (e.g., /server or /server/index.html)
+    let pathname = refererUrl.pathname;
+
+    // If the pathname ends with a filename (e.g., index.html), remove it
+    if (/\w*\.\w+$/.test(pathname)) {
+      pathname = pathname.substring(0, pathname.lastIndexOf('/'));
     }
-    templateHTML[type] = parse(file);
+
+    preurl = pathname;
   }
 
-  return templateHTML[type];
+  return preurl;
 }
-function getFILE(url: string) {
+function getFILE(req: http.IncomingMessage) {
+  const url = req.url as string;
   let fileinfo = null;
-
   // theme related 
 
+  // REMOVE-BLOCK
+  // NOTE this needs some remapping, im keeping some original but the latest (preurl, withoutpreurl) 
+  // maybe should be always considered and ONLY considered.. 
+
+  // NOTE i actually comment it out.. lets see if no probelms occur then this could be removed 
+  // // get based on .temp folder 
+  // fileinfo = trypath(path.join(process.env.LOCATION as string, ".temp", url));
+  // if (fileinfo !== null) return fileinfo;
+  // REMOVE-BLOCK end 
+
+  // we need to seperate the url from wherever the client is : localhost:3000/server -> server 
+  // access file: /style.css should yield -> /server/style.css and not just /style.css
+  const preurl = getBaseUrl(req);
+  let preurl_withslashend = preurl;
+  if (!preurl_withslashend.endsWith('/')) preurl_withslashend += "/";
+  let withoutpreurl = url;
+  if (url.startsWith(preurl_withslashend)) {
+    withoutpreurl = url.split(preurl_withslashend)[1];
+  }
+
   // get based on .temp folder 
-  fileinfo = trypath(path.join(process.env.VIEWDIR as string, ".temp", url));
+  fileinfo = trypath(path.join(process.env.LOCATION as string, ".temp", preurl, withoutpreurl));
   if (fileinfo !== null) return fileinfo;
 
-  // get based on view folder 
-  fileinfo = trypath(path.join(process.env.VIEWDIR as string, url));
+  // get based on view folder
+  fileinfo = trypath(path.join(process.env.LOCATION as string, preurl, withoutpreurl));
   if (fileinfo !== null) return fileinfo;
 
-  // get based on view folder (public/asset)
-  fileinfo = trypath(path.join(process.env.VIEWDIR as string, "public", url));
-  if (fileinfo !== null) return fileinfo;
+  for (let local of ["asset", "assets", "public"]) {
+    fileinfo = trypath(path.join(process.env.LOCATION as string, preurl, local, withoutpreurl));
+    if (fileinfo !== null) return fileinfo;
+  }
 
-  fileinfo = trypath(path.join(process.env.VIEWDIR as string, "asset", url));
-  if (fileinfo !== null) return fileinfo;
-
-  // get based on package folder (asset)
-  fileinfo = trypath(path.join(process.env.PACKAGEDIR as string, "asset", url));
-  if (fileinfo !== null) return fileinfo;
-
-  // get based on global folder (asset)
-  fileinfo = trypath(path.join(process.env.ROOTDIR as string, "asset", url));
-  if (fileinfo !== null) return fileinfo;
+  // now based on any asset folders 
+  for (let folder of ASSET_FOLDERS) {
+    fileinfo = trypath(path.join(folder, url));
+    if (fileinfo !== null) return fileinfo;
+  }
 
   // get based on dependency folder (asset)
   for (let dep in DEPENDENCY) {

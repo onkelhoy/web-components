@@ -5,7 +5,7 @@ import * as esbuild from 'esbuild';
 // local imports
 import { update as socketupdate, error as socketerror } from './socket';
 
-const outputfolder = path.join(process.env.VIEWDIR as string, '.temp');
+const outputfolder = path.join(process.env.LOCATION as string, '.temp');
 
 // Plugin for handling rebuilds with esbuild
 const RebuildPlugin = {
@@ -37,18 +37,20 @@ const RebuildPlugin = {
       }
       catch (error) {
         // Log errors that occur during the rebuild handling
-        if (process.env.VERBOSE === "true") console.log(error)
+        if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log(error)
         console.log('something went wrong')
       }
     })
   },
 }
 
-const output_dir = path.join(process.env.VIEWDIR as string, '.temp');
+const output_dir = path.join(process.env.LOCATION as string, '.temp');
 
 function strip(url: string) {
-  const stripped = url
-    .replace(process.env.VIEWDIR as string + "/", '')
+  let loc = process.env.LOCATION as string;
+  if (!loc.endsWith('/')) loc += "/";
+
+  const stripped = url.replace(loc, '');
   return stripped;
 }
 
@@ -69,7 +71,7 @@ export const contexts: Record<string, {
 // Function to initiate watch mode on a file path with esbuild
 export async function watch(file_path: string) {
   if (!contexts[file_path]) {
-    if (process.env.VERBOSE === "true") console.log('[esbuild - watch]', file_path)
+    if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log('[esbuild - watch]', file_path)
     const outfile = path.join(output_dir, strip(file_path));
 
     await build(file_path, outfile);
@@ -89,7 +91,7 @@ export async function watch(file_path: string) {
 }
 export async function build(file_path: string, outfile: string | null = null) {
   if (outfile === null) {
-    if (process.env.VERBOSE === "true") console.log('[esbuild - build]', file_path)
+    if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log('[esbuild - build]', file_path)
     outfile = path.join(output_dir, strip(file_path));
   }
 
@@ -102,6 +104,6 @@ export async function build(file_path: string, outfile: string | null = null) {
 }
 // Clean up all contexts
 export function cleanup() {
-  if (process.env.VERBOSE === "true") console.log('\x1b[32m- [esbuild] disposing watcher-contexts\x1b[0m')
+  if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log('\x1b[32m- [esbuild] disposing watcher-contexts\x1b[0m')
   Object.values(contexts).forEach(v => v.ctx.dispose());
 }

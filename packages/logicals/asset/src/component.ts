@@ -1,5 +1,5 @@
 // system
-import { CustomElement, property } from "@papit/web";
+import { CustomElement, property } from "@papit/core";
 
 export class Asset extends CustomElement {
 

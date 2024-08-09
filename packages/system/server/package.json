@@ -1,29 +1,29 @@
 {
   "name": "@papit/server",
-  "version": "0.0.4",
+  "version": "0.0.12",
   "scripts": {
-    "build:sass": "sh .bin/_utils/sass.sh",
-    "build:react": "sh .bin/_utils/react.sh",
-    "build": ".bin/build.sh",
-    "watch": ".bin/watch.sh",
-    "init": "sh .bin/_utils/init.sh",
-    "start": ".bin/start.sh",
-    "preversion": ".bin/_utils/preversion.sh",
-    "postversion": ".bin/_utils/postversion.sh",
-    "publish:manual": ".bin/publish.sh",
-    "test": ".bin/test.sh"
+    "build:sass": "sh bin/_utils/sass.sh",
+    "build:react": "sh bin/_utils/react.sh",
+    "build": "bin/build.sh",
+    "watch": "bin/watch.sh",
+    "init": "sh bin/_utils/init.sh",
+    "start": "bin/start.sh",
+    "preversion": "bin/_utils/preversion.sh",
+    "postversion": "bin/_utils/postversion.sh",
+    "publish:manual": "bin/publish.sh",
+    "test": "npx playwright test -c tests/playwright.config.ts"
   },
-  "main": "./build/bundle.js",
+  "main": "./lib/bundle.js",
   "files": [
     "asset/",
-    "build/",
-    ".bin/cli.sh"
+    "lib/",
+    "bin/cli.sh"
   ],
   "exports": {
-    ".": "./build/bundle.js"
+    ".": "./lib/bundle.js"
   },
   "bin": {
-    "server": ".bin/cli.sh"
+    "server": "bin/cli.sh"
   },
   "author": "Henry",
   "private": false,

@@ -11,24 +11,24 @@
       "esnext"
     ],
     "jsx": "react-jsx",
-    "strict": true,
+    "strict": false,
     "esModuleInterop": false,
-    "allowSyntheticDefaultImports": true,
+    "allowSyntheticDefaultImports": false,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "outDir": "build",
+    "outDir": "lib",
     "sourceMap": true,
     "inlineSources": true,
     "rootDir": "./",
     "allowJs": true,
     "declaration": true,
-    "declarationDir": "types",
+    "declarationDir": "lib/types",
     "incremental": true,
     "resolveJsonModule": true
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.d.ts"
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts"
   ]
 }

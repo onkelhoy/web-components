@@ -1,29 +1,29 @@
 {
   "name": "@papit/icon",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
-    "build:sass": "sh .bin/_utils/sass.sh",
-    "build:react": "sh .bin/_utils/react.sh",
-    "build": ".bin/build.sh",
-    "watch": ".bin/watch.sh",
-    "init": "sh .bin/_utils/init.sh",
-    "start": ".bin/start.sh",
-    "preversion": ".bin/_utils/preversion.sh",
-    "postversion": ".bin/_utils/postversion.sh",
-    "publish:manual": ".bin/publish.sh",
-    "test": ".bin/test.sh"
+    "build:sass": "sh bin/_utils/sass.sh",
+    "build:react": "sh bin/_utils/react.sh",
+    "build": "bin/build.sh",
+    "watch": "bin/watch.sh",
+    "init": "sh bin/_utils/init.sh",
+    "start": "bin/start.sh",
+    "preversion": "bin/_utils/preversion.sh",
+    "postversion": "bin/_utils/postversion.sh",
+    "publish:manual": "bin/publish.sh",
+    "test": "npx playwright test -c tests/playwright.config.ts",
+    "test:update-snapshots": "npx playwright test --update-snapshots -c tests/playwright.config.ts"
   },
-  "main": "./build/bundle.js",
-  "types": "./types/src/index.d.ts",
+  "main": "./lib/bundle.js",
+  "types": "./lib/types/index.d.ts",
   "type": "module",
   "files": [
     "asset/",
-    "types/",
-    "build/"
+    "lib/"
   ],
   "exports": {
-    "./react": "./build/react/index.js",
-    ".": "./build/bundle.js"
+    "./react": "./lib/react/index.js",
+    ".": "./lib/bundle.js"
   },
   "author": "Henry",
   "private": false,
@@ -37,16 +37,18 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
-    "@papit/web": "^0.0.0",
-    "@papit/asset": "^0.0.0",
+    "@papit/asset": "0.0.1",
+    "@papit/core": "^0.0.0",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "esbuild": "^0.17.18",
+    "@playwright/test": "^1.45.3",
     "chokidar": "^3.6.0",
+    "esbuild": "^0.17.18",
+    "node-html-parser": "^6.1.5",
+    "playwright": "^1.45.3",
     "sass": "^1.70.0",
-    "typescript": "^5.0.4",
-    "node-html-parser": "^6.1.5"
+    "typescript": "^5.0.4"
   },
   "keywords": [
     "web-component",

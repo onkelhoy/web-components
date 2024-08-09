@@ -15,7 +15,9 @@ export function start() {
 
   server.listen(PORT + attempts, () => {
     process.env.PORT = (PORT + attempts) + "";
-    console.log("\x1b[33m", `server:\x1b[36m${PORT + attempts}\x1b[33m  - running`, "\x1b[0m");
+    if (process.env.LOGLEVEL !== "none") {
+      console.log("\x1b[33m", `server:\x1b[36m${PORT + attempts}\x1b[33m  - running`, "\x1b[0m");
+    }
   });
 
   // events 
@@ -27,7 +29,7 @@ export function start() {
         if (server) server.close();
         start();
       }
-      else {
+      else if (process.env.LOGLEVEL !== "none") {
         console.log(`[\x1b[31merror\x1b[0m] port spaces between [${process.env.PORT || 3000}, ${PORT + attempts}] are all taken, please free up some ports`);
       }
     }
@@ -39,5 +41,7 @@ export function start() {
 
 export function close() {
   server?.close();
-  console.log("\x1b[33m", `server:\x1b[36m${PORT + attempts}\x1b[33m - shutdown`, "\x1b[0m");
+  if (process.env.LOGLEVEL !== "none") {
+    console.log("\x1b[33m", `server:\x1b[36m${PORT + attempts}\x1b[33m - shutdown`, "\x1b[0m");
+  }
 }
