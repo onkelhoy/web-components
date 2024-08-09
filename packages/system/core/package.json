@@ -2,17 +2,16 @@
   "name": "@papit/core",
   "version": "0.0.0",
   "scripts": {
-    "build:sass": "sh bin/_utils/sass.sh",
-    "build:react": "sh bin/_utils/react.sh",
+    "build:sass": "bash bin/_utils/sass.sh",
+    "build:react": "bash bin/_utils/react.sh",
     "build": "bin/build.sh",
     "watch": "bin/watch.sh",
-    "init": "sh bin/_utils/init.sh",
+    "init": "bash bin/_utils/init.sh",
     "start": "bin/start.sh",
     "preversion": "bin/_utils/preversion.sh",
     "postversion": "bin/_utils/postversion.sh",
     "publish:manual": "bin/publish.sh",
-    "test": "npx playwright test -c tests/playwright.config.ts",
-    "test:update-snapshots": "npx playwright test --update-snapshots -c tests/playwright.config.ts"
+    "test": "npx playwright test -c tests/playwright.config.ts"
   },
   "type": "module",
   "types": "./lib/types/index.d.ts",
@@ -40,6 +39,7 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
+    "@types/node": "^20.14.15",
     "chokidar": "^3.6.0",
     "esbuild": "^0.17.18",
     "node-html-parser": "^6.1.5",

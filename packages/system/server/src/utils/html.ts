@@ -68,10 +68,10 @@ export function route(req: http.IncomingMessage, res: http.ServerResponse) {
       }
 
       directories.forEach(dir => {
-        listelment?.appendChild(parse(`<li><span>🗂️</span><a href="/${dir}">${dir}/</a></li>`));
+        listelment?.appendChild(parse(`<li><span>🗂️</span><a href="${path.join(req.url || '/', dir)}">${dir}/</a></li>`));
       });
       files.forEach(file => {
-        listelment?.appendChild(parse(`<li><span>📄</span><a href="/${file}">${file}</a></li>`));
+        listelment?.appendChild(parse(`<li><span>📄</span><a href="${path.join(req.url || '/', file)}">${file}</a></li>`));
       });
     }
     else {

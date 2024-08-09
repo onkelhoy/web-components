@@ -36,7 +36,7 @@ PACKAGE_PREFIX=""
 PROJECTLICENSE=$(node -pe "require('$ROOTDIR/package.json').license")
 
 # now lets get the name for the theme 
-sh "$SCRIPTDIR/theme/scripts/name.sh"
+bash "$SCRIPTDIR/theme/scripts/name.sh"
 source "$SCRIPTDIR/theme/.tmp"
 export NAME=$NAME
 export PACKAGE_NAME=$PACKAGE_NAME
@@ -46,7 +46,7 @@ export destination="packages/themes/$NAME"
 #endregion VARIABLES
 
 # running copy and replace script 
-sh $SCRIPTDIR/theme/scripts/copy.sh
+bash $SCRIPTDIR/theme/scripts/copy.sh
 
 # initialize theme 
 cd "$destination" # in 

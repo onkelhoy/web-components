@@ -1,8 +1,8 @@
 /* eslint-disable indent */
-const fs = require("fs");
-const path = require("path");
-const {spawn} = require('child_process');
-const {iterate, initializePackages} = require('./dependency-order');
+const fs = require("node:fs");
+const path = require("node:path");
+const {spawn} = require('node:child_process');
+const {iterate, initializePackages} = require('../_utils/dependency-order');
 
 // variables
 // const SEMANTIC_VERSION = process.env.SEMANTIC_VERSION;
@@ -64,11 +64,8 @@ async function execute_individual(info, VERSIONDATA) {
     return;
   }
 
-  const scriptPath = path.join(__dirname, 'individual.sh');
   const args = [info.location, package_version];
-
-
-  const childProcess = spawn(scriptPath, args);
+  const childProcess = spawn(path.join(process.env.SCRIPTDIR, "individual.sh"), args);
   const status = await spawnLogs(childProcess);
 
   CONFIRMLIST.push({status, title: info.name});
@@ -82,6 +79,16 @@ async function execute_individual(info, VERSIONDATA) {
   }
 }
 
+function getStatusIcon(status) {
+  if (status === "success") return "✅";
+  if (status === "failed") return "❎";
+  if (status === "warning") return "⚠️";
+  if (status === "skipped") return "⏩";
+
+  return "🚫"
+}
+
+
 function spawnLogs(process) {
   let errors = false;
 
@@ -91,6 +98,22 @@ function spawnLogs(process) {
 
       if (output.includes("[individual]: skipped")) {
         res('skipped');
+        return;
+      }
+      else if (output.includes("[individual]: failed")) {
+        res('failed');
+        return;
+      }
+      else if (output.includes("[individual]: success")) {
+        res('success');
+        return;
+      }
+      else if (output.includes("[individual]: passed")) {
+        res('success');
+        return;
+      }
+      else if (output.includes("[individual]: warning")) {
+        res('warning');
         return;
       }
       else if (output.includes("[individual]: complete")) {
@@ -166,16 +189,6 @@ function spawnLogs(process) {
     });
   })
 }
-
-function getStatusIcon(status) {
-  if (status === "success") return "✅";
-  if (status === "failed") return "❎";
-  if (status === "warning") return "⚠️";
-  if (status === "skipped") return "⏩";
-
-  return "🚫"
-}
-
 async function init() {
   VERSIONDATA = await getjsonData();
   await iterate(execute, true, true); // print = true, grouping = true (github action printing ::group::)

@@ -19,16 +19,16 @@ export GITNAME=${GITNAME:-anonymous} # if empty then anonymous will be default a
 for arg in "$@"; do
   # call script with all arguments 
   if [[ $arg == "--project" ]]; then
-    sh "$SCRIPTDIR/project/run.sh" "$@"
+    bash "$SCRIPTDIR/project/run.sh" "$@"
     exit 0
   elif [[ $arg == "--component" ]]; then
-    sh "$SCRIPTDIR/component/run.sh" "$@"
+    bash "$SCRIPTDIR/component/run.sh" "$@"
     exit 0
   elif [[ $arg == "--theme" ]]; then
-    sh "$SCRIPTDIR/theme/run.sh" "$@"
+    bash "$SCRIPTDIR/theme/run.sh" "$@"
     exit 0
   elif [[ $arg == "--package" ]]; then
-    sh "$SCRIPTDIR/package/run.sh" "$@"
+    bash "$SCRIPTDIR/package/run.sh" "$@"
     exit 0
   fi
 done
@@ -48,13 +48,13 @@ done
 echo ""
 
 if [[ $option_answer == 1 || $option_answer == "package" ]]; then 
-  sh "$SCRIPTDIR/package/run.sh" "$@"
+  bash "$SCRIPTDIR/package/run.sh" "$@"
   exit 0
 elif [[ $option_answer == 2 || $option_answer == "theme" ]]; then 
-  sh "$SCRIPTDIR/theme/run.sh" "$@"
+  bash "$SCRIPTDIR/theme/run.sh" "$@"
   exit 0
 else 
-  sh "$SCRIPTDIR/project/run.sh" "$@"
+  bash "$SCRIPTDIR/project/run.sh" "$@"
   exit 0
 fi 
 

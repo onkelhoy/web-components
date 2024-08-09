@@ -2,11 +2,11 @@
   "name": "@papit/icon",
   "version": "0.0.1",
   "scripts": {
-    "build:sass": "sh bin/_utils/sass.sh",
-    "build:react": "sh bin/_utils/react.sh",
+    "build:sass": "bash bin/_utils/sass.sh",
+    "build:react": "bash bin/_utils/react.sh",
     "build": "bin/build.sh",
     "watch": "bin/watch.sh",
-    "init": "sh bin/_utils/init.sh",
+    "init": "bash bin/_utils/init.sh",
     "start": "bin/start.sh",
     "preversion": "bin/_utils/preversion.sh",
     "postversion": "bin/_utils/postversion.sh",
@@ -42,6 +42,7 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
+    "@types/node": "^20.14.15",
     "@playwright/test": "^1.45.3",
     "chokidar": "^3.6.0",
     "esbuild": "^0.17.18",

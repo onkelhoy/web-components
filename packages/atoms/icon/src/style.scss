@@ -6,6 +6,8 @@
   width: var(--icon-custom-size);
   height: var(--icon-custom-size);
 
+  font-family: var(--icon-font-family, var(--pap-font-family), Verdana, Geneva, Tahoma, sans-serif);
+
   span[part="flag"] {
     font-size: 1.5rem;
   }

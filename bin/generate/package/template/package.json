@@ -2,11 +2,11 @@
   "name": "PLACEHOLDER_FULL_NAME",
   "version": "0.0.0",
   "scripts": {
-    "build:sass": "sh bin/_utils/sass.sh",
-    "build:react": "sh bin/_utils/react.sh",
+    "build:sass": "bash bin/_utils/sass.sh",
+    "build:react": "bash bin/_utils/react.sh",
     "build": "bin/build.sh",
     "watch": "bin/watch.sh",
-    "init": "sh bin/_utils/init.sh",
+    "init": "bash bin/_utils/init.sh",
     "start": "bin/start.sh",
     "preversion": "bin/_utils/preversion.sh",
     "postversion": "bin/_utils/postversion.sh",
@@ -40,6 +40,7 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
+    "@types/node": "^20.14.15",
     "@papit/codeblock": "^0.0.0",
     "@papit/server": "^0.0.0",
     "@papit/card": "^0.0.0",

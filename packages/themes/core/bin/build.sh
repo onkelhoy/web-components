@@ -28,8 +28,14 @@ find . -name "*.scss" | grep -v "\.skip\.scss$" | while read -r file; do compile
 LIGHTROOT=1
 DARKROOT=1
 
+# Remove the build directory
+rm -rf lib
+
+# then re-create it 
+mkdir lib
+
 # Specify the output file
-outputFile="style.css"
+outputFile="lib/style.css"
 
 # Clear or create the output file
 > "$outputFile"

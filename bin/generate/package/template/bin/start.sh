@@ -26,7 +26,7 @@ npm run build -- --dev
 npm run watch &
 watch_pid=$!
 
-npx @papit/server --verbose --location=$package/views/$view --live $@ &
+npx @papit/server --verbose --open --location=$package/views/$view --live $@ &
 server_pid=$!
 
 # final 

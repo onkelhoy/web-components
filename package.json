@@ -8,11 +8,12 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "scripts": {
-    "generate": "sh bin/generate/run.sh",
-    "clean": "sh bin/_utils/clean.sh",
-    "init": "sh bin/_utils/init.sh",
+    "generate": "bash bin/generate/run.sh",
+    "clean": "bash bin/_utils/clean.sh",
+    "init": "bash bin/_utils/init.sh",
     "publish": "bash bin/publish/run.sh",
-    "build": "sh bin/lib/run.sh"
+    "build": "bash bin/build/run.sh",
+    "test": "bash bin/test/run.sh"
   },
   "keywords": [
     "web-component",

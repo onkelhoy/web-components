@@ -25,7 +25,7 @@ npm run build -- --dev
 npm run watch &
 watch_pid=$!
 
-npx @papit/server --log-level="debug" --location=$(pwd)/views --live $@ &
+npx @papit/server --verbose --open --location=$(pwd)/views --live $@ &
 server_pid=$!
 
 # final 

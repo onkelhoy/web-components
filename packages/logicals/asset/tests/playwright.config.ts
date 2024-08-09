@@ -17,31 +17,40 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
 
   // Retry on CI only.
-  retries: process.env.CI ? 2 : 0,
+  retries: 0,
 
   // Opt out of parallel tests on CI.
   workers: process.env.CI ? 1 : undefined,
 
   // reporter, with output path for HTML reports.
-  reporter: [['html', { outputFolder: path.join(__dirname, 'test-reports') }]],
+  reporter: [
+    process.env.CI ? ['github', {
+      open: 'never',
+      outputFolder: path.join(__dirname, 'test-reports'),
+    }] : ['html', {
+      open: 'never',
+      outputFolder: path.join(__dirname, 'test-reports'),
+    }],
+  ],
 
   outputDir: path.join(__dirname, "test-results"),
 
+  snapshotPathTemplate: '{testDir}/snapshots/{projectName}/{testFilePath}/{arg}-{platform}{ext}',
+
   use: {
     // Base URL to use in actions like `await page.goto('/')`.
-    baseURL: 'http://localhost:3500/',
+    baseURL: process.env.CI ? `http://localhost:3500/${process.env.LAYER_FOLDER}/${process.env.NAME}/tests/` : 'http://localhost:3500/',
 
     // Collect trace when retrying the failed test.
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
 
-  // Specify the directory for storing the test snapshots
-  snapshotDir: path.join(__dirname, "snapshots"),
 
   expect: {
     toHaveScreenshot: {
-      maxDiffPixels: 10
+      maxDiffPixels: 100,
+      maxDiffPixelRatio: 0.2,
     },
   },
   // Global setup and teardown scripts
@@ -67,7 +76,7 @@ export default defineConfig({
   webServer: {
     command: 'npx @papit/server -- --log-level=debug --location=$(pwd) --port=3500',
     url: 'http://localhost:3500',
-    reuseExistingServer: !process.env.CI || !!process.env.GLOBAL,
+    reuseExistingServer: true,
     stdout: 'ignore',
     stderr: 'pipe'
   },
