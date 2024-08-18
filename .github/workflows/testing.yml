@@ -19,16 +19,17 @@ on:
 
 jobs:
   commitcheck:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: |
-        commit_message=$(git log -1 --pretty=%B)
+          commit_message=$(git log -1 --pretty=%B)
 
-        # Check if the commit message ends with '[skip action]'
-        if [[ "$commit_message" == *"[skip action]" ]]; then
-          echo "Skipping workflow due to '[skip action]' marker in commit message."
-          exit 1
-        fi
+          # Check if the commit message ends with '[skip action]'
+          if [[ "$commit_message" == *"[skip action]" ]]; then
+            echo "Skipping workflow due to '[skip action]' marker in commit message."
+            exit 1
+          fi
 
   initialise:
     needs: commitcheck
