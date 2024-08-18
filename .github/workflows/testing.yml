@@ -1,51 +1,106 @@
-# todo: choose one
+name: Test Workflow
 
-name: Playwright Tests
 on:
-  push:
+  pull_request:
     branches: [ main, master ]
-jobs:
-  test:
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 18
-    - name: Install dependencies
-      run: npm ci
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+  workflow_dispatch:  # Allows manual triggering
+    inputs:
+      force_build:
+        description: 'Force build?'
+        required: false
+        default: false
+        type: boolean 
 
+      update_snapshots:
+        description: 'Update snapshots?'
+        required: true
+        default: false
+        type: boolean
 
-# via containers 
-name: Playwright Tests
-on:
-  push:
-    branches: [ main, master ]
 jobs:
-  playwright:
-    name: 'Playwright Tests'
-    runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright:v1.45.1-jammy
+  commitcheck:
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - run: |
+        commit_message=$(git log -1 --pretty=%B)
+
+        # Check if the commit message ends with '[skip action]'
+        if [[ "$commit_message" == *"[skip action]" ]]; then
+          echo "Skipping workflow due to '[skip action]' marker in commit message."
+          exit 1
+        fi
+
+  initialise:
+    needs: commitcheck
+    uses: ./.github/workflows/initialise.yml
+    with:
+      force_build: ${{ github.event.inputs.force_build  || false }}
+
+  test:
+    needs: initialise
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+        # setup node
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
-      - name: Install dependencies
-        run: npm ci
-      - name: Run your tests
-        run: npx playwright test
-        env:
-          HOME: /root
+          node-version-file: .nvmrc
+
+        # caching: node_modules
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: 'node_modules'
+          key: ${{ runner.os }}-modules
+
+        # caching: package builds
+      - name: Cache build artifacts
+        uses: actions/cache@v4
+        with:
+          path: packages/**/lib
+          key: ${{ runner.os }}-build
+
+        # caching: package builds
+      - name: Cache Playwright binaries
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright
+
+      # this should still respect the cached binary files for playwright but also just "install" them
+      - name: Installing Playwright
+        run: npx playwright install --with-deps 
+        
+      - name: Conditionally Update Screenshots
+        if: ${{ github.event.inputs.update_snapshots == 'true' }}
+        run: npm test -- --update-snapshots
+
+        # Run tests
+      - name: Running Tests 
+        run: npm test
+
+      - name: Commit and Push Changes
+        run: |
+          git add ./packages/**/*/tests/snapshots
+          if [[ -n $(git status -s) ]]; then
+            
+            git config user.name "GitHub Actions"
+            git config user.email "actions@github.com"
+            git commit --amend -m "$(git log -1 --pretty=%B; echo -e '\n- add: github-runner snapshots [skip action]')" > /dev/null
+
+            git push --force-with-lease
+          fi
+
+      - name: Upload Playwright artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts
+          overwrite: true  # Allow overwriting of artifacts with the same name
+          path: |
+            packages/**/*/tests/test-results  # Adjust the path according to where your artifacts are saved
+            packages/**/*/tests/snapshots  # Adjust the path according to where your artifacts are saved
+          retention-days: 3  # Optional: specify how long to keep artifacts

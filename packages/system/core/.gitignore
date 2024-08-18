@@ -1,11 +1,17 @@
 # directories
 node_modules/
 build/
-types/
+dist/
+lib/
 isolated/
 web/
+types/
 .temp/
 .npm/
+
+# test
+test-results/
+test-reports/
 
 # Ignore OS-specific files
 Thumbs.db

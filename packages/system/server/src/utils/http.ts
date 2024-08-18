@@ -1,5 +1,7 @@
 // import statements 
 import http from "node:http";
+import fs from "node:fs";
+import path from "node:path";
 
 // local imports 
 import { upgrade } from "./socket";
@@ -17,6 +19,8 @@ export function start() {
     process.env.PORT = (PORT + attempts) + "";
     if (process.env.LOGLEVEL !== "none") {
       console.log("\x1b[33m", `server:\x1b[36m${PORT + attempts}\x1b[33m  - running`, "\x1b[0m");
+
+      fs.appendFileSync(path.join(process.env.LOCATION as string, ".temp/.info"), `PORT=${PORT + attempts}`)
     }
   });
 

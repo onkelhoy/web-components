@@ -9,5 +9,5 @@ SERVERDIR=$(dirname $(dirname "$(realpath "$0")"))
 if [ ! -f "$SERVERDIR/lib/run.sh" ]; then
   echo "[error] server lib/run.sh file not found"
 else
-  sh $SERVERDIR/lib/run.sh $@
+  bash $SERVERDIR/lib/run.sh $@
 fi

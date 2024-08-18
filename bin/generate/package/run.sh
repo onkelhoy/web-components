@@ -31,7 +31,7 @@ PACKAGE_PREFIX=""
 PROJECTLICENSE=$(node -pe "require('$ROOTDIR/package.json').license")
 
 # begin by getting the layer-name 
-sh "$SCRIPTDIR/package/scripts/layer.sh"
+bash "$SCRIPTDIR/package/scripts/layer.sh"
 source "$SCRIPTDIR/package/.tmp"
 if [ "$EXIT" == true ]; then 
   exit 
@@ -42,7 +42,7 @@ export LAYER_NAME=$LAYER_NAME
 export LAYER_INCLUDE=$LAYER_INCLUDE
 
 # now lets get the name for the package 
-sh "$SCRIPTDIR/package/scripts/name.sh"
+bash "$SCRIPTDIR/package/scripts/name.sh"
 source "$SCRIPTDIR/package/.tmp"
 export NAME=$NAME
 export PACKAGE_NAME=$PACKAGE_NAME
@@ -54,10 +54,10 @@ export destination="$TARGET_FOLDER/$NAME"
 #endregion VARIABLES
 
 # running copy and replace script 
-sh $SCRIPTDIR/package/scripts/copy.sh
+bash $SCRIPTDIR/package/scripts/copy.sh
 
 # now its time to call in component script 
-sh $SCRIPTDIR/component/run.sh "$destination" --package
+bash $SCRIPTDIR/component/run.sh "$destination" --package
 
 # initialize package 
 cd "$destination" # in 

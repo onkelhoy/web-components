@@ -103,8 +103,8 @@ fi
 ############### END #################
 #endregion PREFIX
 
-sh "$SCRIPTDIR/component/scripts/name.sh"
-sh "$SCRIPTDIR/component/scripts/type.sh"
+bash "$SCRIPTDIR/component/scripts/name.sh"
+bash "$SCRIPTDIR/component/scripts/type.sh"
 
 source "$SCRIPTDIR/component/.tmp"
 COMPONENT_HTML_NAME=""
@@ -113,7 +113,7 @@ if [ -d "$ROOTDIR/bin/generate/component/template/$COMPONENT_TYPE/views" ]; then
 fi 
 echo "COMPONENT_HTML_NAME=$COMPONENT_HTML_NAME" >> "$SCRIPTDIR/component/.tmp"
 
-sh "$SCRIPTDIR/component/scripts/copy.sh"
+bash "$SCRIPTDIR/component/scripts/copy.sh"
 
 # no unecessary prints..
 if [ "$INITIAL_PACKAGE" == false ]; then 

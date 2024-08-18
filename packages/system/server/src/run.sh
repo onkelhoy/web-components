@@ -16,11 +16,15 @@ export DIRECTORY="./template/directory.html"
 export COMMON="./template/common.html"
 export WRAPPER="./template/wrapper.html"
 
+DOOPEN=false
+
 for arg in "$@"; do
   if [[ $arg == --port=* ]]; then 
     export PORT="${arg#*=}"
   elif [[ $arg == --location=* ]]; then 
     export LOCATION="${arg#*=}"
+  elif [[ $arg == --open ]]; then 
+    export DOOPEN=true
   
   # Log Levels 
   elif [[ $arg == --log-level=* ]]; then 
@@ -136,6 +140,7 @@ export AUTOSTART=true
 # in case :: like playwright sends SIGKILL instead of SIGTERM - no cleanup possible 
 rm -rf "$LOCATION/.temp"
 mkdir "$LOCATION/.temp"
+touch "$LOCATION/.temp/.info"
 
 has_cleaned=false
 function cleanup() {
@@ -164,5 +169,35 @@ elif [[ -f "$SCRIPTDIR/src/index.js" ]]; then
 elif [[ "$LOGLEVEL" == "debug" ]]; then
   echo "[\x1b[31merror] could not find server scripts\x1b[0m"
 fi
+
+echo "SERVER_PID=$server_pid" >> "$LOCATION/.temp/.info"
+sleep 1
+
+if [[ $DOOPEN == true ]]; then 
+  source "$LOCATION/.temp/.info"
+
+  if [[ -n "$PORT" ]]; then 
+    # Define the URL you want to open
+    URL="http://localhost:$PORT"
+
+    # Detect the operating system and open the URL
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+      # macOS
+      open "$URL"
+    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+      # Linux
+      if command -v xdg-open >/dev/null 2>&1; then
+        xdg-open "$URL"
+      else
+        echo "[\x1b[33merror\x1b[0m] xdg-open is not available, please install it to open URLs."
+      fi
+    elif [[ "$OSTYPE" == "cygwin" ]] || [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
+      # Windows (Cygwin, Git Bash, or Windows Subsystem for Linux)
+      start "$URL"
+    else
+      echo "[\x1b[33merror\x1b[0m] unsupported OS: Cannot open URL automatically."
+    fi
+  fi 
+fi 
 
 wait
