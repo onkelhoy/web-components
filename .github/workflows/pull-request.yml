@@ -1,38 +1,12 @@
-name: Test Workflow
+name: Pull Request Checks 
 
 on:
   pull_request:
     branches: [ main, master ]
-  workflow_dispatch:  # Allows manual triggering
-    inputs:
-      force_build:
-        description: 'Force build?'
-        required: false
-        default: false
-        type: boolean 
-
-      update_snapshots:
-        description: 'Update snapshots?'
-        required: true
-        default: false
-        type: boolean
 
 jobs:
-  commitcheck:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: |
-          commit_message=$(git log -1 --pretty=%B)
-
-          # Check if the commit message ends with '[skip action]'
-          if [[ "$commit_message" == *"[skip action]" ]]; then
-            echo "Skipping workflow due to '[skip action]' marker in commit message."
-            exit 1
-          fi
-
   initialise:
-    needs: commitcheck
+    if: "!contains(github.event.pull_request.title, 'wip:')"
     uses: ./.github/workflows/initialise.yml
     with:
       force_build: ${{ github.event.inputs.force_build  || false }}
@@ -55,6 +29,7 @@ jobs:
         with:
           path: 'node_modules'
           key: ${{ runner.os }}-modules
+          restore-keys: ${{ runner.os }}-modules
 
         # caching: package builds
       - name: Cache build artifacts
@@ -62,6 +37,7 @@ jobs:
         with:
           path: packages/**/lib
           key: ${{ runner.os }}-build
+          restore-keys: ${{ runner.os }}-build
 
         # caching: package builds
       - name: Cache Playwright binaries
@@ -70,6 +46,7 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright
+          restore-keys: ${{ runner.os }}-playwright
 
       # this should still respect the cached binary files for playwright but also just "install" them
       - name: Installing Playwright
@@ -83,20 +60,9 @@ jobs:
       - name: Running Tests 
         run: npm test
 
-      - name: Commit and Push Changes
-        run: |
-          git add ./packages/**/*/tests/snapshots
-          if [[ -n $(git status -s) ]]; then
-            
-            git config user.name "GitHub Actions"
-            git config user.email "actions@github.com"
-            git commit --amend -m "$(git log -1 --pretty=%B; echo -e '\n- add: github-runner snapshots [skip action]')" > /dev/null
-
-            git push --force-with-lease
-          fi
-
       - name: Upload Playwright artifacts
-        if: failure()
+        # if: failure()
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: playwright-artifacts

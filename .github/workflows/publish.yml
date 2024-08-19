@@ -34,6 +34,7 @@ jobs:
         with:
           path: 'node_modules'
           key: ${{ runner.os }}-modules
+          restore-keys: ${{ runner.os }}-modules
 
         # caching: package builds
       - name: Cache build artifacts
@@ -41,6 +42,7 @@ jobs:
         with:
           path: packages/**/lib
           key: ${{ runner.os }}-build
+          restore-keys: ${{ runner.os }}-build
 
         # Publish to npm
       - name: Publish to npmjs.com

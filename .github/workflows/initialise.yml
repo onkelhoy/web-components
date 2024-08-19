@@ -27,6 +27,7 @@ jobs:
         with:
           path: 'node_modules'
           key: ${{ runner.os }}-modules
+          restore-keys: ${{ runner.os }}-modules
 
         # caching: package builds
       - name: Cache build artifacts
@@ -34,6 +35,7 @@ jobs:
         with:
           path: packages/**/lib
           key: ${{ runner.os }}-build
+          restore-keys: ${{ runner.os }}-build
 
       # Building and Installing packages
       - name: Build & Install Packages
