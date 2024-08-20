@@ -83,9 +83,7 @@ export class Asset extends CustomElement {
       console.error('Something went wrong fetching asset:', error);
     }
   }
-  protected handleResponse(response: Response | string) {
-    console.log('well look at that, a response!');
-  }
+  protected handleResponse(response: Response | string) { }
   protected cacheData(file: string, data: string) {
     let filename = file;
     if (filename[0] === "/") filename = filename.slice(1, filename.length);

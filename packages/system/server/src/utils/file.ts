@@ -97,6 +97,12 @@ function getURL(req: http.IncomingMessage) {
   if (req.url) url = req.url;
   if (req.headers.referer) base = new URL(req.headers.referer).pathname;
 
+  // clearing up base from any file pointers 
+  const lastslash_base = base.lastIndexOf("/");
+  if (base.slice(lastslash_base, base.length).includes(".")) {
+    base = base.slice(0, lastslash_base);
+  }
+
   const urllastslash = url.lastIndexOf("/");
   let file = url.substring(urllastslash + 1, url.length);
   url = url.substring(0, urllastslash);

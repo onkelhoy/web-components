@@ -1,4 +1,4 @@
-<script defer>
+<script defer data-server-omitter>
   const ws = new WebSocket('ws://localhost:PLACEHOLDER_PORT'); // NOTE port is probably a misstake but browser is smart and defaults to same origin..
   ws.onerror = (error) => {
     console.error('live-server socket error:', error);
@@ -41,7 +41,7 @@
     document.body.appendChild(popup);
   });
 </script>
-<style>
+<style data-server-omitter>
   dialog#liveservererrorpopup {
     border: none;
     background: none;

@@ -1,6 +1,6 @@
 {
   "name": "@papit/server",
-  "version": "0.0.17",
+  "version": "0.0.20",
   "scripts": {
     "build:sass": "bash bin/_utils/sass.sh",
     "build:react": "bash bin/_utils/react.sh",

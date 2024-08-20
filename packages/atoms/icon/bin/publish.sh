@@ -21,7 +21,7 @@ elif [[ $choice == 3 ]]; then
 fi
 
 # Run build 
-npm run build -- --prod --bundle
+npm run build -- --prod
 
 # NPM Publish 
 npm publish

@@ -8,7 +8,7 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "scripts": {
-    "generate": "bash bin/generate/run.sh",
+    "create": "bash bin/create/run.sh",
     "clean": "bash bin/_utils/clean.sh",
     "init": "bash bin/_utils/init.sh",
     "publish": "bash bin/publish/run.sh",

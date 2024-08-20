@@ -11,7 +11,9 @@
     "preversion": "bin/_utils/preversion.sh",
     "postversion": "bin/_utils/postversion.sh",
     "publish:manual": "bin/publish.sh",
-    "test": "npx playwright test -c tests/playwright.config.ts"
+    "test": "npx playwright test -c tests/playwright.config.ts",
+    "test:chrome": "npm test -- --project=chromium",
+    "add:component": "sh bin/_utils/component.sh"
   },
   "type": "module",
   "types": "./lib/types/index.d.ts",

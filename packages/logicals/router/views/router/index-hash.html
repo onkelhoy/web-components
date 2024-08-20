@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Router prototype</title>
+
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+
+  <script defer src="main.js"></script>
+</head>
+
+<body>
+  <pap-card>
+    <pap-typography slot="header" variant="C1">Title</pap-typography>
+    <pap-codeblock display="both">
+      <button data-url="a">page A</button>
+      <button data-url="b">page B</button>
+      <button data-url="c">page C</button>
+
+      <button data-url="hello/world">page hello/world</button>
+      <button data-url="hello/BAJSKAKA/world">page hello/:foo/world</button>
+
+      <pap-router hash-based>
+        <pap-route path="hello/world" realpath="a"></pap-route>
+        <pap-route path="hello/:foo/world" realpath="c"></pap-route>
+      </pap-router>
+    </pap-codeblock>
+  </pap-card>
+</body>
+
+</html>

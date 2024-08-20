@@ -1,0 +1,26 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>router test</title>
+
+  <script defer src="main.js"></script>
+</head>
+
+<body>
+  <button data-testid="button-a" data-url="a">a</button>
+  <button data-testid="button-b" data-url="b">b</button>
+  <button data-testid="button-c" data-url="c">c</button>
+
+  <button data-testid="button-hello-world" data-url="hello/world">hello world</button>
+  <button data-testid="button-hello-foo-world-ABC" data-url="hello/ABC/world">ABC</button>
+  <button data-testid="button-hello-foo-world-DEF" data-url="hello/DEF/world">DEF</button>
+
+  <pap-router hash-based data-testid="target">
+    <pap-route path="hello/world" realpath="c"></pap-route>
+    <pap-route path="hello/:foo/world" realpath="c"></pap-route>
+  </pap-router>
+</body>
+
+</html>
