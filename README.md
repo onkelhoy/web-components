@@ -4,8 +4,7 @@ Welcome to the `@pap-framework` ecosystem, an innovative framework designed to r
 
 **Author**: Henry Pap\
 **GitHub**: [onkelhoy](https://github.com/onkelhoy/web-components)\
-**License**: MIT
-
+**License**: @Papit License 1.0
 ### Ready, Set, Code
 
 You are all set to begin developing with the framework. The setup has taken care of the necessary tooling and dependencies. Dive into creating, developing, and managing your components within our innovative ecosystem.
@@ -24,7 +23,7 @@ We welcome community contributions, including bug reports, suggestions for impro
 
 ## License
 
-`@papit` is licensed under the MIT License. This permissive license allows for maximum flexibility in using, modifying, and buildributing the software, provided attribution is given, and liability is not assumed. See the [LICENSE file](./LICENSE) for details.
+`@papit` is licensed under the @Papit License 1.0. This permissive license allows for maximum flexibility in using, modifying, and buildributing the software, provided attribution is given, and liability is not assumed. See the [LICENSE file](./LICENSE) for details.
 
 ## Further Reading
 
