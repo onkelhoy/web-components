@@ -12,20 +12,24 @@ done
 # cleanup
 cleanup() {
   echo "[start] cleanup"
-  kill $watch_pid $server_pid
+  kill $watch_pid 
+  kill $server_pid
 
-  npm run build -- --prod --bundle
+  npm run build -- --prod
   exit 0
 }
 trap cleanup INT
 
-npm run build -- --dev
+# only run build if lib/bundle.js is not present 
+if [[ ! -f lib/bundle.js ]]; then 
+  npm run build -- --dev
+fi
 
 # runners
 npm run watch &
 watch_pid=$!
 
-npx @papit/server --verbose --open --location=$(pwd)/views --live $@ &
+npx @papit/server --verbose --location=$(pwd)/views --live $@ &
 server_pid=$!
 
 # final 

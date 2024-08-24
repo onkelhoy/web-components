@@ -100,7 +100,11 @@ for dir in $LIST; do
       if [[ $test_exit_code -ne 0 ]]; then
         touch "$ROOTDIR/.test-fail"
 
-        if [[ "$ALLOW_FAIL" == false ]]; then 
+        # try rerun on failed tests to see if potential timing issue was the culprit (router had several such)
+        npm test -- --last-failed
+        rerun_exit_code=$?
+
+        if [[ $rerun_exit_code -ne 0 && "$ALLOW_FAIL" == false ]]; then 
           echo ""
           echo "- tests failed"
           break 

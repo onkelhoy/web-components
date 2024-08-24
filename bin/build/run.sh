@@ -19,6 +19,7 @@ fi
 
 echo "flags:" 
 echo "- FORCE: $FORCE"
+echo ""
 
 for package in $LIST; do
   cd $package
@@ -27,7 +28,7 @@ for package in $LIST; do
   if [[ -f .config ]]; then 
     source .config 
 
-    if [[ $FORCE == "false" ]]; then 
+    if [[ $FORCE == "false" && -d lib ]]; then 
       read -r name LOCAL_VERSION <<< $(node -pe "let pkg=require('./package.json'); pkg.name + ' ' + pkg.version")
       PROJECTSCOPE=@$(echo "$name" | cut -d'/' -f1 | awk -F'@' '{print $2}')
 
