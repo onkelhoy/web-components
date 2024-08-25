@@ -1,24 +1,24 @@
 # PageShowcase
 
-[![Github Repo](https://img.shields.io/badge/Git-@/page-showcase-blue?logo=github&link=/tree/main/packages/pages/showcase)](/tree/main/packages/pages/showcase)
+[![Github Repo](https://img.shields.io/badge/Git-@papit/page-showcase-blue?logo=github&link=https://github.com/onkelhoy/web-components/tree/main/packages/pages/showcase)](https://github.com/onkelhoy/web-components/tree/main/packages/pages/showcase)
 ![Layer Type](https://img.shields.io/badge/Layer_Type-page-orange)
 
-[![Tests](/actions/workflows/pull-request.yml/badge.svg)](/actions/workflows/pull-request.yml)
-[![NPM version](https://img.shields.io/npm/v/@/page-showcase.svg?logo=npm)](https://www.npmjs.com/package/@/page-showcase)
+[![Tests](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml/badge.svg)](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml)
+[![NPM version](https://img.shields.io/npm/v/@papit/page-showcase.svg?logo=npm)](https://www.npmjs.com/package/@papit/page-showcase)
 
 ## Use Case
 
 ### installation
 
 ```bash
-npm install @/page-showcase
+npm install @papit/page-showcase
 ```
 
 ### to use in **html**
 
 ```html
 <script type="module" defer>
-  import "@/page-showcase";
+  import "@papit/page-showcase";
 </script>
 
 <pap-showcase></pap-showcase>
@@ -27,7 +27,7 @@ npm install @/page-showcase
 ### to use in **react**
 
 ```jsx
-import { PageShowcase } from "@/page-showcase/react";
+import { PageShowcase } from "@papit/page-showcase/react";
 
 function Component() {
   return (

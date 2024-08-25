@@ -34,7 +34,7 @@
   "license": "",
   "repository": {
     "type": "git",
-    "url": ".git"
+    "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
     "@papit/core": "0.0.2",
