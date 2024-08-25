@@ -53,7 +53,7 @@ echo ""
 read -p "option: " option_answer
 
 while [ -z "$option_answer" ]; do
-  echo "\x1b[33m|warn] must choose a option\x1b[0m"
+  echo "must choose a option"
   read -p "option: " option_answer
 done
 echo ""
@@ -69,4 +69,4 @@ else
   exit 0
 fi 
 
-echo "\x1b[31m|error] something went wrong..\x1b[0m"
+echo "[error] something went wrong.."

@@ -15,7 +15,8 @@
   "type": "module",
   "main": "./style.css",
   "files": [
-    "lib/"
+    "lib/",
+    ".config"
   ],
   "author": "Henry",
   "private": false,

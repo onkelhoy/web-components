@@ -1,6 +1,6 @@
 {
   "name": "@papit/router",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
     "build:sass": "bash ./bin/_utils/sass.sh",
     "build:react": "bash ./bin/_utils/react.sh",
@@ -19,7 +19,8 @@
   "type": "module",
   "files": [
     "asset/",
-    "lib/"
+    "lib/",
+    ".config"
   ],
   "exports": {
     "./react": "./lib/react/index.js",

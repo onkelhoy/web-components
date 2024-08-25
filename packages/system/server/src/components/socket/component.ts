@@ -22,7 +22,7 @@ export function upgrade(this: http.Server, req: http.IncomingMessage, socket: Du
   const socketid = randomUUID();
   connectedClients.set(socketid, socket);
 
-  if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log("\x1b[31m", 'client connected', "\x1b[0m");
+  if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log("", 'client connected', "");
 
   // events 
   socket.on('error', handleError.bind(socket, socketid));
@@ -33,7 +33,7 @@ export function upgrade(this: http.Server, req: http.IncomingMessage, socket: Du
 // event handlers 
 function handleError(this: Duplex, socketid: string, error: any) {
   if ('code' in error && error.code === 'ECONNRESET') {
-    if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log("\x1b[31m", 'client disconnected', "\x1b[0m");
+    if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log("", 'client disconnected', "");
     connectedClients.delete(socketid);
   }
   else if (process.env.LOGLEVEL !== "none") {
@@ -42,13 +42,13 @@ function handleError(this: Duplex, socketid: string, error: any) {
 }
 function handleData(this: Duplex, socketid: string, buffer: Buffer) {
   const message = buffer.toString();
-  if (["debug"].includes(process.env.LOGLEVEL || "")) console.log("\x1b[34m", 'Received: ', message, "\x1b[0m");
+  if (["debug"].includes(process.env.LOGLEVEL || "")) console.log("\x1b[34m", 'Received: ', message, "");
 
   // Echoing back the received message (simplified, not handling actual WebSocket frames)
   this.write(frameWebSocketMessage(message));
 }
 function handleEnd(this: Duplex, socketid: string) {
-  if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log("\x1b[31m", 'client disconnected', "\x1b[0m");
+  if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log("", 'client disconnected', "");
 
   // TODO: have to find the client-id to be removed so we can remove it from the connectedClients list 
   connectedClients.delete(socketid);

@@ -17,7 +17,8 @@
   "type": "module",
   "files": [
     "asset/",
-    "lib/"
+    "lib/",
+    ".config"
   ],
   "exports": {
     ".": "./lib/bundle.js"

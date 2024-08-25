@@ -116,7 +116,7 @@ export function route(req: http.IncomingMessage, res: http.ServerResponse) {
     res.end(JSON.stringify({ error: "something went wrong getting HTML file" }));
 
     if (process.env.LOGLEVEL as string !== "none") {
-      console.log("\x1b[31m[error] something went wrong on server processing document\x1b[0m")
+      console.log("[error] something went wrong on server processing document")
     }
   }
 }

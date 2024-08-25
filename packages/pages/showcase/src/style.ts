@@ -1,1 +1,1 @@
-export const style = `:host{color:var(--pap-color-text);background-color:var(--pap-color-background)}`;
+export const style = `:host{display:flex}:host section{width:150px;background-color:var(--pap-foreground);padding:1rem}:host section div{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem}:host section div pap-button::part(prefix-suffix){flex:1}:host main{flex:1}`;
