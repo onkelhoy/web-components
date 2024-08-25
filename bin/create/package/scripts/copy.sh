@@ -27,6 +27,8 @@ function relative_path_to_ancestor() {
 mkdir "$destination"
 rsync -a --exclude='*DS_Store' --exclude='.gitkeep' "$SCRIPTDIR/package/template/" "$destination"
 
+GITHUB_REPO="https://github.com/$GITNAME/web-components"
+
 # replace placeholders 
 # layer info 
 find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s/PLACEHOLDER_LAYER_NAME/${LAYER_NAME}/g" {} \;
@@ -37,6 +39,8 @@ find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name
 # main component
 find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_CLASS_NAME#${CLASS_NAME}#g" {} \;
 find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_NAME#${NAME}#g" {} \;
+# github
+find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_GITHUB_REPO#${GITHUB_REPO}#g" {} \;
 
 # specific placeholder replacement 
 sed -i '' "s/GITNAME/${GITNAME}/g" $destination/package.json

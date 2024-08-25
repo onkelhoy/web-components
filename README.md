@@ -1,4 +1,15 @@
-# @papit Ecosystem: An Overview
+# @papit 
+
+![GitHub contributors](https://img.shields.io/github/contributors/onkelhoy/web-components)
+![GitHub Release Date](https://img.shields.io/github/release-date/onkelhoy/web-components)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/onkelhoy/web-components)
+
+[![Tests](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml/badge.svg)](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml)
+
+![GitHub Repo stars](https://img.shields.io/github/stars/onkelhoy/web-components)
+
+
+## Ecosystem: An Overview
 
 Welcome to the `@pap-framework` ecosystem, an innovative framework designed to revolutionize the development and deployment of web components. Developed by Henry Pap, this ecosystem is built on a zero-dependency philosophy in production environments, promoting modular development, performance enhancement, and security. It offers a comprehensive toolkit for developers, encouraging efficiency and creativity in web application development.
 

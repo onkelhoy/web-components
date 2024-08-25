@@ -1,8 +1,10 @@
 # Web
 
-Layer Type: system
+[![Github Repo](https://img.shields.io/badge/Git-@papit/core-blue?logo=github&link=https://github.com/onkelhoy/web-components/tree/main/packages/systems/core)](https://github.com/onkelhoy/web-components/tree/main/packages/systems/core)
+![Layer Type](https://img.shields.io/badge/Layer_Type-system-orange)
 
-Version: 0.0.0
+[![Tests](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml/badge.svg)](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml)
+[![NPM version](https://img.shields.io/npm/v/@papit/core.svg?logo=npm)](https://www.npmjs.com/package/@papit/core)
 
 This is the core package to be able to create web-components
 
