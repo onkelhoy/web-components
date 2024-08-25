@@ -7,10 +7,9 @@ export SCRIPTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$ROOTDIR/.config"
 
 # extract project-scope variable 
-PROJECTSCOPE=$(node -pe "require('$ROOTDIR/package.json').name")
 read -r PROJECTSCOPE GITHUB_REPO <<< $(node -pe "
   const pkg = require('$ROOTDIR/package.json'); 
-  const repo = pkg.repository?.url || 'unknown'
+  const repo = pkg.repository?.url || 'unknown';
   \`\${pkg.name} \${repo}\`
 ")
 
