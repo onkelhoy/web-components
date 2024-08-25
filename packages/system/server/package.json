@@ -1,16 +1,16 @@
 {
   "name": "@papit/server",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "scripts": {
-    "build:sass": "bash bin/_utils/sass.sh",
-    "build:react": "bash bin/_utils/react.sh",
-    "build": "bin/build.sh",
-    "watch": "bin/watch.sh",
-    "init": "bash bin/_utils/init.sh",
-    "start": "bin/start.sh",
-    "preversion": "bin/_utils/preversion.sh",
-    "postversion": "bin/_utils/postversion.sh",
-    "publish:manual": "bin/publish.sh"
+    "build:sass": "bash ./bin/_utils/sass.sh",
+    "build:react": "bash ./bin/_utils/react.sh",
+    "build": "bash ./bin/build.sh",
+    "watch": "bash ./bin/watch.sh",
+    "start": "bash ./bin/start.sh",
+    "preversion": "bash ./bin/_utils/preversion.sh",
+    "postversion": "bash ./bin/_utils/postversion.sh",
+    "publish:manual": "bash ./bin/publish.sh",
+    "server": "bin/cli.sh"
   },
   "main": "./lib/bundle.js",
   "files": [

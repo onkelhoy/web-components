@@ -295,7 +295,7 @@ function clone(element: CustomElement) {
 // function clone_compare(element: CustomElement, clone: HTMLTemplateElement, shadowNode: Element | null, node: Element, path: string[]) {
 
 // }
-function getComposedPath(element: CustomElement, base: ShadowRoot | Element, target: Element) {
+function getComposedPath(element: CustomElement, base: ShadowRoot | Element | Document, target: Element) {
   const path = [];
   while (target !== base) {
     path.push(getSelector(target));
@@ -306,7 +306,7 @@ function getComposedPath(element: CustomElement, base: ShadowRoot | Element, tar
 
   return path.reverse();
 }
-function getSelector(node: Element) {
+export function getSelector(node: Element) {
   const selector = [node.tagName];
 
   if (node.id) selector.push("#" + node.id);

@@ -48,11 +48,6 @@ export destination="packages/themes/$NAME"
 # running copy and replace script 
 bash $SCRIPTDIR/theme/scripts/copy.sh
 
-# initialize theme 
-cd "$destination" # in 
-npm run init 
-cd "$ROOTDIR"     # and out 
-
 read -p "install theme? [1/0]: " confirm_install
 if [ "$confirm_install" == "0" ]; then
   echo "you choose not to install" 

@@ -1,31 +1,16 @@
 #!/bin/bash
 
 function compile() {
-  foldername=$(dirname "$1")
-  filename=$(basename "$1")
-  filename_no_ext="${filename%.*}"
+  local filepath=$1
+  foldername=$(dirname "$filepath")
+  filename=$(basename "$filepath")
+  filename="${filename%.*}"
 
-  # Set the input and output file paths
-  input_file="$1"
-  output_css="$foldername/$filename_no_ext.css"
-  output_file="$foldername/$filename_no_ext.ts"
-
-  # Compile the SCSS file to CSS
-  sass "$input_file":"$output_css" --style=compressed --no-source-map
-
-  # Wait for the CSS file to be created
-  while [ ! -f "$output_css" ]; do
-    sleep 1
-  done
-
-  # Convert the CSS code to a JavaScript string
-  CSS=$(cat "$output_css") # | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+  # # Compile SCSS to CSS and capture the output in a variable
+  CSS=$(sass "$filepath" --style=compressed --no-source-map)
 
   # Write the JavaScript code to a file
-  echo "export const style = \`$CSS\`;" > "$output_file"
-
-  # Remove the intermediate CSS file
-  rm "$output_css"
+  echo "export const style = \`$CSS\`;" > "$foldername/$filename.ts"
 }
 
 # run on all sass files

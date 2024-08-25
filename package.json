@@ -1,5 +1,5 @@
 {
-  "name": "@papit/core",
+  "name": "@papit/root",
   "version": "0.0.0",
   "description": "web component - framework/ecosystem",
   "private": true,
@@ -8,12 +8,13 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "scripts": {
-    "create": "bash bin/create/run.sh",
-    "clean": "bash bin/_utils/clean.sh",
-    "init": "bash bin/_utils/init.sh",
-    "publish": "bash bin/publish/run.sh",
-    "build": "bash bin/build/run.sh",
-    "test": "bash bin/test/run.sh"
+    "create": "bash ./bin/create/run.sh",
+    "clean": "bash ./bin/_utils/clean.sh",
+    "init": "bash ./bin/_utils/init.sh",
+    "publish": "bash ./bin/publish/run.sh",
+    "build": "bash ./bin/build/run.sh",
+    "test": "bash ./bin/test/run.sh",
+    "server": "npx @papit/server"
   },
   "keywords": [
     "web-component",

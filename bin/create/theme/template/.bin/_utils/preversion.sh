@@ -3,7 +3,7 @@
 source .config 
   
 # create rootdir (now based on relative paths)
-ROOTDIR=$(realpath $ROOTDIR_RELATIVE)
+ROOTDIR=$(npm prefix)
 
 source $ROOTDIR/bin/version/utils.sh
 if [ -f "$ROOTDIR/bin/version/.config" ]; then 

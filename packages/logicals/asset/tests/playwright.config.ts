@@ -74,7 +74,7 @@ export default defineConfig({
   ],
   // running web-server before starting tests 
   webServer: {
-    command: 'npx @papit/server -- --log-level=debug --location=$(pwd) --port=3500',
+    command: 'npm run server --include-workspace-root=true --workspace="$(npm prefix)" -- --log-level=debug --location=$(pwd) --nosig --port=3500',
     url: 'http://localhost:3500',
     reuseExistingServer: true,
     stdout: 'ignore',

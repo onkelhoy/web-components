@@ -59,11 +59,6 @@ bash $SCRIPTDIR/package/scripts/copy.sh
 # now its time to call in component script 
 bash $SCRIPTDIR/component/run.sh "$destination" --package
 
-# initialize package 
-cd "$destination" # in 
-npm run init 
-cd "$ROOTDIR"     # and out 
-
 read -p "install package? [1/0]: " confirm_install
 if [ "$confirm_install" == "0" ]; then
   echo "you choose not to install" 

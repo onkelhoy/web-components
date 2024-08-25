@@ -1,4 +1,4 @@
-# Web
+# Core
 
 [![Github Repo](https://img.shields.io/badge/Git-@papit/core-blue?logo=github&link=https://github.com/onkelhoy/web-components/tree/main/packages/systems/core)](https://github.com/onkelhoy/web-components/tree/main/packages/systems/core)
 ![Layer Type](https://img.shields.io/badge/Layer_Type-system-orange)
@@ -23,7 +23,7 @@ npm install @papit/core
   import "@papit/core";
 </script>
 
-<pap-web></pap-web>
+<pap-core></pap-core>
 ```
 
 ### to use in **react**

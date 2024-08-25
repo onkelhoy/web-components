@@ -12,8 +12,6 @@ test.describe("router - basic unit tests", () => {
     const component = await page.$('pap-router');
     expect(component).not.toBeNull();
   });
-
-
 });
 
 test.describe("router - configuration", () => {
@@ -157,6 +155,25 @@ test.describe("router - mappings", () => {
 
     // make sure document A ws loaded
     expect(param).toHaveText("ABC");
+  });
+
+  test('window.location proxy', async ({ page }) => {
+    await page.waitForTimeout(2000);
+    await page.getByTestId("button-d").click();
+    await page.waitForTimeout(2000);
+
+    const parama = await page.getByTestId('param-a');
+    expect(parama).not.toBeNull();
+    expect(parama).toHaveText("abc");
+
+
+    const paramb = await page.getByTestId('param-b');
+    expect(paramb).not.toBeNull();
+    expect(paramb).toHaveText("def");
+
+    const paramc = await page.getByTestId('param-c');
+    expect(paramc).not.toBeNull();
+    expect(paramc).toHaveText("ghi");
   });
 })
 

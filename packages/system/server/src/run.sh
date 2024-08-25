@@ -1,11 +1,8 @@
 #!/bin/bash
 
-# variables
 source .config
 export SCRIPTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export ROOTDIR=$(realpath $ROOTDIR_RELATIVE)
-source "$ROOTDIR/.config"
-loadcolors
+export ROOTDIR=$(npm prefix)
 
 # extracting flags
 export LIVE=false
@@ -25,6 +22,8 @@ for arg in "$@"; do
     export LOCATION="${arg#*=}"
   elif [[ $arg == --open ]]; then 
     export DOOPEN=true
+  elif [[ $arg == --nosig ]]; then 
+    NOSIG=true
   
   # Log Levels 
   elif [[ $arg == --log-level=* ]]; then 
@@ -152,13 +151,22 @@ function cleanup() {
   fi 
 
   # run all necessary cleanups 
-  kill $server_pid
-  rm -rf "$LOCATION/.temp" 
+  if [[ -n "$server_pid" ]]; then
+    kill $server_pid > /dev/null
+  fi
+  
+  if [[ -d "$LOCATION/.temp" ]]; then 
+    rm -rf "$LOCATION/.temp" 
+  fi
   echo ""
 }
 
-# Trap to call cleanup function when the script receives a SIGINT (Ctrl+C)
-trap cleanup SIGINT EXIT SIGTERM
+if [[ $NOSIG == true ]]; then 
+  trap cleanup EXIT
+else 
+  # Trap to call cleanup function when the script receives a SIGINT (Ctrl+C)
+  trap cleanup SIGINT EXIT SIGTERM
+fi 
 
 if [[ -f "$SCRIPTDIR/bundle.js" ]]; then 
   node "$SCRIPTDIR/bundle.js" & 

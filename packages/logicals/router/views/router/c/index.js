@@ -4,11 +4,8 @@ window.onload = () => {
     console.log('document C click');
   }
 
-  const router = document.querySelector("pap-router");
-  if (router) {
-    const foo = document.getElementById("foo");
-    if (foo) {
-      foo.innerText = router.params.foo;
-    }
+  const foo = document.getElementById("foo");
+  if (foo) {
+    foo.innerText = window.location.params?.foo;
   }
 }

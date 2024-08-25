@@ -2,7 +2,7 @@
 
 export PACKAGE_PATH=$1
 export SCRIPTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export ROOTDIR=$(cd $SCRIPTDIR/../../ && pwd)
+export ROOTDIR=$(npm prefix)
 
 # get the package environment variables
 source $PACKAGE_PATH/.config
