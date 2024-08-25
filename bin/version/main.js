@@ -70,25 +70,6 @@ async function init() {
     // get version 
     const VERSION = targetpackage.version;
 
-    try {
-      let readme = fs.readFileSync(path.join(PACKAGE_DIR, 'README.md'), 'utf-8');
-      let oldversion = readme.match(/version:(.+)/i);
-      if (oldversion) {
-        oldversion = oldversion[1].replace('Version:', '').trim();
-        if (VERSIONINGJSON.initiator === TARGET_PACKAGE) {
-          console.log(`[${TARGET_PACKAGE}]: ${oldversion} -> ${VERSION}`)
-        }
-        else {
-          console.log(`## [${TARGET_PACKAGE}]: ${oldversion} -> ${VERSION}`)
-        }
-        readme = readme.replace(oldversion, VERSION);
-        fs.writeFileSync(path.join(PACKAGE_DIR, 'README.md'), readme, 'utf-8');
-      }
-    }
-    catch (e) {
-      console.log('[WARN] could not find README to update version');
-    }
-
     // now save the lockfile 
     for (let name in LOCKFILE.packages) {
       if (!name.startsWith('packages/')) continue;

@@ -1,8 +1,10 @@
 # PLACEHOLDER_CLASS_NAME
 
-Layer Type: PLACEHOLDER_LAYER_NAME
+[![Github Repo](https://img.shields.io/badge/Git-PLACEHOLDER_FULL_NAME-blue?logo=github&link=PLACEHOLDER_GITHUB_REPO/tree/main/packages/PLACEHOLDER_LAYER_FOLDER/PLACEHOLDER_NAME)](PLACEHOLDER_GITHUB_REPO/tree/main/packages/PLACEHOLDER_LAYER_FOLDER/PLACEHOLDER_NAME)
+![Layer Type](https://img.shields.io/badge/Layer_Type-PLACEHOLDER_LAYER_NAME-orange)
 
-Version: 0.0.0
+[![Tests](PLACEHOLDER_GITHUB_REPO/actions/workflows/pull-request.yml/badge.svg)](PLACEHOLDER_GITHUB_REPO/actions/workflows/pull-request.yml)
+[![NPM version](https://img.shields.io/npm/v/PLACEHOLDER_FULL_NAME.svg?logo=npm)](https://www.npmjs.com/package/PLACEHOLDER_FULL_NAME)
 
 ## Use Case
 

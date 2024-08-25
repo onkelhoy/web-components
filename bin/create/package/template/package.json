@@ -35,7 +35,7 @@
   "license": "PROJECTLICENSE",
   "repository": {
     "type": "git",
-    "url": "https://github.com/onkelhoy/web-components.git"
+    "url": "PLACEHOLDER_GITHUB_REPO.git"
   },
   "dependencies": {
     "@papit/core": "^0.0.0",

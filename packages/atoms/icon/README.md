@@ -1,8 +1,10 @@
 # Icon
 
-Layer Type: atom
+[![Github Repo](https://img.shields.io/badge/Git-@papit/icon-blue?logo=github&link=https://github.com/onkelhoy/web-components/tree/main/packages/atoms/icon)](https://github.com/onkelhoy/web-components/tree/main/packages/atoms/icon)
+![Layer Type](https://img.shields.io/badge/Layer_Type-atom-orange)
 
-Version: 0.0.1
+[![Tests](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml/badge.svg)](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml)
+[![NPM version](https://img.shields.io/npm/v/@papit/icon.svg?logo=npm)](https://www.npmjs.com/package/@papit/icon)
 
 ## Use Case
 
