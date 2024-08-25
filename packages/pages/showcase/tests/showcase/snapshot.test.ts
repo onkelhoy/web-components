@@ -1,12 +1,8 @@
 import { test, expect } from '@playwright/test';
 
-test.beforeEach(async ({ page }) => {
-  // Navigate to your test page
-  await page.goto('showcase');
-});
-
-test.describe.skip("showcase visual regression", () => {
+test.describe("showcase visual regression", () => {
   test('default snapshot', async ({ page }) => {
+    await page.goto('pap-showcase');
     await expect(page).toHaveScreenshot();
   });
 })

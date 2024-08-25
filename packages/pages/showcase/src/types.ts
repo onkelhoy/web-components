@@ -1,2 +1,1 @@
-export type Package = { name: string; location: string; };
-export type Layer = { name: string; packages: Package[]; };
+export type ClickEvent = { timestamp: number };

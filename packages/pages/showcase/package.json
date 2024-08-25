@@ -34,7 +34,7 @@
   "license": "",
   "repository": {
     "type": "git",
-    "url": "https://github.com/onkelhoy/web-components.git"
+    "url": "https://github.com/Henry/web-components.git"
   },
   "dependencies": {
     "@papit/core": "0.0.2",
@@ -47,8 +47,6 @@
     "@types/node": "^22.10.2",
     "chokidar": "^3.6.0",
     "esbuild": "^0.17.18",
-    "node-html-parser": "^6.1.11",
-    "playwright": "^1.45.3",
     "sass": "^1.70.0",
     "typescript": "^5.7.2"
   },
