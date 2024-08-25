@@ -34,7 +34,7 @@
   "license": "",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Henry/web-components.git"
+    "url": ".git"
   },
   "dependencies": {
     "@papit/core": "0.0.2",
