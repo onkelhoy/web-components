@@ -19,8 +19,11 @@ export class CustomElement extends HTMLElement {
   setting: Setting;
   properties: Record<string, PropertyInfo> = {};
   originalHTML: string;
+  lastrender!: Document; // OLD stage, we use this to determine dynamically added content in between
   rendercomperator!: HTMLTemplateElement;
   stylecomperator!: HTMLStyleElement;
+
+  static domparser: DOMParser = new DOMParser();
 
   @property({ type: Boolean, rerender: false }) hasFocus: boolean = false;
 

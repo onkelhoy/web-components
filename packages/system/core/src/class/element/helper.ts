@@ -59,6 +59,7 @@ export function renderHTML(setting: Setting, element: CustomElement) {
 
     // init case 
     freshRender(element, content, element.shadowRoot);
+    element.lastrender = CustomElement.domparser.parseFromString(element.outerHTML, "text/html");
     return;
   }
 
@@ -69,6 +70,8 @@ export function renderHTML(setting: Setting, element: CustomElement) {
   else {
     diffing(element, content);
   }
+
+  element.lastrender = CustomElement.domparser.parseFromString(element.outerHTML, "text/html");
 }
 
 // helper functions 
@@ -104,6 +107,8 @@ function flushHTML(node: Element | ShadowRoot) {
 function diffing(element: CustomElement, content: RenderType) {
   if (!element.rendercomperator) return;
 
+  // lets keep the html and check if any dynamic content was added by making sure no difference between OLD and NEW 
+
   // flush the html
   const nodes = element.rendercomperator.querySelectorAll('*:not(style)');
   for (let node of nodes) {
@@ -133,10 +138,16 @@ function cleanup(element: CustomElement) {
 
     // determine which one should leave ! 
     const path = getComposedPath(element, element.shadowRoot as ShadowRoot, node);
-    const templateNode = (element.rendercomperator as HTMLTemplateElement).querySelector(path.join(" > "));
+    const selector = path.join(" > ");
+    const templateNode = element.rendercomperator.querySelector(selector);
     if (!templateNode) {
+      let shouldremove = true;
+      if (element.lastrender) {
+        shouldremove = element.lastrender.querySelector(selector) !== null; // make sure it wasnt a dynamic element 
+      }
       // needs to go! (if not render-greedy)
-      if (!path.some(p => /render-greedy/.test(p))) {
+      if (shouldremove && !path.some(p => /render-greedy/.test(p))) {
+        // console.log('Im here I say goodbye', node);
         node.parentNode.removeChild(node);
       }
     }
@@ -271,8 +282,19 @@ function clone(element: CustomElement) {
         }
       })
     }
-  })
+  });
+
+  // cleanup is then called to remove all elements from original that is not in rendercomperator
+  // OBS: we need to check for dynamic elements though !
+
+  // should we re-write the differ? 
+  // why not simply just compare the 3 stages, OLD, current and NEW to determine which elements should add/remove/update ? 
+
+  // then we just iterate each element to apply the events or? 
 }
+// function clone_compare(element: CustomElement, clone: HTMLTemplateElement, shadowNode: Element | null, node: Element, path: string[]) {
+
+// }
 function getComposedPath(element: CustomElement, base: ShadowRoot | Element, target: Element) {
   const path = [];
   while (target !== base) {
