@@ -8,11 +8,17 @@ source "$ROOTDIR/.config"
 loadcolors
 
 # extract project-scope variable 
-PROJECTSCOPE=$(node -pe "require('$ROOTDIR/package.json').name")
-read -r PROJECTSCOPE GITHUB_REPO <<< $(node -pe "let pkg=require('$ROOTDIR/package.json'); pkg.name + ' ' + (pkg.rerepository?.url || 'unknown')")https://github.com/onkelhoy/web-components
+read -r PROJECTSCOPE GITHUB_REPO <<< $(node -pe "
+  const pkg = require('$ROOTDIR/package.json'); 
+  const repo = pkg.repository?.url || 'unknown';
+  \`\${pkg.name} \${repo}\`
+")
 
-if [[ $GITHUB_REPO == "unknown" ]]; then 
+if [[ $GITHUB_REPO != "unknown" ]]; then 
   export GITHUB_REPO=${GITHUB_REPO%.git}
+else 
+  echo "Your project has no Github Repo pointed out in 'package.json' [repository.url]"
+  exit 0
 fi 
 
 export PROJECTSCOPE=$(echo "$PROJECTSCOPE" | cut -d'/' -f1 | awk -F'@' '{print $2}')

@@ -63,7 +63,7 @@ sleep 5 # Ensure server starts before reading files
 for dir in $LIST; do
   if [[ -f $dir/package.json ]]; then 
 
-    read has_script has_update_script PROJECTSCOPE LOCAL_VERSION <<< $(node -pe "
+    read -r has_script has_update_script PROJECTSCOPE LOCAL_VERSION <<< $(node -pe "
       const pkg = require('$dir/package.json'); 
       const hastest = !!pkg.scripts.test;
       const hasupdate = !!pkg.scripts['test:update-snapshots'];
@@ -76,17 +76,18 @@ for dir in $LIST; do
       source .config 
       export LAYER_FOLDER=$LAYER_FOLDER 
       export NAME=$NAME
+      echo "$FULL_NAME"
 
       if [[ -f "$ROOTDIR/node_modules/$PROJECTSCOPE/$PACKAGE_NAME/package.json" ]]; then 
         CACHE_VERSION=$(node -pe "require('$ROOTDIR/node_modules/$PROJECTSCOPE/$PACKAGE_NAME/package.json').version")
 
         if [[ $LOCAL_VERSION == $CACHE_VERSION ]]; then 
-          echo "$FULL_NAME skipped"
+          echo "versions are same: skipped"
           continue
+        else 
+          echo "versions are not same, local: $LOCAL_VERSION, cache: $CACHE_VERSION, projectsope/package_name: $PROJECTSCOPE/$PACKAGE_NAME"
         fi 
       fi
-
-      echo "$FULL_NAME"
 
       if [[ $has_update_script == "true" ]]; then 
         # if no snapshots we make sure to create them 
