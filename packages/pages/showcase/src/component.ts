@@ -18,10 +18,26 @@ export class PageShowcase extends CustomElement {
 
   render() {
     return html`
-      <section>menu</section>
+      <section>
+        ${this.data.forEach(layer => html`
+          <div key="${layer.name}">
+            <p>${layer.name}</p>
+            ${layer.packages.forEach(pkg => html`<a key="${pkg.location}" href="${pkg.location}">${pkg.name}</a>`)}
+          </div>
+        `)}
+      </section>
       <main>
         <pap-router hash-based="${this.hashbased}" url="${this.url}" update-url="true">
-          ${this.data.forEach(layer => console.log('layer', layer))}
+          ${this.data.forEach(layer => {
+      return layer.packages.forEach(pkg => html`
+              <pap-route 
+                key="${layer.name}/${pkg.name}"
+                path="${layer.name}/${pkg.name}" 
+                realpath="${pkg.location}/views/showcase" 
+                fallback="${pkg.location}/views/${pkg.name}"
+              ></pap-route>
+            `)
+    })}
         </pap-router>
       </main>
     `
