@@ -18,10 +18,12 @@
   <img src="/image.png" alt="static" data-testid="image-static" />
 
   <script>
-    console.log('internal script A');
+    window.addEventListener("load", () => {
+      console.log('internal script A');
 
-    const h1 = document.body.querySelector("h1");
-    h1.innerText = "Document A - Updated";
+      const h1 = document.body.querySelector("h1");
+      h1.innerText = "Document A - Updated";
+    })
   </script>
 
   <style>

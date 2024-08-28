@@ -17,7 +17,15 @@
   <p>Hello World</p>
 
   <script>
-    console.log('HEY WRF?')
+    window.addEventListener("load", () => {
+      const h1 = document.body.querySelector('h1');
+      if (h1) {
+        h1.innerHTML = "Document A - UPDATED"
+      }
+      else {
+        console.error("hey dude its not there.. ITS NOT THERE!!!")
+      }
+    })
   </script>
 </body>
 

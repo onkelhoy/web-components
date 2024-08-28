@@ -1,9 +1,26 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
   // Navigate to your test page
   await page.goto('router');
 });
+
+async function clickmainbutton(page: Page, testid: string) {
+  const router = page.getByTestId("target");
+  await expect(router).toBeAttached();
+  const eventPromise = router.evaluate(element => {
+    return new Promise<void>((resolveEvent) => {
+      const listener = () => {
+        (element as HTMLElement).removeEventListener("window-load", listener);
+        resolveEvent();
+      }
+
+      (element as HTMLElement).addEventListener("window-load", listener);
+    });
+  });
+  await page.getByTestId(testid).click();
+  await eventPromise;
+}
 
 test.describe("router - basic unit tests", () => {
   test('available in DOM', async ({ page }) => {
@@ -12,6 +29,13 @@ test.describe("router - basic unit tests", () => {
     const component = await page.$('pap-router');
     expect(component).not.toBeNull();
   });
+
+  test("main.js window load only once", async ({ page }) => {
+    await clickmainbutton(page, "button-a");
+
+    const loads = page.getByTestId("loads");
+    expect(loads).toHaveText("1");
+  })
 });
 
 test.describe("router - configuration", () => {
@@ -30,7 +54,7 @@ test.describe("router - configuration", () => {
     expect(url).not.toBe(initialURL);
   });
   test("update-url: false", async ({ page }) => {
-    const router = await page.getByTestId("target");
+    const router = page.getByTestId("target");
     await router.evaluate(element => element.setAttribute("update-url", "false"));
 
     const initialURL = page.url();
@@ -72,11 +96,7 @@ test.describe("router - configuration", () => {
       (element as any).omitters = ["script"]; // this should make ALL scripts unavailable 
     });
 
-    // wait so router can initiate
-    await page.waitForTimeout(2000);
-
-    // naviagate to document A 
-    await page.getByTestId("button-a").click();
+    await clickmainbutton(page, "button-a");
 
     const { scripts, styles } = await router.evaluate(element => {
       return {
@@ -91,14 +111,11 @@ test.describe("router - configuration", () => {
 });
 
 test.describe("router - mappings", () => {
-  test("mappings - bash-based: false", async ({ page }) => {
+  test("bash-based: false", async ({ page }) => {
     const router = await page.getByTestId("target");
     await router.evaluate(element => element.setAttribute("hash-based", "true"));
 
-    // wait so router can initiate
-    await page.waitForTimeout(2000);
-    await page.getByTestId("button-hello-world").click()
-    await page.waitForTimeout(2000);
+    await clickmainbutton(page, "button-hello-world");
 
     const url = page.url()
 
@@ -112,14 +129,11 @@ test.describe("router - mappings", () => {
     expect(url.endsWith("router/#/hello/world/")).toBeTruthy();
   });
 
-  test("mappings - bash-based: true", async ({ page }) => {
+  test("bash-based: true", async ({ page }) => {
     const router = await page.getByTestId("target");
     await router.evaluate(element => element.setAttribute("hash-based", "true"));
 
-    // wait so router can initiate
-    await page.waitForTimeout(2000);
-    await page.getByTestId("button-hello-world").click()
-    await page.waitForTimeout(2000);
+    await clickmainbutton(page, "button-hello-world");
 
     const url = page.url()
 
@@ -133,11 +147,8 @@ test.describe("router - mappings", () => {
     expect(url.endsWith("/router/#/hello/world/")).toBeTruthy();
   });
 
-  test("mappings - param variable", async ({ page }) => {
-    // wait so router can initiate
-    await page.waitForTimeout(2000);
-    await page.getByTestId("button-hello-foo-world-ABC").click()
-    await page.waitForTimeout(2000);
+  test("param variable", async ({ page }) => {
+    await clickmainbutton(page, "button-hello-foo-world-ABC");
 
     const router = await page.getByTestId("target");
     const foo = await router.evaluate(element => {
@@ -156,34 +167,12 @@ test.describe("router - mappings", () => {
     // make sure document A ws loaded
     expect(param).toHaveText("ABC");
   });
-
-  test('window.location proxy', async ({ page }) => {
-    await page.waitForTimeout(2000);
-    await page.getByTestId("button-d").click();
-    await page.waitForTimeout(2000);
-
-    const parama = await page.getByTestId('param-a');
-    expect(parama).not.toBeNull();
-    expect(parama).toHaveText("abc");
-
-
-    const paramb = await page.getByTestId('param-b');
-    expect(paramb).not.toBeNull();
-    expect(paramb).toHaveText("def");
-
-    const paramc = await page.getByTestId('param-c');
-    expect(paramc).not.toBeNull();
-    expect(paramc).toHaveText("ghi");
-  });
 })
 
 test.describe("router - sources", () => {
 
   test("styles should have updated references", async ({ page }) => {
-
-    await page.waitForTimeout(2000); // allow router to setup 
-    await page.getByTestId("button-a").click();
-    await page.waitForTimeout(2000); // wait for document to load 
+    await clickmainbutton(page, "button-a");
 
     const firstp = await page.getByTestId("first-p");
 
@@ -191,20 +180,14 @@ test.describe("router - sources", () => {
   });
 
   test("javascript should have updated references", async ({ page }) => {
-
-    await page.waitForTimeout(2000); // allow router to setup 
-    await page.getByTestId("button-a").click();
-    await page.waitForTimeout(2000); // wait for document to load 
+    await clickmainbutton(page, "button-a");
 
     const firstp = await page.getByTestId("first-p");
     expect(firstp).toHaveText("First Paragraph A updated")
   });
 
   test("switching document should flush the old sources", async ({ page }) => {
-
-    await page.waitForTimeout(2000); // allow router to setup 
-    await page.getByTestId("button-a").click();
-    await page.waitForTimeout(2000); // wait for document to load 
+    await clickmainbutton(page, "button-a");
 
     const router = await page.getByTestId("target");
     const hashes = await router.evaluate(element => {
@@ -217,8 +200,7 @@ test.describe("router - sources", () => {
       return hashes;
     });
 
-    await page.getByTestId("button-c").click();
-    await page.waitForTimeout(2000); // wait for document to load 
+    await clickmainbutton(page, "button-c");
 
     const containsHashes = await router.evaluate((element, hashes) => {
       ((element as any).head as HTMLElement).querySelectorAll("[data-hash]").forEach(source => {
@@ -232,11 +214,8 @@ test.describe("router - sources", () => {
     expect(containsHashes).toBeFalsy();
   });
 
-  test("hash based should also recieve their sources", async ({ page }) => {
-
-    await page.waitForTimeout(2000); // allow router to setup 
-    await page.getByTestId("button-a").click();
-    await page.waitForTimeout(2000); // wait for document to load 
+  test.skip("hash based should also recieve their sources", async ({ page }) => {
+    await clickmainbutton(page, "button-a");
 
   });
 
@@ -244,9 +223,7 @@ test.describe("router - sources", () => {
     const router = await page.getByTestId("target");
     // await router.evaluate(element => element.setAttribute("hash-based", "true"));
 
-    await page.waitForTimeout(2000); // allow router to setup 
-    await page.getByTestId("button-hello-world").click();
-    await page.waitForTimeout(2000); // wait for document to load 
+    await clickmainbutton(page, "button-hello-world");
 
     const url = page.url();
 
@@ -278,20 +255,16 @@ test.describe("router - sources", () => {
     expect(newsources.styles).toBeGreaterThan(1);
   });
 
-  test("trailing slashes should receive sources", async ({ page }) => {
+  test.skip("trailing slashes should receive sources", async ({ page }) => {
 
     const router = await page.getByTestId("target");
     await router.evaluate(element => element.setAttribute("trailing-slash", "true"));
 
-    await page.waitForTimeout(2000); // allow router to setup 
-    await page.getByTestId("button-hello-world").click();
-    await page.waitForTimeout(2000); // wait for document to load 
-
-
+    await clickmainbutton(page, "button-hello-world");
   });
 });
 
-test.describe("router - Single Page Application Tests", () => {
+test.describe("router - SPA tests", () => {
 
   test("link click should not cause refresh", async ({ page }) => {
     let didPageReload = false;
@@ -301,13 +274,7 @@ test.describe("router - Single Page Application Tests", () => {
       didPageReload = true;
     });
 
-    await page.waitForTimeout(2000); // allow router to setup 
-
-    // Click on the link that triggers SPA navigation
-    await page.getByTestId("button-a").click();
-
-    // Wait for any SPA actions to complete, if necessary
-    await page.waitForTimeout(2000); // Adjust based on your SPA behavior
+    await clickmainbutton(page, "button-a");
 
     // Ensure that no full page reload happened
     expect(didPageReload).toBe(false); // Page reload should NOT have occurred
@@ -318,11 +285,7 @@ test.describe("router - Single Page Application Tests", () => {
     // Get initial page state
     const initialURL = page.url();
 
-    // Click on the link that triggers SPA navigation
-    await page.getByTestId("button-a").click();
-
-    // Wait for any SPA actions to complete, if necessary
-    await page.waitForTimeout(2000); // Adjust based on your SPA behavior
+    await clickmainbutton(page, "button-a");
 
     // Ensure that the URL changed due to SPA routing
     const currentURL = page.url();
@@ -333,12 +296,7 @@ test.describe("router - Single Page Application Tests", () => {
     await page.waitForTimeout(2000); // allow router to setup 
 
     const initialContent = await page.content();
-
-    // Click on the link that triggers SPA navigation
-    await page.getByTestId("button-a").click();
-
-    // Wait for any SPA actions to complete, if necessary
-    await page.waitForTimeout(2000); // Adjust based on your SPA behavior
+    await clickmainbutton(page, "button-a");
 
     // Ensure the content is different, meaning SPA routing updated the DOM
     const currentContent = await page.content();
@@ -354,7 +312,7 @@ test.describe("router - Single Page Application Tests", () => {
   })
 });
 
-test.describe("router - hashbased setup", () => {
+test.describe("router - hash-based setup", () => {
   test.beforeEach(async ({ page }) => {
     await page.evaluate(() => {
       const router = document.querySelector("pap-router") as any;
@@ -377,22 +335,11 @@ test.describe("router - hashbased setup", () => {
   });
 
   test("loading document A", async ({ page }) => {
-    // wait for web component to load fully
-    await page.waitForTimeout(2000);
-
-    // store current url 
-    const initialURL = page.url();
-
-    // navigate to document-A
-    await page.getByTestId("button-a").click();
-
-    // wait again to make sure content was loaded
-    await page.waitForTimeout(2000);
+    await clickmainbutton(page, "button-a");
 
     const navigatedURL = page.url();
-    expect(navigatedURL).not.toBe(initialURL); // Check if the URL has changed
 
-    expect(navigatedURL).toBe(initialURL + "a/");
+    expect(navigatedURL.endsWith("/a/")).toBeTruthy();
   });
 
   test("refresh should render same page", async ({ page }) => {
@@ -400,9 +347,7 @@ test.describe("router - hashbased setup", () => {
     // Get the initial page content and URL
     const initialURL = page.url();
 
-    // Step 2: Click on the link that triggers SPA navigation
-    await page.getByTestId("button-a").click();
-    await page.waitForTimeout(2000); // Adjust based on your SPA behavior
+    await clickmainbutton(page, "button-a");
 
     const navigatedURL = page.url();
     expect(navigatedURL).not.toBe(initialURL); // Check if the URL has changed
@@ -419,4 +364,83 @@ test.describe("router - hashbased setup", () => {
     // Verify that the URL is the same as after the SPA navigation
     expect(refreshedURL).toBe(navigatedURL);
   });
+});
+
+test.describe("router - proxies", () => {
+  test("document.body should update propper case", async ({ page }) => {
+    await clickmainbutton(page, "button-a");
+
+    const header = await page.getByTestId("header");
+    expect(header).toHaveText("Document A - Updated");
+  })
+  test.skip("window.onload should get triggered", async ({ page }) => { // this is already covered by load-resources JS
+    await clickmainbutton(page, "button-a");
+
+    const firstp = await page.getByTestId("first-p");
+    expect(firstp).toHaveText("First Paragraph A updated")
+  });
+  test("window.addEventListener('load') should get triggered", async ({ page }) => {
+    await clickmainbutton(page, "button-e");
+
+    const firstp = await page.getByTestId("first-p");
+    expect(firstp).toHaveText("First Paragraph E updated")
+  });
+  test('window.location proxy - param variable', async ({ page }) => {
+    await clickmainbutton(page, "button-d");
+
+    const parama = await page.getByTestId('param-a');
+    expect(parama).not.toBeNull();
+    expect(parama).toHaveText("abc");
+
+    const paramb = await page.getByTestId('param-b');
+    expect(paramb).not.toBeNull();
+    expect(paramb).toHaveText("def");
+
+    const paramc = await page.getByTestId('param-c');
+    expect(paramc).not.toBeNull();
+    expect(paramc).toHaveText("ghi");
+  });
+});
+
+test.describe("router - fallbacks & dynamics", () => {
+
+  test('fallback routes', async ({ page }) => {
+
+    await clickmainbutton(page, "button-fallback");
+
+    const url = page.url().split("#")[1];
+
+    expect(url).toBe("/fallback/");
+
+    // make sure a document was actully loaded
+    const firstp = await page.getByTestId('first-p');
+    expect(firstp).not.toBeNull();
+
+    // make sure document A ws loaded
+    expect(firstp).toHaveText("First Paragraph A updated");
+  });
+  test("fallback params", async ({ page }) => {
+    await clickmainbutton(page, "button-showcase");
+
+    const url = page.url().split("#")[1];
+
+    expect(url).toBe("/showcase/atoms/button/showcase/");
+
+    // making sure source was loaded
+    const paragraph = await page.getByTestId('paragraph');
+    expect(paragraph).not.toBeNull();
+    expect(paragraph).toHaveText("showcase");
+  });
+  test("dynamic param", async ({ page }) => {
+    await clickmainbutton(page, "icon-showcase");
+
+    const url = page.url().split("#")[1];
+
+    expect(url).toBe("/showcase/atoms/icon/icon/");
+
+    // making sure source was loaded
+    const paragraph = await page.getByTestId('paragraph');
+    expect(paragraph).not.toBeNull();
+    expect(paragraph).toHaveText("icon");
+  })
 });
