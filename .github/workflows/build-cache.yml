@@ -6,6 +6,8 @@ on:
 jobs:
   initialise:
     uses: ./.github/workflows/initialise.yml
+    with:
+      force_build: true
 
   build:
     needs: initialise
