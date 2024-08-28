@@ -12,6 +12,7 @@
   <button data-testid="button-a" data-url="a">a</button>
   <button data-testid="button-b" data-url="b">b</button>
   <button data-testid="button-c" data-url="c">c</button>
+  <button data-testid="button-d" data-url="location/abc/def/ghi">d</button>
 
   <button data-testid="button-hello-world" data-url="hello/world">hello world</button>
   <button data-testid="button-hello-foo-world-ABC" data-url="hello/ABC/world">ABC</button>
@@ -20,6 +21,7 @@
   <pap-router hash-based data-testid="target">
     <pap-route path="hello/world" realpath="c"></pap-route>
     <pap-route path="hello/:foo/world" realpath="c"></pap-route>
+    <pap-route path="location/:a/:b/:c" realpath="d"></pap-route>
   </pap-router>
 </body>
 

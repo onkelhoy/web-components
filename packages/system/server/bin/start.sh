@@ -22,7 +22,7 @@ trap cleanup INT
 
 npm run build -- --dev
 
-bash bin/cli.sh --log-level="debug" --open --location="$package/views" --live $@ &
+bash ./bin/cli.sh --log-level="debug" --open --location="$package/views" --live $@ &
 server_pid=$!
 
 # final 

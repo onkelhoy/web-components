@@ -4,7 +4,7 @@
 source .config 
   
 # create rootdir (now based on relative paths)
-ROOTDIR=$(realpath $ROOTDIR_RELATIVE)
+ROOTDIR=$(npm prefix)
 
 bash $ROOTDIR/bin/version/run.sh $(pwd)
 

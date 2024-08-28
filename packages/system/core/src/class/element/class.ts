@@ -1,10 +1,11 @@
 import { PropertyInfo, property } from "../../decorators/property";
 import { NextParent, debounce } from "../../functions";
-import { ConvertFromString, renderHTML, renderStyle } from "./helper";
+import { ConvertFromString, renderHTML, renderStyle, getSelector } from "./helper";
 import { FunctionCallback, RenderType, Setting } from "./types";
 
 export class CustomElement extends HTMLElement {
 
+  static domparser: DOMParser = new DOMParser();
   static observedAttributes = [];
   static style: string;
   static styles: string[];
@@ -14,16 +15,16 @@ export class CustomElement extends HTMLElement {
 
   protected callAfterRender: (Function | FunctionCallback)[] = [];
 
-  attributeToPropertyMap: Map<string, string> = new Map();
-  hasrendered = false;
-  setting: Setting;
-  properties: Record<string, PropertyInfo> = {};
-  originalHTML: string;
-  lastrender!: Document; // OLD stage, we use this to determine dynamically added content in between
-  rendercomperator!: HTMLTemplateElement;
-  stylecomperator!: HTMLStyleElement;
-
-  static domparser: DOMParser = new DOMParser();
+  public attributeToPropertyMap: Map<string, string> = new Map();
+  public hasrendered = false;
+  public setting: Setting;
+  public properties: Record<string, PropertyInfo> = {};
+  public originalHTML: string;
+  public lastrender!: Document; // OLD stage, we use this to determine dynamically added content in between
+  public rendercomperator!: HTMLTemplateElement;
+  public stylecomperator!: HTMLStyleElement;
+  public DOMpath!: string;
+  public UUID!: string;
 
   @property({ type: Boolean, rerender: false }) hasFocus: boolean = false;
 
@@ -48,6 +49,13 @@ export class CustomElement extends HTMLElement {
     this.callAfterRender.push(this.firstRender);
     this.originalHTML = this.outerHTML;
 
+    if (window.crypto) {
+      this.UUID = window.crypto.randomUUID();
+    }
+    else {
+      this.UUID = Math.random() + "" + performance.now();
+    }
+
     if (!this.setting.noblur) this.addEventListener('blur', this.handleblur);
     if (!this.setting.noblur) this.addEventListener('focus', this.handlefocus);
 
@@ -60,6 +68,8 @@ export class CustomElement extends HTMLElement {
     this.attributeinit = false;
     this.dispatchEvent(new Event('connected'));
     this.requestUpdate?.();
+    this.setDOMpath();
+    this.setAttribute("UUID", this.UUID);
   }
   disconnectedCallback() {
     this.dispatchEvent(new Event('disconnected'));
@@ -177,6 +187,41 @@ export class CustomElement extends HTMLElement {
   }
 
   // private functions
+  private setDOMpath() {
+    let target: any = this;
+    let path = [];
+
+    while (target !== document.documentElement) {
+      const parent = NextParent<any>(target as HTMLElement);
+      if (!parent) {
+        console.error("[warning] could not establish parent");
+        break;
+      }
+
+      if (parent.DOMpath) {
+        path.push(parent.DOMpath);
+        break;
+      }
+
+      let childindex = -1;
+      if (parent.children) {
+        for (let i = 0; i < parent.children.length; i++) {
+          if (parent.children[i] === target) {
+            childindex = i;
+            break;
+          }
+        }
+      }
+      else {
+        console.error("[error] parent has no children", parent);
+      }
+
+      path.push(`${target.tagName}:nth-child(${childindex + 1})`);
+      target = parent;
+    }
+
+    this.DOMpath = path.reverse().join(">");
+  }
   private initAttributes() {
     if (this.attributeinit) return
 

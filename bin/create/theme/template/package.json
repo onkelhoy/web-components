@@ -2,12 +2,11 @@
   "name": "PLACEHOLDER_FULL_NAME",
   "version": "0.0.0",
   "scripts": {
-    "build": "bin/build.sh",
-    "init": "bash bin/_utils/init.sh",
-    "start": "bin/start.sh",
-    "preversion": "bin/_utils/preversion.sh",
-    "postversion": "bin/_utils/postversion.sh",
-    "publish:manual": "bin/publish.sh"
+    "build": "bash ./bin/build.sh",
+    "start": "bash ./bin/start.sh",
+    "preversion": "bash ./bin/_utils/preversion.sh",
+    "postversion": "bash ./bin/_utils/postversion.sh",
+    "publish:manual": "bash ./bin/publish.sh"
   },
   "type": "module",
   "main": "./lib/style.css",
@@ -23,7 +22,7 @@
   "license": "PROJECTLICENSE",
   "repository": {
     "type": "git",
-    "url": "https://github.com/onkelhoy/web-components.git"
+    "url": "PLACEHOLDER_GITHUB_REPO.git"
   },
   "dependencies": {
     "@papit/theme-core": "^0.0.0"

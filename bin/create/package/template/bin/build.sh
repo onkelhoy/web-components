@@ -21,7 +21,7 @@ for arg in "$@"; do
 done
 
 if [[ "$PROD" == false && "$DEV" == false ]]; then 
-  echo "Choose wich build option you want" 
+  echo "Choose which build option you want" 
   echo "1. develpment"
   echo "2. production"
   echo ""
@@ -33,14 +33,8 @@ if [[ "$PROD" == false && "$DEV" == false ]]; then
   fi 
 fi
 
-# in a local mode we want to load the environment, (but in CI/CD pipeline we dont)
-if [[ -z "$ROOTDIR" ]]; then 
-  # get environment variables
-  source .config
-  
-  # create rootdir (now based on relative paths)
-  export ROOTDIR=$(realpath $ROOTDIR_RELATIVE)
-fi
+# get environment variables
+source .config
 
 # Remove the build directory
 rm -rf lib
@@ -49,7 +43,7 @@ rm -rf lib
 mkdir lib
 
 # compile the styles 
-bash "$SCRIPTDIR/_utils/sass.sh"
+npm run build:sass
 
 # Extract dependencies and devDependencies using Node.js
 DEPENDENCIES=$(node -pe "

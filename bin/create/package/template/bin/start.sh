@@ -11,8 +11,17 @@ for arg in "$@"; do
 done
 
 # cleanup
+has_cleaned=false
 cleanup() {
+  if [[ $has_cleaned == true ]]; then 
+    return 
+  fi 
+
+  has_cleaned=true
+  
   echo "[start] cleanup"
+  cd $package
+  
   kill $watch_pid 
   kill $server_pid
 
@@ -30,7 +39,10 @@ fi
 npm run watch &
 watch_pid=$!
 
-npx @papit/server --verbose --location=$package/views/$view --live $@ &
+# Try running the server with npm workspace
+cd $(npm prefix)
+
+npm run server --include-workspace-root=true --workspace="$(npm prefix)" -- --verbose --location=$package/views/$view --live --nosig "$@" &
 server_pid=$!
 
 # final 

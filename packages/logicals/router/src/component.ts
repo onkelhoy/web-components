@@ -1,5 +1,5 @@
 // system 
-import { CustomElement, property, html, NextParent, context, debounce } from "@papit/core";
+import { CustomElement, property, html, NextParent, context, debounce, query } from "@papit/core";
 
 // local imports
 import { URL, Mapping, PrepareElement, PrepareElementType, Params } from "./types";
@@ -74,9 +74,28 @@ export class Router extends CustomElement {
   @context({ name: "parent" }) child: boolean = false; // this should be flicked to true by "parent" if this router is nested in another router.. (should)
 
   // elements
-  public dom!: HTMLDivElement;
-  public head!: HTMLDivElement;
-  public body!: HTMLDivElement;
+  @query({
+    selector: '#router-dom',
+    load: function (this: Router) {
+      this.gethtml();
+
+    }
+  }) dom!: HTMLDivElement;
+  @query({
+    selector: '#router-head',
+    load: function (this: Router) {
+      // load main script 
+      this.proxyscript();
+
+      this.gethtml();
+    }
+  }) head!: HTMLDivElement;
+  @query({
+    selector: '#router-body',
+    load: function (this: Router) {
+      this.gethtml();
+    }
+  }) body!: HTMLDivElement;
 
   // variables 
   private parser: DOMParser;
@@ -87,7 +106,7 @@ export class Router extends CustomElement {
   private browser_url?: string = undefined;
   private internal = false;
   private firststate = true;
-
+  private safeUUID!: string;
 
   get params() {
     return this.mappedURL.params;
@@ -104,28 +123,11 @@ export class Router extends CustomElement {
   // class functions 
   firstRender(): void {
     super.firstRender();
-    const parent = NextParent(this);
-    if (parent) {
-      this.dom = document.createElement("div");
-      this.dom.id = crypto.randomUUID();
-
-      this.head = document.createElement("div");
-      this.head.className = "router-head";
-      this.dom.appendChild(this.head);
-
-      this.body = document.createElement("div");
-      this.body.className = "router-body"
-      this.dom.appendChild(this.body);
-
-      parent.appendChild(this.dom);
-      this.gethtml(); // this will always be the initial render 
-    }
-
     this.initiateurl();
   }
   connectedCallback(): void {
     super.connectedCallback();
-
+    this.safeUUID = this.UUID.replaceAll(/\W/g, "");
     window.addEventListener("popstate", this.handlewindowpopstate);
   }
   disconnectedCallback(): void {
@@ -138,6 +140,10 @@ export class Router extends CustomElement {
   render() {
     return html`
       <slot @slotchange="${this.handleslotchange}"></slot>
+      <div id="router-dom">
+        <div id="router-head"></div>
+        <div id="router-body"></div>
+      </div>
     `;
   }
 
@@ -288,9 +294,9 @@ export class Router extends CustomElement {
       });
     }
 
-    const scripts = dom.querySelectorAll("script");
+    const scripts = dom.querySelectorAll<HTMLScriptElement>("script:not([data-proxy])");
     const links = dom.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]');
-    const styles = dom.querySelectorAll("style");
+    const styles = dom.querySelectorAll<HTMLStyleElement>("style");
 
     const list: Array<{ elm: PrepareElement, type: PrepareElementType }> = [];
     scripts.forEach(elm => list.push({ elm, type: "script" }));
@@ -357,7 +363,10 @@ export class Router extends CustomElement {
     let response, content;
 
     try {
-      response = await fetch(url, { signal: controller.signal, });
+      response = await fetch(url, {
+        signal: controller.signal,
+        referrer: this.mappedURL.request_url
+      });
       this.abortcontrollers.add(controller);
 
       if (response.ok) {
@@ -397,7 +406,7 @@ export class Router extends CustomElement {
       return;
     }
 
-    content = correct(this.dom.id, content, type);
+    content = this.source_content(content, type);
 
     const h = await hash(content, this.encoder);
     this.sources.add(h); // append to latest sources 
@@ -418,6 +427,102 @@ export class Router extends CustomElement {
       this.head.appendChild(child);
     }
   }
+  private proxyscript() {
+    let script = this.head.querySelector("script[data-proxy]");
+    if (script) {
+      this.head.removeChild(script);
+    }
+
+    script = document.createElement("script");
+    script.toggleAttribute("data-proxy");
+    script.textContent = `
+      let document_${this.safeUUID} = null;
+      let router_${this.safeUUID} = null;
+
+      function load_document_${this.safeUUID}(withError = true) {
+        if (!document_${this.safeUUID}) 
+        {
+          router_${this.safeUUID} = document.querySelector("${this.DOMpath}");
+          document_${this.safeUUID} = router_${this.safeUUID}?.shadowRoot;
+        }
+
+        if (!document_${this.safeUUID} && withError)
+        {
+          // at this point we give up 
+          throw new Error("could not establish proxy document");
+        }
+      }
+
+      load_document_${this.safeUUID}(false);
+      window.location_proxy_${this.safeUUID} = new Proxy(window.location, {
+        get: (target, key) => {
+          if (key === "route" || key === "params")
+          {
+            if (typeof target[key] === "object") {
+              return {
+                ...target[key],
+                ...router_${this.safeUUID}.params
+              }
+            }
+
+            return router_${this.safeUUID}.params;
+          }
+          return target[key];
+        }
+      });
+      window.document_proxy_${this.safeUUID} = new Proxy(document, {
+        get: (target, key) => {
+          switch (key) {
+            case "querySelector":
+            case "querySelectorAll":
+              load_document_${this.safeUUID}();
+              return (original_query) => {
+                const modified_query = original_query.replaceAll("body", "#router-body");
+                let result = document_${this.safeUUID}[key](modified_query);
+                if (result) return result;
+  
+                // should not really happen but in one of view scripts I was referencing to the 
+                // need to fallback to document + original_query
+                return target[key](original_query);
+              }
+            case "getElementById":
+            case "getElementsByClassName":
+            case "getElementsByName":
+            case "getElementsByTagName":
+            case "getElementsByTagNameNS":
+              load_document_${this.safeUUID}();
+              return document_${this.safeUUID}[key].bind(document_${this.safeUUID});
+
+            case "body": 
+            case "documentElement":
+              load_document_${this.safeUUID}();
+              return document_${this.safeUUID};
+
+            default:
+              return target[key];
+          }
+        }
+      });
+    `;
+
+    console.log('script booted');
+
+    this.head.appendChild(script);
+  }
+  private source_content(content: string, type: PrepareElementType) {
+    if (type === "style") {
+      // replace with a look-behind & look-ahead to ensure we dont remove any necessary info (CSS info)
+      return content.replaceAll(/(?<=\W|^)body(?=\W|$)/g, "div#router-body");
+    }
+
+    // replace all instances to document by the document proxy 
+    content = content.replaceAll(/(?<=\W|^)document\./g, ` window.document_proxy_${this.safeUUID}.`);
+
+    // replace all instances to document by the document proxy 
+    content = content.replaceAll(/window\.location/g, ` window.location_proxy_${this.safeUUID}`);
+
+    return content;
+  }
 }
 
 // helper functions 
@@ -427,24 +532,4 @@ async function hash(content: string, encoder: TextEncoder) {
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   return hashHex;
-}
-/**
- * NOTE:: IF ERROR OCCURS ITS PROBABLY HERE
- * Corrects the source content by replacing all references to "body" to the id of dom instead 
- * @param domid {string} - ID of current router dom 
- * @param content {string} - content of source 
- */
-function correct(domid: string, content: string, type: PrepareElementType) {
-  if (type === "style") {
-    // replace with a look-behind & look-ahead to ensure we dont remove any necessary info (CSS info)
-    return content.replaceAll(/(?<=\W|^)body(?=\W|$)/g, `div[id='${domid}'] > div.router-body`);
-  }
-
-  // Replace querySelector and querySelectorAll calls (and getElementsByTagName)
-  content = content.replaceAll(/([querySelector(All)?|getElementsByTagName]\([^)]*)\bbody\b(?![-_\w])/g, `\$1div[id='${domid}'] > div.router-body`)
-
-  // Replace references to document.body
-  content = content.replaceAll(/document\.body(\.\s)/g, `document.querySelector('div[id='${domid}'] > div.router-body')\$1`);
-
-  return content;
 }
