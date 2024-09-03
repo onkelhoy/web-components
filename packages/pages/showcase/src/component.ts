@@ -1,12 +1,13 @@
 // import statements 
 // system 
-import { CustomElement, html, property } from "@papit/core";
+import { CustomElement, html, property, query } from "@papit/core";
 // logicals
 import "@papit/router";
 
 // local 
 import { style } from "./style";
 import { Layer } from "./types";
+import { Router } from "@papit/router";
 
 export class PageShowcase extends CustomElement {
   static style = style;
@@ -14,31 +15,60 @@ export class PageShowcase extends CustomElement {
   // properties 
   @property({ type: Array }) data: Layer[] = [];
   @property({ type: Boolean, attribute: 'hash-based' }) hashbased: boolean = true;
-  @property() url!: string;
+  @property({ attribute: 'base-url' }) baseurl: string = "../../..";
+
+  @query<Router>('pap-router') router!: Router;
+
+  // event handle
+  private handlepackageclick = (e: Event) => {
+    if (this.router) {
+      this.router.url = (e.target as HTMLButtonElement).getAttribute("data-url") as string;
+    }
+    else {
+      console.error("[chil] you clicked before router was initialized!");
+    }
+  }
+
+  // private helpers
+  private renderlayer() {
+    return this.data.map(layer => html`
+      <div key="${layer.name}">
+        <p>${layer.displayname || layer.name}</p>
+        ${layer.packages.map(pkg => {
+      let name, displayname;
+      if (typeof pkg === "object") {
+        name = pkg.name;
+        displayname = pkg.displayname || name;
+      }
+      else {
+        name = pkg;
+        displayname = name;
+      }
+
+      return html`
+        <button @click="${this.handlepackageclick}" key="${layer.name}/${name}" data-url="${layer.name}/${name}">
+          ${displayname}
+        </button>
+      `;
+    })}
+      </div>
+    `)
+  }
 
   render() {
+
     return html`
       <section>
-        ${this.data.forEach(layer => html`
-          <div key="${layer.name}">
-            <p>${layer.name}</p>
-            ${layer.packages.forEach(pkg => html`<a key="${pkg.location}" href="${pkg.location}">${pkg.name}</a>`)}
-          </div>
-        `)}
+        <slot name="menu-above"></slot>
+        ${this.renderlayer()}
+        <slot name="menu-below"></slot>
       </section>
       <main>
-        <pap-router hash-based="${this.hashbased}" url="${this.url}" update-url="true">
-          ${this.data.forEach(layer => {
-      return layer.packages.forEach(pkg => html`
-              <pap-route 
-                key="${layer.name}/${pkg.name}"
-                path="${layer.name}/${pkg.name}" 
-                realpath="${pkg.location}/views/showcase" 
-                fallback="${pkg.location}/views/${pkg.name}"
-              ></pap-route>
-            `)
-    })}
+        <slot name="main-top"></slot>
+        <pap-router hash-based="${this.hashbased}" update-url="true">
+          <span url=":type/:package" reroute="/packages/:type/:package/views/:view" view="showcase" view-fallback=":package" />
         </pap-router>
+        <slot name="main-bottom"></slot>
       </main>
     `
   }

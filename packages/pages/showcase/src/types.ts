@@ -1,2 +1,2 @@
-export type Package = { name: string; location: string; };
-export type Layer = { name: string; packages: Package[]; };
+type info = { name: string; displayname?: string; };
+export type Layer = info & { packages: (info | string)[]; };
