@@ -1,59 +1,48 @@
 // system 
-import { CustomElement, property, html, NextParent, context, debounce, query } from "@papit/core";
+import { CustomElement, property, html, debounce, query } from "@papit/core";
 
 // local imports
-import { URL, Mapping, PrepareElement, PrepareElementType, Params } from "./types";
-import { tidy, join, format, clearHash } from "./url";
+import { Route, AddRoute, MappedRoute, SourceElement, SourceType } from "./types";
+// helper imports 
+import { extract, intermediate, candidateGenerator } from "./helper/route";
+import { fetchURL } from "./helper/fetch";
+import { format, join, tidy } from "./helper/url";
+import { hash } from "./helper/utils";
+import { proxy } from "./helper/proxy";
 
-/**
- * NOTE:: dom needs to be placed outside of the webcomponent in order to "trigger" the style + scripts 
- * as normally the html 
- */
 export class Router extends CustomElement {
 
-  // properties
-  @property({
-    rerender: false,
-    after: function (this: Router, value: string, old: undefined | string) {
-      if (!this.internal) {
-        if (old === undefined) {
-          this.initiateurl();
-        }
-        else {
-          this.mapURL();
-        }
-      }
+  // static variables
+  private static parser: DOMParser;
+  private static encoder: TextEncoder;
+  // private variables
+  private sources: Set<string> = new Set();
+  private hasinitiated = false;
+  private internalpopstate = false; // prevents browser-url to be set if true
+  // public variables
+  public safeUUID!: string;
+  public routes: Route[] = [];
+  public browser_url: string | undefined = undefined;
+  public route: MappedRoute | null = null;
+  public abortcontrollers: Set<AbortController> = new Set();
 
-      this.internal = false;
-    }
-  }) url!: string;
+  // queries
+  @query({ selector: '#router-dom', load: function (this: Router) { this.initiateurl() } }) dom!: HTMLDivElement;
+  @query({ selector: '#router-head', load: function (this: Router) { this.initiateurl() } }) head!: HTMLDivElement;
+  @query({ selector: '#router-body', load: function (this: Router) { this.initiateurl() } }) body!: HTMLDivElement;
+
+  // properties
+  @property({ type: Boolean, rerender: false, attribute: "update-title" }) updatetitle: boolean = true;
+  @property({ type: Boolean, rerender: false, attribute: "update-url" }) updateurl: boolean = true;
+  @property({ type: Boolean, rerender: false, attribute: "trailing-slash" }) trailingslash: boolean = true;
+  @property({ type: Array, rerender: false, attribute: false }) omitters: string[] = ["[data-server-omitter]"];
+  @property({ rerender: false }) cache: "session" | "local" | undefined = undefined;
   @property({
-    type: Object,
-    attribute: false,
     rerender: false,
     after: function (this: Router) {
-      if (this.updateurl && !this.popstatechange && !this.child) {
-
-        if (this.firststate) {
-          window.history.replaceState({ path: this.mappedURL.path }, '', this.mappedURL.browser_url)
-          this.firststate = false;
-        }
-        else {
-          // Push the new state into the history
-          window.history.pushState({ path: this.mappedURL.path }, '', this.mappedURL.browser_url);
-        }
-      }
-      this.popstatechange = false;
-
-      try {
-        this.gethtml();
-      }
-      catch (error) {
-        console.error("[router]", error);
-      }
+      this.doupdateurl();
     }
-  }) mappedURL!: URL;
-
+  }) url?: string;
   @property({
     type: Boolean,
     rerender: false,
@@ -61,74 +50,28 @@ export class Router extends CustomElement {
     after: function (this: Router) {
       this.initiateurl();
     }
-  }) hashbased!: boolean;
-  @property({ type: Array, rerender: false, attribute: false }) omitters: string[] = ["[data-server-omitter]"];
-  @property({ type: Boolean, rerender: false }) cache: boolean = false;
-  @property({ type: Boolean, rerender: false, attribute: "update-title" }) updatetitle: boolean = true;
-  @property({ type: Boolean, rerender: false, attribute: "update-url" }) updateurl: boolean = true;
-  @property({ type: Array, rerender: false, attribute: false }) mappings: Mapping[] = [];
-  @property({ type: Boolean, rerender: false, attribute: "trailing-slash" }) trailingslash = true;
-  @property({ type: Boolean, context: true, rerender: false, attribute: false }) parent = true;
+  }) hashbased: boolean = true;
 
-  // contexts 
-  @context({ name: "parent" }) child: boolean = false; // this should be flicked to true by "parent" if this router is nested in another router.. (should)
-
-  // elements
-  @query({
-    selector: '#router-dom',
-    load: function (this: Router) {
-      this.gethtml();
-
-    }
-  }) dom!: HTMLDivElement;
-  @query({
-    selector: '#router-head',
-    load: function (this: Router) {
-      // load main script 
-      this.proxyscript();
-
-      this.gethtml();
-    }
-  }) head!: HTMLDivElement;
-  @query({
-    selector: '#router-body',
-    load: function (this: Router) {
-      this.gethtml();
-    }
-  }) body!: HTMLDivElement;
-
-  // variables 
-  private parser: DOMParser;
-  private encoder: TextEncoder;
-  private sources: Set<string> = new Set();
-  private abortcontrollers: Set<AbortController> = new Set();
-  private popstatechange = false;
-  private browser_url?: string = undefined;
-  private internal = false;
-  private firststate = true;
-  private safeUUID!: string;
-
+  // getters 
   get params() {
-    return this.mappedURL.params;
+    if (!this.route) return {};
+    return this.route.params;
   }
 
   constructor() {
     super();
-    this.parser = new DOMParser();
-    this.encoder = new TextEncoder();
-
+    if (!Router.parser) Router.parser = new DOMParser();
+    if (!Router.encoder) Router.encoder = new TextEncoder();
     this.initiateurl = debounce(this.initiateurl, 150);
   }
 
-  // class functions 
-  firstRender(): void {
-    super.firstRender();
-    this.initiateurl();
-  }
   connectedCallback(): void {
     super.connectedCallback();
     this.safeUUID = this.UUID.replaceAll(/\W/g, "");
     window.addEventListener("popstate", this.handlewindowpopstate);
+
+    // add proxy here!
+    proxy(this);
   }
   disconnectedCallback(): void {
     super.disconnectedCallback();
@@ -137,14 +80,10 @@ export class Router extends CustomElement {
     this.abortcontrollers.clear();
     window.removeEventListener("popstate", this.handlewindowpopstate);
   }
-  render() {
-    return html`
-      <slot @slotchange="${this.handleslotchange}"></slot>
-      <div id="router-dom">
-        <div id="router-head"></div>
-        <div id="router-body"></div>
-      </div>
-    `;
+  firstRender(): void {
+    super.firstRender();
+
+    // init url 
   }
 
   // event handlers 
@@ -153,138 +92,122 @@ export class Router extends CustomElement {
       const assignedElements = e.target.assignedElements();
 
       for (let element of assignedElements) {
-        if (element instanceof HTMLElement) {
-          if (element.hasAttribute("path")) {
-            const path = element.getAttribute("path") || "";
-            const realpath = element.getAttribute("realpath") || path;
-
-            this.mappings.push({ path, realpath })
-          }
-        }
+        const route = extract(element);
+        if (route) this.routes.push(route);
       }
     }
   }
   private handlewindowpopstate = (event: PopStateEvent) => {
 
-    if (event.state?.path) {
+    if (event.state?.url) {
       // Handle state restoration here
-      this.popstatechange = true;
-      this.url = event.state.path;
+      this.internalpopstate = true;
+      this.url = event.state.url;
     }
     else {
       this.cleanup();
     }
   }
 
-  // helper functions 
-  private cleanup() {
-    this.body.innerHTML = "";
-    this.head.innerHTML = "";
+  // public functions 
+  public addRoute(route: AddRoute) {
+    const mappedroute: Route = {
+      params: {},
+      reroute: [route.url],
+      ...route, // override the above if so 
+    };
+
+    this.routes.push(mappedroute);
   }
-  private initiateurl = () => {
-    let browser_url = tidy(window.location.pathname);
-    let url = tidy(this.url);
 
-    if (this.url === undefined) {
-      this.internal = true;
-      this.url = url;
+  // private functions 
+  private initiateurl() {
+    if (!this.hasinitiated) {
+      this.doupdateurl();
     }
-
-    if (!url.startsWith(browser_url)) {
-      // this means url is set aside from browser_url thus found initial browser_url
-      this.browser_url = browser_url;
-    }
-
-    if (!this.hashbased) {
-      this.hashbased = false;
-    }
-
-    this.mapURL();
   }
-  private mapURL() {
-    let browser_url = this.browser_url || "";
-    let url = tidy(this.url);
-
-    if (this.url === undefined) {
-      this.internal = true;
-      this.url = url;
-    }
-
-    if (this.hashbased) {
-      if (url === "") url = tidy(window.location.hash.replace("#", ""));
-      browser_url += "/#"
-    }
-
-    const output: URL = {
-      request_url: clearHash(join(this.browser_url || "", url), this.trailingslash), // formatted real-path 
-      browser_url: format(join(browser_url, url), this.trailingslash), // the url  (turns all variables into values)
-      path: clearHash(url, this.trailingslash), // can include variables -> /hello/:world/foo
-      params: {}, // aaand params.. 
-    }
-
-    const urlsplit = url.split("/");
-    for (let mapping of this.mappings) {
-      const params: Params = {};
-      const split = mapping.path.split("/");
-      let match = urlsplit.length === split.length;
-      const _browser_url: string[] = [browser_url]
-
-      if (!match) continue;
-      for (let i = 0; i < urlsplit.length; i++) {
-        if (split[i].startsWith(":")) {
-          // dynamic
-          _browser_url.push(urlsplit[i]);
-          params[split[i].slice(1, split[i].length)] = urlsplit[i];
-        }
-        else if (split[i] !== urlsplit[i]) {
-          // not ok
-          match = false;
-          break;
-        }
-        else {
-          _browser_url.push(split[i]);
-        }
-      }
-
-      if (match) {
-        output.path = mapping.path;
-        output.request_url = clearHash(join(this.browser_url || "", typeof mapping.realpath === "function" ? mapping.realpath(mapping.path, params) : mapping.realpath), this.trailingslash);
-        output.params = params;
-        output.browser_url = format(join(..._browser_url), this.trailingslash);
-        break;
-      }
-    }
-
-    this.mappedURL = output;
-  }
-  private async gethtml() {
-    if (this.child) return;
-
+  private async doupdateurl() {
     if (!this.dom) return;
     if (!this.head) return;
     if (!this.body) return;
 
-    if (!this.mappedURL) return;
+    if (this.browser_url === undefined) {
+      let browser_url = tidy(window.location.pathname);
+      let url = tidy(this.url);
 
-    if (!this.mappedURL.path || this.mappedURL.path === "/") {
-      this.cleanup();
+      if (!url.startsWith(browser_url)) {
+        // this means url is set aside from browser_url thus found initial browser_url
+        this.browser_url = "/" + browser_url;
+      }
+      else {
+        this.browser_url = "";
+      }
+    }
+
+    this.hasinitiated = true;
+
+    if (this.url === undefined) {
+      let browser_url = this.browser_url;
+      if (this.hashbased) {
+        this.url = tidy(window.location.hash.replace("#", ""));
+        browser_url = format(join(browser_url, "#"), this.trailingslash)
+      }
+      if (this.updateurl) {
+        const REALBROWSERURL = window.location.href.slice(window.location.origin.length);
+        if (!REALBROWSERURL.startsWith(browser_url)) {
+          window.history.replaceState(null, '', browser_url);
+        }
+      }
       return;
     }
 
-    const { response, content } = await this.fetch(this.mappedURL.request_url);
+    this.route = null;
+    const route = intermediate(this.url, this.routes);
+    if (route) {
+      const gen = candidateGenerator(route, this.browser_url, this);
+      for (let candidate of gen) {
+        const data = await fetchURL(candidate.request, candidate, this);
+        if (data.response && data.response.ok) {
+          this.route = candidate;
+          if (this.updateurl && !this.internalpopstate) {
 
-    if (!(content && response)) {
-      console.error({ response, content })
-      throw new Error("fetching html content went wrong");
+            const REALBROWSERURL = window.location.href.slice(window.location.origin.length);
+            if (this.route.browser !== REALBROWSERURL) {
+              // Push the new state into the history
+              window.history.pushState({ url: this.url }, '', this.route.browser);
+            }
+          }
+          this.internalpopstate = false;
+
+          this.insertHTML(data.content, data.response);
+          break;
+        }
+      }
     }
 
+    if (this.route === null) {
+      console.log('no route could be determined');
+    }
+  }
+  private cleanup() {
+    const sources = this.head.querySelectorAll(":not([data-proxy])");
+    sources.forEach(element => this.head.removeChild(element));
+    this.body.innerHTML = "";
+  }
+  private async insertHTML(content: string, response: Response) {
     const contenttype = response.headers.get('content-type');
 
     if (contenttype !== "text/html") {
       throw new Error("fetched something besides html..");
     }
 
-    const dom = this.parser.parseFromString(content, "text/html");
+    // cleanup always scripts until smart solution can be made to reload window-load on already existing scripts
+    const currentScripts = this.head.querySelectorAll("script[data-hash]");
+    for (let i = 0; i < currentScripts.length; i++) {
+      this.head.removeChild(currentScripts[i]);
+    }
+
+    const dom = Router.parser.parseFromString(content, "text/html");
 
     // first remove any elements that are defined by omitters 
     for (let omiter of this.omitters) {
@@ -294,11 +217,11 @@ export class Router extends CustomElement {
       });
     }
 
-    const scripts = dom.querySelectorAll<HTMLScriptElement>("script:not([data-proxy])");
+    const scripts = dom.querySelectorAll<HTMLScriptElement>("script");
     const links = dom.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]');
     const styles = dom.querySelectorAll<HTMLStyleElement>("style");
 
-    const list: Array<{ elm: PrepareElement, type: PrepareElementType }> = [];
+    const list: Array<{ elm: SourceElement, type: SourceType }> = [];
     scripts.forEach(elm => list.push({ elm, type: "script" }));
     links.forEach(elm => list.push({ elm, type: "style" }));
     styles.forEach(elm => list.push({ elm, type: "style" }));
@@ -314,6 +237,7 @@ export class Router extends CustomElement {
     // cleanup existing sources (that was not just added)
     for (let i = 0; i < this.head.children.length; i++) {
       const child = this.head.children[i];
+      if (child.hasAttribute("data-proxy")) continue;
       const hash = child.getAttribute("data-hash") || "";
 
       if (!this.sources.has(hash)) {
@@ -338,64 +262,16 @@ export class Router extends CustomElement {
 
     if (body) this.body.innerHTML = body.innerHTML;
 
-    if (window.onload instanceof Function) {
-      window.onload(new Event("load"));
-    }
+    this.dispatchEvent(new Event("window-clear"));
+    this.dispatchEvent(new Event("window-load"));
   }
-  private async fetch(url: string) {
-    if (this.cache) {
-      const item = window.localStorage.getItem(url);
-      if (item) {
-        const { type, content } = JSON.parse(item);
-        return {
-          content, response: {
-            ok: true, headers: {
-              get: (key: string) => {
-                return type;
-              }
-            }
-          } as Response
-        };
-      }
-    }
-
-    const controller = new AbortController();
-    let response, content;
-
-    try {
-      response = await fetch(url, {
-        signal: controller.signal,
-        referrer: this.mappedURL.request_url
-      });
-      this.abortcontrollers.add(controller);
-
-      if (response.ok) {
-        content = await response.text();
-      }
-      else {
-        console.error('[router] fetching went wrong, status not 2xx', response.status, response.statusText);
-      }
-    }
-    catch (e) {
-      console.error('[router] fetching went wrong', e);
-    }
-    finally {
-      this.abortcontrollers.delete(controller);
-      if (this.cache && content && response && response.ok) {
-        window.localStorage.setItem(url, JSON.stringify({
-          content,
-          type: response.headers.get('content-type')
-        }));
-      }
-      return { content, response };
-    }
-  }
-  private async handlesource(element: PrepareElement, type: PrepareElementType) {
+  private async handlesource(element: SourceElement, type: SourceType) {
     let content = element.textContent;
     const url = element.getAttribute(type === "script" ? "src" : "href");
 
     if (url) {
-      const data = await this.fetch(format(join(this.mappedURL.request_url, url)));
+      const route = this.route as MappedRoute;
+      const data = await fetchURL("/" + join(route.request, url), route as MappedRoute, this);
       if (data.content) {
         content = data.content;
       }
@@ -406,10 +282,12 @@ export class Router extends CustomElement {
       return;
     }
 
-    content = this.source_content(content, type);
-
-    const h = await hash(content, this.encoder);
+    const h = await hash(content, Router.encoder);
     this.sources.add(h); // append to latest sources 
+
+    content = this.fixcontent(content, type);
+
+    // append proxy script first 
 
     if (!this.head.querySelector(`[data-hash="${h}"]`)) {
       // no hash found 
@@ -427,109 +305,36 @@ export class Router extends CustomElement {
       this.head.appendChild(child);
     }
   }
-  private proxyscript() {
-    let script = this.head.querySelector("script[data-proxy]");
-    if (script) {
-      this.head.removeChild(script);
-    }
-
-    script = document.createElement("script");
-    script.toggleAttribute("data-proxy");
-    script.textContent = `
-      let document_${this.safeUUID} = null;
-      let router_${this.safeUUID} = null;
-
-      function load_document_${this.safeUUID}(withError = true) {
-        if (!document_${this.safeUUID}) 
-        {
-          router_${this.safeUUID} = document.querySelector("${this.DOMpath}");
-          document_${this.safeUUID} = router_${this.safeUUID}?.shadowRoot;
-        }
-
-        if (!document_${this.safeUUID} && withError)
-        {
-          // at this point we give up 
-          throw new Error("could not establish proxy document");
-        }
-      }
-
-      load_document_${this.safeUUID}(false);
-      window.location_proxy_${this.safeUUID} = new Proxy(window.location, {
-        get: (target, key) => {
-          if (key === "route" || key === "params")
-          {
-            if (typeof target[key] === "object") {
-              return {
-                ...target[key],
-                ...router_${this.safeUUID}.params
-              }
-            }
-
-            return router_${this.safeUUID}.params;
-          }
-          return target[key];
-        }
-      });
-      window.document_proxy_${this.safeUUID} = new Proxy(document, {
-        get: (target, key) => {
-          switch (key) {
-            case "querySelector":
-            case "querySelectorAll":
-              load_document_${this.safeUUID}();
-              return (original_query) => {
-                const modified_query = original_query.replaceAll("body", "#router-body");
-                let result = document_${this.safeUUID}[key](modified_query);
-                if (result) return result;
-  
-                // should not really happen but in one of view scripts I was referencing to the 
-                // need to fallback to document + original_query
-                return target[key](original_query);
-              }
-            case "getElementById":
-            case "getElementsByClassName":
-            case "getElementsByName":
-            case "getElementsByTagName":
-            case "getElementsByTagNameNS":
-              load_document_${this.safeUUID}();
-              return document_${this.safeUUID}[key].bind(document_${this.safeUUID});
-
-            case "body": 
-            case "documentElement":
-              load_document_${this.safeUUID}();
-              return document_${this.safeUUID};
-
-            default:
-              return target[key];
-          }
-        }
-      });
-    `;
-
-    console.log('script booted');
-
-    this.head.appendChild(script);
-  }
-  private source_content(content: string, type: PrepareElementType) {
+  private fixcontent(content: string, type: SourceType) {
     if (type === "style") {
       // replace with a look-behind & look-ahead to ensure we dont remove any necessary info (CSS info)
       return content.replaceAll(/(?<=\W|^)body(?=\W|$)/g, "div#router-body");
     }
 
-    // replace all instances to document by the document proxy 
-    content = content.replaceAll(/(?<=\W|^)document\./g, ` window.document_proxy_${this.safeUUID}.`);
+    // replace reference to document to window.document
+    content = content.replaceAll(/(?<![\w'"`])(window\.)?document(?![\w])/g, "window.document"); //`window.proxy_document_${this.safeUUID}`);
+    // replace reference to location to window.location
+    content = content.replaceAll(/(?<![\w'"`])(window\.|document\.)?location(?![\w])/g, "window.location"); //, `window.proxy_location_${this.safeUUID}`);
 
-    // replace all instances to document by the document proxy 
-    content = content.replaceAll(/window\.location/g, ` window.location_proxy_${this.safeUUID}`);
+    // replace references to window to window.proxy_ ...
+    content = content.replaceAll(/(?<![\w'"`])window(?=[\.])/g, `window.proxy_${this.safeUUID}`);
 
     return content;
   }
+
+  render() {
+    return html`
+      <slot @slotchange="${this.handleslotchange}"></slot>
+      <div id="router-dom">
+        <div id="router-head"></div>
+        <div id="router-body"></div>
+      </div>
+    `
+  }
 }
 
-// helper functions 
-async function hash(content: string, encoder: TextEncoder) {
-  const data = encoder.encode(content);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  return hashHex;
+declare global {
+  interface HTMLElementTagNameMap {
+    "pap-router": Router;
+  }
 }

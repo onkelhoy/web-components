@@ -52,6 +52,8 @@ export function Decorator(setting?: Partial<Setting>) {
           set(value: any) {
             if (_settings?.set) value = _settings.set.call(this, value);
 
+            // don't know what should do with info but calling getInfo seems important (yes.. I forgot why)
+            // it sets to attributeToPropertyMap in case which is used to determine many stuff (especially by analyse, but still)
             const info = getInfo.call(this, propertyKey, attributeName, _settings);
             const valuestring = ConvertToString(value, _settings.type);
 

@@ -40,6 +40,7 @@ export function route(req: http.IncomingMessage, res: http.ServerResponse) {
   }
 
   let document: null | HTMLElement = null;
+  let status = 200;
 
   try {
     const source = fs.readFileSync(path.join(process.env.LOCATION as string, filepath), 'utf-8');
@@ -76,12 +77,13 @@ export function route(req: http.IncomingMessage, res: http.ServerResponse) {
     }
     else {
       document = processDocument(get("notfound"));
+      status = 404;
     }
   }
 
   if (document !== null) {
     const file = document.toString();
-    res.statusCode = 200;
+    res.statusCode = status;
     res.setHeader("Content-Type", "text/html");
     res.end(file);
   }

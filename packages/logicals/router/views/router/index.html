@@ -22,13 +22,32 @@
       <button data-url="a">page A</button>
       <button data-url="b">page B</button>
       <button data-url="c">page C</button>
+      <button data-url="location/abc/def/ghi">page D</button>
+      <button data-url="fallback">fallback</button>
+      <button data-url="fallback-2">fallback-2</button>
+
+      <div style="margin: 1rem">
+        <button data-url="showcase/atoms/button/:view">Button Showcase</button>
+        <button data-url="showcase/atoms/icon/:view">Icon Showcase</button>
+        <button data-url="showcase/molecules/input/:view">Input Showcase</button>
+        <button data-url="showcase/molecules/select/:view">Select Showcase</button>
+      </div>
 
       <button data-url="hello/world">page hello/world</button>
       <button data-url="hello/BAJSKAKA/world">page hello/:foo/world</button>
 
-      <pap-router>
-        <pap-route path="hello/world" realpath="a"></pap-route>
-        <pap-route path="hello/:foo/world" realpath="c"></pap-route>
+      <pap-router hash-based>
+        <div path="hello/world" realpath="a"></div>
+        <div path="hello/:foo/world" realpath="c"></div>
+        <div path="location/:a/:b/:c" realpath="d"></div>
+
+        <div path="fallback-2" realpath="z" realpath-fallback="x" realpath-fallback-0="a"></div>
+
+        <div path="showcase/:type/:package/:view" realpath="fake-packages/:type/:package/views/:view" view="showcase"
+          view-fallback=":package"></div>
+
+        <div path="dynamic-realpath" realpath=":dynamic" dynamic="x" dynamic-fallback="z" dynamic-fallback-1="a"></div>
+
       </pap-router>
     </pap-codeblock>
   </pap-card>

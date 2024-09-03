@@ -1,9 +1,7 @@
 import { Router } from './component.js';
-import "./components/route";
 
 // export 
-export * from "./component";
-export * from "./components/route";
+export * from "./component.js";
 
 // Register the element with the browser
 

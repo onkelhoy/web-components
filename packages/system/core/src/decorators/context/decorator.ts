@@ -58,7 +58,6 @@ export function Decorator(setting?: Setting) {
       if (_setting.verbose) console.log('final parent', parent);
 
       if (parent) {
-
         const operation = () => {
           if (_setting.verbose) console.log('context-update', _setting.name, _setting.attribute)
 
