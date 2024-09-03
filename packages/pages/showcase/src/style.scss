@@ -1,4 +1,13 @@
 :host {
-  color: var(--pap-color-text);
-  background-color: var(--pap-color-background);
+  display: flex;
+
+  section {
+    width: 120px;
+    background-color: rgb(213, 213, 213);
+    padding: 1rem;
+  }
+
+  main {
+    flex: 1;
+  }
 }

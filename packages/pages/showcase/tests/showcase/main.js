@@ -1,1 +1,1 @@
-import 'showcase';
+import '@papit/page-showcase';
