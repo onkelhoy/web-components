@@ -1,5 +1,4 @@
-import { RenderType, Setting } from "./types";
-import { CustomElement } from "./class";
+import { RenderType, Setting, ICustomElement } from "./types";
 
 export function ConvertFromString(value: string | null, type: Function) {
   switch (type.name) {
@@ -16,7 +15,7 @@ export function ConvertFromString(value: string | null, type: Function) {
       return type(value);
   }
 }
-export function renderStyle(setting: Setting, element: CustomElement) {
+export function renderStyle(setting: Setting, element: ICustomElement) {
   if (!element.shadowRoot) {
     console.error('shadowroot not defined yet!')
     return;
@@ -44,7 +43,7 @@ export function renderStyle(setting: Setting, element: CustomElement) {
     targetElement.innerHTML = element.stylecomperator.innerHTML;
   }
 }
-export function renderHTML(setting: Setting, element: CustomElement) {
+export function renderHTML(setting: Setting, element: ICustomElement) {
   if (!element.shadowRoot) {
     console.error('shadowroot not defined yet!')
     return;
@@ -60,7 +59,7 @@ export function renderHTML(setting: Setting, element: CustomElement) {
 
     // init case 
     freshRender(element, content, element.shadowRoot);
-    element.lastrender = CustomElement.domparser.parseFromString(element.outerHTML, "text/html");
+    element.lastrender = element.domparser.parseFromString(element.outerHTML, "text/html");
     return;
   }
 
@@ -72,11 +71,11 @@ export function renderHTML(setting: Setting, element: CustomElement) {
     diffing(element, content);
   }
 
-  element.lastrender = CustomElement.domparser.parseFromString(element.outerHTML, "text/html");
+  element.lastrender = element.domparser.parseFromString(element.outerHTML, "text/html");
 }
 
 // helper functions 
-function freshRender(element: CustomElement, content: RenderType, parent: ShadowRoot | Element) {
+function freshRender(element: ICustomElement, content: RenderType, parent: ShadowRoot | Element) {
   if (["string", "number", "boolean"].includes(typeof content)) {
     const strcontent = (content || "").toString();
     if (/</.test(strcontent) && />/.test(strcontent)) {
@@ -110,7 +109,7 @@ function flushHTML(node: Element | ShadowRoot) {
     }
   });
 }
-function diffing(element: CustomElement, content: RenderType) {
+function diffing(element: ICustomElement, content: RenderType) {
   if (!element.rendercomperator) return;
 
   // lets keep the html and check if any dynamic content was added by making sure no difference between OLD and NEW 
@@ -132,7 +131,7 @@ function diffing(element: CustomElement, content: RenderType) {
 }
 
 // diffing helpers 
-function cleanup(element: CustomElement) {
+function cleanup(element: ICustomElement) {
   if (!element.shadowRoot) return;
   if (!element.rendercomperator) return;
 
@@ -143,7 +142,7 @@ function cleanup(element: CustomElement) {
     if (!node.parentNode) return;
 
     // determine which one should leave ! 
-    const path = getComposedPath(element, element.shadowRoot as ShadowRoot, node);
+    const path = getComposedPath(element.shadowRoot as ShadowRoot, node);
     const selector = path.join(" > ");
     const templateNode = element.rendercomperator.querySelector(selector);
     if (!templateNode) {
@@ -159,14 +158,14 @@ function cleanup(element: CustomElement) {
     }
   });
 }
-function clone(element: CustomElement) {
+function clone(element: ICustomElement) {
   if (!element.shadowRoot) return;
   if (!element.rendercomperator) return;
 
   const clone = element.rendercomperator.cloneNode(true) as HTMLTemplateElement;
 
   clone.querySelectorAll('*:not(style[data-static-style])').forEach(node => {
-    const path = getComposedPath(element, clone, node);
+    const path = getComposedPath(clone, node);
     const originalnode = element.rendercomperator.querySelector(path.join(' > '));
     if (originalnode) {
 
@@ -301,7 +300,7 @@ function clone(element: CustomElement) {
 // function clone_compare(element: CustomElement, clone: HTMLTemplateElement, shadowNode: Element | null, node: Element, path: string[]) {
 
 // }
-function getComposedPath(element: CustomElement, base: ShadowRoot | Element | Document, target: Element) {
+function getComposedPath(base: ShadowRoot | Element | Document, target: Element) {
   const path = [];
   while (target !== base) {
     path.push(getSelector(target));
@@ -345,9 +344,9 @@ export function getSelector(node: Element) {
 
   return selector.join("");
 }
-function getNextElement(element: CustomElement, clone: HTMLTemplateElement, node: Element): Element | null {
+function getNextElement(element: ICustomElement, clone: HTMLTemplateElement, node: Element): Element | null {
   if (node.nextElementSibling) {
-    const path = getComposedPath(element, clone, node.nextElementSibling);
+    const path = getComposedPath(clone, node.nextElementSibling);
     const shadowNode = element.querySelector(path.join(" > "));
 
     if (shadowNode) {

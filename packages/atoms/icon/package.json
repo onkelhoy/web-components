@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@papit/asset": "0.0.1",
-    "@papit/core": "^0.0.0",
+    "@papit/core": "0.0.1",
     "tslib": "^2.5.0"
   },
   "devDependencies": {

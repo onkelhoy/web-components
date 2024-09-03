@@ -1,0 +1,10 @@
+// pre-styles
+pap-button:not(:defined) {
+  background-color: var(--pap-secondary);
+  display: flex;
+  justify-content: center;
+  gap: var(--gap-small);
+  align-items: center;
+  color: var(--pap-text);
+  border-radius: 1000px;
+}

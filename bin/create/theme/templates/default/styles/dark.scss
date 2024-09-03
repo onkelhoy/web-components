@@ -13,6 +13,10 @@
   --pap-text: var(--pap-white);
   --pap-text-inverse: var(--pap-black);
 
+  /* disabled colors */
+  --pap-text-disabled: #444F59;
+  --pap-disabled: #8B9BAB;
+
   /* primary colors */
   --pap-primary-text: var(--pap-text);
   --pap-primary-contrast: var(--pap-text-inverse);
@@ -58,6 +62,7 @@
   --pap-border-1: color-mix(in srgb, var(--pap-white), var(--pap-black) 80%);
   --pap-border-2: color-mix(in srgb, var(--pap-white), var(--pap-black) 72%);
   --pap-border-3: color-mix(in srgb, var(--pap-white), var(--pap-black) 64%);
+  --pap-border-strong: var(--pap-white);
 
   /* shadow colors */
   --pap-shadow: color-mix(in srgb, var(--pap-white), transparent 90%);

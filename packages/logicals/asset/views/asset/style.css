@@ -1,8 +1,4 @@
 body {
-  background-color: var(--pap-color-background-canvas, #EAEBEF);
-  color: var(--pap-color-text, #29292F);
-}
-
-body {
-  font-family: var(--pap-font-family);
+  background-color: var(--pap-background, #DEDEDE);
+  color: var(--pap-text, #080808);
 }

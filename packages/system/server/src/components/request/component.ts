@@ -5,6 +5,7 @@ import http from "node:http";
 import { route as handleHTML } from "../html";
 import { route as handleFile } from "../file";
 import { route as handleAsset } from "../asset";
+import { route as handleTheme } from "../theme";
 
 export function request(req: http.IncomingMessage, res: http.ServerResponse) {
   if (req.method !== "GET") {
@@ -36,6 +37,8 @@ export function request(req: http.IncomingMessage, res: http.ServerResponse) {
     handleHTML(req, res);
     return;
   }
+
+  if (handleTheme(req, res)) return;
 
   // dealing with file-type 
   handleFile(req, res);
