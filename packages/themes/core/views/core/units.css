@@ -1,0 +1,118 @@
+div.radiuses {
+  display: flex;
+  gap: var(--gap-large);
+  flex-wrap: wrap;
+
+  span {
+    border: 3px solid var(--pap-border);
+
+    &[data-radius=small] {
+      border-radius: var(--radius-small);
+    }
+
+    &[data-radius=medium] {
+      border-radius: var(--radius-medium);
+    }
+
+    &[data-radius=large] {
+      border-radius: var(--radius-large);
+    }
+  }
+}
+
+div.paddings {
+  display: flex;
+  gap: var(--gap-large);
+  flex-wrap: wrap;
+  align-items: flex-start;
+
+  &>span {
+    border: 2px solid var(--pap-border);
+    box-sizing: unset;
+    aspect-ratio: unset;
+    width: auto;
+    background-color: var(--pap-foreground-2);
+
+    &[data-padding=small] {
+      padding: var(--padding-small);
+    }
+
+    &[data-padding=medium] {
+      padding: var(--padding-medium);
+    }
+
+    &[data-padding=large] {
+      padding: var(--padding-large);
+    }
+
+    &>span {
+      display: block;
+      line-height: 40px;
+    }
+  }
+}
+
+
+div.margins {
+  display: flex;
+  gap: var(--gap-large);
+  flex-wrap: wrap;
+  align-items: flex-start;
+
+  &>span {
+    border: 2px solid var(--pap-border);
+    box-sizing: unset;
+    aspect-ratio: unset;
+    width: auto;
+
+    &[data-margin=small] span {
+      margin: var(--margin-small);
+    }
+
+    &[data-margin=medium] span {
+      margin: var(--margin-medium);
+    }
+
+    &[data-margin=large] span {
+      margin: var(--margin-large);
+    }
+
+    &>span {
+      background-color: var(--pap-foreground-2);
+      display: block;
+      line-height: 40px;
+      border-radius: var(--radius-small);
+      padding: var(--padding-small);
+    }
+  }
+}
+
+div.gaps {
+  margin-bottom: var(--margin-large);
+
+  & p {
+    margin-top: 0;
+  }
+
+  &>div>div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+
+    &>span {
+      border: 2px solid var(--pap-border);
+    }
+  }
+
+  &>div[data-gap=small]>div {
+    gap: var(--gap-small);
+  }
+
+  &>div[data-gap=medium]>div {
+    gap: var(--gap-medium);
+  }
+
+  &>div[data-gap=large]>div {
+    gap: var(--gap-large);
+  }
+}

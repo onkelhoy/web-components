@@ -1,0 +1,12 @@
+/* DARK colors */
+
+:root,
+.theme-dark {
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  .theme-opposite {
+    color-scheme: light;
+  }
+}

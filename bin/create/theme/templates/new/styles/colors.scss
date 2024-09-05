@@ -1,0 +1,132 @@
+:root {
+  color-scheme: light dark;
+
+  /* colors */
+  --pap-black: black;
+  --pap-white: white;
+  --pap-tertiary-light: cornflowerblue;
+  --pap-tertiary-dark: salmon;
+  --pap-error-light: #c31f1f;
+  --pap-error-dark: #fd4444;
+  --pap-success-light: OliveDrab;
+  --pap-success-dark: #64e41a;
+  --pap-warning-light: #ff9900;
+  --pap-warning-dark: #ffd94e;
+  --pap-information-light: RoyalBlue;
+
+  --pap-text: light-dark(var(--pap-black), var(--pap-white));
+  --pap-text-inverse: light-dark(var(--pap-white), var(--pap-black));
+
+  /* primary colors */
+  --pap-primary: light-dark(var(--pap-black), var(--pap-white));
+  --pap-primary-text: var(--pap-text);
+  --pap-primary-contrast: var(--pap-text-inverse);
+
+  /* secondary colors */
+  --pap-secondary: light-dark(var(--pap-white), var(--pap-black));
+  --pap-secondary-text-light: color-mix(in srgb, var(--pap-white), var(--pap-black) 80%);
+  --pap-secondary-text-dark: color-mix(in srgb, var(--pap-white) 80%, var(--pap-black));
+  --pap-secondary-text: light-dark(var(--pap-secondary-text-light), var(--pap-secondary-text-dark));
+  --pap-secondary-contrast: var(--pap-text);
+
+  /* tertiary colors */
+  --pap-tertiary-text-light: hsl(from var(--pap-tertiary-light) h s calc(l * 0.72));
+  --pap-tertiary-text-dark: hsl(from var(--pap-tertiary-dark) h s calc(l * 1.28));
+  --pap-tertiary: light-dark(var(--pap-tertiary-light), var(--pap-tertiary-dark));
+  --pap-tertiary-text: light-dark(var(--pap-tertiary-text-light), var(--pap-tertiary-text-dark));
+  --pap-tertiary-contrast: var(--pap-text-inverse);
+
+  /* error colors */
+  --pap-error-text-light: hsl(from var(--pap-error-light) h s calc(l * 0.72));
+  --pap-error-text-dark: hsl(from var(--pap-error-dark) h s calc(l * 0.9));
+  --pap-error: light-dark(var(--pap-error-light), var(--pap-error-dark));
+  --pap-error-text: light-dark(var(--pap-error-text-light), var(--pap-error-text-dark));
+  --pap-error-contrast: var(--pap-text-inverse);
+
+  /* success colors */
+  --pap-success-dark: color-mix(in srgb, hsl(from var(--pap-success-light) h s calc(l * 1.5)), rgb(0, 212, 0) 20%);
+  --pap-success-text-light: hsl(from var(--pap-success-light) h s calc(l * 0.72));
+  --pap-success-text-dark: hsl(from var(--pap-success-dark) h s calc(l * 0.9));
+  --pap-success: light-dark(var(--pap-success-light), var(--pap-success-dark));
+  --pap-success-text: light-dark(var(--pap-success-text-light), var(--pap-success-text-dark));
+  --pap-success-contrast: var(--pap-text-inverse);
+
+  /* warning colors */
+  --pap-warning-text-light: hsl(from var(--pap-warning-light) h s calc(l * 0.72));
+  --pap-warning-text-dark: hsl(from var(--pap-warning-dark) h s calc(l * 0.9));
+  --pap-warning: light-dark(var(--pap-warning-light), var(--pap-warning-dark));
+  --pap-warning-text: light-dark(var(--pap-warning-text-light), var(--pap-warning-text-dark));
+  --pap-warning-contrast: var(--pap-text-inverse);
+
+  /* information colors */
+  --pap-information-dark: hsl(from var(--pap-information-light) h s calc(l * 1.2));
+  --pap-information-text-light: hsl(from var(--pap-information-light) h s calc(l * 0.72));
+  --pap-information-text-dark: hsl(from var(--pap-information-dark) h s calc(l * 0.92));
+  --pap-information: light-dark(var(--pap-information-light), var(--pap-information-dark));
+  --pap-information-text: light-dark(var(--pap-information-text-light), var(--pap-information-text-dark));
+  --pap-information-contrast: var(--pap-text-inverse);
+
+  /* foreground colors */
+  // light dark breakouts 
+  --pap-foreground-light: color-mix(in srgb, var(--pap-white) 99%, var(--pap-black));
+  --pap-foreground-dark: color-mix(in srgb, var(--pap-white), var(--pap-black) 99%);
+  --pap-foreground-1-light: color-mix(in srgb, var(--pap-white) 96%, var(--pap-black));
+  --pap-foreground-1-dark: color-mix(in srgb, var(--pap-white), var(--pap-black) 96%);
+  --pap-foreground-2-light: color-mix(in srgb, var(--pap-white) 93%, var(--pap-black));
+  --pap-foreground-2-dark: color-mix(in srgb, var(--pap-white), var(--pap-black) 93%);
+  --pap-foreground-3-light: color-mix(in srgb, var(--pap-white) 90%, var(--pap-black));
+  --pap-foreground-3-dark: color-mix(in srgb, var(--pap-white), var(--pap-black) 90%);
+  // combined values 
+  --pap-foreground: light-dark(var(--pap-foreground-light), var(--pap-foreground-dark));
+  --pap-foreground-1: light-dark(var(--pap-foreground-1-light), var(--pap-foreground-1-dark));
+  --pap-foreground-2: light-dark(var(--pap-foreground-2-light), var(--pap-foreground-2-dark));
+  --pap-foreground-3: light-dark(var(--pap-foreground-3-light), var(--pap-foreground-3-dark));
+
+  /* background colors */
+  // light dark breakouts 
+  --pap-background-light: color-mix(in srgb, var(--pap-white) 87%, var(--pap-black));
+  --pap-background-dark: color-mix(in srgb, var(--pap-white), var(--pap-black) 87%);
+  --pap-background-1-light: color-mix(in srgb, var(--pap-white) 84%, var(--pap-black));
+  --pap-background-1-dark: color-mix(in srgb, var(--pap-white), var(--pap-black) 84%);
+  --pap-background-2-light: color-mix(in srgb, var(--pap-white) 81%, var(--pap-black));
+  --pap-background-2-dark: color-mix(in srgb, var(--pap-white), var(--pap-black) 81%);
+  --pap-background-3-light: color-mix(in srgb, var(--pap-white) 78%, var(--pap-black));
+  --pap-background-3-dark: color-mix(in srgb, var(--pap-white), var(--pap-black) 78%);
+  // combined values 
+  --pap-background: light-dark(var(--pap-background-light), var(--pap-background-dark));
+  --pap-background-1: light-dark(var(--pap-background-1-light), var(--pap-background-1-dark));
+  --pap-background-2: light-dark(var(--pap-background-2-light), var(--pap-background-2-dark));
+  --pap-background-3: light-dark(var(--pap-background-3-light), var(--pap-background-3-dark));
+
+  /* border colors */
+  // light dark breakouts 
+  --pap-border-light: color-mix(in srgb, var(--pap-white) 88%, var(--pap-black));
+  --pap-border-dark: color-mix(in srgb, var(--pap-white), var(--pap-black) 88%);
+  --pap-border-1-light: color-mix(in srgb, var(--pap-white) 80%, var(--pap-black));
+  --pap-border-1-dark: color-mix(in srgb, var(--pap-white), var(--pap-black) 80%);
+  --pap-border-2-light: color-mix(in srgb, var(--pap-white) 72%, var(--pap-black));
+  --pap-border-2-dark: color-mix(in srgb, var(--pap-white), var(--pap-black) 72%);
+  --pap-border-3-light: color-mix(in srgb, var(--pap-white) 64%, var(--pap-black));
+  --pap-border-3-dark: color-mix(in srgb, var(--pap-white), var(--pap-black) 64%);
+  // combined values 
+  --pap-border: light-dark(var(--pap-border-light), var(--pap-border-dark));
+  --pap-border-1: light-dark(var(--pap-border-1-light), var(--pap-border-1-dark));
+  --pap-border-2: light-dark(var(--pap-border-2-light), var(--pap-border-2-dark));
+  --pap-border-3: light-dark(var(--pap-border-3-light), var(--pap-border-3-dark));
+
+  /* shadow colors */
+  // light dark breakouts 
+  --pap-shadow-light: color-mix(in srgb, var(--pap-black), transparent 90%);
+  --pap-shadow-dark: color-mix(in srgb, var(--pap-white), transparent 90%);
+  --pap-shadow-1-light: color-mix(in srgb, var(--pap-black), transparent 60%);
+  --pap-shadow-1-dark: color-mix(in srgb, var(--pap-white), transparent 60%);
+  --pap-shadow-2-light: color-mix(in srgb, var(--pap-black), transparent 0%);
+  --pap-shadow-2-dark: color-mix(in srgb, var(--pap-white), transparent 0%);
+  --pap-shadow-3-light: var(--pap-black);
+  --pap-shadow-3-dark: var(--pap-white);
+  // combined values 
+  --pap-shadow: light-dark(var(--pap-shadow-light), var(--pap-shadow-dark));
+  --pap-shadow-1: light-dark(var(--pap-shadow-1-light), var(--pap-shadow-1-dark));
+  --pap-shadow-2: light-dark(var(--pap-shadow-2-light), var(--pap-shadow-2-dark));
+  --pap-shadow-3: light-dark(var(--pap-shadow-3-light), var(--pap-shadow-3-dark));
+}

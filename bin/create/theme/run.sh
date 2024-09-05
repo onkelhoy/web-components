@@ -45,8 +45,13 @@ export FULL_NAME=$FULL_NAME
 export destination="packages/themes/$NAME"
 #endregion VARIABLES
 
+# running type 
+bash $SCRIPTDIR/theme/scripts/type.sh
+
 # running copy and replace script 
 bash $SCRIPTDIR/theme/scripts/copy.sh
+
+rm $SCRIPTDIR/theme/.tmp
 
 read -p "install theme? [1/0]: " confirm_install
 if [ "$confirm_install" == "0" ]; then

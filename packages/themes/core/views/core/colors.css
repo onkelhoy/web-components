@@ -1,0 +1,254 @@
+/* BACKGROUNDS */
+div.background {
+  background: var(--pap-background);
+}
+
+div.background-1 {
+  background: var(--pap-background-1);
+}
+
+div.background-2 {
+  background: var(--pap-background-2);
+}
+
+div.background-3 {
+  background: var(--pap-background-3);
+}
+
+/* FOREGROUNDS */
+div.foreground {
+  background: var(--pap-foreground);
+}
+
+div.foreground-1 {
+  background: var(--pap-foreground-1);
+}
+
+div.foreground-2 {
+  background: var(--pap-foreground-2);
+}
+
+div.foreground-3 {
+  background: var(--pap-foreground-3);
+}
+
+/* COLORS */
+div.primary {
+  color: var(--pap-primary);
+
+  & span {
+    background: var(--pap-primary);
+  }
+
+  & p.text {
+    color: var(--pap-primary-text);
+  }
+
+  & p.contrast {
+    background: var(--pap-primary);
+    color: var(--pap-primary-contrast);
+  }
+}
+
+div.secondary {
+  color: var(--pap-secondary);
+
+  & span {
+    background: var(--pap-secondary);
+  }
+
+  & p.text {
+    color: var(--pap-secondary-text);
+  }
+
+  & p.contrast {
+    background: var(--pap-secondary);
+    color: var(--pap-secondary-contrast);
+  }
+}
+
+div.tertiary {
+  color: var(--pap-tertiary);
+
+  & span {
+    background: var(--pap-tertiary);
+  }
+
+  & p.text {
+    color: var(--pap-tertiary-text);
+  }
+
+  & p.contrast {
+    background: var(--pap-tertiary);
+    color: var(--pap-tertiary-contrast);
+  }
+}
+
+div.error {
+  color: var(--pap-error);
+
+  & span {
+    background: var(--pap-error);
+  }
+
+  & p.text {
+    color: var(--pap-error-text);
+  }
+
+  & p.contrast {
+    background: var(--pap-error);
+    color: var(--pap-error-contrast);
+  }
+}
+
+div.warning {
+  color: var(--pap-warning);
+
+  & span {
+    background: var(--pap-warning);
+  }
+
+  & p.text {
+    color: var(--pap-warning-text);
+  }
+
+  & p.contrast {
+    background: var(--pap-warning);
+    color: var(--pap-warning-contrast);
+  }
+}
+
+div.success {
+  color: var(--pap-success);
+
+  & span {
+    background: var(--pap-success);
+  }
+
+  & p.text {
+    color: var(--pap-success-text);
+  }
+
+  & p.contrast {
+    background: var(--pap-success);
+    color: var(--pap-success-contrast);
+  }
+}
+
+div.information {
+  color: var(--pap-information);
+
+  & span {
+    background: var(--pap-information);
+  }
+
+  & p.text {
+    color: var(--pap-information-text);
+  }
+
+  & p.contrast {
+    background: var(--pap-information);
+    color: var(--pap-information-contrast);
+  }
+}
+
+div.shadows {
+  display: flex;
+  gap: var(--gap-large);
+  flex-wrap: wrap;
+
+  & span {
+
+    &[data-shadow=default] {
+      box-shadow: 0 0 10px var(--pap-shadow);
+    }
+
+    &[data-shadow="1"] {
+      box-shadow: 0 0 10px var(--pap-shadow-1);
+    }
+
+    &[data-shadow="2"] {
+      box-shadow: 0 0 10px var(--pap-shadow-2);
+    }
+
+    &[data-shadow="3"] {
+      box-shadow: 0 0 10px var(--pap-shadow-3);
+    }
+  }
+}
+
+div.borders {
+  display: flex;
+  gap: var(--gap-large);
+  flex-wrap: wrap;
+
+  & span {
+    &[data-border=default] {
+      border: 4px solid var(--pap-border);
+    }
+
+    &[data-border="1"] {
+      border: 4px solid var(--pap-border-1);
+    }
+
+    &[data-border="2"] {
+      border: 4px solid var(--pap-border-2);
+    }
+
+    &[data-border="3"] {
+      border: 4px solid var(--pap-border-3);
+    }
+  }
+}
+
+div.boxes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-small);
+
+  & div {
+    padding: var(--padding-medium);
+    border: 1px solid var(--pap-border);
+    box-sizing: border-box;
+  }
+
+  & p {
+    margin: 0;
+  }
+}
+
+div.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-medium);
+
+  &>div {
+    width: 160px;
+    height: 180px;
+    border-radius: var(--radius-small);
+
+    border: 3px solid;
+    box-sizing: border-box;
+    box-shadow: 0 1px 6px var(--pap-shadow);
+    overflow: hidden;
+    flex: 1 1 auto;
+
+    display: grid;
+    grid-template-rows: 5fr 1fr 1fr;
+
+    & span {
+      width: 80px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      margin: auto;
+      outline: 2px solid;
+      outline-offset: 3px;
+    }
+
+    & p {
+      text-align: center;
+      margin: 0;
+      line-height: 200%;
+    }
+  }
+}

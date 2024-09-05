@@ -52,6 +52,7 @@ else
 fi 
 if [ -f "$PACKAGE_LOCATION/.config" ]; then 
   source "$PACKAGE_LOCATION/.config"
+  export FULL_PACKAGE_NAME=$FULL_NAME
 else 
   echo "[error] could not find package config: [$PACKAGE_LOCATION/.config]"
   exit 1
@@ -89,15 +90,21 @@ fi
 
 # region PREFIX
 ############### START ###############
-COMPONENT_PREFIX="$GLOBAL_PREFIX"
+COMPONENT_PREFIX=
 if [ -n "$GLOBAL_PREFIX" ]; then 
   echo "" 
   echo "global-prefix is set to: $GLOBAL_PREFIX"
-  read -p "use global-prefix? [1/0]: " USE_GLOBAL_PREFIX
+  echo "use global-prefix [1 or empty] or provide a custom prefix"
+  read -p "component prefix [1/0/custom]: " USE_GLOBAL_PREFIX
 
   if [ "$USE_GLOBAL_PREFIX" == "0" ]; then 
     echo "global-prefix will not be used"
     COMPONENT_PREFIX=""
+  elif [[ "$USE_GLOBAL_PREFIX" == "" || "$USE_GLOBAL_PREFIX" == "1" ]]; then 
+    COMPONENT_PREFIX="$GLOBAL_PREFIX-"
+  else 
+    echo "you choose custom: $USE_GLOBAL_PREFIX"
+    COMPONENT_PREFIX="$USE_GLOBAL_PREFIX-"
   fi 
 fi 
 ############### END #################
@@ -109,7 +116,7 @@ bash "$SCRIPTDIR/component/scripts/type.sh"
 source "$SCRIPTDIR/component/.tmp"
 COMPONENT_HTML_NAME=""
 if [ -d "$ROOTDIR/bin/create/component/template/$COMPONENT_TYPE/views" ]; then 
-  COMPONENT_HTML_NAME="$COMPONENT_PREFIX-$COMPONENT_FULL_NAME"
+  COMPONENT_HTML_NAME="$COMPONENT_PREFIX$COMPONENT_FULL_NAME"
 fi 
 echo "COMPONENT_HTML_NAME=$COMPONENT_HTML_NAME" >> "$SCRIPTDIR/component/.tmp"
 

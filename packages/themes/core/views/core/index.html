@@ -1,0 +1,424 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Core Theme</title>
+
+  <link rel="stylesheet" href="build.css" />
+  <link rel="stylesheet" href="colors.css" />
+  <link rel="stylesheet" href="animation.css" />
+  <link rel="stylesheet" href="units.css" />
+  <link rel="stylesheet" href="style.css" />
+
+  <script src="main.js" type="module" defer></script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="grid">
+      <section class="intro">
+        <h1>Core Theme Overview</h1>
+        <p>
+          Welcome to the core theme for Papit components. The focus here is simplicity, harnessing the power of CSS's
+          new relative colors. This approach allows for more intuitive design adjustments and fewer variables.
+        </p>
+        <p>
+          Components like buttons can now inherit base colors and dynamically adjust them for states like hover and
+          active, using CSS's relative color functions.
+        </p>
+
+        <div class="flex large">
+          <div>
+            <h4>Notification Colors</h4>
+            <ul>
+              <li>Error</li>
+              <li>Warning</li>
+              <li>Success</li>
+              <li>Information</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4>Core Colors</h4>
+            <ul>
+              <li>Primary</li>
+              <li>Secondary</li>
+              <li>Tertiary</li>
+            </ul>
+          </div>
+        </div>
+
+        <h4>Each Color Includes:</h4>
+        <ul>
+          <li>The main color, defined by its variable (e.g., <em>--pap-primary</em>)</li>
+          <li>Text color for use with the main color (e.g., <em>--pap-primary-text</em>)</li>
+          <li>Contrast color for text or elements on top of the main color (e.g., <em>--pap-primary-contrast</em>)</li>
+        </ul>
+        <p>
+          Say goodbye to dozens of specific-purpose variables, and embrace streamlined, flexible color management!
+        </p>
+
+        <hr />
+
+        <div class="flex space-between">
+          <div style="flex:4">
+            <h2>Breakpointers</h2>
+            <p>Note these mostly have to be hard-coded when used in different media queries as media queries cannot
+              accept CSS variables</p>
+            <table>
+              <tr>
+                <td>name</td>
+                <td>value</td>
+              </tr>
+              <tr>
+                <td>--breakpoint-mobile</td>
+                <td>320px</td>
+              </tr>
+              <tr>
+                <td>--breakpoint-pad</td>
+                <td>768px</td>
+              </tr>
+              <tr>
+                <td>--breakpoint-laptop</td>
+                <td>1024px</td>
+              </tr>
+              <tr>
+                <td>--breakpoint-desktop</td>
+                <td>1440px</td>
+              </tr>
+            </table>
+          </div>
+          <div style="flex:3">
+            <h2>Z-Index</h2>
+            <table>
+              <tr>
+                <td>name</td>
+                <td>value</td>
+              </tr>
+              <tr>
+                <td>--z-index-small</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>--z-index-medium</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>--z-index-large</td>
+                <td>3</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <section class="animations">
+        <h1>Animations</h1>
+        <p>Here is a showcase to illustrate animation-timings using simple linear animation</p>
+
+        <div data-speed="slow">
+          <p>--timing-slow</p>
+          <div>
+            <span class="box small"></span>
+          </div>
+          <button>play</button>
+        </div>
+
+        <div data-speed="normal">
+          <p>--timing-normal</p>
+          <div>
+            <span class="box small"></span>
+          </div>
+          <button>play</button>
+        </div>
+
+        <div data-speed="fast">
+          <p>--timing-fast</p>
+          <div>
+            <span class="box small"></span>
+          </div>
+          <button>play</button>
+        </div>
+      </section>
+
+      <section class="units">
+        <h1>Units</h1>
+
+        <div class="flex large space-between wrap">
+          <div>
+            <h2>Radius</h2>
+            <div class="radiuses">
+              <span class="box" data-radius="small">radius-small</span>
+              <span class="box" data-radius="medium">radius-medium</span>
+              <span class="box" data-radius="large">radius-large</span>
+            </div>
+          </div>
+
+          <div>
+            <h2>Margins</h2>
+            <div class="margins">
+              <span class="box" data-margin="small"><span>margin-small</span></span>
+              <span class="box" data-margin="medium"><span>margin-medium</span></span>
+              <span class="box" data-margin="large"><span>margin-large</span></span>
+            </div>
+          </div>
+
+          <div>
+            <h2>Paddings</h2>
+            <div class="paddings">
+              <span class="box" data-padding="small"><span>padding-small</span></span>
+              <span class="box" data-padding="medium"><span>padding-medium</span></span>
+              <span class="box" data-padding="large"><span>padding-large</span></span>
+            </div>
+          </div>
+        </div>
+
+        <hr />
+
+        <h2>Gaps</h2>
+        <div class="gaps flex large space-between wrap">
+          <div data-gap="small">
+            <p>--gap-small</p>
+            <div>
+              <span class="box small"></span>
+              <span class="box small"></span>
+              <span class="box small"></span>
+            </div>
+          </div>
+          <div data-gap="medium">
+            <p>--gap-medium</p>
+            <div>
+              <span class="box small"></span>
+              <span class="box small"></span>
+              <span class="box small"></span>
+            </div>
+          </div>
+          <div data-gap="large">
+            <p>--gap-large</p>
+            <div>
+              <span class="box small"></span>
+              <span class="box small"></span>
+              <span class="box small"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="left">
+        <h1 class="theme-mode">Color Mode</h1>
+        <p>Here you have a longer paragraph text to illustrate how normal text looks on default foreground color</p>
+
+        <h2>Backgrounds</h2>
+        <div class="boxes">
+          <div class="background">
+            <h4>--background</h4>
+            <p>Here's some text to illustrate how text looks on default background</p>
+          </div>
+          <div class="background-1">
+            <h4>--background-1</h4>
+            <p>Here's some text to illustrate how text looks on background level 1</p>
+          </div>
+          <div class="background-2">
+            <h4>--background-2</h4>
+            <p>Here's some text to illustrate how text looks on background level 2</p>
+          </div>
+          <div class="background-3">
+            <h4>--background-3</h4>
+            <p>Here's some text to illustrate how text looks on background level 3</p>
+          </div>
+        </div>
+
+        <h2>Foregrounds</h2>
+        <div class="boxes">
+          <div class="foreground">
+            <h4>--foreground</h4>
+            <p>Here's some text to illustrate how text looks on default foreground</p>
+          </div>
+          <div class="foreground-1">
+            <h4>--foreground-1</h4>
+            <p>Here's some text to illustrate how text looks on foreground level 1</p>
+          </div>
+          <div class="foreground-2">
+            <h4>--foreground-2</h4>
+            <p>Here's some text to illustrate how text looks on foreground level 2</p>
+          </div>
+          <div class="foreground-3">
+            <h4>--foreground-3</h4>
+            <p>Here's some text to illustrate how text looks on foreground level 3</p>
+          </div>
+        </div>
+
+        <h2>Shadows</h2>
+        <div class="shadows">
+          <span class="box" data-shadow="default">pap-shadow</span>
+          <span class="box" data-shadow="1">pap-shadow-1</span>
+          <span class="box" data-shadow="2">pap-shadow-2</span>
+          <span class="box" data-shadow="3">pap-shadow-3</span>
+        </div>
+
+        <h2>Borders</h2>
+        <div class="borders">
+          <span class="box" data-border="default">pap-border</span>
+          <span class="box" data-border="1">pap-border-1</span>
+          <span class="box" data-border="2">pap-border-2</span>
+          <span class="box" data-border="3">pap-border-3</span>
+        </div>
+
+        <h2>Colors</h2>
+        <div class="cards">
+          <div class="primary">
+            <span class="color"></span>
+            <p class="text">Primary</p>
+            <p class="contrast">Contrast Text</p>
+          </div>
+
+          <div class="secondary">
+            <span class="color"></span>
+            <p class="text">Secondary</p>
+            <p class="contrast">Contrast Text</p>
+          </div>
+
+          <div class="tertiary">
+            <span class="color"></span>
+            <p class="text">Tertiary</p>
+            <p class="contrast">Contrast Text</p>
+          </div>
+
+          <div class="error"></span>
+            <span class="color"></span>
+            <p class="text">Error</p>
+            <p class="contrast">Contrast Text</p>
+          </div>
+
+          <div class="warning">
+            <span class="color"></span>
+            <p class="text">Warning</p>
+            <p class="contrast">Contrast Text</p>
+          </div>
+
+          <div class="success">
+            <span class="color"></span>
+            <p class="text">Success</p>
+            <p class="contrast">Contrast Text</p>
+          </div>
+
+          <div class="information">
+            <span class="color"></span>
+            <p class="text">Information</p>
+            <p class="contrast">Contrast Text</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="right theme-opposite">
+        <h1 class="theme-mode">Color Mode</h1>
+        <p>Here you have a longer paragraph text to illustrate how normal text looks on default foreground color</p>
+
+        <h2>Backgrounds</h2>
+        <div class="boxes">
+          <div class="background">
+            <h4>--background</h4>
+            <p>Here's some text to illustrate how text looks on default background</p>
+          </div>
+          <div class="background-1">
+            <h4>--background-1</h4>
+            <p>Here's some text to illustrate how text looks on background level 1</p>
+          </div>
+          <div class="background-2">
+            <h4>--background-2</h4>
+            <p>Here's some text to illustrate how text looks on background level 2</p>
+          </div>
+          <div class="background-3">
+            <h4>--background-3</h4>
+            <p>Here's some text to illustrate how text looks on background level 3</p>
+          </div>
+        </div>
+
+        <h2>Foregrounds</h2>
+        <div class="boxes">
+          <div class="foreground">
+            <h4>--foreground</h4>
+            <p>Here's some text to illustrate how text looks on default foreground</p>
+          </div>
+          <div class="foreground-1">
+            <h4>--foreground-1</h4>
+            <p>Here's some text to illustrate how text looks on foreground level 1</p>
+          </div>
+          <div class="foreground-2">
+            <h4>--foreground-2</h4>
+            <p>Here's some text to illustrate how text looks on foreground level 2</p>
+          </div>
+          <div class="foreground-3">
+            <h4>--foreground-3</h4>
+            <p>Here's some text to illustrate how text looks on foreground level 3</p>
+          </div>
+        </div>
+
+        <h2>Shadows</h2>
+        <div class="shadows">
+          <span class="box" data-shadow="default">pap-shadow</span>
+          <span class="box" data-shadow="1">pap-shadow-1</span>
+          <span class="box" data-shadow="2">pap-shadow-2</span>
+          <span class="box" data-shadow="3">pap-shadow-3</span>
+        </div>
+
+        <h2>Borders</h2>
+        <div class="borders">
+          <span class="box" data-border="default">pap-border</span>
+          <span class="box" data-border="1">pap-border-1</span>
+          <span class="box" data-border="2">pap-border-2</span>
+          <span class="box" data-border="3">pap-border-3</span>
+        </div>
+
+        <h2>Colors</h2>
+        <div class="cards">
+          <div class="primary">
+            <span class="color"></span>
+            <p class="text">Primary</p>
+            <p class="contrast">Contrast Text</p>
+          </div>
+
+          <div class="secondary">
+            <span class="color"></span>
+            <p class="text">Secondary</p>
+            <p class="contrast">Contrast Text</p>
+          </div>
+
+          <div class="tertiary">
+            <span class="color"></span>
+            <p class="text">Tertiary</p>
+            <p class="contrast">Contrast Text</p>
+          </div>
+
+          <div class="error"></span>
+            <span class="color"></span>
+            <p class="text">Error</p>
+            <p class="contrast">Contrast Text</p>
+          </div>
+
+          <div class="warning">
+            <span class="color"></span>
+            <p class="text">Warning</p>
+            <p class="contrast">Contrast Text</p>
+          </div>
+
+          <div class="success">
+            <span class="color"></span>
+            <p class="text">Success</p>
+            <p class="contrast">Contrast Text</p>
+          </div>
+
+          <div class="information">
+            <span class="color"></span>
+            <p class="text">Information</p>
+            <p class="contrast">Contrast Text</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+
+</html>
