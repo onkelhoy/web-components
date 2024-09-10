@@ -32,20 +32,20 @@ else
   TARGET_SRC="$PACKAGE_LOCATION/src/components/$COMPONENT_NAME"
 fi
 
-TARGET_TEST="$PACKAGE_LOCATION/tests/$COMPONENT_NAME"
 TARGET_VIEW="$PACKAGE_LOCATION/views/$COMPONENT_NAME"
-mkdir -p "$PACKAGE_LOCATION/views/$COMPONENT_NAME"
 
 # SOURCE 
 rsync -a --exclude='*DS_Store' --exclude='.gitkeep' "$SCRIPTDIR/component/template/$COMPONENT_TYPE/src/" "$TARGET_SRC"
 
 # VIEWS
 if [ -d "$ROOTDIR/bin/create/component/template/$COMPONENT_TYPE/views" ]; then 
+  mkdir -p "$PACKAGE_LOCATION/views/$COMPONENT_NAME"
   rsync -a --exclude='*DS_Store' --exclude='.gitkeep' "$SCRIPTDIR/component/template/$COMPONENT_TYPE/views/" "$TARGET_VIEW"
 fi 
 
 # TEST 
 if [ -d "$SCRIPTDIR/component/template/$COMPONENT_TYPE/tests" ]; then 
+  TARGET_TEST="$PACKAGE_LOCATION/tests/$COMPONENT_NAME"
   rsync -a --exclude='*DS_Store' --exclude='.gitkeep' "$SCRIPTDIR/component/template/$COMPONENT_TYPE/tests/" "$TARGET_TEST"
 fi
 

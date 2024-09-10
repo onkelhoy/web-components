@@ -24,6 +24,10 @@ for arg in "$@"; do
     export DOOPEN=true
   elif [[ $arg == --nosig ]]; then 
     NOSIG=true
+  elif [[ $arg == --output-translations=* ]]; then 
+    export OUTPUT_TRANSLATIONS="${arg#*=}"
+  elif [[ $arg == --output-translations && -z "$OUTPUT_TRANSLATIONS" ]]; then 
+    export OUTPUT_TRANSLATIONS=true
   
   # Log Levels 
   elif [[ $arg == --log-level=* ]]; then 
@@ -101,7 +105,10 @@ while true; do
   for dir in $(ls "$current_dir"); do
     for pattern in "${asset_patterns[@]}"; do
       if [[ "$dir" == "$pattern" ]]; then
-        asset_dirs_arr+=("$current_dir/$pattern")
+        if [[ ! -f $current_dir/$dir/package.json ]]; then 
+          # we dont want to add packages that has name of asset_patterns (like logicals/asset)
+          asset_dirs_arr+=("$current_dir/$pattern")
+        fi 
       fi
     done
 
@@ -138,7 +145,7 @@ export AUTOSTART=true
 
 # in case :: like playwright sends SIGKILL instead of SIGTERM - no cleanup possible 
 rm -rf "$LOCATION/.temp"
-mkdir "$LOCATION/.temp"
+mkdir -p "$LOCATION/.temp/translations"
 touch "$LOCATION/.temp/.info"
 
 has_cleaned=false

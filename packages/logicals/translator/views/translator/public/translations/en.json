@@ -1,0 +1,10 @@
+{
+  "meta": {
+    "region": "GB",
+    "language": "en-UK"
+  },
+  "Hello World": "Translated Hello World",
+  "Hello {name}": "Translated Hello {name}",
+  "bajs": "BAAAAAJS",
+  "scope.bajs": "Hey im a scoped BAJS"
+}
