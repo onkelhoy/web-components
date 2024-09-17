@@ -42,6 +42,7 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
+    "@papit/translator": "^0.0.0",
     "@types/node": "^20.14.15",
     "esbuild": "^0.17.18",
     "sass": "^1.70.0",

@@ -1,7 +1,12 @@
-export * from './utils/http';
+import path from "node:path";
 
-import { start, close } from "./utils/http"
-import { cleanup as esbuild_cleanup } from "./utils/esbuild";
+import { start as httpstart, close } from "./components/http"
+import { cleanup as esbuild_cleanup } from "./components/esbuild";
+import { init as dependencyinit } from "./components/dependency";
+import { init as assetinit } from "./components/asset";
+import { save as savetranslations } from "./components/language";
+// import { init as assetinit } from './components/asset';
+// import { init as languageinit } from "./components/language";
 
 process.on('EXIT', cleanup);
 process.on('SIGINT', cleanup);
@@ -19,7 +24,22 @@ function cleanup() {
   process.exit(0);  // This is important to ensure the process actually terminates
 }
 
-// this 
+export function start() {
+  dependencyinit(name => console.log("-", name, "added"));
+  assetinit();
+
+  if (process.env.OUTPUT_TRANSLATIONS) {
+    let location = process.env.OUTPUT_TRANSLATIONS;
+    if (process.env.OUTPUT_TRANSLATIONS === "true") {
+      location = path.join(process.env.LOCATION || "", ".temp/translations");
+    }
+    savetranslations(location);
+  }
+
+  httpstart();
+}
+
+// this is useless.. its ALWAYS autostart (for now atleast)
 if (process.env.AUTOSTART) {
   start();
 }

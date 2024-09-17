@@ -1,6 +1,43 @@
 <link data-server-omitter href="/themes/core.css" rel="stylesheet" />
 
-<script data-server-omitter>
+<script data-server-omitter type="module" defer>
+
+  window.addEventListener('load', () => {
+    if (!window.localization) {
+      console.log('window.localization haven\'t been establish yet!')
+      return;
+    }
+    init_translations();
+  });
+
+
+  async function init_translations() {
+    try {
+      const response = await fetch("/asset/translations/");
+      const data = await response.json();
+      if (data instanceof Array) {
+        let targetlanguage = false;
+        data.forEach(lang => {
+          if (/en/i.test(lang.name) && !targetlanguage) targetlanguage = lang.name;
+
+          window.localization.add({
+            id: lang.name,
+            url: `/translations/${lang.name}.json`,
+            meta: lang.meta,
+          });
+        });
+
+        if (!window.localization.current) {
+          if (targetlanguage === false && data.length > 0) targetlanguage = data[0].name;
+          window.localization.change(targetlanguage);
+        }
+      }
+    }
+    catch {
+      console.error("something went wrong fetching translation info");
+    }
+  }
+
   // window.addEventListener('load', () => {
   //   tryagain("papTranslation", fetchLanguages);
   //   tryagain("papTheme", fetchThemes);
@@ -41,27 +78,6 @@
   //   }
   //   else {
   //     console.warn(`no ${name} object available in window`);
-  //   }
-  // }
-
-  // async function fetchLanguages() {
-  //   if (window.papLocalization) {
-  //     const files = await fetchResource("translations");
-  //     let langs = [];
-  //     files.forEach(file => {
-  //       // NOTE if someone manually appends a language that matches this we might have a problem but lets solve that
-  //       // once it comes..
-  //       langs.push({
-  //         id: file.name,
-  //         url: file.path,
-  //         meta: file.meta,
-  //       });
-  //     });
-
-  //     window.papLocalization.addAll(langs);
-  //   }
-  //   else {
-  //     tryagain("papTranslation", fetchLanguages);
   //   }
   // }
 

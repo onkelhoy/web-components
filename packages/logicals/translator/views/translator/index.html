@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TranslatorTool demo</title>
+
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+
+  <script defer src="main.js"></script>
+  <script defer src="demo.js"></script>
+</head>
+
+<body>
+  <button id="toggle-translation">Toggle Translation</button>
+
+  <ul>
+    <li><pap-translator>fallback</pap-translator></li>
+    <li><pap-translator>Hello world</pap-translator></li>
+    <li><pap-translator name="Henry">Hello {name}</pap-translator></li>
+    <li><pap-translator>bajs</pap-translator></li>
+    <li><pap-translator scope="scope">bajs</pap-translator></li>
+  </ul>
+
+  <!-- <doc-card>
+  </doc-card>
+
+  <doc-card>
+    <pap-typography slot="header" variant="C1">Variables</pap-typography>
+
+    <pap-typography>Simple case</pap-typography>
+    <pap-codeblock display="both">
+      <pap-translator>Hello World</pap-translator>
+      <br />
+      <pap-translator name="Henry">Hello {name}</pap-translator>
+    </pap-codeblock>
+
+    <pap-typography>Advanced case</pap-typography>
+    <pap-codeblock display="both">
+      <button id="inc">increase start</button>
+      <button id="dec">decrease end</button>
+      <pap-translator name="Henry">I dont exist {name}</pap-translator>
+      <pap-translator id="paginationcase" start="4" end="7" total="19">
+        {start} - {end} of {total}
+      </pap-translator>
+    </pap-codeblock>
+  </doc-card>
+
+  <doc-card>
+    <pap-typography slot="header" variant="C1">Scoping</pap-typography>
+
+    <pap-typography>Simple case</pap-typography>
+    <pap-codeblock display="both">
+      <pap-translator scope="scope">bajs</pap-translator>
+    </pap-codeblock>
+
+    <pap-typography>Advanced case</pap-typography>
+    <pap-codeblock lang="javascript" display="code">
+      class ScopeDemo extends Translator
+      {
+      render()
+      {
+      this.scope = 'scope';
+      return html`
+      <label>${this.translateKey('bajs')}</label>
+      `
+      }
+      }
+    </pap-codeblock>
+    <pap-codeblock display="both">
+      <translate-scopedemo></translate-scopedemo>
+    </pap-codeblock>
+  </doc-card>
+
+  <doc-card>
+    <pap-typography slot="header" variant="C1">Inside</pap-typography>
+
+    <pap-codeblock lang="javascript" display="code">
+      class ExtendDemo extends Translator {
+      render() {
+      return html`
+      <label>${this.translateKey('bajs')}</label>
+      `
+      }
+      }
+    </pap-codeblock>
+    <pap-codeblock display="both">
+      <translate-extenddemo></translate-extenddemo>
+    </pap-codeblock>
+  </doc-card>
+
+  <doc-card>
+    <pap-typography slot="header" variant="C1">TranslateKey</pap-typography>
+
+    <pap-codeblock lang="javascript" display="code">
+      class InsideDemo extends Base {
+      render() {
+      return html`
+      <pap-translator>${this.getAttribute('text')}</pap-translator>
+      `
+      }
+      }
+    </pap-codeblock>
+    <pap-codeblock display="both">
+      <translate-insidedemo text="bajs"></translate-insidedemo>
+    </pap-codeblock>
+
+    <pap-codeblock lang="javascript" display="code">
+      class ExtendDemo2 extends Translator {
+      render()
+      {
+      return html`
+      <label>${this.translateKey('Hello {name}', { name: this.getAttribute('name') })}</label>
+      `
+      }
+      }
+    </pap-codeblock>
+    <pap-codeblock display="both">
+      <translate-extenddemo2 name="Henry"></translate-extenddemo2>
+    </pap-codeblock>
+  </doc-card> -->
+</body>
+
+</html>
