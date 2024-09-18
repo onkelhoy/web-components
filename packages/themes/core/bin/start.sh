@@ -10,6 +10,8 @@ for arg in "$@"; do
   fi 
 done
 
+export VIEW=$view
+
 # cleanup
 has_cleaned=false
 cleanup() {
@@ -30,10 +32,8 @@ cleanup() {
 }
 trap cleanup INT
 
-# only run build if lib/bundle.js is not present 
-if [[ ! -f lib/bundle.js ]]; then 
-  npm run build -- --dev
-fi
+# we want to run build to make sure we serve the latest (both JS and CSS) 
+npm run build -- --dev
 
 # runners
 npm run watch &

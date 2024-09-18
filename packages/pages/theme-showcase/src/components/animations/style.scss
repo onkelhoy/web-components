@@ -1,0 +1,66 @@
+:host {
+  button {
+    padding: 0.4rem 1.5rem;
+    background-color: var(--pap-primary, black);
+    color: var(--pap-primary-contrast, white);
+    border: none;
+    border-radius: 1000px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--pap-white, white) 10%, var(--pap-primary, black));
+    }
+
+    &:active {
+      background-color: color-mix(in srgb, var(--pap-white, white) 30%, var(--pap-primary, black));
+    }
+
+    /* this will later be replaced by actual button !*/
+  }
+
+  span {
+    display: inline-block;
+    box-sizing: border-box;
+    text-align: center;
+    border-radius: var(--radius-medium, 8px);
+    line-height: 50px;
+    color: var(--pap-secondary-text, #333333);
+    font-size: 8pt;
+    background: var(--pap-background-3, #c7c7c7);
+    position: relative;
+    left: 0;
+    height: 50px;
+    width: 200px;
+  }
+
+
+  &>div {
+    div {
+      margin-block: var(--margin-large, 16px);
+    }
+
+    &[data-speed=slow] {
+      span {
+        transition: left linear var(--timing-slow, 80ms);
+      }
+    }
+
+    &[data-speed=normal] {
+      span {
+        transition: left linear var(--timing-normal, 120ms);
+      }
+    }
+
+    &[data-speed=fast] {
+      span {
+        transition: left linear var(--timing-fast, 180ms);
+      }
+    }
+
+    &.play {
+      span {
+        left: calc(100% - 200px);
+      }
+    }
+  }
+}

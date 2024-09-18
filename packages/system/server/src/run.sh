@@ -20,6 +20,8 @@ for arg in "$@"; do
     export PORT="${arg#*=}"
   elif [[ $arg == --location=* ]]; then 
     export LOCATION="${arg#*=}"
+  elif [[ $arg == --theme=* ]]; then 
+    export THEME="${arg#*=}"
   elif [[ $arg == --open ]]; then 
     export DOOPEN=true
   elif [[ $arg == --nosig ]]; then 

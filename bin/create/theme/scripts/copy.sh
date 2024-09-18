@@ -23,9 +23,13 @@ function relative_path_to_ancestor() {
   echo "$relative_path"
 }
 
+source "$SCRIPTDIR/theme/.tmp"
+
 # create folder and copy over files 
-mkdir "$destination"
-rsync -a --exclude='*DS_Store' --exclude='.gitkeep' "$SCRIPTDIR/theme/template/" "$destination"
+mkdir -p "$destination/views/$NAME"
+rsync -a --exclude='*DS_Store' --exclude='views/' --exclude='.gitkeep' "$SCRIPTDIR/theme/template/" "$destination"
+rsync -a --exclude='*DS_Store' --exclude='.gitkeep' "$SCRIPTDIR/theme/template/views/" "$destination/views/$NAME"
+rsync -a --exclude='*DS_Store' --exclude='.gitkeep' "$SCRIPTDIR/theme/templates/$THEME_TYPE/" "$destination"
 
 # variables 
 # replace placeholders 

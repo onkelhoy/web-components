@@ -93,8 +93,12 @@ test.describe("loading translations", () => {
     const hello = page.getByTestId("hello");
     await toHaveText(hello, "world");
 
-    await page.evaluate(() => {
+    await page.evaluate(async () => {
+      const prom = new Promise<void>(res => {
+        window.localization.subscribe(() => res());
+      });
       window.localization.change('custom');
+      await prom;
     });
 
     const current = await page.evaluate(() => {

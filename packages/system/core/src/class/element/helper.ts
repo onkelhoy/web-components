@@ -23,9 +23,10 @@ export function renderStyle(setting: Setting, element: CustomElement) {
   }
 
   // check if style is different 
-  let targetElement = element.shadowRoot.querySelector('style');
+  let targetElement = element.shadowRoot.querySelector('style[data-static-style]');
   if (!targetElement) {
     targetElement = document.createElement("style");
+    targetElement.setAttribute('data-static-style', 'true');
     element.shadowRoot.appendChild(targetElement);
   }
 
@@ -99,7 +100,12 @@ function freshRender(element: CustomElement, content: RenderType, parent: Shadow
 }
 function flushHTML(node: Element | ShadowRoot) {
   node.childNodes.forEach(child => {
-    if (child.nodeName !== "STYLE") {
+    if (child.nodeName === "STYLE") {
+      if (!(child as HTMLStyleElement).hasAttribute("data-static-style")) {
+        node.removeChild(child);
+      }
+    }
+    else {
       node.removeChild(child);
     }
   });
@@ -110,7 +116,7 @@ function diffing(element: CustomElement, content: RenderType) {
   // lets keep the html and check if any dynamic content was added by making sure no difference between OLD and NEW 
 
   // flush the html
-  const nodes = element.rendercomperator.querySelectorAll('*:not(style)');
+  const nodes = element.rendercomperator.querySelectorAll('*:not(style[data-static-style])');
   for (let node of nodes) {
     node.parentNode?.removeChild(node);
   }
@@ -130,7 +136,7 @@ function cleanup(element: CustomElement) {
   if (!element.shadowRoot) return;
   if (!element.rendercomperator) return;
 
-  element.shadowRoot.querySelectorAll('*:not(style)').forEach(node => {
+  element.shadowRoot.querySelectorAll('*:not(style[data-static-style])').forEach(node => {
     // NOTE element node can already been removed now from a previous deletion 
     // (as it could be a child within a child)
 
@@ -159,7 +165,7 @@ function clone(element: CustomElement) {
 
   const clone = element.rendercomperator.cloneNode(true) as HTMLTemplateElement;
 
-  clone.querySelectorAll('*:not(style)').forEach(node => {
+  clone.querySelectorAll('*:not(style[data-static-style])').forEach(node => {
     const path = getComposedPath(element, clone, node);
     const originalnode = element.rendercomperator.querySelector(path.join(' > '));
     if (originalnode) {

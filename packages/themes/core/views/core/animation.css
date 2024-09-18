@@ -1,0 +1,59 @@
+section.animations {
+  button {
+    padding: 0.4rem 1.5rem;
+    background-color: var(--pap-primary);
+    color: var(--pap-primary-contrast);
+    border: none;
+    border-radius: 1000px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--pap-white) 10%, var(--pap-primary));
+    }
+
+    &:active {
+      background-color: color-mix(in srgb, var(--pap-white) 30%, var(--pap-primary));
+    }
+
+    /* this will later be replaced by actual button !*/
+  }
+
+  &>div {
+    &>div {
+      margin-block: var(--margin-large);
+
+      span {
+        background: var(--pap-background-3);
+        position: relative;
+        left: 0;
+        aspect-ratio: unset;
+        height: 50px;
+        width: 200px !important;
+      }
+    }
+
+    &[data-speed=slow] {
+      span {
+        transition: left linear var(--timing-slow);
+      }
+    }
+
+    &[data-speed=normal] {
+      span {
+        transition: left linear var(--timing-normal);
+      }
+    }
+
+    &[data-speed=fast] {
+      span {
+        transition: left linear var(--timing-fast);
+      }
+    }
+
+    &.play {
+      span {
+        left: calc(100% - 200px);
+      }
+    }
+  }
+}

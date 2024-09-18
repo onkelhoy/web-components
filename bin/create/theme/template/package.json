@@ -4,9 +4,11 @@
   "scripts": {
     "build": "bash ./bin/build.sh",
     "start": "bash ./bin/start.sh",
+    "watch": "bash ./bin/watch.sh",
+    "preanalyse": "npm run build",
+    "analyse": "npm run analyse --include-workspace-root=true --workspace=$(npm prefix) -- --theme --location=$(pwd)",
     "preversion": "bash ./bin/_utils/preversion.sh",
-    "postversion": "bash ./bin/_utils/postversion.sh",
-    "publish:manual": "bash ./bin/publish.sh"
+    "postversion": "bash ./bin/_utils/postversion.sh"
   },
   "type": "module",
   "main": "./lib/style.css",
