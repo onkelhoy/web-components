@@ -16,6 +16,9 @@ Welcome to the `@pap-framework` ecosystem, an innovative framework designed to r
 **Author**: Henry Pap\
 **GitHub**: [onkelhoy](https://github.com/onkelhoy/web-components)\
 **License**: @Papit License 1.0
+
+Figma link: [figma - papit](https://www.figma.com/design/axw69RwkUPkh5uW0kUvQu8/papit---WebComponents?node-id=1-3&t=9HXN5GBVYtbvCmi6-1) 
+
 ### Ready, Set, Code
 
 You are all set to begin developing with the framework. The setup has taken care of the necessary tooling and dependencies. Dive into creating, developing, and managing your components within our innovative ecosystem.

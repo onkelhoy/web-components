@@ -173,7 +173,7 @@ function add(filepath: string, level?: Level) {
   types.push(filepath);
   typereference.set(type, types);
 }
-function fileinfo(url: string): "file" | "directory" | undefined {
+export function fileinfo(url: string): "file" | "directory" | undefined {
   try {
     const stat = fs.statSync(url);
     if (stat.isFile()) return "file";

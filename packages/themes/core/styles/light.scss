@@ -2,9 +2,9 @@
   color-scheme: light;
   /* UI colors */
   --pap-primary: var(--pap-black);
-  /* #000000 */
+  /* #080808 */
   --pap-secondary: var(--pap-white);
-  /* #ffffff */
+  /* #f7f7f7 */
   --pap-tertiary: cornflowerblue;
   /* states */
   --pap-error: #c31f1f;
@@ -13,44 +13,50 @@
   --pap-information: RoyalBlue;
   /* base text colors */
   --pap-text: var(--pap-black);
-  /* #000000 */
+  /* #080808 */
   --pap-text-inverse: var(--pap-white);
-  /* #ffffff */
+  /* #f7f7f7 */
+
+  /* disabled colors */
+  --pap-text-disabled: #DADDE3;
+  --pap-disabled: #A3A9B7;
 
   /* primary colors */
   --pap-primary-text: var(--pap-text);
+  /* #080808 */
   --pap-primary-contrast: var(--pap-text-inverse);
-  /* #ffffff */
+  /* #f7f7f7 */
 
   /* secondary colors */
   --pap-secondary-text: color-mix(in srgb, var(--pap-white), var(--pap-black) 80%);
   /* #333333 */
   --pap-secondary-contrast: var(--pap-text);
+  /* #080808 */
 
   /* tertiary colors */
   --pap-tertiary-text: hsl(from var(--pap-tertiary) h s calc(l * 0.72));
   --pap-tertiary-contrast: var(--pap-text-inverse);
-  /* #ffffff */
+  /* #f7f7f7 */
 
   /* error colors */
   --pap-error-text: hsl(from var(--pap-error) h s calc(l * 0.72));
   --pap-error-contrast: var(--pap-text-inverse);
-  /* #ffffff */
+  /* #f7f7f7 */
 
   /* success colors */
   --pap-success-text: hsl(from var(--pap-success) h s calc(l * 0.72));
   --pap-success-contrast: var(--pap-text-inverse);
-  /* #ffffff */
+  /* #f7f7f7 */
 
   /* warning colors */
   --pap-warning-text: hsl(from var(--pap-warning) h s calc(l * 0.72));
   --pap-warning-contrast: var(--pap-text-inverse);
-  /* #ffffff */
+  /* #f7f7f7 */
 
   /* information colors */
   --pap-information-text: hsl(from var(--pap-information) h s calc(l * 0.72));
   --pap-information-contrast: var(--pap-text-inverse);
-  /* #ffffff */
+  /* #f7f7f7 */
 
   /* foreground colors */
   --pap-foreground: color-mix(in srgb, var(--pap-white) 99%, var(--pap-black));
@@ -81,14 +87,15 @@
   /* #b8b8b8 */
   --pap-border-3: color-mix(in srgb, var(--pap-white) 64%, var(--pap-black));
   /* #a3a3a3 */
+  --pap-border-strong: var(--pap-black);
 
   /* shadow colors */
   --pap-shadow: color-mix(in srgb, var(--pap-black), transparent 90%);
-  /* #0000001a */
+  /* #0808081a */
   --pap-shadow-1: color-mix(in srgb, var(--pap-black), transparent 60%);
-  /* #00000066 */
+  /* #08080866 */
   --pap-shadow-2: color-mix(in srgb, var(--pap-black), transparent 30%);
-  /* #000000b3 */
+  /* #080808b3 */
   --pap-shadow-3: var(--pap-black);
-  /* #000000 */
+  /* #080808 */
 }

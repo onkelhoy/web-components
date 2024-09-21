@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Button prototype</title>
+
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+
+  <script defer src="main.js"></script>
+</head>
+
+<body>
+  <pap-card data-type="size">
+    <pap-typography slot="header">Sizes</pap-typography>
+    <pap-codeblock direction="row" display="both">
+      <pap-button size="small">Small Button</pap-button>
+      <pap-button size="medium">Medium Button</pap-button>
+      <pap-button size="large">Large Button</pap-button>
+    </pap-codeblock>
+  </pap-card>
+
+  <pap-card data-type="mode">
+    <pap-typography slot="header">Modes</pap-typography>
+    <pap-codeblock direction="row" display="both">
+      <pap-button mode="hug">Hug Button</pap-button>
+      <pap-button mode="fill">Fill Button</pap-button>
+    </pap-codeblock>
+  </pap-card>
+
+  <pap-card data-type="variants">
+    <pap-typography slot="header" variant="sub-header">Variants</pap-typography>
+    <pap-codeblock direction="row" display="both">
+      <pap-button variant="filled">Filled Button</pap-button>
+      <pap-button variant="outlined">Outlined Button</pap-button>
+      <pap-button variant="clear">Clear Button</pap-button>
+    </pap-codeblock>
+  </pap-card>
+
+  <pap-card data-type="slots">
+    <pap-typography slot="header" variant="sub-header">Slots</pap-typography>
+    <pap-codeblock direction="row" display="both">
+      <pap-button color="primary">
+        <pap-icon slot="prefix" name="circle">P</pap-icon>
+        Prefix Button
+      </pap-button>
+      <pap-button color="primary">
+        Suffix Button
+        <pap-icon slot="suffix" name="circle">S</pap-icon>
+      </pap-button>
+      <pap-button color="primary">
+        <pap-icon slot="prefix" name="circle">P</pap-icon>
+        Prefix & Suffix Button
+        <pap-icon slot="suffix" name="circle">S</pap-icon>
+      </pap-button>
+    </pap-codeblock>
+  </pap-card>
+
+  <pap-card data-type="colors">
+    <pap-typography slot="header" variant="sub-header">Colors</pap-typography>
+    <pap-codeblock direction="row" display="both">
+      <pap-button color="error">Error Button</pap-button>
+      <pap-button color="warning">Warning Button</pap-button>
+      <pap-button color="success">Success Button</pap-button>
+      <pap-button color="information">Information Button</pap-button>
+      <pap-button color="primary">Primary Button</pap-button>
+      <pap-button color="secondary">Secondary Button</pap-button>
+      <pap-button color="tertiary">Tertiary Button</pap-button>
+
+      <pap-button color="error" variant="clear">Clear Error Button</pap-button>
+      <pap-button color="warning" variant="clear">Clear Warning Button</pap-button>
+      <pap-button color="success" variant="clear">Clear Success Button</pap-button>
+      <pap-button color="information" variant="clear">Clear Information Button</pap-button>
+      <pap-button color="primary" variant="clear">Clear Primary Button</pap-button>
+      <pap-button color="secondary" variant="clear">Clear Secondary Button</pap-button>
+      <pap-button color="tertiary" variant="clear">Clear Tertiary Button</pap-button>
+    </pap-codeblock>
+  </pap-card>
+
+  <pap-card data-type="colors" class="theme-opposite">
+    <pap-typography slot="header" variant="sub-header">Colors</pap-typography>
+    <pap-codeblock direction="row" display="both">
+      <pap-button color="error">Error Button</pap-button>
+      <pap-button color="warning">Warning Button</pap-button>
+      <pap-button color="success">Success Button</pap-button>
+      <pap-button color="information">Information Button</pap-button>
+      <pap-button color="primary">Primary Button</pap-button>
+      <pap-button color="secondary">Secondary Button</pap-button>
+      <pap-button color="tertiary">Tertiary Button</pap-button>
+
+      <pap-button color="error" variant="clear">Clear Error Button</pap-button>
+      <pap-button color="warning" variant="clear">Clear Warning Button</pap-button>
+      <pap-button color="success" variant="clear">Clear Success Button</pap-button>
+      <pap-button color="information" variant="clear">Clear Information Button</pap-button>
+      <pap-button color="primary" variant="clear">Clear Primary Button</pap-button>
+      <pap-button color="secondary" variant="clear">Clear Secondary Button</pap-button>
+      <pap-button color="tertiary" variant="clear">Clear Tertiary Button</pap-button>
+    </pap-codeblock>
+  </pap-card>
+
+  <pap-card data-type="disabled">
+    <pap-typography slot="header">Disabled</pap-typography>
+    <pap-codeblock direction="row" display="both">
+      <pap-button variant="filled" disabled>Filled Button</pap-button>
+      <pap-button variant="outlined" disabled>Outlined Button</pap-button>
+      <pap-button variant="clear" disabled>Clear Button</pap-button>
+    </pap-codeblock>
+  </pap-card>
+
+  <pap-card data-type="radius">
+    <pap-typography slot="header" variant="sub-header">Radius</pap-typography>
+    <pap-codeblock direction="row" display="both">
+      <pap-button radius="none">Button</pap-button>
+      <pap-button radius="small">Button</pap-button>
+      <pap-button radius="medium">Button</pap-button>
+      <pap-button radius="large">Button</pap-button>
+      <pap-button radius="circle">Button</pap-button>
+    </pap-codeblock>
+  </pap-card>
+
+
+  <pap-card data-type="circle">
+    <pap-typography slot="header" variant="sub-header">Radius</pap-typography>
+    <pap-codeblock direction="row" display="both">
+      <pap-button circle size="small">
+        <pap-icon name="circle">o</pap-icon>
+      </pap-button>
+      <pap-button circle size="medium">
+        <pap-icon name="circle">o</pap-icon>
+      </pap-button>
+      <pap-button circle size="large">
+        <pap-icon name="circle">o</pap-icon>
+      </pap-button>
+    </pap-codeblock>
+  </pap-card>
+
+  <!-- <pap-card>
+    <pap-codeblock direction="row" display="both">
+      <form>
+        <div>
+          <label>A</label>
+          <input value="testing" name="a" />
+        </div>
+        <br />
+        <div>
+          <label>B</label>
+          <input value="testing" name="b" />
+        </div>
+        <br />
+        <br />
+
+        <pap-button size="small" mode="fill" color="secondary" type="submit">submit</pap-button>
+        <br />
+        <pap-button size="small" mode="fill" color="secondary" variant="outlined" type="reset">reset</pap-button>
+      </form>
+      <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          document.querySelector('form').onsubmit = (e) => {
+            e.preventDefault();
+            const data = new FormData(e.target);
+            alert(`a: ${data.get('a')}, b: ${data.get('b')}`);
+          }
+        });
+      </script>
+    </pap-codeblock>
+  </pap-card>
+
+  <pap-card>
+    <h4 slot="header">Fill Button</h4>
+    <pap-codeblock display="both">
+      <pap-button mode="fill" color="primary">
+        Button
+      </pap-button>
+      <br />
+      <pap-button mode="fill" color="primary">
+        <pap-icon slot="prefix" name="circle">P</pap-icon>
+        Button
+      </pap-button>
+      <br />
+      <pap-button mode="fill" color="primary">
+        Button
+        <pap-icon slot="suffix" name="circle">S</pap-icon>
+      </pap-button>
+      <br />
+      <pap-button mode="fill" color="primary">
+        <pap-icon slot="prefix" name="circle">P</pap-icon>
+        Button
+        <pap-icon slot="suffix" name="circle">S</pap-icon>
+      </pap-button>
+    </pap-codeblock>
+  </pap-card>
+
+  <pap-card>
+    <h4 slot="header">Circle Buttons</h4>
+    <pap-codeblock direction="row" display="both">
+      <pap-button size="large" circle color="warning" variant="outlined">
+        <pap-icon name="circle">S</pap-icon>
+      </pap-button>
+      <pap-button size="medium" circle color="warning" variant="outlined">
+        <pap-icon name="circle">S</pap-icon>
+      </pap-button>
+      <pap-button size="small" circle color="warning" variant="outlined">
+        <pap-icon name="circle">S</pap-icon>
+      </pap-button>
+    </pap-codeblock>
+  </pap-card>
+
+  <pap-card>
+    <h4 slot="header">Small</h4>
+    <pap-codeblock direction="row" display="both">
+      <pap-button size="small" color="primary">
+        <pap-icon slot="prefix" name="circle">P</pap-icon>
+        Button
+      </pap-button>
+      <pap-button size="small" color="primary">
+        <pap-icon slot="prefix" name="circle">P</pap-icon>
+        Button
+        <pap-icon slot="suffix" name="circle">S</pap-icon>
+      </pap-button>
+      <pap-button size="small" color="primary">
+        Button
+        <pap-icon slot="suffix" name="circle">S</pap-icon>
+      </pap-button>
+    </pap-codeblock>
+  </pap-card>
+
+  <pap-card>
+    <h4 slot="header">Medium</h4>
+    <pap-codeblock direction="row" display="both">
+      <pap-button size="medium" color="primary">
+        <pap-icon slot="prefix" name="circle">P</pap-icon>
+        Button
+      </pap-button>
+      <pap-button size="medium" color="primary">
+        <pap-icon slot="prefix" name="circle">P</pap-icon>
+        Button
+        <pap-icon slot="suffix" name="circle">S</pap-icon>
+      </pap-button>
+      <pap-button size="medium" color="primary">
+        Button
+        <pap-icon slot="suffix" name="circle">S</pap-icon>
+      </pap-button>
+    </pap-codeblock>
+  </pap-card>
+
+
+  <pap-card>
+    <h4 slot="header">Large</h4>
+    <pap-codeblock direction="row" display="both">
+      <pap-button size="large" color="primary">
+        <pap-icon slot="prefix" name="circle">P</pap-icon>
+        Button
+      </pap-button>
+      <pap-button size="large" color="primary">
+        <pap-icon slot="prefix" name="circle">P</pap-icon>
+        Button
+        <pap-icon slot="suffix" name="circle">S</pap-icon>
+      </pap-button>
+      <pap-button size="large" color="primary">
+        Button
+        <pap-icon slot="suffix" name="circle">S</pap-icon>
+      </pap-button>
+    </pap-codeblock>
+  </pap-card>
+
+  <pap-card>
+    <h4 slot="header">Warning Icon</h4>
+    <pap-codeblock direction="row" display="both">
+      <pap-button size="large" color="warning" variant="outlined">
+        <pap-icon slot="prefix" name="circle">P</pap-icon>
+        Button
+        <pap-icon slot="suffix" name="circle">S</pap-icon>
+      </pap-button>
+      <pap-button size="large" color="warning" variant="clear">
+        <pap-icon slot="prefix" name="circle">P</pap-icon>
+        Button
+        <pap-icon slot="suffix" name="circle">S</pap-icon>
+      </pap-button>
+    </pap-codeblock>
+  </pap-card>
+
+  <pap-card>
+    <h4 slot="header">Filled</h4>
+    <pap-codeblock direction="row" display="both">
+      <pap-button color="error">Button</pap-button>
+      <pap-button color="warning">Button</pap-button>
+      <pap-button color="success">Button</pap-button>
+      <pap-button color="information">Button</pap-button>
+      <pap-button color="tertiary">Button</pap-button>
+      <pap-button color="primary">Button</pap-button>
+      <pap-button color="secondary">Button</pap-button>
+    </pap-codeblock>
+  </pap-card>
+
+  <pap-card>
+    <h4 slot="header">Outline</h4>
+    <pap-codeblock direction="row" display="both">
+      <pap-button variant="outlined" color="error">Button</pap-button>
+      <pap-button variant="outlined" color="warning">Button</pap-button>
+      <pap-button variant="outlined" color="success">Button</pap-button>
+      <pap-button variant="outlined" color="information">Button</pap-button>
+      <pap-button variant="outlined" color="tertiary">Button</pap-button>
+      <pap-button variant="outlined" color="primary">Button</pap-button>
+      <pap-button variant="outlined" color="secondary">Button</pap-button>
+    </pap-codeblock>
+  </pap-card>
+
+  <pap-card>
+    <h4 slot="header">Clear</h4>
+    <pap-codeblock direction="row" display="both">
+      <pap-button variant="clear" color="error">Button</pap-button>
+      <pap-button variant="clear" color="warning">Button</pap-button>
+      <pap-button variant="clear" color="success">Button</pap-button>
+      <pap-button variant="clear" color="information">Button</pap-button>
+      <pap-button variant="clear" color="tertiary">Button</pap-button>
+      <pap-button variant="clear" color="primary">Button</pap-button>
+      <pap-button variant="clear" color="secondary">Button</pap-button>
+    </pap-codeblock>
+  </pap-card>
+
+
+  <pap-card>
+    <h4 slot="header">Link</h4>
+    <pap-codeblock direction="row" display="both">
+      <pap-button href="#">Link Button</pap-button>
+    </pap-codeblock>
+  </pap-card> -->
+</body>
+
+</html>

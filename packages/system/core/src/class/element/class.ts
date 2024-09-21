@@ -1,11 +1,11 @@
 import { PropertyInfo, property } from "../../decorators/property";
 import { NextParent, debounce } from "../../functions";
-import { ConvertFromString, renderHTML, renderStyle, getSelector } from "./helper";
+import { ConvertFromString, renderHTML, renderStyle } from "./helper";
 import { FunctionCallback, RenderType, Setting } from "./types";
 
 export class CustomElement extends HTMLElement {
 
-  static domparser: DOMParser = new DOMParser();
+  static _domparser: DOMParser = new DOMParser();
   static observedAttributes = [];
   static style: string;
   static styles: string[];
@@ -49,7 +49,7 @@ export class CustomElement extends HTMLElement {
     this.callAfterRender.push(this.firstRender);
     this.originalHTML = this.outerHTML;
 
-    if (window.crypto) {
+    if (window.crypto?.randomUUID) {
       this.UUID = window.crypto.randomUUID();
     }
     else {
@@ -61,6 +61,10 @@ export class CustomElement extends HTMLElement {
 
     this.requestUpdate = debounce(this.requestUpdate, this.setting.updateInterval);
     this.updateAttribute = debounce(this.updateAttribute, this.setting.attributeUpdateInterval);
+  }
+
+  get domparser() {
+    return CustomElement._domparser;
   }
 
   // class functions

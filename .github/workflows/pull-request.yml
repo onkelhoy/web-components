@@ -68,6 +68,6 @@ jobs:
           name: playwright-artifacts
           overwrite: true  # Allow overwriting of artifacts with the same name
           path: |
-            packages/**/*/tests/test-results  # Adjust the path according to where your artifacts are saved
-            packages/**/*/tests/snapshots  # Adjust the path according to where your artifacts are saved
+            ./packages/**/*/tests/test-results
+            ./packages/**/*/tests/snapshots
           retention-days: 3  # Optional: specify how long to keep artifacts

@@ -1,0 +1,1 @@
+export type THEME = { generated?: string; sources: string[] };

@@ -1,6 +1,6 @@
 {
   "name": "@papit/theme-core",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "scripts": {
     "build": "bash ./bin/build.sh",
     "start": "bash ./bin/start.sh",

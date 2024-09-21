@@ -51,14 +51,6 @@ export async function route(req: http.IncomingMessage, res: http.ServerResponse)
 function get(req: http.IncomingMessage) {
   const url = req.url as string;
 
-  if (url.startsWith("/theme")) {
-    // theme related 
-    if (["verbose", "debug"].includes(process.env.LOGLEVEL as string)) {
-      console.log('this is a theme request - special process');
-    }
-    return null;
-  }
-
   let fileinfo = null;
   const { base, file, folder } = getURL(req);
 
