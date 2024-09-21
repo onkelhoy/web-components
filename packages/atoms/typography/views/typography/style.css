@@ -1,0 +1,4 @@
+body {
+  background-color: var(--pap-background, #DEDEDE);
+  color: var(--pap-text, #080808);
+}
