@@ -1,0 +1,145 @@
+:host {
+  text-align: left;
+  display: block;
+  color: inherit;
+  letter-spacing: 0;
+  --font-weight: 400;
+  font-family: var(--pap-font, inherit);
+}
+
+:host([inline]) {
+  display: inline;
+}
+
+// ALIGNMENT 
+:host([alignment="center"]),
+:host([align="center"]) {
+  text-align: center;
+}
+
+:host([alignment="justify"]),
+:host([align="justify"]) {
+  text-align: justify;
+}
+
+:host([alignment="start"]),
+:host([align="start"]) {
+  text-align: start;
+}
+
+:host([alignment="end"]),
+:host([align="end"]) {
+  text-align: end;
+}
+
+:host([alignment="left"]),
+:host([align="left"]) {
+  text-align: left;
+}
+
+:host([alignment="right"]),
+:host([align="right"]) {
+  text-align: right;
+}
+
+:host([alignment="unset"]),
+:host([align="unset"]) {
+  text-align: unset;
+}
+
+:host([alignment="inherit"]),
+:host([align="inherit"]) {
+  text-align: inherit;
+}
+
+:host([alignment="initial"]),
+:host([align="initial"]) {
+  text-align: initial;
+}
+
+:host([nowrap="true"]) {
+  white-space: nowrap;
+}
+
+:host([truncate="true"]) {
+  white-space: nowrap;
+  /* this ensures text remains on a single line */
+  overflow: hidden;
+  /* hides any overflow */
+  text-overflow: ellipsis;
+  /* shows ellipsis for any overflow */
+}
+
+// HEADING
+:host([variant="h1"]) {
+  font-size: 2rem;
+  --font-weight: 600;
+  // line-height: 120%;
+}
+
+:host([variant="h2"]) {
+  font-size: 1.75rem;
+  --font-weight: 600;
+  // line-height: 120%;
+}
+
+:host([variant="h3"]) {
+  font-size: 1.5rem;
+  --font-weight: 700;
+  // line-height: 120%;
+}
+
+:host([variant="h4"]) {
+  font-size: 1.25rem;
+  --font-weight: 500;
+  // line-height: 120%;
+}
+
+:host([variant="h5"]) {
+  font-size: 1.1rem;
+  --font-weight: 500;
+  // line-height: 120%;
+}
+
+:host([variant="h6"]) {
+  font-size: 1rem;
+  --font-weight: 500;
+  // line-height: 120%;
+}
+
+:host([variant="p"]) {
+  font-size: 1rem;
+  // line-height: 140%;
+  letter-spacing: 0.01rem;
+}
+
+:host([variant="caption"]) {
+  font-size: 0.9rem;
+  // line-height: 140%;
+  letter-spacing: 0.02rem;
+}
+
+:host([variant="label"]) {
+  font-size: 0.95rem;
+  --font-weight: 500;
+  // line-height: 140%;
+  letter-spacing: 0.01rem;
+}
+
+// weights
+:host([weight=thin]) {
+  font-weight: calc(var(--font-weight) - 100);
+}
+
+:host([weight=normal]) {
+  font-weight: var(--font-weight);
+}
+
+:host([weight=semi-bold]),
+:host([weight=semibold]) {
+  font-weight: calc(var(--font-weight) + 100);
+}
+
+:host([weight=bold]) {
+  font-weight: calc(var(--font-weight) + 200);
+}
