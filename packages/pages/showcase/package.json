@@ -25,6 +25,9 @@
     "./react": "./lib/react/index.js",
     ".": "./lib/bundle.js"
   },
+  "bin": {
+    "showcase": "./lib/run.sh"
+  },
   "author": "Henry",
   "private": false,
   "publishConfig": {

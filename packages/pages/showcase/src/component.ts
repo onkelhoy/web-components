@@ -25,7 +25,7 @@ export class PageShowcase extends CustomElement {
       this.router.url = (e.target as HTMLButtonElement).getAttribute("data-url") as string;
     }
     else {
-      console.error("[chil] you clicked before router was initialized!");
+      console.error("[chill] you clicked before router was initialized!");
     }
   }
 
