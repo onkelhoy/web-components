@@ -1,0 +1,188 @@
+:host {
+  --background: var(--pap-foreground, #fcfcfc);
+  --border-color: var(--pap-border-2, #b8b8b8); // #DADDE3
+  --message-text: var(--pap-text, #080808); // #29292F
+  --message-icon: var(--pap-text, #080808); // #29292F
+
+  pap-prefix-suffix[part="footer"],
+  pap-prefix-suffix[part="header"] {
+    display: none;
+    height: var(--height);
+  }
+
+  pap-prefix-suffix[part="footer"] {
+
+    pap-icon[slot="prefix"],
+    ::slotted(pap-icon) {
+      color: var(--message-icon);
+    }
+
+    pap-typography[part="message"],
+    ::slotted(*:not(pap-icon)) {
+      color: var(--message-text);
+    }
+  }
+
+  div[part=main] {
+    min-height: var(--height);
+    display: block;
+    background-color: var(--background);
+    padding-inline: var(--padding-smaller, 4px);
+    border: 1px solid var(--border-color);
+
+    pap-prefix-suffix {
+      height: 100%;
+      gap: var(--gap-smaller, 4px);
+    }
+  }
+
+  input,
+  select,
+  textarea {
+    color: inherit;
+
+    font-family: var(--input-fontfamily, var(--typography-c3-fontfamily, 'Libre Franklin', helvetica, sans-serif));
+    font-size: var(--input-fontsize, var(--typography-c3-fontsize, 16px));
+    font-weight: var(--input-fontweight, var(--typography-c3-fontweight, 400));
+    line-height: var(--input-lineheight, var(--typography-c3-lineheight, 24px));
+    letter-spacing: var(--input-letterspacing, var(--typography-c3-letterspacing, 0.01em));
+
+    width: 100%;
+    height: 100%;
+    min-height: var(--height);
+    margin: 0;
+    box-sizing: border-box;
+    border: none;
+    background-color: transparent;
+    outline: none !important;
+  }
+}
+
+:host([header="true"]) pap-prefix-suffix[part="header"] {
+  display: flex;
+}
+
+:host([footer="true"]),
+:host([message]:not([message=""]):not([state="default"])),
+:host([message]:not([message=""])) {
+  pap-prefix-suffix[part="footer"] {
+    display: flex;
+  }
+}
+
+
+// Modes 
+:host([mode="fill"]) {
+  display: block;
+}
+
+:host([mode="hug"]) {
+  display: inline-block;
+  width: fit-content;
+}
+
+// Sizes
+:host([size="small"]) {
+  --height: var(--field-small, 24px);
+}
+
+:host([size="medium"]) {
+  --height: var(--field-medium, 40px);
+}
+
+:host([size="large"]) {
+  --height: var(--field-large, 48px);
+}
+
+
+// Colours 
+
+// hover should come after default to override the border color but but after the rest to let them control
+:host([state="default"]:not([disabled]):not([readonly])) {
+  div[part=main]:hover {
+    --border-color: var(--pap-border-strong, #080808); // #29292F
+  }
+}
+
+:host([state="default"][hasfocus="true"]:not([readonly]):not([disabled])) {
+  --border-color: var(--pap-border-strong, #080808); // #29292F
+}
+
+:host([hasfocus="true"]:not([readonly]):not([disabled])) {
+  outline: none;
+
+  div[part=main] {
+    outline: 1px solid var(--border-color);
+  }
+}
+
+:host([state="information"]) {
+  --border-color: var(--pap-information, RoyalBlue);
+  --message-text: var(--pap-information-text, #0059E6);
+  --message-icon: var(--pap-information-text, #0059E6);
+}
+
+:host([state="success"]) {
+  --border-color: var(--pap-success, #2E701B);
+  --message-text: var(--pap-success-text, #94E274);
+  --message-icon: var(--pap-success-text, #94E274);
+}
+
+:host([state="warning"]) {
+  --border-color: var(--pap-warning, #ff9900); // #E27F00
+  --message-text: var(--pap-warning-text, #FFA800);
+  --message-icon: var(--pap-warning-text, #FFA800);
+}
+
+:host([state="error"]) {
+  --border-color: var(--pap-error, #B70E1E);
+  --message-text: var(--pap-error-text, #FF9EA7);
+  --message-icon: var(--pap-error-text, #FF9EA7);
+}
+
+:host([readonly]:not([disabled])) {
+  --background: transparent;
+
+  div[part=main] {
+    border-radius: 0;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+}
+
+:host([disabled]) {
+  --border-color: var(--pap-disabled, #A3A9B7);
+  --background: var(--pap-disabled, #A3A9B7);
+  --message-text: var(--pap-disabled-text, #DADDE3);
+  --message-icon: var(--pap-disabled-text, #DADDE3);
+  color: var(--pap-text-disabled, #DADDE3);
+
+  cursor: not-allowed;
+
+  ::-ms-input-placeholder {
+    /* Edge 12-18 */
+    color: var(--pap-text-disabled, #DADDE3);
+  }
+
+  ::placeholder {
+    color: var(--pap-text-disabled, #DADDE3);
+  }
+}
+
+// radius 
+:host([radius=small]) div[part=main] {
+  border-radius: var(--radius-small, 4px);
+}
+
+:host([radius=medium]) div[part=main] {
+  border-radius: var(--radius-medium, 8px);
+}
+
+:host([radius=large]) div[part=main] {
+  border-radius: var(--radius-large, 16px);
+}
+
+:host([radius=circle]) div[part=main] {
+  border-radius: var(--radius-circle, 1000px);
+}

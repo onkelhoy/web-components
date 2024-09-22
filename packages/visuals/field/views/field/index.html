@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Field prototype</title>
+
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+
+  <script defer src="main.js"></script>
+</head>
+
+<body>
+  <pap-card>
+    <pap-typography slot="header" variant="C1">NOTE</pap-typography>
+    <pap-typography>The field is made to <strong>deligate</strong> the focus to whatever element that would be passed.
+      This omits the field itself from receiving focus
+    </pap-typography>
+    <br />
+    <pap-typography variant="C4">[sidenote]: when passed element receives focus, the wrapper will have its "hasFocus"
+      set to true
+    </pap-typography>
+  </pap-card>
+  <pap-card>
+    <pap-typography>Special Case of Footer and Header</pap-typography>
+    <pap-codeblock display="both">
+      <button id="field-toggle-header">Toggle Header</button>
+      <button id="field-toggle-footer">Toggle Footer</button>
+      <button id="field-rerender">Rerender Field</button>
+      <pap-field id="field-toggle-target"></pap-field>
+
+      <script>
+        let fieldheadertoggled = false;
+        let fieldfootertoggled = false;
+        let targetfield;
+        document.addEventListener('DOMContentLoaded', () => {
+          targetfield = document.querySelector('#field-toggle-target');
+          document.querySelector('#field-toggle-header').addEventListener("click", () => {
+            fieldheadertoggled = !fieldheadertoggled;
+            targetfield.setAttribute('header', String(fieldheadertoggled));
+          })
+          document.querySelector('#field-toggle-footer').addEventListener("click", () => {
+            fieldfootertoggled = !fieldfootertoggled;
+            targetfield.setAttribute('footer', String(fieldfootertoggled));
+          })
+          document.querySelector('#field-rerender').addEventListener("click", () => {
+            targetfield.debouncedRequestUpdate();
+          })
+        });
+      </script>
+    </pap-codeblock>
+  </pap-card>
+  <pap-card>
+    <pap-typography slot="header" variant="C1">States</pap-typography>
+
+    <pap-typography>Default</pap-typography>
+    <pap-codeblock display="both">
+      <pap-field>
+        <p slot="header">Header Text</p>
+        <p slot="footer">Footer Text</p>
+      </pap-field>
+    </pap-codeblock>
+
+    <pap-typography>Disabled</pap-typography>
+    <pap-codeblock display="both">
+      <pap-field disabled>
+        <p slot="header">Header Text</p>
+        <p slot="footer">Footer Text</p>
+      </pap-field>
+    </pap-codeblock>
+
+    <pap-typography>Readonly</pap-typography>
+    <pap-codeblock display="both">
+      <pap-field readonly>
+        <p slot="header">Header Text</p>
+        <p slot="footer">Footer Text</p>
+      </pap-field>
+    </pap-codeblock>
+
+    <pap-typography>Success</pap-typography>
+    <pap-codeblock display="both">
+      <pap-field state="success">
+        <p slot="header">Header Text</p>
+        <p slot="footer">Footer Text</p>
+      </pap-field>
+    </pap-codeblock>
+
+    <pap-typography>Warning</pap-typography>
+    <pap-codeblock display="both">
+      <pap-field state="warning">
+        <p slot="header">Header Text</p>
+        <p slot="footer">Footer Text</p>
+      </pap-field>
+    </pap-codeblock>
+
+    <pap-typography>Danger</pap-typography>
+    <pap-codeblock display="both">
+      <pap-field state="danger">
+        <p slot="header">Header Text</p>
+        <p slot="footer">Footer Text</p>
+      </pap-field>
+    </pap-codeblock>
+
+    <pap-typography>Info</pap-typography>
+    <pap-codeblock display="both">
+      <pap-field state="info">
+        <p slot="header">Header Text</p>
+        <p slot="footer">Footer Text</p>
+      </pap-field>
+    </pap-codeblock>
+  </pap-card>
+
+  <br />
+
+  <pap-card>
+    <pap-typography slot="header" variant="C1">Slots</pap-typography>
+
+    <pap-typography>Empty</pap-typography>
+    <pap-codeblock display="both">
+      <pap-field></pap-field>
+    </pap-codeblock>
+
+    <pap-typography>Main slot</pap-typography>
+    <pap-codeblock display="both">
+      <pap-field>Main</pap-field>
+    </pap-codeblock>
+
+    <pap-typography>Header slot</pap-typography>
+    <pap-codeblock display="both">
+      <pap-field>
+        <span slot="header">Header</span>
+        Main
+      </pap-field>
+    </pap-codeblock>
+
+    <pap-typography>Footer slot</pap-typography>
+    <pap-codeblock display="both">
+      <pap-field>
+        Main
+        <span slot="footer">Footer</span>
+      </pap-field>
+    </pap-codeblock>
+
+    <pap-typography>All slots (major)</pap-typography>
+    <pap-codeblock display="both">
+      <pap-field>
+        <span slot="header">Header</span>
+        <span slot="header-prefix">P</span>
+        <span slot="header-suffix">S</span>
+
+        Main
+        <span slot="prefix">P</span>
+        <span slot="suffix">S</span>
+
+        <span slot="footer">Footer</span>
+        <span slot="footer-prefix">P</span>
+        <span slot="footer-suffix">S</span>
+      </pap-field>
+    </pap-codeblock>
+  </pap-card>
+
+
+  <pap-card>
+    <pap-typography slot="header" variant="C1">Header Slot</pap-typography>
+
+    <pap-typography>Major slot</pap-typography>
+    <pap-codeblock display="both">
+      <pap-field>
+        <span slot="header">Header</span>
+        Main
+      </pap-field>
+    </pap-codeblock>
+
+    <pap-typography>Prefix slot</pap-typography>
+    <pap-codeblock display="both">
+      <pap-field>
+        <span slot="header-prefix">Prefix</span>
+        <span slot="header">Header</span>
+        Main
+      </pap-field>
+    </pap-codeblock>
+
+    <pap-typography>Suffix slot</pap-typography>
+    <pap-codeblock display="both">
+      <pap-field>
+        <span slot="header">Header</span>
+        <span slot="header-suffix">Suffix</span>
+        Main
+      </pap-field>
+    </pap-codeblock>
+
+    <pap-typography>All slots</pap-typography>
+    <pap-codeblock display="both">
+      <pap-field>
+        <span slot="header-prefix">Prefix</span>
+        <span slot="header">Header</span>
+        <span slot="header-suffix">Suffix</span>
+        Main
+      </pap-field>
+    </pap-codeblock>
+  </pap-card>
+
+
+  <pap-card>
+    <pap-typography slot="header" variant="C1">Footer Slot</pap-typography>
+
+    <pap-typography>Major slot</pap-typography>
+    <pap-codeblock display="both">
+      <pap-field>
+        Main
+        <span slot="footer">Footer</span>
+      </pap-field>
+    </pap-codeblock>
+
+    <pap-typography>Prefix slot</pap-typography>
+    <pap-codeblock display="both">
+      <pap-field>
+        Main
+        <span slot="footer-prefix">Prefix</span>
+        <span slot="footer">Footer</span>
+      </pap-field>
+    </pap-codeblock>
+
+    <pap-typography>Suffix slot</pap-typography>
+    <pap-codeblock display="both">
+      <pap-field>
+        Main
+        <span slot="footer">Footer</span>
+        <span slot="footer-suffix">Suffix</span>
+      </pap-field>
+    </pap-codeblock>
+
+    <pap-typography>All slots</pap-typography>
+    <pap-codeblock display="both">
+      <pap-field>
+        Main
+        <span slot="footer-prefix">Prefix</span>
+        <span slot="footer">Footer</span>
+        <span slot="footer-suffix">Suffix</span>
+      </pap-field>
+    </pap-codeblock>
+  </pap-card>
+</body>
+
+</html>
