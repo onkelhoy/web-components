@@ -1,0 +1,187 @@
+:host {
+  --border: 2px;
+  display: inline-flex;
+  align-items: center;
+
+  -webkit-user-select: none;
+  /* Safari */
+  -ms-user-select: none;
+  /* IE 10 and IE 11 */
+  user-select: none;
+  cursor: pointer;
+
+  div {
+    display: inline-flex;
+
+    &[part=track] {
+      height: var(--size);
+      width: calc(var(--size) * 1.6);
+      background-color: var(--pap-background-3);
+      box-sizing: border-box;
+      overflow: hidden;
+      border-radius: inherit;
+      position: relative;
+      align-items: center;
+      justify-content: space-between;
+
+      border-width: var(--border);
+      border-style: solid;
+      border-color: var(--pap-background-3);
+
+      span {
+        display: inline-flex;
+        background-color: var(--pap-foreground);
+        border-radius: inherit;
+        justify-content: center;
+        align-items: center;
+        transition: left cubic-bezier(0.68, -0.55, 0.27, 1.55) 190ms;
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: calc(var(--size) - var(--border) * 2);
+        width: calc(var(--size) - var(--border) * 2);
+        box-shadow: 0 2px 2px var(--pap-shadow);
+      }
+    }
+
+    &[part=text] {
+      flex-direction: column;
+    }
+  }
+
+  p {
+    text-align: left;
+    display: block;
+    color: inherit;
+    letter-spacing: 0;
+    --font-weight: 400;
+    font-family: var(--pap-font, inherit);
+    color: var(--pap-text);
+    font-size: 1rem;
+    // line-height: 140%;
+    letter-spacing: 0.01rem;
+    margin: 0;
+    display: inline;
+  }
+  p[part="description"] {
+    color: color-mix(in srgb, var(--pap-text), var(--pap-text-inverse) 25%);
+  }
+}
+
+:host(.label),
+:host(.description) {
+  gap: var(--gap-large, 16px);
+}
+
+:host(.label.description) {
+  div[part=text] {
+    gap: var(--gap-small, 4px);
+  }
+}
+
+:host([checked]) {
+  div[part=track] {
+    background-color: var(--track);
+    border-color: var(--track);
+
+    span {
+      background-color: var(--handle);
+      left: calc(100% - var(--size) + var(--border) * 2);
+    }
+  }
+}
+
+:host(.active),
+:host(:active) {
+  span[part=handle] {
+    // keep the part=handle to make sure style is overriden 
+    height: calc(var(--size) - var(--border) * 4);
+    top: var(--border);
+  }
+}
+
+:host(.focus),
+:host(:focus-visible) {
+  outline: none;
+
+  div[part=track] {
+    outline-offset: 3px;
+    outline: 1px solid var(--pap-border-strong, #29292F);
+  }
+}
+
+// size
+:host([size=small]) {
+  --size: 20px;
+}
+
+:host([size=medium]) {
+  --size: 26px;
+}
+
+:host([size=large]) {
+  --size: 32px;
+}
+
+// radius
+:host([radius=none]) {
+  border-radius: 0;
+}
+
+:host([radius=small]) {
+  border-radius: var(--radius-small, 4px);
+}
+
+:host([radius=medium]) {
+  border-radius: var(--radius-medium, 8px);
+}
+
+:host([radius=large]) {
+  border-radius: var(--radius-large, 16px);
+}
+
+:host([radius=circle]) {
+  border-radius: var(--radius-circle, 1000px);
+}
+
+// color
+:host([color=primary]) {
+  --track: var(--pap-primary);
+  --handle: var(--pap-primary-contrast);
+}
+
+:host([color=secondary]) {
+  --track: var(--pap-secondary);
+  --handle: var(--pap-secondary-contrast);
+}
+
+:host([color=tertiary]) {
+  --track: var(--pap-tertiary);
+  --handle: var(--pap-tertiary-contrast);
+}
+
+:host([color=information]) {
+  --track: var(--pap-information);
+  --handle: var(--pap-information-contrast);
+}
+
+:host([color=success]) {
+  --track: var(--pap-success);
+  --handle: var(--pap-success-contrast);
+}
+
+:host([color=warning]) {
+  --track: var(--pap-warning);
+  --handle: var(--pap-warning-contrast);
+}
+
+:host([color=error]) {
+  --track: var(--pap-error);
+  --handle: var(--pap-error-contrast);
+}
+
+// disabled
+:host([disabled]) {
+  cursor: not-allowed;
+  pointer-events: none;
+}

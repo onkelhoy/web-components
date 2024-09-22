@@ -11,10 +11,10 @@ export class CustomElement extends HTMLElement {
   static styles: string[];
 
   private attributeinit = false;
-  private delayedAttributes: Record<string, string> = {};
 
   protected callAfterRender: (Function | FunctionCallback)[] = [];
 
+  public delayedAttributes: Record<string, string> = {};
   public attributeToPropertyMap: Map<string, string> = new Map();
   public hasrendered = false;
   public setting: Setting;

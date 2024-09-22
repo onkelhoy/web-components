@@ -1,6 +1,6 @@
 {
   "name": "@papit/asset",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "scripts": {
     "build:sass": "bash ./bin/_utils/sass.sh",
     "build:react": "bash ./bin/_utils/react.sh",
@@ -37,7 +37,7 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
-    "@papit/core": "0.0.1",
+    "@papit/core": "0.0.2",
     "tslib": "^2.5.0"
   },
   "devDependencies": {

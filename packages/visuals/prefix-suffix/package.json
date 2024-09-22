@@ -1,6 +1,6 @@
 {
   "name": "@papit/prefix-suffix",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "build:sass": "bash ./bin/_utils/sass.sh",
     "build:react": "bash ./bin/_utils/react.sh",
@@ -38,7 +38,7 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
-    "@papit/core": "0.0.1",
+    "@papit/core": "0.0.2",
     "tslib": "^2.5.0"
   },
   "devDependencies": {

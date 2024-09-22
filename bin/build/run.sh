@@ -100,8 +100,8 @@ echo "$LIST" | while IFS=' ' read -r name package version changed; do
   # make sure to install dependencies
   if [[ -n "$CI" ]]; then 
     npm ci > /dev/null 
-  else 
-    npm install > /dev/null
+  # else 
+  #   npm install > /dev/null
   fi 
 
   if [[ -n "$CI" ]]; then 

@@ -180,7 +180,9 @@ function clone(element: ICustomElement) {
       }
     }
 
-    const shadowNode = element.querySelector(path.join(" > "));
+    const joinedpath = path.join(" > ");
+    const shadowNode = element.querySelector(joinedpath);
+    const lastrenderNode = element.lastrender.querySelector(joinedpath);
 
     if (!shadowNode) {
       // we need to traverse up the path until we find one node then insert until the end 
@@ -240,6 +242,17 @@ function clone(element: ICustomElement) {
           shadowNode.setAttribute(name, value);
         }
       }
+
+      for (let i = 0; i < shadowNode.attributes.length; i++) {
+        const name = shadowNode.attributes[i].name;
+        if (!node.hasAttribute(name) && name !== "data-static-style") {
+          // TODO: this case is happening in switch for unknown reason  (when typography is inside it!)
+          console.log('NOTE: removing attribute that could not be found in new node', name);
+          console.log(element.delayedAttributes[name]);
+          shadowNode.removeAttribute(name);
+        }
+      }
+
       // NOTE 
       // this is dangerous as many attributes are dynamically added on render 
       // plus is very rare we would have a case where we should remove attributes.. however if yes then rethink this ! 

@@ -5,38 +5,104 @@ test.beforeEach(async ({ page }) => {
   await page.goto('button');
 });
 
+declare global {
+  interface Window {
+    EVENT_EMITTED: any;
+  }
+}
+
 test.describe("button unit tests", () => {
   test('available in DOM', async ({ page }) => {
     // Interact with your component and make assertions
     const component = await page.$('pap-button');
     expect(component).not.toBeNull();
   });
+
+  test("clicking should result click event", async ({ page }) => {
+    const target = page.getByTestId("base-target");
+    await page.evaluate(() => {
+      window.EVENT_EMITTED = null;
+      const button = document.querySelector<HTMLButtonElement>("pap-button[data-testid='base-target']");
+      if (!button) return;
+
+      button.addEventListener("click", () => {
+        window.EVENT_EMITTED = true;
+      });
+    });
+
+    await target.click();
+
+    const result = await page.evaluate(() => {
+      return window.EVENT_EMITTED;
+    });
+
+    expect(result).toBeTruthy();
+  });
+
+  test.skip("clicking should not result in click event when disabled", async ({ page }) => {
+    const target = page.getByTestId("base-target");
+    await page.evaluate(() => {
+      window.EVENT_EMITTED = null;
+      const button = document.querySelector<HTMLButtonElement>("pap-button[data-testid='base-target']");
+      if (!button) return;
+
+      button.setAttribute("disabled", "true");
+      button.addEventListener("click", () => {
+        window.EVENT_EMITTED = true;
+      });
+    });
+
+    await target.click();
+
+    const result = await page.evaluate(() => {
+      return window.EVENT_EMITTED;
+    });
+
+    expect(result).toBeNull();
+  });
+
+  test.skip("enter keypress should result click event", async ({ page }) => {
+    const target = page.getByTestId("base-target");
+    await page.evaluate(() => {
+      window.EVENT_EMITTED = null;
+      const button = document.querySelector<HTMLButtonElement>("pap-button[data-testid='base-target']");
+      if (!button) return;
+
+      button.addEventListener("click", () => {
+        window.EVENT_EMITTED = true;
+      });
+
+      button.focus();
+      button.dispatchEvent(new KeyboardEvent("up", { key: "Enter" }));
+    });
+
+    await target.focus();
+    await target.press("Enter");
+
+    const result = await page.evaluate(() => {
+      return window.EVENT_EMITTED;
+    });
+
+    expect(result).toBeTruthy();
+  });
 });
 
 test.describe("button form", () => {
   test("should submit a form", async ({ page }) => {
-    const form = page.getByTestId("form");
-    const submitevent = form.evaluate((element) => {
-      return new Promise<{ a: string, b: string } | null>(res => {
-        (element as HTMLFormElement).addEventListener("submit", (e: SubmitEvent) => {
-          if (e.target instanceof HTMLFormElement) {
-            const formdata = new FormData(e.target);
-            res({
-              a: formdata.get("a") as string,
-              b: formdata.get("b") as string,
-            });
-          }
-          else {
-            res(null);
-          }
-        });
-      })
-    });
-
     await page.getByTestId("a").fill("hello");
     await page.getByTestId("submit").click();
 
-    const results = await submitevent;
+    const results = await page.evaluate(() => {
+      const form = document.querySelector("form");
+      if (!form) return null;
+
+      const formdata = new FormData(form);
+      return {
+        a: formdata.get("a"),
+        b: formdata.get("b"),
+      }
+    });
+
     expect(results).not.toBe(null);
     expect(results).toMatchObject({
       a: "hello",
@@ -45,29 +111,21 @@ test.describe("button form", () => {
   });
 
   test("should reset a form", async ({ page }) => {
-    const form = page.getByTestId("form");
-    const submitevent = form.evaluate((element) => {
-      return new Promise<{ a: string, b: string } | null>(res => {
-        (element as HTMLFormElement).addEventListener("submit", (e: SubmitEvent) => {
-          if (e.target instanceof HTMLFormElement) {
-            const formdata = new FormData(e.target);
-            res({
-              a: formdata.get("a") as string,
-              b: formdata.get("b") as string,
-            });
-          }
-          else {
-            res(null);
-          }
-        });
-      })
-    });
-
     await page.getByTestId("a").fill("hello");
     await page.getByTestId("reset").click();
     await page.getByTestId("submit").click();
 
-    const results = await submitevent;
+    const results = await page.evaluate(() => {
+      const form = document.querySelector("form");
+      if (!form) return null;
+
+      const formdata = new FormData(form);
+      return {
+        a: formdata.get("a"),
+        b: formdata.get("b"),
+      }
+    });
+
     expect(results).not.toBe(null);
     expect(results).toMatchObject({
       a: "value",

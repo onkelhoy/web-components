@@ -4,9 +4,9 @@ export PACKAGE_DIR=$(pwd)
 
 cleanup() {
   echo "[watch] cleanup"
-  kill $tsc_pid 
-  kill $esbuild_pid
-  kill $watch_css_pid 
+  kill -9 $tsc_pid 
+  kill -9 $esbuild_pid
+  kill -9 $watch_css_pid 
   exit 0
 }
 

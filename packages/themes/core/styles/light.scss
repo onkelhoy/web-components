@@ -3,7 +3,7 @@
   /* UI colors */
   --pap-primary: var(--pap-black);
   /* #080808 */
-  --pap-secondary: var(--pap-white);
+  --pap-secondary: color-mix(in srgb, var(--pap-white), var(--pap-black) 20%);
   /* #f7f7f7 */
   --pap-tertiary: cornflowerblue;
   /* states */
@@ -24,13 +24,13 @@
   /* primary colors */
   --pap-primary-text: var(--pap-text);
   /* #080808 */
-  --pap-primary-contrast: var(--pap-text-inverse);
+  --pap-primary-contrast: var(--pap-text-inverse); // maybe can ommit this by : var(--pap-primary-contrast, var(--pap-text-contrast)) 
   /* #f7f7f7 */
 
   /* secondary colors */
   --pap-secondary-text: color-mix(in srgb, var(--pap-white), var(--pap-black) 80%);
   /* #333333 */
-  --pap-secondary-contrast: var(--pap-text);
+  --pap-secondary-contrast: var(--pap-text-inverse);
   /* #080808 */
 
   /* tertiary colors */
