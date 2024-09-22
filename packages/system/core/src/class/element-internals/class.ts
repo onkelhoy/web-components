@@ -2,6 +2,7 @@
 // system 
 import { CustomElement } from "../element/class";
 import { property } from "../../decorators/property";
+import { Setting } from "../element/types";
 
 export class CustomElementInternals extends CustomElement {
   static formAssociated = true;
@@ -20,8 +21,8 @@ export class CustomElementInternals extends CustomElement {
     }
   }) disabled?: boolean;
 
-  constructor() {
-    super();
+  constructor(setting?: Partial<Setting>) {
+    super(setting);
     this._internals = this.attachInternals();
   }
 
