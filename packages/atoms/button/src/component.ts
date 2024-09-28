@@ -1,12 +1,12 @@
 // import statements 
 // system 
-import { CustomElementInternals, html, property, Size, Radius, debounce } from "@papit/core";
+import { CustomElementInternals, html, property, Size, Radius, debounce, Color } from "@papit/core";
 // visuals 
 import "@papit/prefix-suffix";
 
 // local 
 import { style } from "./style";
-import { Mode, Type, Variant, Color } from "./types";
+import { Mode, Type, Variant } from "./types";
 
 export class Button extends CustomElementInternals {
   static style = style;
@@ -31,7 +31,7 @@ export class Button extends CustomElementInternals {
 
     this.addEventListener("mouseup", this.handlepressfinished);
     this.addEventListener("touchend", this.handlepressfinished);
-    this.addEventListener('keyup', this.handlepressfinished);
+    this.addEventListener('keyup', this.handlekeyup);
     // NOTE should this be a standard?
     this.role = "button"; // answer yes if possible, what should icon be?, its to do with ARIA labels 
     // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles
@@ -55,6 +55,12 @@ export class Button extends CustomElementInternals {
       this.calculatecircle();
     }
   }
+  private handlekeyup = (e: KeyboardEvent) => {
+    if ((e.key || e.code).toLowerCase() === "enter") {
+      this.handlepressfinished();
+      this.dispatchEvent(new Event("click"));
+    }
+  }
   private handlepressfinished = () => {
     if (this.pressed) {
       const time = performance.now() - this.pressed;
@@ -65,6 +71,9 @@ export class Button extends CustomElementInternals {
     }
   }
   private handleclick = () => {
+    if (this.hasAttribute("disabled")) return;
+    if (this.hasAttribute("readonly")) return;
+
     if (this.href) {
       window.location.href = this.href;
     }
