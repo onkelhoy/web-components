@@ -32,6 +32,8 @@ window.customElements.define("binary-test", Test);
 window.onload = () => {
   const form = document.querySelector("form");
   form.onsubmit = (e) => {
+    const data = new FormData(e.target);
+    console.log({a: data.get("a"), b: data.get("b"), c: data.get("c")});
     e.preventDefault();
   }
 }

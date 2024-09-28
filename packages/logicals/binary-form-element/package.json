@@ -11,7 +11,6 @@
     "postversion": "bash ./bin/_utils/postversion.sh",
     "component": "npm run create --include-workspace-root=true --workspace=$(npm prefix) -- --component --location=$(pwd)",
     "test": "npx playwright test -c tests/playwright.config.ts",
-    "test:update-snapshots": "npx playwright test --update-snapshots -c tests/playwright.config.ts",
     "test:chrome": "npm test -- --project=chromium"
   },
   "main": "./lib/bundle.js",
