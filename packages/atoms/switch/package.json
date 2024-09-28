@@ -37,19 +37,22 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
+    "@papit/binary-form-element": "^0.0.0",
     "@papit/core": "*",
+    "@papit/icon": "^0.0.1",
+    "@papit/typography": "^0.0.0",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
     "@papit/translator": "^0.0.0",
-    "@types/node": "^20.14.15",
-    "esbuild": "^0.17.18",
-    "sass": "^1.70.0",
-    "typescript": "^5.0.4",
-    "node-html-parser": "^6.1.11",
-    "chokidar": "^3.6.0",
     "@playwright/test": "^1.45.3",
-    "playwright": "^1.45.3"
+    "@types/node": "^20.14.15",
+    "chokidar": "^3.6.0",
+    "esbuild": "^0.17.18",
+    "node-html-parser": "^6.1.11",
+    "playwright": "^1.45.3",
+    "sass": "^1.70.0",
+    "typescript": "^5.0.4"
   },
   "keywords": [
     "web-component",

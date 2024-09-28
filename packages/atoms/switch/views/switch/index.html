@@ -17,9 +17,44 @@
 
 <body>
   <pap-card>
-    <pap-typography slot="header" variant="C1">Title</pap-typography>
+    <pap-typography slot="header" variant="h4">Sizes</pap-typography>
     <pap-codeblock display="both">
-      <pap-switch></pap-switch>
+      <pap-switch size="small"></pap-switch>
+      <pap-switch size="medium"></pap-switch>
+      <pap-switch size="large"></pap-switch>
+    </pap-codeblock>
+  </pap-card>
+  <pap-card>
+    <pap-typography slot="header" variant="h4">Radius</pap-typography>
+    <pap-codeblock display="both">
+      <pap-switch radius="none"></pap-switch>
+      <pap-switch radius="small"></pap-switch>
+      <pap-switch radius="medium"></pap-switch>
+      <pap-switch radius="large"></pap-switch>
+      <pap-switch radius="circle"></pap-switch>
+    </pap-codeblock>
+  </pap-card>
+  <pap-card>
+    <pap-typography slot="header" variant="h4">Colors</pap-typography>
+    <pap-codeblock display="both">
+      <pap-switch color="primary"></pap-switch>
+      <pap-switch color="secondary"></pap-switch>
+      <pap-switch color="tertiary"></pap-switch>
+      <pap-switch color="information"></pap-switch>
+      <pap-switch color="error"></pap-switch>
+      <pap-switch color="warning"></pap-switch>
+      <pap-switch color="success"></pap-switch>
+    </pap-codeblock>
+  </pap-card>
+  <pap-card>
+    <pap-typography slot="header" variant="h4">Slots</pap-typography>
+    <pap-codeblock display="both">
+      <pap-switch>I have a label</pap-switch>
+      <pap-switch><span slot="description">I have description</span></pap-switch>
+      <pap-switch>
+        I have a label
+        <span slot="description">and I have description</span>
+      </pap-switch>
     </pap-codeblock>
   </pap-card>
 </body>
