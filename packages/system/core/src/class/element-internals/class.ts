@@ -8,18 +8,7 @@ export class CustomElementInternals extends CustomElement {
   static formAssociated = true;
   protected _internals: ElementInternals;
 
-  @property({
-    type: Boolean,
-    after: function (this: CustomElementInternals, value?: boolean) {
-      if (value) {
-        this.setAttribute('aria-disabled', 'true');
-      }
-      else {
-        this.setAttribute('aria-disabled', 'false');
-        this.removeAttribute("disabled");
-      }
-    }
-  }) disabled?: boolean;
+  @property({ rerender: false, type: Boolean, aria: 'aria-disabled', removeAttribute: true }) disabled?: boolean;
 
   constructor(setting?: Partial<Setting>) {
     super(setting);
