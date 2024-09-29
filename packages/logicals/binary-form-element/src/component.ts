@@ -18,18 +18,17 @@ export class BinaryFormElement extends CustomElementInternals {
   @property({
     type: Boolean,
     removeAttribute: true,
+    aria: 'aria-checked',
     after: function (this: BinaryFormElement) {
-      // update the form value?
-      if (this._internals !== undefined) {
-        this._internals.setFormValue(typeof this.checked === "boolean" ? String(this.checked as boolean) : null);
-      }
-      if (!this.internalflag) {
-        this.dispatchEvent(new Event("change"));
-      }
-      this.internalflag = false;
+      this.afterchecked();
     }
   }) checked?: boolean;
   private internalflag = false;
+
+  constructor() {
+    super();
+    this.role = "checkbox";
+  }
 
   connectedCallback(): void {
     super.connectedCallback();
@@ -51,6 +50,18 @@ export class BinaryFormElement extends CustomElementInternals {
 
   get name() {
     return this.getAttribute("name");
+  }
+
+  // protected methods
+  protected afterchecked() {
+    // update the form value?
+    if (this._internals !== undefined) {
+      this._internals.setFormValue(typeof this.checked === "boolean" ? String(this.checked as boolean) : null);
+    }
+    if (!this.internalflag) {
+      this.dispatchEvent(new Event("change"));
+    }
+    this.internalflag = false;
   }
 
   // event handlers

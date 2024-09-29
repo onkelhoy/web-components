@@ -14,7 +14,6 @@ export class Switch extends BinaryFormElement {
   @property({ rerender: false }) color: Color = "success";
   @property({ rerender: false }) size: Size = "medium";
   @property({ rerender: false }) radius: Radius = "circle";
-  @property({ rerender: false }) state?: State = undefined;
 
   private handleslotchange = (e: Event) => {
     if (e.target instanceof HTMLSlotElement) {

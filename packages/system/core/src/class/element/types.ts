@@ -19,6 +19,7 @@ export interface ICustomElement extends HTMLElement {
   stylecomperator: HTMLStyleElement;
   lastrender: Document;
   domparser: DOMParser;
+  delayedAttributes: Record<string, string>;
 
   // functions 
   getStyle(): string;

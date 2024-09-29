@@ -161,22 +161,8 @@
   --handle: var(--pap-error-contrast);
 }
 
-// state 
-:host([state=information]) {
-  --selected: var(--pap-information);
-
-}
-
-:host([state=success]) {
-  --selected: var(--pap-success);
-
-}
-
-:host([state=warning]) {
-  --selected: var(--pap-warning);
-}
-
-:host([state=error]) {
-  --selected: var(--pap-error);
-
+// disabled
+:host([disabled]) {
+  cursor: not-allowed;
+  pointer-events: none;
 }

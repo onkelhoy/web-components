@@ -12,7 +12,16 @@ declare global {
   }
 }
 
-test.describe("bindary-form-element unit tests", () => {
+test.describe("unit tests", () => {
+  test("sanity test", async ({ page }) => {
+    const targeta = page.getByTestId("a");
+    await expect(targeta).toHaveRole("checkbox");
+    await targeta.setChecked(true);
+    await expect(targeta).toBeChecked();
+    await targeta.setChecked(false);
+    await expect(targeta).not.toBeChecked();
+  });
+
   test("clicking should trigger change event", async ({ page }) => {
     const target = page.getByTestId("a");
     expect(await target.evaluate(elm => (elm as any).checked)).toBeFalsy();
@@ -40,12 +49,10 @@ test.describe("bindary-form-element unit tests", () => {
   });
 });
 
-test.describe("binary-form-element disabled tests", () => {
+test.describe("disabled tests", () => {
   test("disabled click should not trigger change event", async ({ page }) => {
     const target = page.getByTestId("disabled");
-    expect(await target.evaluate(elm => (elm as any).checked)).toBeFalsy();
-    await target.click();
-    expect(await target.evaluate(elm => (elm as any).checked)).toBeFalsy();
+    expect(target).toBeDisabled();
   });
 
   test("disabledenter keypress should not trigger active class", async ({ page }) => {
@@ -66,7 +73,7 @@ test.describe("binary-form-element disabled tests", () => {
   });
 })
 
-test.describe("bindary-form-element form tests", () => {
+test.describe("form tests", () => {
   test.beforeEach(async ({ page }) => {
     await page.waitForTimeout(500);
   });

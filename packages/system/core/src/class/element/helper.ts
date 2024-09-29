@@ -246,8 +246,8 @@ function clone(element: ICustomElement) {
       for (let i = 0; i < shadowNode.attributes.length; i++) {
         const name = shadowNode.attributes[i].name;
         if (!node.hasAttribute(name) && name !== "data-static-style") {
-
           console.log('NOTE: removing attribute that could not be found in new node', name);
+          console.log(element.delayedAttributes[name]);
           shadowNode.removeAttribute(name);
         }
       }
