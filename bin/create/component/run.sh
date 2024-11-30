@@ -57,15 +57,17 @@ else
   echo "[error] could not find package config: [$PACKAGE_LOCATION/.config]"
   exit 1
 fi 
-if [ -f "$ROOTDIR/packages/$LAYER_FOLDER/.config" ]; then 
-  source "$ROOTDIR/packages/$LAYER_FOLDER/.config"
-else 
-  echo "[error] could not find layer config: [$ROOTDIR/packages/$LAYER_FOLDER/.config]"
-  exit 1
-fi
+if [ -n "$LAYER_FOLDER" ]; then 
+  if [ -f "$ROOTDIR/packages/$LAYER_FOLDER/.config" ]; then 
+    source "$ROOTDIR/packages/$LAYER_FOLDER/.config"
+  else 
+    echo "[error] could not find layer config: [$ROOTDIR/packages/$LAYER_FOLDER/.config]"
+    exit 1
+  fi
 
-export LAYER_NAME=$LAYER_NAME
-export LAYER_INCLUDE=$LAYER_INCLUDE
+  export LAYER_NAME=$LAYER_NAME
+  export LAYER_INCLUDE=$LAYER_INCLUDE
+fi
 
 # check if this is first package (called from generate:package script)
 if [ $INITIAL_PACKAGE == true ]; then 
@@ -78,12 +80,14 @@ else
   fi 
 fi
 
-# we need to source layer config
-if [ -f "$ROOTDIR/packages/$LAYER_FOLDER/.config" ]; then 
-  source "$ROOTDIR/packages/$LAYER_FOLDER/.config"
-else 
-  echo "[error] could not determine layer config file at: [$ROOTDIR/packages/$LAYER_FOLDER/.config]"
-  exit 1
+if [ -n "$LAYER_FOLDER" ]; then 
+  # we need to source layer config
+  if [ -f "$ROOTDIR/packages/$LAYER_FOLDER/.config" ]; then 
+    source "$ROOTDIR/packages/$LAYER_FOLDER/.config"
+  else 
+    echo "[error] could not determine layer config file at: [$ROOTDIR/packages/$LAYER_FOLDER/.config]"
+    exit 1
+  fi
 fi
 ############### END #################
 #endregion VARIABLES

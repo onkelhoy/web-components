@@ -32,12 +32,15 @@ rsync -a --exclude='*DS_Store' --exclude='.gitkeep' "$SCRIPTDIR/theme/template/v
 rsync -a --exclude='*DS_Store' --exclude='.gitkeep' "$SCRIPTDIR/theme/templates/$THEME_TYPE/" "$destination"
 
 # variables 
-# replace placeholders 
-find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_FULL_NAME#${FULL_NAME}#g" {} \;
-find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_PACKAGE_NAME#${PACKAGE_NAME}#g" {} \;
-find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_NAME#${NAME}#g" {} \;
-# github
-find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_GITHUB_REPO#${GITHUB_REPO}#g" {} \;
+find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" | while read -r file; do 
+  # replace placeholders 
+  sed -i '' "s#PLACEHOLDER_FULL_NAME#${FULL_NAME}#g" "$file"
+  sed -i '' "s#PLACEHOLDER_PACKAGE_NAME#${PACKAGE_NAME}#g" "$file"
+  sed -i '' "s#PLACEHOLDER_NAME#${NAME}#g" "$file"
+  # github
+  sed -i '' "s#PLACEHOLDER_GITHUB_REPO#${GITHUB_REPO}#g" "$file"
+done
+
 
 # specific placeholder replacement 
 sed -i '' "s/GITNAME/${GITNAME}/g" $destination/package.json

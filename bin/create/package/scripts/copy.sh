@@ -15,7 +15,7 @@ function relative_path_to_ancestor() {
   done
 
   if [[ "$child_path" != "$ancestor_path" ]]; then
-    echo "Error: The specified ancestor is not actually an ancestor of the child." >&2
+    echo "[error]: The specified ancestor is not actually an ancestor of the child." >&2
     return 1
   fi
 
@@ -27,18 +27,24 @@ function relative_path_to_ancestor() {
 mkdir "$destination"
 rsync -a --exclude='*DS_Store' --exclude='.gitkeep' "$SCRIPTDIR/package/template/" "$destination"
 
-# replace placeholders 
-# layer info 
-find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s/PLACEHOLDER_LAYER_NAME/${LAYER_NAME}/g" {} \;
-find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s/PLACEHOLDER_LAYER_FOLDER/${LAYER_FOLDER}/g" {} \;
-# package info
-find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_FULL_NAME#${FULL_NAME}#g" {} \;
-find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_PACKAGE_NAME#${PACKAGE_NAME}#g" {} \;
-# main component
-find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_CLASS_NAME#${CLASS_NAME}#g" {} \;
-find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_NAME#${NAME}#g" {} \;
-# github
-find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_GITHUB_REPO#${GITHUB_REPO}#g" {} \;
+find "$destination" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" | while read -r file; do 
+  # layer info 
+  if [ -n "$LAYER_NAME" ]; then 
+    sed -i '' "s/PLACEHOLDER_LAYER_NAME/${LAYER_NAME}/g" "$file"
+    sed -i '' "s/PLACEHOLDER_LAYER_FOLDER/${LAYER_FOLDER}/g" "$file"
+  else 
+    sed -i '' "s/LAYER_NAME=PLACEHOLDER_LAYER_NAME//g" "$file"
+    sed -i '' "s/LAYER_FOLDER=PLACEHOLDER_LAYER_FOLDER//g" "$file"
+  fi 
+  # package info
+  sed -i '' "s#PLACEHOLDER_FULL_NAME#${FULL_NAME}#g" "$file"
+  sed -i '' "s#PLACEHOLDER_PACKAGE_NAME#${PACKAGE_NAME}#g" "$file"
+  # main component 
+  sed -i '' "s#PLACEHOLDER_CLASS_NAME#${CLASS_NAME}#g" "$file"
+  sed -i '' "s#PLACEHOLDER_NAME#${NAME}#g" "$file"
+  # github
+  sed -i '' "s#PLACEHOLDER_GITHUB_REPO#${GITHUB_REPO}#g" "$file"
+done
 
 # specific placeholder replacement 
 sed -i '' "s/GITNAME/${GITNAME}/g" $destination/package.json

@@ -55,8 +55,10 @@ if [ -f "$SCRIPTDIR/component/template/$COMPONENT_TYPE/README.md" ]; then
 fi
 
 # replace placeholders 
-find "$PACKAGE_LOCATION" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_FULL_NAME#${FULL_PACKAGE_NAME}#g" {} \;
-find "$PACKAGE_LOCATION" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_PACKAGE_NAME#${COMPONENT_FULL_NAME}#g" {} \;
-find "$PACKAGE_LOCATION" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_HTML_NAME#${COMPONENT_HTML_NAME}#g" {} \;
-find "$PACKAGE_LOCATION" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_CLASS_NAME#${COMPONENT_CLASS_NAME}#g" {} \;
-find "$PACKAGE_LOCATION" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" -exec sed -i '' "s#PLACEHOLDER_NAME#${COMPONENT_NAME}#g" {} \;
+find "$PACKAGE_LOCATION" -type f -not -name ".DS_Store" -not -name "*.svg" -not -name "*.ico" | while read -r file; do 
+  sed -i '' "s#PLACEHOLDER_FULL_NAME#${FULL_PACKAGE_NAME}#g" "$file"
+  sed -i '' "s#PLACEHOLDER_PACKAGE_NAME#${COMPONENT_FULL_NAME}#g" "$file"
+  sed -i '' "s#PLACEHOLDER_HTML_NAME#${COMPONENT_HTML_NAME}#g" "$file"
+  sed -i '' "s#PLACEHOLDER_CLASS_NAME#${COMPONENT_CLASS_NAME}#g" "$file"
+  sed -i '' "s#PLACEHOLDER_NAME#${COMPONENT_NAME}#g" "$file"
+done
