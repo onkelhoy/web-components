@@ -5,7 +5,6 @@ export ROOTDIR=$(pwd)
 export SCRIPTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "$ROOTDIR/.config"
-loadcolors
 
 # extract project-scope variable 
 read -r PROJECTSCOPE GITHUB_REPO <<< $(node -pe "
@@ -54,7 +53,7 @@ echo ""
 read -p "option: " option_answer
 
 while [ -z "$option_answer" ]; do
-  logwarn "must choose a option"
+  echo "\x1b[33m|warn] must choose a option\x1b[0m"
   read -p "option: " option_answer
 done
 echo ""
@@ -70,4 +69,4 @@ else
   exit 0
 fi 
 
-logerror "something went wrong.." 
+echo "\x1b[31m|error] something went wrong..\x1b[0m"

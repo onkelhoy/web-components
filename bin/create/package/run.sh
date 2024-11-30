@@ -30,16 +30,23 @@ trap cleanup EXIT
 PACKAGE_PREFIX=""
 PROJECTLICENSE=$(node -pe "require('$ROOTDIR/package.json').license")
 
-# begin by getting the layer-name 
-bash "$SCRIPTDIR/package/scripts/layer.sh"
-source "$SCRIPTDIR/package/.tmp"
-if [ "$EXIT" == true ]; then 
-  exit 
-fi 
+read -p "would you like to use sub-layers? (default 1) [1/0]: " sublevels
+if [ $sublevels == 1 ]; then 
+  # begin by getting the layer-name 
+  bash "$SCRIPTDIR/package/scripts/layer.sh"
+  source "$SCRIPTDIR/package/.tmp"
+  if [ "$EXIT" == true ]; then 
+    exit 
+  fi 
 
-export LAYER_FOLDER=$LAYER_FOLDER
-export LAYER_NAME=$LAYER_NAME
-export LAYER_INCLUDE=$LAYER_INCLUDE
+  export LAYER_FOLDER=$LAYER_FOLDER
+  export LAYER_NAME=$LAYER_NAME
+  export LAYER_INCLUDE=$LAYER_INCLUDE
+else   
+  export LAYER_FOLDER="$ROOTDIR/packages"
+  export LAYER_NAME="packages"
+  export LAYER_INCLUDE=false
+fi 
 
 # now lets get the name for the package 
 bash "$SCRIPTDIR/package/scripts/name.sh"

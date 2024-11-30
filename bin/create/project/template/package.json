@@ -1,12 +1,8 @@
 {
-  "name": "@papit/root",
+  "name": "PROJECTSCOPE",
   "version": "0.0.0",
-  "description": "web component - framework/ecosystem",
+  "description": "my project",
   "private": true,
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/onkelhoy/web-components.git"
-  },
   "scripts": {
     "analyse": "bash ./bin/analyse/run.sh",
     "create": "bash ./bin/create/run.sh",
@@ -17,14 +13,17 @@
     "test": "bash ./bin/test/run.sh",
     "server": "npx @papit/server"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onkelhoy/PLACEHOLDER_NAME.git"
+  },
   "keywords": [
     "web-component",
     "typescript",
     "sass"
   ],
-  "author": "Henry Pap",
-  "license": "Papit-1.0",
-  "licenseFile": "LICENSE",
+  "author": "",
+  "license": "MIT",
   "workspaces": [
     "packages/**/*"
   ]
