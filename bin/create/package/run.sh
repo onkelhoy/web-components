@@ -42,10 +42,6 @@ if [ $sublevels == 1 ]; then
   export LAYER_FOLDER=$LAYER_FOLDER
   export LAYER_NAME=$LAYER_NAME
   export LAYER_INCLUDE=$LAYER_INCLUDE
-else   
-  export LAYER_FOLDER="$ROOTDIR/packages"
-  export LAYER_NAME="packages"
-  export LAYER_INCLUDE=false
 fi 
 
 # now lets get the name for the package 
@@ -56,7 +52,11 @@ export PACKAGE_NAME=$PACKAGE_NAME
 export FULL_NAME=$FULL_NAME
 export CLASS_NAME=$CLASS_NAME
 
-export destination="$TARGET_FOLDER/$NAME"
+if [ -n "$TARGET_FOLDER" ]; then 
+  export destination="$TARGET_FOLDER/$NAME"
+else 
+  export destination="$ROOTDIR/packages/$NAME"
+fi 
 ############### END #################
 #endregion VARIABLES
 
