@@ -1,5 +1,6 @@
 {
   "name": "PLACEHOLDER_FULL_NAME",
+  "description": "",
   "version": "0.0.0",
   "scripts": {
     "build:sass": "bash ./bin/_utils/sass.sh",
@@ -55,6 +56,5 @@
     "web-component",
     "typescript",
     "sass"
-  ],
-  "description": ""
+  ]
 }

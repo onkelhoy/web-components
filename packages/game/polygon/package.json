@@ -1,0 +1,52 @@
+{
+  "name": "@papit/game-polygon",
+  "description": "",
+  "version": "0.0.0",
+  "scripts": {
+    "build": "bash ./bin/build.sh",
+    "watch": "bash ./bin/watch.sh",
+    "start": "bash ./bin/start.sh",
+    "preversion": "bash ./bin/_utils/preversion.sh",
+    "postversion": "bash ./bin/_utils/postversion.sh",
+    "component": "npm run create --include-workspace-root=true --workspace=$(npm prefix) -- --component --location=$(pwd)",
+    "test": "node --test"
+  },
+  "main": "./lib/bundle.js",
+  "types": "./lib/types/index.d.ts",
+  "type": "module",
+  "files": [
+    "asset/",
+    "lib/"
+  ],
+  "exports": {
+    ".": "./lib/bundle.js"
+  },
+  "author": "Henry",
+  "private": false,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "license": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onkelhoy/web-components.git"
+  },
+  "dependencies": {
+    "@papit/game-intersection": "^0.0.0",
+    "@papit/game-shape": "^0.0.0",
+    "@papit/game-vector": "*"
+  },
+  "devDependencies": {
+    "@papit/game-engine": "*",
+    "@papit/game-input-events": "*",
+    "chokidar": "^3.6.0",
+    "esbuild": "^0.17.18",
+    "node-html-parser": "^6.1.11",
+    "typescript": "^5.0.4"
+  },
+  "keywords": [
+    "game",
+    "typescript"
+  ]
+}

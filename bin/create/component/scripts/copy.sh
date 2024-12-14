@@ -25,6 +25,18 @@ if [ "$INITIAL_PACKAGE" == true ]; then
   mkdir "$PACKAGE_LOCATION/src"
 
   TARGET_SRC="$PACKAGE_LOCATION/src"
+
+  if [ -f "$SCRIPTDIR/component/template/$COMPONENT_TYPE/package.json" ]; then 
+    rm "$PACKAGE_LOCATION/package.json" 
+    cp "$SCRIPTDIR/component/template/$COMPONENT_TYPE/package.json" "$PACKAGE_LOCATION/package.json"
+
+    # specific placeholder replacement 
+    sed -i '' "s/GITNAME/${GITNAME}/g" $PACKAGE_LOCATION/package.json
+
+    if [ -n $PROJECTLICENSE ]; then 
+      sed -i '' "s/PROJECTLICENSE/${PROJECTLICENSE}/g" $PACKAGE_LOCATION/package.json
+    fi
+  fi 
 else
   # create folders 
   mkdir -p "$PACKAGE_LOCATION/src/components/$COMPONENT_NAME"
