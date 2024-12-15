@@ -1,7 +1,7 @@
 {
   "name": "@papit/game-input-events",
   "description": "",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "build": "bash ./bin/build.sh",
     "watch": "bash ./bin/watch.sh",
@@ -33,7 +33,7 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
-    "@papit/game-engine": "0.0.0",
+    "@papit/game-engine": "0.0.1",
     "@papit/game-vector": "0.0.0"
   },
   "devDependencies": {

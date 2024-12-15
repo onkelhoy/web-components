@@ -8,10 +8,7 @@ export ROOTDIR=$(npm prefix)
 source $PACKAGE_PATH/.config
 source $SCRIPTDIR/.config
 
-PROJECTSCOPE=$(node -pe "require('$ROOTDIR/package.json').name")
-export PROJECTSCOPE=$(echo "$PROJECTSCOPE" | cut -d'/' -f1 | awk -F'@' '{print $2}')
-
-export TARGET_PACKAGE=@$PROJECTSCOPE/$PACKAGENAME$NAME
+export TARGET_PACKAGE=$FULL_NAME
 
 if [ "$TARGET_PACKAGE" == "$INITIATOR" ]; then 
   echo "{\"initiator\": \"$INITIATOR\"}" > $SCRIPTDIR/.json

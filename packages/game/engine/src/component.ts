@@ -22,6 +22,7 @@ export class Engine {
     element: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
   }[];
+
   /**
    * 
    * @param  {...string|EngineSettings} selectors 
@@ -40,6 +41,7 @@ export class Engine {
         timer: null,
         previous: null,
         callbacks: [],
+        documentElemenet: document:
       }
       if (typeof selector === "string")
       {
@@ -52,8 +54,9 @@ export class Engine {
         setting.width = selector.width ?? window.innerWidth;
         setting.height = selector.height ?? window.innerHeight;
         setting.callbacks = selector.callbacks ?? [];
+        setting.documentElemenet = selector.documentElemenet ?? document;
       }
-      const element = document.querySelector<HTMLCanvasElement>(setting.query);
+      const element = setting.documentElemenet.querySelector<HTMLCanvasElement>(setting.query);
       if (!element) throw new Error(`[error engine] could not find element: [${setting.query}]`);
       const context = element.getContext(setting.type);
       if (!context) throw new Error('[error engine] could not create rendering context');
