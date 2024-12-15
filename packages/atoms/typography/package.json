@@ -37,7 +37,7 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
-    "@papit/core": "*",
+    "@papit/core": "0.0.1",
     "tslib": "^2.5.0"
   },
   "devDependencies": {

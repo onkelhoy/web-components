@@ -28,17 +28,17 @@ trap cleanup EXIT
 # region VARIABLES
 ############### START ###############
 PACKAGE_PREFIX=""
-PROJECTLICENSE=$(node -pe "require('$ROOTDIR/package.json').license")
+export PROJECTLICENSE=$(node -pe "require('$ROOTDIR/package.json').license")
 
 read -p "would you like to use sub-layers? (default 1) [1/0]: " sublevels
-if [ $sublevels == 1 ]; then 
+if [ "$sublevels" != 0 ]; then 
   # begin by getting the layer-name 
   bash "$SCRIPTDIR/package/scripts/layer.sh"
   source "$SCRIPTDIR/package/.tmp"
   if [ "$EXIT" == true ]; then 
     exit 
   fi 
-
+  
   export LAYER_FOLDER=$LAYER_FOLDER
   export LAYER_NAME=$LAYER_NAME
   export LAYER_INCLUDE=$LAYER_INCLUDE
