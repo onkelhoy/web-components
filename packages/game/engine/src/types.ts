@@ -8,4 +8,5 @@ export type Setting = {
   timer: null|number;
   previous: null|number;
   callbacks: SettingCallback[];
+  documentElemenet: Document|HTMLElement|ShadowRoot;
 }

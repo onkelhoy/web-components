@@ -33,8 +33,8 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "devDependencies": {
-    "@papit/game-engine": "*",
-    "@papit/game-input-events": "*",
+    "@papit/game-engine": "0.0.1",
+    "@papit/game-input-events": "0.0.1",
     "@papit/game-vector": "*",
     "esbuild": "^0.17.18",
     "typescript": "^5.0.4",
