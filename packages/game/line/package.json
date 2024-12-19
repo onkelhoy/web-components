@@ -6,6 +6,7 @@
     "build": "bash ./bin/build.sh",
     "watch": "bash ./bin/watch.sh",
     "start": "bash ./bin/start.sh",
+    "publish:manual": "bash ./bin/publish.sh",
     "preversion": "bash ./bin/_utils/preversion.sh",
     "postversion": "bash ./bin/_utils/postversion.sh",
     "component": "npm run create --include-workspace-root=true --workspace=$(npm prefix) -- --component --location=$(pwd)",
@@ -33,8 +34,8 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "devDependencies": {
-    "@papit/game-engine": "0.0.1",
-    "@papit/game-input-events": "0.0.1",
+    "@papit/game-engine": "0.0.2",
+    "@papit/game-input-events": "0.0.2",
     "@papit/game-vector": "*",
     "esbuild": "^0.17.18",
     "typescript": "^5.0.4",

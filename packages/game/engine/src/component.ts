@@ -41,7 +41,7 @@ export class Engine {
         timer: null,
         previous: null,
         callbacks: [],
-        documentElemenet: document:
+        documentElemenet: document,
       }
       if (typeof selector === "string")
       {
