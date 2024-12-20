@@ -1,6 +1,10 @@
 #!/bin/bash
 
-source .config
+if [ -f .config ]; then 
+  source .config
+else 
+  echo "could not find .config"
+fi 
 export SCRIPTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export ROOTDIR=$(npm prefix)
 
@@ -18,7 +22,7 @@ DOOPEN=false
 for arg in "$@"; do
   if [[ $arg == --port=* ]]; then 
     export PORT="${arg#*=}"
-  if [[ $arg == --rootdir=* ]]; then 
+  elif [[ $arg == --rootdir=* ]]; then 
     export ROOTDIR="${arg#*=}"
   elif [[ $arg == --location=* ]]; then 
     export LOCATION="${arg#*=}"
