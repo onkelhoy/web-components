@@ -30,9 +30,9 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@types/node": "^20.14.15",
+    "@types/node": "^22.10.2",
     "sass": "^1.70.0",
-    "typescript": "^5.0.4",
+    "typescript": "^5.7.2",
     "node-html-parser": "^6.1.5",
     "@playwright/test": "^1.45.3",
     "playwright": "^1.45.3"

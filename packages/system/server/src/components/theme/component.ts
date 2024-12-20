@@ -29,15 +29,15 @@ export function route(req: http.IncomingMessage, res: http.ServerResponse) {
   const match = (req.url as string).match(/^\/?themes?\/([^\.]+)/);
   if (match) {
     let [_full, name] = match;
-    if (!THEMES[name]) {
-      if (process.env.LOGLEVEL !== "none") {
+    if (!THEMES[name] && name !== "core") {
+      if (["verbose", "debug"].includes(process.env.LOGLEVEL || "none")) {
         console.log(`[server error] can not find theme: ${name}`);
       }
       name = "core"; // fallback case
     }
 
     if (!THEMES[name]) {
-      if (process.env.LOGLEVEL !== "none") console.log(`[server error] can not find theme: ${name}`);
+      if (["verbose", "debug"].includes(process.env.LOGLEVEL || "none")) console.log(`[server error] can not find theme: ${name}`);
       res.statusCode = 404;
       res.end('/*not found*/');
     }

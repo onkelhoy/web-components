@@ -2,7 +2,7 @@ import { Vector } from "@papit/game-vector";
 import { logscreen } from "@papit/game-engine";
 import { TouchesEventMap } from "./types";
 
-class ExtendedTouch {
+export class ExtendedTouch {
   position: Vector;
   movement: Vector;
 
@@ -22,8 +22,8 @@ class ExtendedTouch {
   target!: EventTarget;
 
   constructor(touch:Touch) {
-    this.position = null;
-    this.movement = null;
+    this.position = Vector.Zero;
+    this.movement = Vector.Zero;
 
     this.start = performance.now();
     this.end = null;
@@ -86,7 +86,7 @@ export class Touches extends EventTarget {
     this.changedTouches = [];
     this.verbose = false;
     
-    canvas.addEventListener("touchstart", this.handletouchstart);
+    canvas.addEventListener("touchstart", this.handletouchstart, { passive: true });
     canvas.addEventListener("touchend", this. handletouchend);
     canvas.addEventListener("touchmove", this.handletouchmove, { passive: true });
     canvas.addEventListener("touchcancel", this.handletouchcancel);

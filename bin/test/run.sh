@@ -3,12 +3,9 @@
 # initiate variables 
 export ROOTDIR=$(pwd)
 
-if [[ -z "$LIST" ]]; then 
-  LIST=$(node "$ROOTDIR/bin/_utils/bash-dependency-order.js")
-fi 
-
-export CI=true
+export CI=true # why this always set ? 
 ALLOW_FAIL=false
+CHECKVERSION=false 
 
 # check flags 
 for arg in "$@"; do
@@ -22,8 +19,15 @@ for arg in "$@"; do
   elif [[ $arg == "--update-snapshots" ]]; then 
     UPDATE_SNAPSHOTS=true
     echo "update-snapshots: on"
+  elif [[ $arg == "--force" ]]; then
+    # this should skip the check if version is not same and build the ancestor tree 
+    export FORCE=true
+    echo "force: on"
   fi
 done
+
+bash "$ROOTDIR/bin/dependency-order/run.sh" --check-version
+LIST=$(cat "$ROOTDIR/bin/dependency-order/list")
 
 has_cleanup=false
 cleanup() {
@@ -31,6 +35,10 @@ cleanup() {
   if [[ $has_cleanup == false ]]; then 
     has_cleanup=true 
     kill $server_pid
+
+    rm "$ROOTDIR/bin/version/.config" &> /dev/null
+    rm "$ROOTDIR/bin/version/.json" &> /dev/null
+    rm "$ROOTDIR/bin/dependency-order/list" &> /dev/null
 
     if [[ -f "$ROOTDIR/packages/.temp/.info" ]]; then 
       source $ROOTDIR/packages/.temp/.info 
@@ -60,79 +68,75 @@ sleep 5 # Ensure server starts before reading files
 # rm -rf tests/snapshots
 # mkdir tests/snapshots
 
-for dir in $LIST; do
-  if [[ -f $dir/package.json ]]; then 
-
-    read -r has_script has_update_script PROJECTSCOPE LOCAL_VERSION <<< $(node -pe "
-      const pkg = require('$dir/package.json'); 
-      const hastest = !!pkg.scripts.test;
-      const hasupdate = !!pkg.scripts['test:update-snapshots'];
-      \`\${hastest} \${hasupdate} \${pkg.name} \${pkg.version}\`
-    ")
-    PROJECTSCOPE=@$(echo "$name" | cut -d'/' -f1 | awk -F'@' '{print $2}')
-
-    if [[ "$has_script" == "true" ]]; then 
-      cd $dir 
-      source .config 
-      export LAYER_FOLDER=$LAYER_FOLDER 
-      export NAME=$NAME
-      echo "$FULL_NAME"
-
-      if [[ -f "$ROOTDIR/node_modules/$PROJECTSCOPE/$PACKAGE_NAME/package.json" ]]; then 
-        CACHE_VERSION=$(node -pe "require('$ROOTDIR/node_modules/$PROJECTSCOPE/$PACKAGE_NAME/package.json').version")
-
-        if [[ $LOCAL_VERSION == $CACHE_VERSION ]]; then 
-          echo "versions are same: skipped"
-          continue
-        else 
-          echo "versions are not same, local: $LOCAL_VERSION, cache: $CACHE_VERSION, projectsope/package_name: $PROJECTSCOPE/$PACKAGE_NAME"
-        fi 
-      fi
-
-      if [[ $has_update_script == "true" ]]; then 
-        # if no snapshots we make sure to create them 
-        if [[ -n "$UPDATE_SNAPSHOTS" || ! -d "tests/snapshots" ]]; then 
-          echo "- update snapshots"
-          npm run test:update-snapshots > /dev/null 2>&1
-
-        # Check if there are any matching files
-        elif find tests/ -type f -name "snapshot.test.ts" | grep -q '.'; then
-          echo "- pre-run snapshots"
-          npx playwright test -c tests/playwright.config.ts "tests/.*?/snapshot\.test\.ts" > /dev/null 2>&1
-        fi
-         
-        echo "- finished"
-      fi
-
-      echo "- running test"
-      npm test 
-
-      # Capture the exit code to determine if the test passed
-      test_exit_code=$?
-      if [[ $test_exit_code -ne 0 ]]; then
-        touch "$ROOTDIR/.test-fail"
-
-        # try rerun on failed tests to see if potential timing issue was the culprit (router had several such)
-        npm test -- --last-failed
-        rerun_exit_code=$?
-
-        if [[ $rerun_exit_code -ne 0 && "$ALLOW_FAIL" == false ]]; then 
-          echo ""
-          echo "- tests failed"
-          break 
-        fi
-      fi
-
-      # if [[ -n $ROOT_SCREENSHOT ]]; then 
-      #   if [[ -d $dir/tests/snapshots ]]; then 
-      #     echo "- screenshot copied"
-      #     cd $ROOTDIR
-      #     mkdir $ROOTDIR/tests/snapshots/$FULL_NAME
-      #     cp -R $dir/tests/snapshots $ROOTDIR/tests/snapshots/$FULL_NAME
-      #   fi
-      # fi
-    fi 
+echo "$LIST" | while IFS=' ' read -r name package version changed; do
+  if [[ ! -f $package/package.json ]]; then 
+    continue 
   fi 
+
+  read -r TESTS_EXIST UPDATE_SNAPSHOT_EXISTS <<< $(node -pe "
+    const pkg = require('$package/package.json'); 
+    const hastest = !!pkg.scripts.test;
+    const hasupdate = !!pkg.scripts['test:update-snapshots'];
+    \`\${hastest} \${hasupdate}\`
+  ")
+
+  if [[ "$TESTS_EXIST" != "true" ]]; then 
+    continue
+  fi 
+
+  cd $package 
+  source .config 
+  export LAYER_FOLDER=$LAYER_FOLDER 
+  export NAME=$NAME
+  echo "$FULL_NAME"
+
+  if [[ $changed -eq 0 ]]; then 
+    echo "versions are same: skipped"
+    continue
+  fi
+
+  if [[ $UPDATE_SNAPSHOT_EXISTS == "true" ]]; then 
+    # if no snapshots we make sure to create them 
+    if [[ -n "$UPDATE_SNAPSHOTS" || ! -d "tests/snapshots" ]]; then 
+      echo "- update snapshots"
+      npm run test:update-snapshots > /dev/null 2>&1
+
+    # Check if there are any matching files
+    elif find tests/ -type f -name "snapshot.test.ts" | grep -q '.'; then
+      echo "- pre-run snapshots"
+      npx playwright test -c tests/playwright.config.ts "tests/.*?/snapshot\.test\.ts" > /dev/null 2>&1
+    fi
+      
+    echo "- finished"
+  fi
+
+  echo "- running test"
+  npm test 
+
+  # Capture the exit code to determine if the test passed
+  test_exit_code=$?
+  if [[ $test_exit_code -ne 0 ]]; then
+    touch "$ROOTDIR/.test-fail"
+
+    # try rerun on failed tests to see if potential timing issue was the culprit (router had several such)
+    npm test -- --last-failed
+    rerun_exit_code=$?
+
+    if [[ $rerun_exit_code -ne 0 && "$ALLOW_FAIL" == false ]]; then 
+      echo ""
+      echo "- tests failed"
+      break 
+    fi
+  fi
+
+  # if [[ -n $ROOT_SCREENSHOT ]]; then 
+  #   if [[ -d $package/tests/snapshots ]]; then 
+  #     echo "- screenshot copied"
+  #     cd $ROOTDIR
+  #     mkdir $ROOTDIR/tests/snapshots/$FULL_NAME
+  #     cp -R $package/tests/snapshots $ROOTDIR/tests/snapshots/$FULL_NAME
+  #   fi
+  # fi
 done
 
 cleanup

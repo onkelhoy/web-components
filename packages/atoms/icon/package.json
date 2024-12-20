@@ -1,6 +1,6 @@
 {
   "name": "@papit/icon",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
     "build:sass": "bash ./bin/_utils/sass.sh",
     "build:react": "bash ./bin/_utils/react.sh",
@@ -37,19 +37,19 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
-    "@papit/asset": "0.0.1",
+    "@papit/asset": "0.0.2",
     "@papit/core": "0.0.1",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.45.3",
-    "@types/node": "^20.14.15",
+    "@types/node": "^22.10.2",
     "chokidar": "^3.6.0",
     "esbuild": "^0.17.18",
     "node-html-parser": "^6.1.5",
     "playwright": "^1.45.3",
     "sass": "^1.70.0",
-    "typescript": "^5.0.4"
+    "typescript": "^5.7.2"
   },
   "keywords": [
     "web-component",
