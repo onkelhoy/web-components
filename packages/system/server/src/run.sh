@@ -18,6 +18,8 @@ DOOPEN=false
 for arg in "$@"; do
   if [[ $arg == --port=* ]]; then 
     export PORT="${arg#*=}"
+  if [[ $arg == --rootdir=* ]]; then 
+    export ROOTDIR="${arg#*=}"
   elif [[ $arg == --location=* ]]; then 
     export LOCATION="${arg#*=}"
   elif [[ $arg == --theme=* ]]; then 
