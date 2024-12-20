@@ -40,7 +40,7 @@ watch_pid=$!
 # Try running the server with npm workspace
 cd $(npm prefix)
 
-npm run server --include-workspace-root=true --workspace="$(npm prefix)" -- --verbose --location=$package/views/$view --live --nosig "$@" &
+npm run server --include-workspace-root=true --workspace="$(npm prefix)" -- --rootdir="$(npm prefix)" --verbose --location=$package/views/$view --live --nosig "$@" &
 server_pid=$!
 
 # final 

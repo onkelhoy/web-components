@@ -10,6 +10,10 @@ fi
 export CI=true
 ALLOW_FAIL=false
 
+# TODO : build ancestor LIST (check)
+# get all info of versions based on npm 
+# determine which packages has been updated and update the ancestor tree only based on those 
+
 # check flags 
 for arg in "$@"; do
   # call script with all arguments 
@@ -22,6 +26,10 @@ for arg in "$@"; do
   elif [[ $arg == "--update-snapshots" ]]; then 
     UPDATE_SNAPSHOTS=true
     echo "update-snapshots: on"
+  elif [[ $arg == "--force" ]]; then
+    # this should skip the check if version is not same and build the ancestor tree 
+    export FORCE_TEST=true
+    echo "force: on"
   fi
 done
 
