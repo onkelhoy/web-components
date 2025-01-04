@@ -12,3 +12,37 @@ function safe_sed() {
     sed -i $input $file
   fi
 }
+
+# example: output=$(get_network_data 10 "npm search --searchlimit=100 @pap-it --json")
+function get_network_data() {
+  local timeout=$1
+  shift
+  local command="$*"
+  local tmpfile=$(mktemp)
+
+  # Execute the command and redirect output to the temporary file
+  eval "$command" > "$tmpfile" 2>&1 &
+  local pid=$!
+
+  # Allow the command to run for up to the specified timeout
+  local counter=0
+  while [ $counter -lt $timeout ]; do
+    sleep 1
+    ((counter++))
+
+    # Check if the process has completedj
+    if ! kill -0 $pid 2>/dev/null; then
+      break
+    fi
+  done
+
+  # If the process is still running after the timeout, kill it
+  if kill -0 $pid 2>/dev/null; then
+    echo "__timeout__"
+    kill $pid 2>/dev/null
+  fi
+
+  # Output the content of the temporary file and clean up
+  cat "$tmpfile"
+  rm "$tmpfile"
+}
