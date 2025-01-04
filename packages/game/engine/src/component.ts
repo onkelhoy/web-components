@@ -127,12 +127,12 @@ export class Engine {
   }
   stop(index:number = 0) {
     const setting = this.getSetting(index);
-    if (setting.timer) cancelAnimationFrame(setting.timer);
+    if (setting.timer !== null) cancelAnimationFrame(setting.timer);
   }
 }
 
 
-export function LoadImage(src:string) {
+export function LoadImage(src:string):Promise<HTMLImageElement> {
   return new Promise(res => {
     const img = new Image();
     img.src = src;

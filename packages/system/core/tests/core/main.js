@@ -1,1 +1,1 @@
-import "@papit/asset";
+console.log("hej")

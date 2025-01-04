@@ -107,28 +107,23 @@ export class Mouse extends EventTarget {
     this.position.set(clientX, clientY);
 
     if (this.pointerlocktimer) clearTimeout(this.pointerlocktimer);
-    this.pointerlocktimer = setTimeout(() => {
+    this.pointerlocktimer = setTimeout(async () => {
       
-      // REFERENCE:: https://developer.mozilla.org/en-US/docs/Web/API/Pointer_Lock_API#handling_promise_and_non-promise_versions_of_requestpointerlock
-      const promise = canvas.requestPointerLock(this.setting.pointerlock);
-        
-      if (!promise && this.setting.pointerlock?.unadjustedMovement) {
-        console.log("disabling mouse acceleration is not supported");
-        return;
+      try {
+        // REFERENCE:: https://developer.mozilla.org/en-US/docs/Web/API/Pointer_Lock_API#handling_promise_and_non-promise_versions_of_requestpointerlock
+        await canvas.requestPointerLock(this.setting.pointerlock);
       }
-    
-      promise
-        .then(() => {
-          console.log("pointer-lock")
-        })
-        .catch((error) => {
-          console.log('pointer lock error', error)
+      catch (error:unknown) {
+        console.log('pointer lock error', error)
+        if (error instanceof Error)
+        {
           if (error.name === "NotSupportedError" && this.setting.pointerlock?.unadjustedMovement) {
             // Some platforms may not support unadjusted movement.
             // You can request again a regular pointer lock.
             return canvas.requestPointerLock();
           }
-        });
+        }
+      }
     }, time)
   }
   handlepointerlockchange = (e:Event) => {

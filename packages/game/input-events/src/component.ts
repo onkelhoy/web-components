@@ -14,7 +14,7 @@ export class InputEvents extends EventTarget {
   movement: Vector;
   pressing: boolean = false;
 
-  constructor(canvas:HTMLCanvasElement, settings: Settings) {
+  constructor(canvas:HTMLCanvasElement, settings?: Partial<Settings>) {
     super();
     this.settings = getSettings(settings);
 
@@ -101,9 +101,14 @@ export class InputEvents extends EventTarget {
 }
 
 // helper functions
-function getSettings(_settings: Settings) {
-  const settings = {
+function getSettings(_settings?: Partial<Settings>):Settings {
+  const settings:Settings = {
+    touch: undefined,
+    keyboard: undefined,
+    verbose: false,
+
     ...(_settings || {}),
+    
     mouse: {
       ...DefaultMouseSettings,
       ...(_settings?.mouse || {})

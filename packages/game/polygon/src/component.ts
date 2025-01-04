@@ -1,8 +1,8 @@
 import {Vector, VectorObject} from "@papit/game-vector";
 import {Triangulate} from "./components/triangulate";
-import { Shape } from "@papit/game-shape";
+// import { Shape } from "@papit/game-shape";
 
-export class Polygon implements Shape {
+export class Polygon {
 
   static instances = 0;
   verticies: VectorObject[];
@@ -13,14 +13,13 @@ export class Polygon implements Shape {
   centeroffset?: Vector;
 
   constructor(...verticies: VectorObject[]) {
+    // super(0, 0, 0); 
+
     this.verticies = [];
     this.triangles = [];
     this.boundaryindex = null;
     this.id = Polygon.instances++;
-
-    for (let v of verticies) {
-      this.verticies.push(new Vector(v));
-    }
+    this.verticies = verticies.map(v => new Vector(v));
 
     if (this.verticies.length > 0)
     {
