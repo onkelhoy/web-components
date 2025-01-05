@@ -89,6 +89,7 @@ echo "$LIST" | while IFS=' ' read -r name package version changed; do
   done <<< "$output" 
 
   echo "::endgroup::"
+  sleep 1
 done
 
 unset NPM_TOKEN
