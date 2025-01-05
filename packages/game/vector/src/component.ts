@@ -189,9 +189,16 @@ export class Vector implements VectorObject {
 
   normalise() {
     const mag = this.magnitude;
-    this.x /= mag;
-    this.y /= mag;
-    this.z /= mag;
+    if (mag >= 0.00001) {
+      this.x /= mag;
+      this.y /= mag;
+      this.z /= mag;
+    }
+    else {
+      this.x = 0;
+      this.y = 0;
+      this.z = 0;
+    }
 
     return this;
   }
@@ -253,7 +260,13 @@ export class Vector implements VectorObject {
     )
   }
   static Cross(a:VectorObject, b:VectorObject) {
-    return a.x * b.y - a.y * b.x;
+    let x = 0;
+    let y = 0;
+    if (a.z !== undefined && b.z !== undefined) {
+      x = a.y * b.z - a.z * b.y;
+      y = a.z * b.x - a.x * b.z;
+    }
+    return new Vector(x, y, a.x * b.y - a.y * b.x);
   }
   static Magnitude(v:VectorObject) {
     return Math.sqrt(v.x*v.x + v.y*v.y);

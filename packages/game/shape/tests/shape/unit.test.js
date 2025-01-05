@@ -1,10 +1,16 @@
 import { describe, it, beforeEach } from "node:test";
 import assert from "node:assert";
 
-describe('A thing', () => {
-  beforeEach(() => console.log('about to run a test'));
+// NOTE: shape is abstract 
+// import { Shape } from '@papit/game-shape';
 
-  it('should work', () => {
-    assert.strictEqual(1, 1);
+describe.skip('@papit/game-shape unit tests', () => {
+  // beforeEach(() => console.log('about to run a test'));
+
+  it('template test', () => {
+    // const temp = new Shape();
+    // temp.doSomething();
+    // assert.strictEqual(1, 1);
   });
 });
+

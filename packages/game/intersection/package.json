@@ -1,7 +1,7 @@
 {
   "name": "@papit/game-intersection",
   "description": "",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "build": "bash ./bin/build.sh",
     "watch": "bash ./bin/watch.sh",
@@ -35,15 +35,15 @@
   },
   "dependencies": {
     "@papit/game-shape": "*",
-    "@papit/game-vector": "*"
+    "@papit/game-vector": "0.0.1"
   },
   "devDependencies": {
     "@papit/codeblock": "^0.0.0",
     "@papit/game-circle": "^0.0.0",
-    "@papit/game-engine": "0.0.3",
-    "@papit/game-input-events": "0.0.4",
+    "@papit/game-engine": "0.0.4",
+    "@papit/game-input-events": "0.0.5",
     "@papit/game-line": "^0.0.0",
-    "@papit/game-rectangle": "^0.0.0",
+    "@papit/game-rectangle": "0.0.1",
     "chokidar": "^3.6.0",
     "esbuild": "^0.17.18",
     "node-html-parser": "^6.1.11",

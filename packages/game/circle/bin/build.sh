@@ -43,7 +43,7 @@ rm -rf lib
 mkdir lib
 
 # compile the styles 
-npm run build:sass
+# npm run build:sass
 
 # Extract dependencies and devDependencies using Node.js
 DEPENDENCIES=$(node -pe "

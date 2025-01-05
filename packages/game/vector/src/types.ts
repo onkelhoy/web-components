@@ -3,6 +3,9 @@ export type VectorObject = {
   y: number;
   z?: number;
 }
+export type Vector3Object = VectorObject & {
+  z: number;
+}
 export type PrintSettings = {
   z: boolean;
   round: boolean;

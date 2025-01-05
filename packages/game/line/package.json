@@ -35,9 +35,9 @@
   },
   "devDependencies": {
     "@papit/codeblock": "^0.0.0",
-    "@papit/game-engine": "0.0.3",
-    "@papit/game-input-events": "0.0.4",
-    "@papit/game-vector": "*",
+    "@papit/game-engine": "0.0.4",
+    "@papit/game-input-events": "0.0.5",
+    "@papit/game-vector": "0.0.1",
     "chokidar": "^3.6.0",
     "esbuild": "^0.17.18",
     "node-html-parser": "^6.1.11",

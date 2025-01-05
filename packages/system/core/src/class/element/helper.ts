@@ -183,7 +183,7 @@ function clone(element: ICustomElement) {
     }
 
     const shadowNode = element.querySelector(joinedpath);
-    const lastrenderNode = element.lastrender.querySelector(joinedpath);
+    // const lastrenderNode = element.lastrender.querySelector(joinedpath);
 
     if (!shadowNode) {
       // we need to traverse up the path until we find one node then insert until the end 
@@ -243,6 +243,9 @@ function clone(element: ICustomElement) {
           shadowNode.setAttribute(name, value);
         }
       }
+
+      // this part was commented out, I think it was added to "cleanup" attributes 
+      // but I think the safer use of "removeAttribute" flag in the property setting should deal with this 
 
       // cleaup case: was for switch but not sure why - we want to remove some attributes that is remaining in case 
       // maybe manually removing them.. which can be very tricky 

@@ -1,14 +1,15 @@
-import { test, expect } from '@playwright/test';
+import { describe, it, beforeEach } from "node:test";
+import assert from "node:assert";
 
-test.beforeEach(async ({ page }) => {
-  // Navigate to your test page
-  await page.goto('polygon-generate');
-});
+// import { Generate } from '@papit/game-polygon-generator';
 
-test.describe("shape matcher", () => {
-  test('image 01', async ({ page }) => {
-    // Interact with your component and make assertions
-    // const component = await page.$('polygon-generate');
-    // expect(component).not.toBeNull();
+describe.skip('@papit/game-polygon-generator unit tests', () => {
+  // beforeEach(() => console.log('about to run a test'));
+
+  it('template test', () => {
+    // const temp = new Generate();
+    // temp.doSomething();
+    // assert.strictEqual(1, 1);
   });
 });
+
