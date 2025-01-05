@@ -69,6 +69,12 @@ sleep 5 # Ensure server starts before reading files
 # mkdir tests/snapshots
 
 echo "$LIST" | while IFS=' ' read -r name package version changed; do
+
+  if [[ $changed -eq 0 ]]; then 
+    echo "versions are same: skipped"
+    continue
+  fi
+  
   if [[ ! -f $package/package.json ]]; then 
     continue 
   fi 
@@ -89,11 +95,6 @@ echo "$LIST" | while IFS=' ' read -r name package version changed; do
   export LAYER_FOLDER=$LAYER_FOLDER 
   export NAME=$NAME
   echo "$FULL_NAME"
-
-  if [[ $changed -eq 0 ]]; then 
-    echo "versions are same: skipped"
-    continue
-  fi
 
   if [[ $UPDATE_SNAPSHOT_EXISTS == "true" ]]; then 
     # if no snapshots we make sure to create them 

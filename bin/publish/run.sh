@@ -5,13 +5,7 @@ export GLOBAL_PUBLISH=true
 export SCRIPTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export ROOTDIR=$(pwd)
 
-if [ -f "$ROOTDIR/bin/version/.config" ]; then
-  rm "$ROOTDIR/bin/version/.config"
-fi 
-
-touch "$ROOTDIR/bin/version/.config"
-touch "$ROOTDIR/bin/version/.json"
-echo "GLOBAL_PUBLISH=\"true\"" >> "$ROOTDIR/bin/version/.config"
+source $ROOTDIR/bin/_utils/common-functions.sh
 
 # Check each argument
 for arg in "$@"; do
@@ -56,20 +50,50 @@ else
   export NPM_TOKEN=$NPM_TOKEN
 fi
 
-export INDIVIDUAL_SCRIPT="$SCRIPTDIR/individual.sh"
+# compute the list
+bash "$ROOTDIR/bin/dependency-order/run.sh" --check-version
+LIST=$(cat "$ROOTDIR/bin/dependency-order/list")
 
-PROJECTSCOPE=$(node -pe "require('$ROOTDIR/package.json').name")
-export PROJECTSCOPE=$(echo "$PROJECTSCOPE" | cut -d'/' -f1 | awk -F'@' '{print $2}')
+# Iterate over the list line by line
+echo "$LIST" | while IFS=' ' read -r name package version changed; do
+  # Access each part: $package, $version, and $changed
+  if [[ $changed -eq 0 ]]; then 
+    continue
+  fi 
 
-npm search --searchlimit=100 @$PROJECTSCOPE --json | node $SCRIPTDIR/main.js
+  echo "::group::$name 📦"
 
-# last we run the npm install (as we skipped in all postversion scripts)
-npm install
+  cd "$package"
+  # output=$(npm publish --access public --registry https://registry.npmjs.org/ --//registry.npmjs.org/:_authToken=${NPM_TOKEN} --verbose --dry-run)
+  output=$(npm publish --access public --registry https://registry.npmjs.org/ --//registry.npmjs.org/:_authToken=${NPM_TOKEN} --verbose)
+
+  while IFS= read -r line; do
+    line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+
+    if [[ -n "$group" ]] && [[ "$line" == "npm $group"* ]]; then
+      echo "${line#npm $group }"
+    else
+      # Extract the group (the part after 'npm')
+      if [[ "$line" =~ ^npm\ ([a-zA-Z0-9-]+)(.*) ]]; then
+        if [[ -n "$group" ]]; then 
+          echo "::endgroup::"
+        fi
+        group="${BASH_REMATCH[1]}"
+        echo "::group::$group"
+        echo "${BASH_REMATCH[2]}"
+        
+      else
+        echo "$line"
+      fi
+    fi
+  done <<< "$output" 
+
+  echo "::endgroup::"
+done
 
 unset NPM_TOKEN
 
 # cleanup
-rm "$ROOTDIR/bin/version/.config"
-rm "$ROOTDIR/bin/version/.json"
-
-echo "packages built"
+rm "$ROOTDIR/bin/version/.config" &> /dev/null
+rm "$ROOTDIR/bin/version/.json" &> /dev/null
+rm "$ROOTDIR/bin/dependency-order/list" &> /dev/null
