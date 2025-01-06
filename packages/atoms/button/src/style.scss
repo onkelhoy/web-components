@@ -22,6 +22,7 @@
 
   font-size: 1.1rem;
   letter-spacing: 0.01rem;
+  cursor: pointer;
 
   padding-inline: var(--padding-small, 8px);
   transition: background-color var(--timing-slow, 120ms) ease,
@@ -166,6 +167,12 @@
 
   span[part=overlay]::after {
     animation: click-circle-animation var(--timing-slow, 320ms) ease-out;
+  }
+}
+
+:host([ripple="false"]) {
+  span[part=overlay] {
+    display: none;
   }
 }
 

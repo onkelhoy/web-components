@@ -166,7 +166,9 @@ function clone(element: ICustomElement) {
 
   clone.querySelectorAll('*:not(style[data-static-style])').forEach(node => {
     const path = getComposedPath(clone, node);
-    const originalnode = element.rendercomperator.querySelector(path.join(' > '));
+    const joinedpath = path.join(" > ");
+    const originalnode = element.rendercomperator.querySelector(joinedpath);
+
     if (originalnode) {
 
       // reapply events
@@ -180,7 +182,6 @@ function clone(element: ICustomElement) {
       }
     }
 
-    const joinedpath = path.join(" > ");
     const shadowNode = element.querySelector(joinedpath);
     const lastrenderNode = element.lastrender.querySelector(joinedpath);
 
@@ -243,15 +244,16 @@ function clone(element: ICustomElement) {
         }
       }
 
-      for (let i = 0; i < shadowNode.attributes.length; i++) {
-        const name = shadowNode.attributes[i].name;
-        if (!node.hasAttribute(name) && name !== "data-static-style") {
-          // TODO: this case is happening in switch for unknown reason  (when typography is inside it!)
-          console.log('NOTE: removing attribute that could not be found in new node', name);
-          console.log(element.delayedAttributes[name]);
-          shadowNode.removeAttribute(name);
-        }
-      }
+      // cleaup case: was for switch but not sure why - we want to remove some attributes that is remaining in case 
+      // maybe manually removing them.. which can be very tricky 
+      // for (let i = 0; i < shadowNode.attributes.length; i++) {
+      //   const name = shadowNode.attributes[i].name;
+      //   if (!node.hasAttribute(name) && name !== "data-static-style") {
+      //     console.log('NOTE: removing attribute that could not be found in new node', name);
+      //     console.log(element.delayedAttributes[name]);
+      //     shadowNode.removeAttribute(name);
+      //   }
+      // }
 
       // NOTE 
       // this is dangerous as many attributes are dynamically added on render 

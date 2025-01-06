@@ -18,8 +18,15 @@ export class Button extends CustomElementInternals {
   @property({ rerender: false }) color: Color = "primary";
   @property({ rerender: false }) size: Size = "medium";
   @property({ rerender: false }) radius: Radius = "circle";
+  @property({ rerender: false, type: Boolean }) ripple: boolean = true;
 
   private pressed?: number = undefined;
+  
+  constructor() {
+    super();
+
+    this.role = "button"; // WCAG
+  }
 
   connectedCallback(): void {
     super.connectedCallback();

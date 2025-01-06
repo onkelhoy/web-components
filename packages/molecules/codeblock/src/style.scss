@@ -1,0 +1,184 @@
+:host {
+
+  // defining code colors 
+  --color: var(--pap-primary-text);
+  --keyword: var(--pap-error-text);
+  --keyword-class: var(--pap-information-text);
+  --keyword-implements: var(--pap-information-text);
+  --keyword-extends: var(--pap-information-text);
+  --keyword-this: var(--pap-information-text);
+  --keyword-function: var(--pap-information-text);
+  --string: var(--pap-warning-text);
+  --function-arg: var(--pap-warning-text);
+  --function-name: var(--pap-information);
+  --html-attribute-name:var(--pap-primary-text);
+  --html-attribute-value: var(--pap-warning-text);
+  --html-tag: var(--pap-secondary-text);
+  --html-tag-name: var(--pap-information-text);
+
+  display: block;
+  margin-block: var(--margin-medium, 16px);
+  color: var(--color);
+
+  .string {
+    color: var(--string);
+  }
+
+  .keyword {
+    color: var(--keyword);
+
+    &.class {
+      color: var(--keyword-class);
+    }
+    &.implements {
+      color: var(--keyword-implements);
+    }
+    &.extends {
+      color: var(--keyword-extends);
+    }
+    &.this {
+      color: var(--keyword-this);
+    }
+    &.function {
+      color: var(--keyword-function);
+    }
+  }
+
+  .function-arg {
+    color: var(--function-arg);
+  }
+
+  .function-name {
+    color: var(--function-name);
+  }
+
+  div.line {
+    min-height: 12px;
+    color: var(--color);
+  }
+
+  .html-attribute {
+    padding-left: var(--padding-smaller, 4px);
+
+    .html-attribute-name {
+      color: var(--html-attribute-name);
+    }
+
+    .html-attribute-value {
+      color: var(--html-attribute-value);
+    }
+  }
+
+  .html-tag {
+    color: var(html-tag);
+  }
+
+  .html-tag-name {
+    color: var(--html-tag-name);
+  }
+
+  code {
+    div {
+      background-color: var(--pap-foreground-3, #F6F7F8);
+      overflow: hidden;
+      display: block;
+      border-radius: var(--radius-small, 4px);
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: inherit;
+        background-color: var(--pap-background-1, #EAEBEF);
+
+        &>pap-typography {
+          text-indent: var(--padding-medium, 16px);
+        }
+
+        pap-switch {
+          color: var(--color);
+        }
+
+        pap-button {
+          pap-icon[name="done"] {
+            display: none;
+          }
+
+          pap-icon[name="content_paste"] {
+            display: initial;
+          }
+        }
+      }
+
+      main {
+        min-height: var(--unit-size5, 32px);
+        padding: var(--padding-medium, 16px) var(--padding-large, 24px);
+      }
+    }
+  }
+
+  fieldset {
+    display: flex;
+    gap: var(--gap-small, 8px);
+    margin-bottom: var(--margin-small, 8px);
+  }
+}
+
+:host([color="canvas"]) {
+  fieldset {
+    background-color: var(--pap-foreground-2, #EAEBEF);
+  }
+}
+
+:host([color="background"]) {
+  fieldset {
+    background-color: var(--pap-background, #FFFFFF);
+  }
+}
+
+:host([color="checker"]) {
+  fieldset {
+    background-color: var(--pap-foreground, #F6F7F8);
+    --a: var(--pap-foreground-2, #EAEBEF);
+
+    background-image: linear-gradient(45deg, var(--a) 25%, transparent 25%, transparent 75%, var(--a) 75%, var(--a)),
+      linear-gradient(45deg, var(--a) 25%, transparent 25%, transparent 75%, var(--a) 75%, var(--a));
+    background-position: 0 0, 0.75rem 0.75rem;
+    background-size: 1.5rem 1.5rem;
+  }
+}
+
+:host([direction="row"]) {
+  fieldset {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+:host([direction="column"]) {
+  fieldset {
+    flex-direction: column;
+
+    &>* {
+      flex: 1;
+    }
+  }
+}
+
+:host([display="code"]) fieldset {
+  display: none;
+}
+
+:host(.copied) {
+  header {
+    pap-button {
+      pap-icon[name="done"] {
+        display: initial;
+      }
+
+      pap-icon[name="content_paste"] {
+        display: none;
+      }
+    }
+  }
+}
