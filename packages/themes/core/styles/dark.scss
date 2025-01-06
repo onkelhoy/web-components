@@ -2,7 +2,7 @@
   color-scheme: dark;
   /* UI colors */
   --pap-primary: var(--pap-white);
-  --pap-secondary: var(--pap-black);
+  --pap-secondary: color-mix(in srgb, var(--pap-white) 20%, var(--pap-black));
   --pap-tertiary: salmon;
   /* states */
   --pap-error: #fd4444;

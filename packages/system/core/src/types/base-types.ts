@@ -1,6 +1,8 @@
 // style related
 export type Size = 'small' | 'medium' | 'large';
 export type Radius = 'none' | 'small' | 'medium' | 'large' | 'circle';
+export type State = "error" | "success" | "warning" | "information";
+export type Color = "primary" | "secondary" | "tertiary" | State;
 
 // system
 export type Devices = "mobile" | "pad" | "laptop" | "desktop";

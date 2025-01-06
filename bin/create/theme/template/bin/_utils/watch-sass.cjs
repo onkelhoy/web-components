@@ -56,9 +56,10 @@ process.on('SIGINT', cleanup);
 process.on('SIGTERM', cleanup);
 
 let cleanupcalls = 0;
-function cleanup() {
+async function cleanup() {
   if (cleanupcalls > 0) return;
 
-  console.log('[watch sass] closed')
-  watcher.close();
+  console.log('[watch sass] closing');
+  await watcher.close();
+  console.log('[watch sass] closed');
 }

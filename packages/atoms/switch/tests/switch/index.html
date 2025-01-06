@@ -1,0 +1,52 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>switch test</title>
+
+  <script defer src="main.js"></script>
+</head>
+
+<body>
+  <pap-switch data-testid="base-target">fallback</pap-switch>
+
+  <div data-snapshot>
+    <pap-switch color="primary" checked></pap-switch>
+    <pap-switch color="secondary" checked></pap-switch>
+    <pap-switch color="tertiary" checked></pap-switch>
+    <pap-switch color="information" checked></pap-switch>
+    <pap-switch color="error" checked></pap-switch>
+    <pap-switch color="success" checked></pap-switch>
+    <pap-switch color="warning" checked></pap-switch>
+
+    <pap-switch color="primary" checked disabled></pap-switch>
+    <pap-switch color="secondary" checked disabled></pap-switch>
+    <pap-switch color="tertiary" checked disabled></pap-switch>
+    <pap-switch color="information" checked disabled></pap-switch>
+    <pap-switch color="error" checked disabled></pap-switch>
+    <pap-switch color="success" checked disabled></pap-switch>
+    <pap-switch color="warning" checked disabled></pap-switch>
+
+    <pap-switch radius="none"></pap-switch>
+    <pap-switch radius="small"></pap-switch>
+    <pap-switch radius="medium"></pap-switch>
+    <pap-switch radius="large"></pap-switch>
+    <pap-switch radius="circle"></pap-switch>
+
+    <pap-switch size="small"></pap-switch>
+    <pap-switch size="medium"></pap-switch>
+    <pap-switch size="large"></pap-switch>
+  </div>
+
+  <form data-testid="form">
+    <pap-switch data-testid="a" name="a"></pap-switch>
+    <pap-switch data-testid="b" name="b"></pap-switch>
+    <pap-switch data-testid="b" name="b"></pap-switch>
+
+    <button data-testid="submit" type="submit"></button>
+    <button data-testid="reset" type="reset"></button>
+  </form>
+</body>
+
+</html>

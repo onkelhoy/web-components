@@ -1,10 +1,12 @@
 export type Setting = {
   type: Function;
   attribute: boolean | string;
+  removeAttribute?: boolean;
   rerender: boolean;
   onUpdate?: string;
   context?: boolean;
   verbose?: boolean;
+  aria?: string;
   // spread?: string | Spread | boolean;
   set?(value: any): any; // SET would get called twice (as we cannot know if the value is changed or not at this point)
   get?(value: any): any;

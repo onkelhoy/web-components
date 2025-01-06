@@ -94,7 +94,7 @@ echo "$LIST" | while IFS=' ' read -r name package version changed; do
   source .config 
   export LAYER_FOLDER=$LAYER_FOLDER 
   export NAME=$NAME
-  echo "$FULL_NAME"
+  echo "::group::$FULL_NAME"
 
   if [[ $UPDATE_SNAPSHOT_EXISTS == "true" ]]; then 
     # if no snapshots we make sure to create them 
@@ -126,9 +126,11 @@ echo "$LIST" | while IFS=' ' read -r name package version changed; do
     if [[ $rerun_exit_code -ne 0 && "$ALLOW_FAIL" == false ]]; then 
       echo ""
       echo "- tests failed"
+      echo "::endgroup::"
       break 
     fi
   fi
+  echo "::endgroup::"
 
   # if [[ -n $ROOT_SCREENSHOT ]]; then 
   #   if [[ -d $package/tests/snapshots ]]; then 

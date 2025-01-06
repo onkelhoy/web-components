@@ -66,15 +66,26 @@ export function Decorator(setting?: Partial<Setting>) {
               return;
             }
 
+            if (_settings.aria) {
+              this.setAttribute(_settings.aria, valuestring);
+            }
+
             if (_settings.attribute) {
               if (!this.delayedAttributes) {
                 this.delayedAttributes = {};
               }
+              let shouldupdatedelayed = false;
               if (this.delayedAttributes[attributeName] !== valuestring) {
                 // if (this.tagName === "PAP-INPUT") console.log("DECORATOR", attributeName)
                 this.delayedAttributes[attributeName] = valuestring;
-                this.updateAttribute();
+                shouldupdatedelayed = true;
               }
+              if (_settings.removeAttribute && _settings.type === Boolean && !value) {
+                this.removeAttribute(attributeName);
+                delete this.delayedAttributes[attributeName];
+                shouldupdatedelayed = false;
+              }
+              if (shouldupdatedelayed) this.updateAttribute();
             }
             if (_settings?.before) _settings.before.call(this, value);
 

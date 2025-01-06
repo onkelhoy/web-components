@@ -1,0 +1,24 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>binary-form-element test</title>
+
+  <script defer src="main.js"></script>
+</head>
+
+<body>
+  <form data-testid="form">
+    <binary-test data-testid="disabled" disabled name="disabled"></binary-test>
+
+    <binary-test data-testid="a" name="a"></binary-test>
+    <binary-test data-testid="b" name="b" default-checked></binary-test>
+    <binary-test data-testid="c" name="c" checked></binary-test>
+
+    <button data-testid="submit" type="submit">submit</button>
+    <button data-testid="reset" type="reset">reset</button>
+  </form>
+</body>
+
+</html>
