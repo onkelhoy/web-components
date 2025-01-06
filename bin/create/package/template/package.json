@@ -38,11 +38,11 @@
     "url": "PLACEHOLDER_GITHUB_REPO.git"
   },
   "dependencies": {
-    "@papit/core": "*",
+    "@papit/core": "^*",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@papit/translator": "^0.0.0",
+    "@papit/translator": "^*",
     "@types/node": "^22.10.2",
     "esbuild": "^0.17.18",
     "sass": "^1.70.0",

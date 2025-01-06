@@ -27,7 +27,7 @@
     "url": "PLACEHOLDER_GITHUB_REPO.git"
   },
   "dependencies": {
-    "@papit/theme-core": "^0.0.0"
+    "@papit/theme-core": "^*"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

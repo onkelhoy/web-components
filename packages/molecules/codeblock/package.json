@@ -1,5 +1,6 @@
 {
-  "name": "@papit/switch",
+  "name": "@papit/codeblock",
+  "description": "",
   "version": "0.0.0",
   "scripts": {
     "build:sass": "bash ./bin/_utils/sass.sh",
@@ -31,20 +32,21 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "license": "",
+  "license": "Papit-1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
-    "@papit/binary-form-element": "^0.0.0",
-    "@papit/core": "0.0.2",
+    "@papit/button": "^0.0.2",
+    "@papit/core": "^*",
+    "@papit/icon": "^0.0.3",
+    "@papit/switch": "^0.0.0",
+    "@papit/typography": "^0.0.2",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@papit/icon": "0.0.3",
-    "@papit/typography": "^0.0.2",
-    "@papit/translator": "0.0.1",
+    "@papit/translator": "^*",
     "@playwright/test": "^1.45.3",
     "@types/node": "^22.10.2",
     "chokidar": "^3.6.0",
@@ -58,6 +60,5 @@
     "web-component",
     "typescript",
     "sass"
-  ],
-  "description": ""
+  ]
 }

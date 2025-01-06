@@ -2,7 +2,6 @@
 // system 
 import { html, property, Color, State, Radius, Size, CustomElement } from "@papit/core";
 
-import "@papit/typography";
 import { BinaryFormElement } from "@papit/binary-form-element";
 
 // local 

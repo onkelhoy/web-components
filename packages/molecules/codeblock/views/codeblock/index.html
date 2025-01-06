@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Codeblock prototype</title>
+
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+
+  <script defer src="main.js"></script>
+</head>
+
+<body>
+  <pap-card>
+    <pap-codeblock display="both">
+      <pap-button variant="outlined" color="primary">
+        hello
+      </pap-button>
+
+      <pap-button variant="outlined" color="primary" radius="small">
+        hello HEHEHEH
+      </pap-button>
+
+      <div>
+        <p>hello world</p>
+        <a href="#">
+          <p>bajskaka</p>
+        </a>
+
+        <div>
+          <h1>Hello World?</h1>
+        </div>
+      </div>
+    </pap-codeblock>
+
+    <pap-codeblock display="both">
+      <pap-button variant="outlined" color="primary" class="special">
+        hello
+      </pap-button>
+
+      <style>
+        pap-button.special {
+          color: blue;
+          background-color: red;
+        }
+      </style>
+    </pap-codeblock>
+
+    <pap-codeblock>
+      function hello(arg1 = "hejsan", arg2) {
+        return arg1 + " - " + arg2;
+      }
+
+      class A extends B implements C {
+        constructor(a = "hello") {
+          this.a = a;
+        }
+      }
+
+      async function doSomething(foo:Bar) {
+        const res = await fetch(foo);
+      }
+
+      hello("foo", "bar");
+
+      im just some stupid text lets see how it would behave?
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum dicta, ipsa consequuntur eligendi fugit neque esse
+      architecto veniam fugiat optio expedita eos molestias quos delectus deserunt rem cum libero est.
+      Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quas consequuntur, ratione maxime deserunt placeat
+      numquam sint tenetur eligendi accusantium obcaecati assumenda magni quisquam excepturi, quia laudantium enim
+      eaque. In, at!
+    </pap-codeblock>
+
+    <pap-codeblock theme-toggle="false">
+      function MyComponent(arg1 = "hejsan", arg2) {
+
+      return (
+        <h1>Hello world</h1>
+        )
+      }
+    </pap-codeblock>
+  </pap-card>
+  <pap-card>
+    <pap-typography slot="header" variant="h4">Title</pap-typography>
+    <pap-codeblock display="both">
+      <p>hello world</p>
+    </pap-codeblock>
+  </pap-card>
+</body>
+
+</html>
