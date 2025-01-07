@@ -42,9 +42,10 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
+    "@papit/codeblock": "^0.0.0",
     "@papit/icon": "0.0.3",
-    "@papit/typography": "^0.0.2",
     "@papit/translator": "0.0.1",
+    "@papit/typography": "^0.0.2",
     "@playwright/test": "^1.45.3",
     "@types/node": "^22.10.2",
     "chokidar": "^3.6.0",

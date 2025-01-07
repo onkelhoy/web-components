@@ -38,6 +38,7 @@
     "@papit/game-vector": "*"
   },
   "devDependencies": {
+    "@papit/codeblock": "^0.0.0",
     "@papit/game-circle": "^0.0.0",
     "@papit/game-engine": "0.0.3",
     "@papit/game-input-events": "0.0.4",

@@ -44,6 +44,7 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
+    "@papit/codeblock": "^0.0.0",
     "@papit/translator": "0.0.1",
     "@playwright/test": "^1.45.3",
     "@types/node": "^22.10.2",
