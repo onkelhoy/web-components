@@ -57,19 +57,31 @@ function handleEnd(this: Duplex, socketid: string) {
 // exposed functions 
 export function update(filename: string, content: string) {
   // notify all clients 
-  if (connectedClients.size === 0) {
-    if (["debug"].includes(process.env.LOGLEVEL || "")) console.log('No clients connected to send update!');
-    return
-  }
-
-  const message = frameWebSocketMessage({ action: 'update', filename, content });
-  connectedClients.forEach((client) => {
-    if (!client) {
-      if (["debug"].includes(process.env.LOGLEVEL || "")) console.log('socket-error: [update] could not find client');
-    } else {
-      client.write(message);
+  try {
+    if (connectedClients.size === 0) {
+      if (["debug"].includes(process.env.LOGLEVEL || "")) console.log('No clients connected to send update!');
+      return
     }
-  });
+  
+    const message = frameWebSocketMessage({ action: 'update', filename, content });
+    const MAX_SIZE = 65535; // Maximum size for a UInt16 buffer
+    const numChunks = Math.ceil(message.length / MAX_SIZE);
+
+    connectedClients.forEach((client) => {
+      if (!client) {
+        if (["debug"].includes(process.env.LOGLEVEL || "")) console.log('socket-error: [update] could not find client');
+      } else {
+        for (let i = 0; i < numChunks; i++) {
+          const chunk = message.slice(i * MAX_SIZE, (i + 1) * MAX_SIZE);
+          client.write(chunk);  // Send chunk to the client
+        }
+        client.write(message);
+      }
+    });
+  }
+  catch (e) {
+    console.log('[socket error]', e);
+  }
 }
 export function error(filename: string, errors: any[]) {
   // notify all clients 
@@ -96,8 +108,21 @@ export function error(filename: string, errors: any[]) {
 function frameWebSocketMessage(jsondata: any): Buffer {
   const json = JSON.stringify(jsondata);
   const jsonByteLength = Buffer.byteLength(json);
-  const lengthByteCount = jsonByteLength < 126 ? 0 : 2;
-  const payloadLength = lengthByteCount === 0 ? jsonByteLength : 126;
+
+  let lengthByteCount = 0;
+  let payloadLength = 0;
+
+  if (jsonByteLength <= 125) {
+    lengthByteCount = 0;  // Use 1 byte for payload length
+    payloadLength = jsonByteLength;
+  } else if (jsonByteLength <= 65535) {
+    lengthByteCount = 2;  // Use 2 bytes for payload length (max 65535)
+    payloadLength = 126;
+  } else {
+    lengthByteCount = 8;  // Use 8 bytes for payload length (for larger payloads)
+    payloadLength = 127;
+  }
+
   const buffer = Buffer.alloc(2 + lengthByteCount + jsonByteLength);
 
   // Set the first byte to indicate a text frame
@@ -105,8 +130,12 @@ function frameWebSocketMessage(jsondata: any): Buffer {
 
   // Set the payload length
   buffer[1] = payloadLength;
-  if (lengthByteCount > 0) {
-    buffer.writeUInt16BE(jsonByteLength, 2);
+
+  // Set the extended length (2 or 8 bytes depending on size)
+  if (lengthByteCount === 2) {
+    buffer.writeUInt16BE(jsonByteLength, 2);  // 2-byte length
+  } else if (lengthByteCount === 8) {
+    buffer.writeBigUInt64BE(BigInt(jsonByteLength), 2);  // 8-byte length for large payloads
   }
 
   // Write the JSON data to the buffer

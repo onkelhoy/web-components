@@ -28,14 +28,14 @@
     "type": "git",
     "url": "https://github.com/onkelhoy/web-components.git"
   },
-  "dependencies": {},
   "devDependencies": {
-    "@types/node": "^22.10.2",
-    "sass": "^1.70.0",
-    "typescript": "^5.7.2",
-    "node-html-parser": "^6.1.5",
+    "@papit/codeblock": "^0.0.0",
     "@playwright/test": "^1.45.3",
-    "playwright": "^1.45.3"
+    "@types/node": "^22.10.2",
+    "node-html-parser": "^6.1.5",
+    "playwright": "^1.45.3",
+    "sass": "^1.70.0",
+    "typescript": "^5.7.2"
   },
   "keywords": [
     "theme",

@@ -41,14 +41,15 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@types/node": "^22.10.2",
-    "esbuild": "^0.17.18",
-    "chokidar": "^3.6.0",
-    "sass": "^1.70.0",
-    "typescript": "^5.7.2",
-    "node-html-parser": "^6.1.5",
+    "@papit/codeblock": "^0.0.0",
     "@playwright/test": "^1.45.3",
-    "playwright": "^1.45.3"
+    "@types/node": "^22.10.2",
+    "chokidar": "^3.6.0",
+    "esbuild": "^0.17.18",
+    "node-html-parser": "^6.1.5",
+    "playwright": "^1.45.3",
+    "sass": "^1.70.0",
+    "typescript": "^5.7.2"
   },
   "keywords": [
     "web-component",
