@@ -2,13 +2,13 @@
   color-scheme: dark;
   /* UI colors */
   --pap-primary: var(--pap-white);
-  --pap-secondary: color-mix(in srgb, var(--pap-white) 20%, var(--pap-black));
+  --pap-secondary: #383838; // color-mix(in srgb, var(--pap-white) 20%, var(--pap-black));
   --pap-tertiary: salmon;
   /* states */
   --pap-error: #fd4444;
   --pap-success: #64e41a;
   --pap-warning: #ffd94e;
-  --pap-information: hsl(from cornflowerblue h s calc(l * 1.2));
+  --pap-information: #a0bef4; // hsl(from cornflowerblue h s calc(l * 1.2));
   /* base text colors */
   --pap-text: var(--pap-white);
   --pap-text-inverse: var(--pap-black);
@@ -22,51 +22,51 @@
   --pap-primary-contrast: var(--pap-text-inverse);
 
   /* secondary colors */
-  --pap-secondary-text: color-mix(in srgb, var(--pap-white) 80%, var(--pap-black));
+  --pap-secondary-text: #c7c7c7; // color-mix(in srgb, var(--pap-white) 80%, var(--pap-black));
   --pap-secondary-contrast: var(--pap-text);
 
   /* tertiary colors */
-  --pap-tertiary-text: hsl(from var(--pap-tertiary) h s calc(l * 1.28));
+  --pap-tertiary-text: #fdd9d4; // hsl(from var(--pap-tertiary) h s calc(l * 1.28));
   --pap-tertiary-contrast: var(--pap-text-inverse);
 
   /* error colors */
-  --pap-error-text: hsl(from var(--pap-error) h s calc(l * 0.9));
+  --pap-error-text: #fd2424; // hsl(from var(--pap-error) h s calc(l * 0.9));
   --pap-error-contrast: var(--pap-text-inverse);
 
   /* success colors */
-  --pap-success-text: hsl(from var(--pap-success) h s calc(l * 0.9));
+  --pap-success-text: #5acd17; // hsl(from var(--pap-success) h s calc(l * 0.9));
   --pap-success-contrast: var(--pap-text-inverse);
 
   /* warning colors */
-  --pap-warning-text: hsl(from var(--pap-warning) h s calc(l * 0.9));
+  --pap-warning-text: #ffd22d; // hsl(from var(--pap-warning) h s calc(l * 0.9));
   --pap-warning-contrast: var(--pap-text-inverse);
 
   /* information colors */
-  --pap-information-text: hsl(from var(--pap-information) h s calc(l * 0.92));
+  --pap-information-text: #83aaf1; // hsl(from var(--pap-information) h s calc(l * 0.92));
   --pap-information-contrast: var(--pap-text-inverse);
 
   /* foreground colors */
-  --pap-foreground: color-mix(in srgb, var(--pap-white), var(--pap-black) 99%);
-  --pap-foreground-1: color-mix(in srgb, var(--pap-white), var(--pap-black) 96%);
-  --pap-foreground-2: color-mix(in srgb, var(--pap-white), var(--pap-black) 93%);
-  --pap-foreground-3: color-mix(in srgb, var(--pap-white), var(--pap-black) 90%);
+  --pap-foreground: #0a0a0a; // color-mix(in srgb, var(--pap-white), var(--pap-black) 99%);
+  --pap-foreground-1: #121212; // color-mix(in srgb, var(--pap-white), var(--pap-black) 96%);
+  --pap-foreground-2: #191919; // color-mix(in srgb, var(--pap-white), var(--pap-black) 93%);
+  --pap-foreground-3: #202020; // color-mix(in srgb, var(--pap-white), var(--pap-black) 90%);
 
   /* background colors */
-  --pap-background: color-mix(in srgb, var(--pap-white), var(--pap-black) 87%);
-  --pap-background-1: color-mix(in srgb, var(--pap-white), var(--pap-black) 84%);
-  --pap-background-2: color-mix(in srgb, var(--pap-white), var(--pap-black) 81%);
-  --pap-background-3: color-mix(in srgb, var(--pap-white), var(--pap-black) 78%);
+  --pap-background: #272727; // color-mix(in srgb, var(--pap-white), var(--pap-black) 87%);
+  --pap-background-1: #2e2e2e; // color-mix(in srgb, var(--pap-white), var(--pap-black) 84%);
+  --pap-background-2: #353535; // color-mix(in srgb, var(--pap-white), var(--pap-black) 81%);
+  --pap-background-3: #3d3d3d; // color-mix(in srgb, var(--pap-white), var(--pap-black) 78%);
 
   /* border colors */
-  --pap-border: color-mix(in srgb, var(--pap-white), var(--pap-black) 88%);
-  --pap-border-1: color-mix(in srgb, var(--pap-white), var(--pap-black) 80%);
-  --pap-border-2: color-mix(in srgb, var(--pap-white), var(--pap-black) 72%);
-  --pap-border-3: color-mix(in srgb, var(--pap-white), var(--pap-black) 64%);
+  --pap-border: #252525; // color-mix(in srgb, var(--pap-white), var(--pap-black) 88%);
+  --pap-border-1: #383838; // color-mix(in srgb, var(--pap-white), var(--pap-black) 80%);
+  --pap-border-2: #4b4b4b; // color-mix(in srgb, var(--pap-white), var(--pap-black) 72%);
+  --pap-border-3: #5e5e5e; // color-mix(in srgb, var(--pap-white), var(--pap-black) 64%);
   --pap-border-strong: var(--pap-white);
 
   /* shadow colors */
-  --pap-shadow: color-mix(in srgb, var(--pap-white), transparent 90%);
-  --pap-shadow-1: color-mix(in srgb, var(--pap-white), transparent 60%);
-  --pap-shadow-2: color-mix(in srgb, var(--pap-white), transparent 0%);
+  --pap-shadow: #f7f7f726; // color-mix(in srgb, var(--pap-white), transparent 90%);
+  --pap-shadow-1: #f7f7f766; // color-mix(in srgb, var(--pap-white), transparent 60%);
+  --pap-shadow-2: #f7f7f7cc; // color-mix(in srgb, var(--pap-white), transparent 20%);
   --pap-shadow-3: var(--pap-white);
 }
