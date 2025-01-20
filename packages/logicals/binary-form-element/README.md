@@ -1,7 +1,7 @@
 # BinaryFormElement
 
 [![Github Repo](https://img.shields.io/badge/Git-@papit/binary-form-element-blue?logo=github&link=https://github.com/onkelhoy/web-components/tree/main/packages/logicals/binary-form-element)](https://github.com/onkelhoy/web-components/tree/main/packages/logicals/binary-form-element)
-![Layer Type](https://img.shields.io/badge/Layer_Type-locical-orange)
+![Layer Type](https://img.shields.io/badge/Layer_Type-logical-orange)
 
 [![Tests](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml/badge.svg)](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml)
 [![NPM version](https://img.shields.io/npm/v/@papit/binary-form-element.svg?logo=npm)](https://www.npmjs.com/package/@papit/binary-form-element)
@@ -30,9 +30,7 @@ npm install @papit/binary-form-element
 import { BinaryFormElement } from "@papit/binary-form-element/react";
 
 function Component() {
-  return (
-    <BinaryFormElement /> 
-  )
+  return <BinaryFormElement />;
 }
 ```
 

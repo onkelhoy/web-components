@@ -1,0 +1,47 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>popover test</title>
+
+  <script defer src="main.js"></script>
+
+  <style>
+    section {
+      height: 500px;
+      display: flex;
+    }
+    pap-popover {
+      margin: auto;
+    }
+
+    div {
+      width: 300px;
+      padding: 1rem;
+      background-color: var(--pap-background-inverse);
+      color: var(--pap-text-inverse)
+    }
+
+    span {
+      display: block;
+      height: 800px;
+      width: 100%;
+      background-color: var(--pap-information);
+    }
+  </style>
+</head>
+
+<body>
+  <section>
+    <pap-popover data-testid="popover" revealby="click">
+      <button data-testid="button" slot="target">target</button>
+      <div data-testid="wrapper">
+        hello world
+      </div>
+    </pap-popover>
+  </section>
+  <span />
+</body>
+
+</html>

@@ -1,0 +1,17 @@
+body {
+  background-color: var(--pap-background, #DEDEDE);
+  color: var(--pap-text, #080808);
+}
+
+button {
+  padding: 0.5rem 1rem;
+}
+
+div.card {
+  min-width: 300px;
+  padding: 1rem;
+  padding-block: 3rem;
+  background-color: var(--pap-foreground);
+  color: var(--pap-text);
+  border: 1px solid black;
+}

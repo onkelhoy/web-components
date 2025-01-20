@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Popover prototype</title>
+
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+
+  <script defer src="main.js"></script>
+</head>
+
+<body>
+  <doc-card>
+    <pap-codeblock display="both">
+      <pap-popover placement="top-center" target="#popover1">
+        <pap-button mode="fill" color="secondary" slot="target">TARGET BUTTON</pap-button>
+
+        <div class="card">
+          Popover body content
+        </div>
+      </pap-popover>
+    </pap-codeblock>
+  </doc-card>
+
+  <doc-card>
+    <pap-codeblock display="both">
+      <pap-popover revealby="click" target="#popover1b">
+        <div slot="target">
+          <button>TARGET BUTTON</button>
+          <br />
+          <button>TARGET BUTTON 2</button>
+        </div>
+        <div class="card">
+          <header>
+            <h5>Im the header!</h5>
+            <button>X</button>
+          </header>
+          <div>
+            <p>Some body content with some "fruits"!</p>
+            <ul>
+              <li>bananas (actually a berry)</li>
+              <li>apples</li>
+              <li>pears</li>
+            </ul>
+          </div>
+          <footer>
+            Im a footer yay!
+          </footer>
+        </div>
+      </pap-popover>
+    </pap-codeblock>
+  </doc-card>
+
+  <div style="height:400px; background: var(--pap-information);" />
+  
+  <doc-card>
+    <pap-codeblock display="both">
+      <pap-popover placement="top-center" revealby="click">
+        <pap-button mode="fill" color="secondary" slot="target">TARGET BUTTON</pap-button>
+
+        <div class="card">
+          Popover body content
+        </div>
+      </pap-popover>
+    </pap-codeblock>
+  </doc-card>
+  <div style="height:800px; background: var(--pap-warning);" />
+
+</body>
+
+</html>
