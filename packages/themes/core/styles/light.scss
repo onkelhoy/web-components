@@ -58,34 +58,34 @@
 
   /* foreground colors */
   --pap-foreground: #f5f5f5; // color-mix(in srgb, var(--pap-white) 99%, var(--pap-black));
-  /* #fcfcfc */
   --pap-foreground-1: #e6e6e6; // color-mix(in srgb, var(--pap-white) 96%, var(--pap-black));
-  /* #f5f5f5 */
   --pap-foreground-2: #e6e6e6; // color-mix(in srgb, var(--pap-white) 93%, var(--pap-black));
-  /* #ededed */
   --pap-foreground-3: #dfdfdf; // color-mix(in srgb, var(--pap-white) 90%, var(--pap-black));
-  /* #e6e6e6 */
 
   /* background colors */
   --pap-background: #d8d8d8; // color-mix(in srgb, var(--pap-white) 87%, var(--pap-black));
-  /* #dedede */
   --pap-background-1: #d1d1d1; // color-mix(in srgb, var(--pap-white) 84%, var(--pap-black));
-  /* #d6d6d6 */
   --pap-background-2: #cacaca; // color-mix(in srgb, var(--pap-white) 81%, var(--pap-black));
-  /* #cfcfcf */
   --pap-background-3: #c2c2c2; // color-mix(in srgb, var(--pap-white) 78%, var(--pap-black));
-  /* #c7c7c7 */
 
   /* border colors */
   --pap-border: #dadada; // color-mix(in srgb, var(--pap-white) 88%, var(--pap-black));
-  /* #e0e0e0 */
   --pap-border-1: #c7c7c7; // color-mix(in srgb, var(--pap-white) 80%, var(--pap-black));
-  /* #cccccc */
   --pap-border-2: #b4b4b4; // color-mix(in srgb, var(--pap-white) 72%, var(--pap-black));
-  /* #b8b8b8 */
   --pap-border-3: #a1a1a1; // color-mix(in srgb, var(--pap-white) 64%, var(--pap-black));
-  /* #a3a3a3 */
   --pap-border-strong: var(--pap-black);
+
+  /* inverse foreground colors */
+  --pap-foreground-inverse: #0a0a0a; // color-mix(in srgb, var(--pap-white), var(--pap-black) 99%);
+  --pap-foreground-inverse-1: #121212; // color-mix(in srgb, var(--pap-white), var(--pap-black) 96%);
+  --pap-foreground-inverse-2: #191919; // color-mix(in srgb, var(--pap-white), var(--pap-black) 93%);
+  --pap-foreground-inverse-3: #202020; // color-mix(in srgb, var(--pap-white), var(--pap-black) 90%);
+
+  /* inverse background colors */
+  --pap-background-inverse: #272727; // color-mix(in srgb, var(--pap-white), var(--pap-black) 87%);
+  --pap-background-inverse-1: #2e2e2e; // color-mix(in srgb, var(--pap-white), var(--pap-black) 84%);
+  --pap-background-inverse-2: #353535; // color-mix(in srgb, var(--pap-white), var(--pap-black) 81%);
+  --pap-background-inverse-3: #3d3d3d; // color-mix(in srgb, var(--pap-white), var(--pap-black) 78%);
 
   /* shadow colors */
   --pap-shadow: #0808081a; // color-mix(in srgb, var(--pap-black), transparent 90%);

@@ -1,36 +1,38 @@
-# Translator
+# Popover
 
-[![Github Repo](https://img.shields.io/badge/Git-@papit/translator-blue?logo=github&link=https://github.com/onkelhoy/web-components/tree/main/packages/logicals/translator)](https://github.com/onkelhoy/web-components/tree/main/packages/logicals/translator)
-![Layer Type](https://img.shields.io/badge/Layer_Type-logical-orange)
+[![Github Repo](https://img.shields.io/badge/Git-@papit/popover-blue?logo=github&link=https://github.com/onkelhoy/web-components/tree/main/packages/logicals/popover)](https://github.com/onkelhoy/web-components/tree/main/packages/logicals/popover)
+![Layer Type](https://img.shields.io/badge/Layer_Type-locical-orange)
 
 [![Tests](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml/badge.svg)](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml)
-[![NPM version](https://img.shields.io/npm/v/@papit/translator.svg?logo=npm)](https://www.npmjs.com/package/@papit/translator)
+[![NPM version](https://img.shields.io/npm/v/@papit/popover.svg?logo=npm)](https://www.npmjs.com/package/@papit/popover)
 
 ## Use Case
 
 ### installation
 
 ```bash
-npm install @papit/translator
+npm install @papit/popover
 ```
 
 ### to use in **html**
 
 ```html
 <script type="module" defer>
-  import "@papit/translator";
+  import "@papit/popover";
 </script>
 
-<pap-translator></pap-translator>
+<pap-popover></pap-popover>
 ```
 
 ### to use in **react**
 
 ```jsx
-import { Translator } from "@papit/translator/react";
+import { Popover } from "@papit/popover/react";
 
 function Component() {
-  return <Translator />;
+  return (
+    <Popover /> 
+  )
 }
 ```
 
