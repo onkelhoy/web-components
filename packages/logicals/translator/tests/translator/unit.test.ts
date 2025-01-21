@@ -1,8 +1,9 @@
-import { test, expect, Locator } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 
 async function toHaveText(loc: Locator, text: string) {
   const actualtext = await loc.evaluate(elm => {
-    if (elm instanceof HTMLElement) {
+    if (elm instanceof HTMLElement)
+    {
       return {
         innerHTML: elm.innerHTML,
         innerText: elm.innerText,

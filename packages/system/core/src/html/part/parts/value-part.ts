@@ -30,20 +30,32 @@ export class ValuePart implements Part {
   constructor(
     private marker: Comment,
     private helpers: PartHelpers
-  ) {}
+  ) { }
 
   /**
    * Inserts or updates the value before the marker.
    * @param newValue Strings, Nodes, or nested template roots.
    */
   apply(newValue: any) {
-    if (!newValue && newValue != 0) return void this.clear();
+    if (!newValue && newValue !== 0) return void this.clear();
     if (newValue === this.value) return;
     this.value = newValue;
 
+    // special case Text 
+    if (newValue instanceof Text)
+    {
+      this.clear();
+      this.node = newValue;
+      this.insert(this.node);
+      return;
+    }
+
+
     // --- 1. Handle nested template (pure Element from html())
-    if (newValue instanceof Element && (newValue as any).__isTemplateRoot) {
-      if (this.nestedInstance == null) {
+    if ((newValue as any).__isTemplateRoot || newValue instanceof DocumentFragment)
+    {
+      if (this.nestedInstance == null)
+      {
         this.clear();
         this.nestedInstance = this.helpers.createPart({
           kind: "nested",
@@ -54,8 +66,18 @@ export class ValuePart implements Part {
       return;
     }
 
-    // --- 2. Handle DOM nodes directly
-    if (newValue instanceof Node) {
+    // --- 2a. Handle DocumentFragment explicitly
+    if (newValue instanceof DocumentFragment)
+    {
+      this.clear();
+      this.node = newValue;
+      this.marker.parentNode?.insertBefore(newValue, this.marker);
+      return;
+    }
+
+    // --- 2b. Handle DOM nodes directly
+    if (newValue instanceof Node)
+    {
       if (newValue === this.node) return; // skip same node
       this.clear();
       this.node = newValue;
@@ -65,10 +87,12 @@ export class ValuePart implements Part {
 
     // --- 3. Everything else → string
     const str = newValue != null ? String(newValue) : "";
-    if (this.node instanceof Text) {
+    if (this.node instanceof Text)
+    {
       this.node.data = str;
       return;
     }
+
     this.clear();
     this.node = document.createTextNode(str);
     this.insert(this.node);
@@ -81,13 +105,15 @@ export class ValuePart implements Part {
 
   clear() {
     // Remove DOM node if present
-    if (this.node && this.node.parentNode) {
+    if (this.node && this.node.parentNode)
+    {
       this.node.parentNode.removeChild(this.node);
     }
     this.node = null;
 
     // Clear nested instance if present
-    if (this.nestedInstance) {
+    if (this.nestedInstance)
+    {
       this.nestedInstance.clear();
       this.nestedInstance = null;
     }

@@ -71,8 +71,14 @@ export class ListPart implements Part {
 
   /** Tries to find the DOM node immediately after a part for insertion tracking. */
   private getEndNode(part: Part): Node | null {
-    // This assumes parts always have a `marker` property or similar.
-    return (part as any).marker ?? null;
+    // If part has a root element or fragment, use its last child as end node
+    const node = (part as any).node || (part as any).instance?.root;
+    if (node instanceof DocumentFragment) {
+      return node.childNodes[node.childNodes.length - 1] ?? null;
+    }
+    return node ?? (part as any).marker ?? null;
+    // // This assumes parts always have a `marker` property or similar.
+    // return (part as any).marker ?? null;
   }
 
   /** Removes all list items. */

@@ -49,7 +49,7 @@
     "@papit/icon": "0.0.4"
   },
   "devDependencies": {
-    "@papit/codeblock": "^*",
+    "@papit/codeblock": "0.0.1",
     "@papit/translator": "0.0.2",
     "@playwright/test": "^1.45.3",
     "@types/node": "^22.10.2",

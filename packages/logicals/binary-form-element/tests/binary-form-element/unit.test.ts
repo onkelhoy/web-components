@@ -52,10 +52,11 @@ test.describe("unit tests", () => {
 test.describe("disabled tests", () => {
   test("disabled click should not trigger change event", async ({ page }) => {
     const target = page.getByTestId("disabled");
-    expect(target).toBeDisabled();
+    // expect(target).toBeDisabled();
+    expect(await target.evaluate((el:any) => el.disabled)).toBe(true);
   });
 
-  test("disabledenter keypress should not trigger active class", async ({ page }) => {
+  test("disabled enter keypress should not trigger active class", async ({ page }) => {
     const target = page.getByTestId("disabled");
 
     await target.focus();

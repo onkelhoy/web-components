@@ -11,7 +11,7 @@
   --string: var(--pap-warning-text);
   --function-arg: var(--pap-warning-text);
   --function-name: var(--pap-information);
-  --html-attribute-name:var(--pap-primary-text);
+  --html-attribute-name: var(--pap-primary-text);
   --html-attribute-value: var(--pap-warning-text);
   --html-tag: var(--pap-secondary-text);
   --html-tag-name: var(--pap-information-text);
@@ -30,15 +30,19 @@
     &.class {
       color: var(--keyword-class);
     }
+
     &.implements {
       color: var(--keyword-implements);
     }
+
     &.extends {
       color: var(--keyword-extends);
     }
+
     &.this {
       color: var(--keyword-this);
     }
+
     &.function {
       color: var(--keyword-function);
     }
@@ -85,14 +89,14 @@
       border-radius: var(--radius-small, 4px);
 
       header {
-        display: flex;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
         align-items: center;
         color: inherit;
         background-color: var(--pap-background-1, #EAEBEF);
 
         &>pap-typography {
-          text-indent: var(--padding-medium, 16px);
+          text-indent: var(--padding-large, 16px);
         }
 
         pap-switch {
@@ -100,6 +104,8 @@
         }
 
         pap-button {
+          margin-left: auto;
+
           pap-icon[name="done"] {
             display: none;
           }
@@ -112,7 +118,7 @@
 
       main {
         min-height: var(--unit-size5, 32px);
-        padding: var(--padding-medium, 16px) var(--padding-large, 24px);
+        padding: var(--padding-large, 16px) var(--padding-large, 24px);
       }
     }
   }

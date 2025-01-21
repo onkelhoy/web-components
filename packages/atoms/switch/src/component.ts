@@ -5,8 +5,8 @@ import { html, property, bind } from "@papit/core";
 import { BinaryFormElement } from "@papit/binary-form-element";
 
 // local 
+import { Color, Radius, Size } from "./types";
 import { style } from "./style";
-import { Color, Radius, Size } from "types";
 
 
 // TODO: inside the file "packages/system/core/src/class/element"

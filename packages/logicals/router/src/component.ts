@@ -49,7 +49,7 @@ export class Router extends CustomElement {
 
   // properties
   @property({ type: Boolean, rerender: false, attribute: "update-title" }) updatetitle: boolean = true;
-  @property({ type: Boolean, rerender: false, attribute: "update-url" }) updateurl: boolean = true;
+  @property({ type: Boolean, rerender: false, attribute: "update-url", after: console.log }) updateurl: boolean = true;
   @property({ 
     type: Boolean, 
     rerender: false, 
@@ -189,26 +189,26 @@ export class Router extends CustomElement {
 
     this.route = null;
     const route = intermediate(this.url, this.routes);
-    if (route) {
-      const gen = candidateGenerator(route, this.browser_url, this);
-      for (let candidate of gen) {
-        const data = await fetchURL(candidate.request, candidate, this);
-        if (data.response && data.response.ok) {
-          this.route = candidate;
-          if (this.updateurl && !this.internalpopstate) {
+    if (!route) return;
 
-            const REALBROWSERURL = window.location.href.slice(window.location.origin.length);
-            if (this.route.browser !== REALBROWSERURL) {
-              // Push the new state into the history
-              window.history.pushState({ url: this.url }, '', this.route.browser);
-            }
-          }
-          this.internalpopstate = false;
+    const gen = candidateGenerator(route, this.browser_url, this);
+    for (let candidate of gen) {
+      const data = await fetchURL(candidate.request, candidate, this);
+      if (!(data.response && data.response.ok)) continue;
 
-          this.insertHTML(data.content, data.response);
-          break;
+      this.route = candidate;
+      if (this.updateurl && !this.internalpopstate) {
+
+        const REALBROWSERURL = window.location.href.slice(window.location.origin.length);
+        if (this.route.browser !== REALBROWSERURL) {
+          // Push the new state into the history
+          window.history.pushState({ url: this.url }, '', this.route.browser);
         }
       }
+      this.internalpopstate = false;
+
+      this.insertHTML(data.content, data.response);
+      break;
     }
 
     if (this.route === null) {
@@ -276,13 +276,12 @@ export class Router extends CustomElement {
 
     const body = dom.querySelector("body");
     const headstuff = dom.querySelectorAll("head > *:not(title)");
-    if (headstuff) {
-      if (this.updatetitle) {
-        const title = dom.querySelector("title");
-        if (title) {
-          const domtitle = document.querySelector("title");
-          if (domtitle) domtitle.innerHTML = title.innerHTML;
-        }
+    if (headstuff && this.updatetitle) {
+      const title = dom.querySelector("title");
+
+      if (title) {
+        const domtitle = document.querySelector("title");
+        if (domtitle) domtitle.innerHTML = title.innerHTML;
       }
     }
 

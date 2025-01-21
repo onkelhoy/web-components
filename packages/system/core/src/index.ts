@@ -10,6 +10,7 @@ export * from "./functions/lerp";
 export * from "./functions/uuid";
 export * from "./functions/cumalative-offset";
 export * from "./functions/next-parent";
+export * from "./functions/resolve";
 
 // decorators 
 export * from "./decorators/bind";

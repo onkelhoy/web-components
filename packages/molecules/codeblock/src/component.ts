@@ -3,6 +3,7 @@
 import { CustomElement, html, query, property } from "@papit/core";
 
 // atoms 
+import "@papit/typography";
 import { Typography } from "@papit/typography";
 import "@papit/button";
 import "@papit/icon";
@@ -23,7 +24,8 @@ export class Codeblock extends CustomElement {
 
   @query({
     selector: 'main', load: function (this: Codeblock) {
-      if (this.value) {
+      if (this.value)
+      {
         this.format(this.value);
       }
     }
@@ -36,15 +38,15 @@ export class Codeblock extends CustomElement {
   @property direction: "row" | "column" = "column";
   @property color: "canvas" | "background" | "checker" = "checker";
   @property({ type: Boolean, attribute: "theme-toggle" }) themetoggle: boolean = true;
-  @property({ 
-    rerender: false, 
-    after: function (this: Codeblock, value:string) {
+  @property({
+    rerender: false,
+    after: function (this: Codeblock, value: string) {
       this.setLanguage(value);
-    } 
+    }
   }) lang!: string;
 
   private value: string = "";
-  private timer: NodeJS.Timeout|null = null;
+  private timer: NodeJS.Timeout | null = null;
   private _indentationLevel = 0;
   private set indentationLevel(value: number) {
     this._indentationLevel = Math.max(0, value);
@@ -73,30 +75,38 @@ export class Codeblock extends CustomElement {
   }
   private handletogglechange = (e: Event) => {
     const isdark = (e.target as HTMLInputElement).checked;
-    if (isdark) {
+    if (isdark)
+    {
       this.classList.remove("theme-light");
       this.classList.add("theme-dark");
     }
-    else {
+    else
+    {
       this.classList.add("theme-light");
       this.classList.remove("theme-dark");
     }
   }
   private handleslotchange = (e: Event) => {
-    if (e.target instanceof HTMLSlotElement) {
+    if (e.target instanceof HTMLSlotElement)
+    {
       if (this.value) return;
 
       const original: string[] = [];
       const nodes = e.target.assignedNodes();
-      for (const node of nodes) {
-        if (node.nodeType === Node.TEXT_NODE) {
+      for (const node of nodes)
+      {
+        if (node.nodeType === Node.TEXT_NODE)
+        {
           if (node.textContent && node.textContent.trim() !== "") original.push(node.textContent);
         }
-        else {
-          if ('originalHTML' in node) {
+        else
+        {
+          if ('originalHTML' in node)
+          {
             original.push(node.originalHTML as string);
           }
-          else {
+          else
+          {
             original.push((node as HTMLElement).outerHTML);
           }
         }
@@ -111,7 +121,8 @@ export class Codeblock extends CustomElement {
   public FormatLine(line: string, preoutput: string = ""): string | null {
     const htmlformat = this.formatHTML(line, preoutput);
 
-    if (htmlformat !== null) {
+    if (htmlformat !== null)
+    {
       if (!htmlformat) return null;
       return htmlformat;
     }
@@ -123,25 +134,30 @@ export class Codeblock extends CustomElement {
 
     const lines = this.value.split('\n');
 
-    for (let i = 0; i < lines.length; i++) {
+    for (let i = 0; i < lines.length; i++)
+    {
       const line = lines[i];
       let trimmedline = line.trim();
 
       // NOTE quickfix needs propper handle for general cases
-      if (trimmedline === "<br>") {
+      if (trimmedline === "<br>")
+      {
         let output = '<span class="html-tag">&lt;</span><span class="html-tag-name">br </span><span class="html-tag">/&gt;</span>';
         this.appendLine(output);
         continue;
       }
 
-      if (trimmedline === "") {
-        if (i === 0 || i === lines.length - 1) {
+      if (trimmedline === "")
+      {
+        if (i === 0 || i === lines.length - 1)
+        {
           continue
         }
       }
 
       const output = this.FormatLine(trimmedline);
-      if (output !== null) {
+      if (output !== null)
+      {
         this.appendLine(output);
       }
     }
@@ -164,22 +180,26 @@ export class Codeblock extends CustomElement {
     const regex = new RegExp(`${stringPattern}|${functionPattern}|${classPattern}|${keywords}`, 'g');
 
     output = output.replace(regex, (match, s1, f1, f2, f3, c1, c2, c3, c4, c5, c6) => {
-      if (s1) {
+      if (s1)
+      {
         // This is a string match
         return `<span class="string">${match}</span>`;
       }
-      if (f1) {
+      if (f1)
+      {
         if (this.lang !== "html") this.setLanguage("javascript");
 
         // This is a function match
         const functionName = f2 ? `<span class="function-name">${f2}</span>` : '';
         let functionArgs = '';
-        if (f3) {
+        if (f3)
+        {
           functionArgs = f3.split(',').map((arg: string) => `<span class="function-arg">${arg.trim()}</span>`).join(', ');
         }
         return `<span class="keyword function">function</span> ${functionName}(<span class="function-args">${functionArgs}</span>)`;
       }
-      if (c1) {
+      if (c1)
+      {
         if (this.lang !== "html") this.setLanguage("javascript");
 
         // This is a class match
@@ -197,8 +217,10 @@ export class Codeblock extends CustomElement {
 
     // Check for opening brackets at the end of the line
     let modifiedindentionlevel = 0;
-    for (const openBracket of OPEN_BRACKETS) {
-      if (output.endsWith(openBracket)) {
+    for (const openBracket of OPEN_BRACKETS)
+    {
+      if (output.endsWith(openBracket))
+      {
         this.stack.push(openBracket);
         modifiedindentionlevel++; // should be applied afterward
       }
@@ -206,20 +228,25 @@ export class Codeblock extends CustomElement {
 
     // Check for closing brackets at the start of the line
     const closeBracketMatches = output.match(new RegExp(`^(${CLOSE_BRACKETS.map(s => "\\" + s).join('|')})+`));
-    if (closeBracketMatches) {
+    if (closeBracketMatches)
+    {
       const numOfCLOSE_BRACKETS = closeBracketMatches[0].length;
-      for (let j = 0; j < numOfCLOSE_BRACKETS; j++) {
-        if (this.stack.length > 0) {
+      for (let j = 0; j < numOfCLOSE_BRACKETS; j++)
+      {
+        if (this.stack.length > 0)
+        {
           this.stack.pop();
           this.indentationLevel = Math.max(0, this.indentationLevel - 1);
         }
       }
     }
 
-    if (modifiedindentionlevel === 0) {
+    if (modifiedindentionlevel === 0)
+    {
       return preoutput + output;
     }
-    else {
+    else
+    {
       this.appendLine(preoutput + output);
       this.indentationLevel += modifiedindentionlevel;
       return null;
@@ -241,13 +268,15 @@ export class Codeblock extends CustomElement {
     let L = tagmatch[1] || null;
     const htmlpart = tagmatch[2];
     const cases = ["< ", "<="];
-    if (cases.some(cs => htmlpart.startsWith(cs) || htmlpart.startsWith(cs.replace("<", ">")))) {
+    if (cases.some(cs => htmlpart.startsWith(cs) || htmlpart.startsWith(cs.replace("<", ">"))))
+    {
       return null
     }
 
     const R = line.split(tagmatch[0])[1];
 
-    if (["javascript", "jsx"].includes(this.language)) {
+    if (["javascript", "jsx"].includes(this.language))
+    {
       this.setLanguage("jsx");
     }
     else this.setLanguage("html");
@@ -256,9 +285,11 @@ export class Codeblock extends CustomElement {
     const ismultiline = line.length > MAX_HTMLCONTENT;
 
     let outputline: string | null = preoutput;
-    if (L) {
+    if (L)
+    {
       // if we currently inside script or style we should apply format on it ! 
-      if (["script", "style"].includes(this.peek())) {
+      if (["script", "style"].includes(this.peek()))
+      {
         // it would never be HTML anyways..
         const leftcontent = this.formatCODE(L, preoutput);
         if (leftcontent) L = leftcontent;
@@ -268,7 +299,8 @@ export class Codeblock extends CustomElement {
       outputline += L;
 
       // if overflow we should add as its own line (as long the format returned - if not it already inserted!)
-      if (ismultiline && outputline) {
+      if (ismultiline && outputline)
+      {
         this.appendLine(outputline);
         outputline = "";
       }
@@ -276,26 +308,32 @@ export class Codeblock extends CustomElement {
 
     // now we cover the html part "<TAG attr*>?" is the pattern 
     const htmloutput = this.formatHtmlTag(htmlpart, ismultiline, R);
-    if (htmloutput) {
+    if (htmloutput)
+    {
       if (outputline) outputline += htmloutput;
       else outputline = htmloutput;
     }
 
     // weird case that should not really happen
-    if (ismultiline && outputline) {
+    if (ismultiline && outputline)
+    {
       console.warn("[codeblock] multiline but we see content!");
       this.appendLine(outputline);
       outputline = "";
     }
 
     // now we reach the right side, this could have content and further ending tags etc etc (or normal code for some reason)
-    if (R) {
+    if (R)
+    {
       const output = this.FormatLine(R, preoutput);
-      if (output) {
-        if (ismultiline) {
+      if (output)
+      {
+        if (ismultiline)
+        {
           this.appendLine(output);
         }
-        else {
+        else
+        {
           outputline += output;
         }
       }
@@ -309,25 +347,30 @@ export class Codeblock extends CustomElement {
     // first we check if this is a ending tag 
     const endingmatch = line.match(/<\/([\w-]+)>/);
 
-    if (endingmatch) {
+    if (endingmatch)
+    {
       const tagname = endingmatch[1];
       // check if we see the tagname on the current stack -> this means we need to lower the indention level
-      if (this.peek() === tagname) {
+      if (this.peek() === tagname)
+      {
         this.stack.pop();
         this.indentationLevel--;
       }
       const ending = `<span class="html-tag">&lt;/</span><span class="html-tag-name">${tagname}</span><span class="html-tag">&gt;</span>`;
-      if (multiline) {
+      if (multiline)
+      {
         this.appendLine(ending);
       }
-      else {
+      else
+      {
         return ending;
       }
     }
 
     // its a beginning tag so we should expect attributes ! 
     let tagmatch = line.match(/<([\w-]+)([^>]*)/);
-    if (!tagmatch) {
+    if (!tagmatch)
+    {
       // this should not really happen! 
       console.log('mamma mia!', line)
       console.error("[codeblock] html but no html error");
@@ -340,7 +383,8 @@ export class Codeblock extends CustomElement {
     let attributes = [];
     let attributesize = 0;
 
-    while ((match = attributesRegex.exec(attributesString)) !== null) {
+    while ((match = attributesRegex.exec(attributesString)) !== null)
+    {
       attributes.push(match);
       attributesize += match[0].length;
     }
@@ -351,7 +395,8 @@ export class Codeblock extends CustomElement {
     let output = `<span class="html-tag">&lt;</span><span class="html-tag-name">${tagname}</span>`;
 
     // check if we need to split the opening html tag into multilines
-    if (multilines) {
+    if (multilines)
+    {
       this.stack.push(tagname);
       this.appendLine(output);
       output = "";
@@ -359,13 +404,15 @@ export class Codeblock extends CustomElement {
       this.indentationLevel++;
     }
     // loop the attributes
-    for (let [_full, name, value] of attributes) {
+    for (let [_full, name, value] of attributes)
+    {
       // split by the "=" if exists 
       // const  = attribute;
       // so if attributes are added as new lines we need not to add a margin-left
       let attributeinlineindent = multilines ? "indent" : "";
       let attributestring = `<span class="html-attribute ${attributeinlineindent}"><span class="html-attribute-name">${name}</span>`;
-      if (value && value !== '""') {
+      if (value && value !== '""')
+      {
         // yes value exists 
         attributestring += `=<span class="html-attribute-value">${value}</span>`
       }
@@ -373,26 +420,32 @@ export class Codeblock extends CustomElement {
       attributestring += "</span>"
 
       // self explained
-      if (multilines) {
+      if (multilines)
+      {
         this.appendLine(attributestring);
       }
-      else {
+      else
+      {
         output += attributestring;
       }
     }
 
     // if we see the tag has a ending we want to append to output (or add new line in case multilines)
-    if (!line.endsWith("/>") && line.endsWith(">")) {
+    if (!line.endsWith("/>") && line.endsWith(">"))
+    {
       const ending = '<span class="html-tag">&gt;</span>';
-      if (multilines) {
+      if (multilines)
+      {
         // decrese for ending but increase for content
         this.indentationLevel--;
         this.appendLine(ending);
         this.indentationLevel++;
         return null;
       }
-      else {
-        if (multilines || !right) {
+      else
+      {
+        if (multilines || !right)
+        {
           this.stack.push(tagname);
           this.appendLine(output + ending);
           this.indentationLevel++;
@@ -405,10 +458,11 @@ export class Codeblock extends CustomElement {
     return output;
   }
   private appendLine(value: string) {
-    if (this.main) {
+    if (this.main)
+    {
       const divline = document.createElement("div");
       divline.className = "line";
-      divline.style.paddingLeft = `calc(${this.indentationLevel} * var(--padding-medium, 16px))`;
+      divline.style.paddingLeft = `calc(${this.indentationLevel} * var(--padding-large, 16px))`;
       divline.innerHTML = value;
       this.main.appendChild(divline);
     }
@@ -418,7 +472,8 @@ export class Codeblock extends CustomElement {
     if (this.lang && lang !== this.lang) return;
 
     this.language = lang;
-    if (this.languageElement) {
+    if (this.languageElement)
+    {
       this.languageElement.innerHTML = this.language;
     }
   }
@@ -438,24 +493,27 @@ export class Codeblock extends CustomElement {
         <div radius="small">
           <header>
             <pap-typography id="language">${this.language}</pap-typography>
-            <pap-switch 
-              color="primary"
-              @change="${this.handletogglechange}" 
-              checked="${(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)}"
+            ${this.themetoggle ? html`
+              <pap-switch 
+                color="primary"
+                @change="${this.handletogglechange}" 
+                checked="${(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)}"
+              >
+              </pap-switch>
+            ` : html`<span />`}
+            <pap-button 
+              variant="clear"  
+              color="secondary"
+              radius="none" 
+              mode="hug"
+              @click="${this.handlecopy}" 
             >
-            </pap-switch>
-          <pap-button 
-            variant="clear"  
-            color="secondary"
-            radius="none" 
-            @click="${this.handlecopy}" 
-          >
-            <pap-icon cache name="done" slot="prefix"></pap-icon>
-            <pap-icon cache name="content_paste" slot="prefix"></pap-icon>
-            <pap-typography>Copy code</pap-typography>
-          </pap-button>
-        </header>
-        <main render-greedy></main>
+              <pap-icon cache name="done" slot="prefix"></pap-icon>
+              <pap-icon cache name="content_paste" slot="prefix"></pap-icon>
+              <pap-typography>Copy code</pap-typography>
+            </pap-button>
+          </header>
+        <main></main>
       </div>
     </code>
     `

@@ -30,7 +30,7 @@ export class NestedPart implements Part {
    * @param newValue is expected to be an Element with `__isTemplateRoot` - otherwise its cleared
    */
   apply(newValue: any) {
-    if (!(newValue instanceof Element) || !(newValue as any).__isTemplateRoot) {
+    if (!(newValue instanceof Element || newValue instanceof DocumentFragment) || !(newValue as any).__isTemplateRoot) {
       this.clear();
       return;
     }

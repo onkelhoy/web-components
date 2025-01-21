@@ -11,11 +11,10 @@
       "esnext"
     ],
     "jsx": "react-jsx",
-    "strict": false,
+    "strict": true,
     "esModuleInterop": false,
-    "allowSyntheticDefaultImports": false,
+    "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
-    
     "outDir": "lib",
     "sourceMap": true,
     "inlineSources": true,
@@ -27,7 +26,9 @@
     "resolveJsonModule": true,
     "baseUrl": "src",
     "paths": {
-      "@papit/asset": ["./index"],
+      "@papit/asset": [
+        "./index"
+      ],
     }
   },
   "include": [

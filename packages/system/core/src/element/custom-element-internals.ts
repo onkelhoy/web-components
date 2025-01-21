@@ -59,7 +59,7 @@ export class CustomElementInternals extends CustomElement {
    * - `removeAttribute: true` → removes `disabled` attribute when false
    */
   @property({ rerender: false, type: Boolean, aria: 'aria-disabled', removeAttribute: true })
-  disabled?: boolean;
+  disabled: boolean|undefined = undefined;
 
   constructor(setting?: Partial<Setting>) {
     super(setting);

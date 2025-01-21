@@ -1,6 +1,6 @@
 // import statements 
 // system 
-import { bind, CustomElementInternals, property } from "@papit/core";
+import { bind, CustomElementInternals, debounce, property } from "@papit/core";
 
 export class BinaryFormElement extends CustomElementInternals {
 
@@ -10,7 +10,8 @@ export class BinaryFormElement extends CustomElementInternals {
     removeAttribute: true,
     attribute: 'default-checked',
     after: function (this: BinaryFormElement) {
-      if (this.defaultchecked !== undefined && this.checked === undefined) {
+      if (this.defaultchecked !== undefined && this.checked === undefined)
+      {
         this.internalflag = true;
         this.checked = this.defaultchecked;
       }
@@ -23,11 +24,13 @@ export class BinaryFormElement extends CustomElementInternals {
     attribute: true,
     removeAttribute: true,
     aria: 'aria-checked',
-    after: function (this: BinaryFormElement, value) {
-      if (this._internals !== undefined) {
+    after: function (this: BinaryFormElement) {
+      if (this._internals !== undefined)
+      {
         this._internals.setFormValue(typeof this.checked === "boolean" ? String(this.checked as boolean) : null);
       }
-      if (!this.internalflag) {
+      if (!this.internalflag)
+      {
         this.dispatchEvent(new Event("change"));
       }
       this.internalflag = false;
@@ -51,16 +54,20 @@ export class BinaryFormElement extends CustomElementInternals {
     super.firstRender();
     if (!this.hasAttribute("tabindex")) this.tabIndex = 0;
 
-    window.setTimeout(() => {
-      if (this.defaultchecked === undefined) {
-        // initiate default-checked to first value?
-        this.defaultchecked = !!this.checked;
-      }
-    }, 100);
+    this.setupDefaultChecked();
+  }
+
+  @debounce(100)
+  private setupDefaultChecked() {
+    if (this.defaultchecked === undefined)
+    {
+      // initiate default-checked to first value?
+      this.defaultchecked = !!this.checked;
+    }
   }
 
   @bind
-  private handleblur_internal () {
+  private handleblur_internal() {
     this.classList.remove("active");
   };
 
@@ -71,34 +78,37 @@ export class BinaryFormElement extends CustomElementInternals {
   // event handlers
   @bind
   private handlekeydown(e: KeyboardEvent) {
-    if (this.hasAttribute("disabled")) return;
+    if (this.disabled) return;
     if (this.hasAttribute("readonly")) return;
 
-    if ((e.key || e.code).toLowerCase() === "enter") {
+    if ((e.key || e.code).toLowerCase() === "enter")
+    {
       this.classList.add('active');
     }
   }
   @bind
-  private handlepressfinished (e: KeyboardEvent) {
-    if (this.hasAttribute("disabled")) return;
+  private handlepressfinished(e: KeyboardEvent) {
+    if (this.disabled) return;
     if (this.hasAttribute("readonly")) return;
 
-    if ((e.key || e.code).toLowerCase() === "enter") {
+    if ((e.key || e.code).toLowerCase() === "enter")
+    {
       this.classList.remove('active');
       this.dispatchEvent(new Event("click"));
     }
   }
   @bind
-  private handleclick () {
-    if (this.hasAttribute("disabled")) return;
+  private handleclick() {
+    if (this.disabled) return;
     if (this.hasAttribute("readonly")) return;
-    
+
     this.checked = !this.checked;
   }
 
   // form events
   public formResetCallback() {
-    if (this.defaultchecked !== undefined) {
+    if (this.defaultchecked !== undefined)
+    {
       this.checked = this.defaultchecked as boolean;
     }
   }

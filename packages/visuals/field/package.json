@@ -50,7 +50,7 @@
     "@papit/typography": "0.0.3"
   },
   "devDependencies": {
-    "@papit/codeblock": "^0.0.0",
+    "@papit/codeblock": "0.0.1",
     "@papit/translator": "0.0.2",
     "@playwright/test": "^1.45.3",
     "@types/node": "^22.10.2",

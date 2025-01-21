@@ -15,7 +15,7 @@ export type PartFactory = (desc: PartDescriptor, helpers: PartHelpers) => Part;
 
 export type PartHelpers = {
   createPart: (desc: PartDescriptor) => Part;
-  createTemplateInstance: (rootElement: Element) => ITemplateInstance;
+  createTemplateInstance: (rootElement: Element|DocumentFragment) => ITemplateInstance;
 };
 
 export interface ITemplateInstance {
