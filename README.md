@@ -1,4 +1,4 @@
-# @papit 
+# @papit
 
 ![GitHub contributors](https://img.shields.io/github/contributors/onkelhoy/web-components)
 ![GitHub Release Date](https://img.shields.io/github/release-date/onkelhoy/web-components)
@@ -8,7 +8,6 @@
 
 ![GitHub Repo stars](https://img.shields.io/github/stars/onkelhoy/web-components)
 
-
 ## Ecosystem: An Overview
 
 Welcome to the `@pap-framework` ecosystem, an innovative framework designed to revolutionize the development and deployment of web components. Developed by Henry Pap, this ecosystem is built on a zero-dependency philosophy in production environments, promoting modular development, performance enhancement, and security. It offers a comprehensive toolkit for developers, encouraging efficiency and creativity in web application development.
@@ -17,7 +16,7 @@ Welcome to the `@pap-framework` ecosystem, an innovative framework designed to r
 **GitHub**: [onkelhoy](https://github.com/onkelhoy/web-components)\
 **License**: @Papit License 1.0
 
-Figma link: [figma - papit](https://www.figma.com/design/axw69RwkUPkh5uW0kUvQu8/papit---WebComponents?node-id=1-3&t=9HXN5GBVYtbvCmi6-1) 
+Figma link: [figma - papit](https://www.figma.com/design/axw69RwkUPkh5uW0kUvQu8/papit---WebComponents?node-id=1-3&t=9HXN5GBVYtbvCmi6-1)
 
 ### Ready, Set, Code
 
@@ -38,6 +37,11 @@ We welcome community contributions, including bug reports, suggestions for impro
 ## License
 
 `@papit` is licensed under the @Papit License 1.0. This permissive license allows for maximum flexibility in using, modifying, and buildributing the software, provided attribution is given, and liability is not assumed. See the [LICENSE file](./LICENSE) for details.
+
+## Core Documentation
+
+The **[`@papit/core`](./packages/system/core/README.md)** package is the heart of the ecosystem — it contains all the major building blocks: decorators, HTML rendering utilities, reactive base classes, and standalone functions.
+If you want to understand how to build, extend, and optimize components, start here.
 
 ## Further Reading
 

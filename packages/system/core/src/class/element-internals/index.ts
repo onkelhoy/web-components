@@ -1,1 +1,0 @@
-export { CustomElementInternals } from "./class";

@@ -1,5 +1,5 @@
 // utils 
-import { ExtractSlotValue, CustomElement, html, property } from "@papit/core";
+import { ExtractSlotValue, CustomElement, html, property, bind } from "@papit/core";
 
 // local 
 import { style } from "./style";
@@ -47,7 +47,6 @@ export class Translator extends CustomElement {
   }
 
   @property({
-    rerender: false,
     after: function (this: Translator) {
       this.updateText();
     }
@@ -82,7 +81,8 @@ export class Translator extends CustomElement {
   }
 
   // event handlers 
-  private mutantobservercallback: MutationCallback = (mutations: MutationRecord[], observer: MutationObserver) => {
+  @bind 
+  private mutantobservercallback(mutations: MutationRecord[], observer: MutationObserver): MutationCallback|undefined {
     if (this.internal) {
       this.internal = false;
       return;
@@ -96,7 +96,8 @@ export class Translator extends CustomElement {
       }
     }
   }
-  private handleslotchange = (e: Event) => {
+  @bind 
+  private handleslotchange (e: Event) {
     if (e.target instanceof HTMLSlotElement) {
       const text = ExtractSlotValue(e.target).join(' ').trim();
       this.key = text;
@@ -121,7 +122,8 @@ export class Translator extends CustomElement {
   }
 
   // private functions 
-  private updateText = () => {
+  @bind 
+  private updateText() {
     const text = this.localization.translate(this.key, {
       element: this,
       scope: this.scope

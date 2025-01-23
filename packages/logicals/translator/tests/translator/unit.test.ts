@@ -1,11 +1,5 @@
 import { test, expect, Locator } from '@playwright/test';
 
-declare global {
-  interface Window {
-    localization: any;
-  }
-}
-
 async function toHaveText(loc: Locator, text: string) {
   const actualtext = await loc.evaluate(elm => {
     if (elm instanceof HTMLElement) {

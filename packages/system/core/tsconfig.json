@@ -15,7 +15,6 @@
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
-    "importHelpers": true,
     "outDir": "lib",
     "sourceMap": true,
     "emitDecoratorMetadata": true,
@@ -26,12 +25,22 @@
     "declaration": true,
     "declarationDir": "lib/types",
     "incremental": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "useDefineForClassFields": false,
+    "baseUrl": "src",
+    "paths": {
+      "@decorators/*": ["./decorators/*"],
+      "@html": ["./html/index"],
+      "@html/*": ["./html/*"],
+      "@element/*": ["./element/*"],
+      "@element": ["./element/index"],
+      "@functions/*": ["./functions/*"],
+      "@papit/core": ["./index"],
+    }
   },
   "include": [
-    "src/**/*.js",
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.d.ts"
+    "src",
+    "views",
+    "tests"
   ]
 }
