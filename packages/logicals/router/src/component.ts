@@ -1,5 +1,5 @@
 // system 
-import { CustomElement, property, html, debounce, query } from "@papit/core";
+import { CustomElement, property, html, debounce, query, bind, generateUUID } from "@papit/core";
 
 // local imports
 import { Route, AddRoute, MappedRoute, SourceElement, SourceType } from "./types";
@@ -20,6 +20,7 @@ export class Router extends CustomElement {
   private hasinitiated = false;
   private internalpopstate = false; // prevents browser-url to be set if true
   // public variables
+  public UUID!: string;
   public safeUUID!: string;
   public routes: Route[] = [];
   public browser_url: string | undefined = undefined;
@@ -27,14 +28,33 @@ export class Router extends CustomElement {
   public abortcontrollers: Set<AbortController> = new Set();
 
   // queries
-  @query({ selector: '#router-dom', load: function (this: Router) { this.initiateurl() } }) dom!: HTMLDivElement;
-  @query({ selector: '#router-head', load: function (this: Router) { this.initiateurl() } }) head!: HTMLDivElement;
-  @query({ selector: '#router-body', load: function (this: Router) { this.initiateurl() } }) body!: HTMLDivElement;
+  @query({ 
+    selector: '#router-dom', 
+    load: function (this: Router) { 
+      this.initiateurl(); 
+    } 
+  }) dom!: HTMLDivElement;
+  @query({ 
+    selector: '#router-head', 
+    load: function (this: Router) { 
+      this.initiateurl(); 
+    } 
+  }) head!: HTMLDivElement;
+  @query({ 
+    selector: '#router-body', 
+    load: function (this: Router) { 
+      this.initiateurl(); 
+    } 
+  }) body!: HTMLDivElement;
 
   // properties
   @property({ type: Boolean, rerender: false, attribute: "update-title" }) updatetitle: boolean = true;
   @property({ type: Boolean, rerender: false, attribute: "update-url" }) updateurl: boolean = true;
-  @property({ type: Boolean, rerender: false, attribute: "trailing-slash" }) trailingslash: boolean = true;
+  @property({ 
+    type: Boolean, 
+    rerender: false, 
+    attribute: "trailing-slash",
+  }) trailingslash: boolean = true;
   @property({ type: Array, rerender: false, attribute: false }) omitters: string[] = ["[data-server-omitter]"];
   @property({ rerender: false }) cache: "session" | "local" | undefined = undefined;
   @property({
@@ -50,7 +70,7 @@ export class Router extends CustomElement {
     after: function (this: Router) {
       this.initiateurl();
     }
-  }) hashbased: boolean = true;
+  }) hashbased?: boolean;
 
   // getters 
   get params() {
@@ -62,11 +82,11 @@ export class Router extends CustomElement {
     super();
     if (!Router.parser) Router.parser = new DOMParser();
     if (!Router.encoder) Router.encoder = new TextEncoder();
-    this.initiateurl = debounce(this.initiateurl, 150);
   }
 
   connectedCallback(): void {
     super.connectedCallback();
+    this.UUID = generateUUID();
     this.safeUUID = this.UUID.replaceAll(/\W/g, "");
     window.addEventListener("popstate", this.handlewindowpopstate);
 
@@ -87,7 +107,8 @@ export class Router extends CustomElement {
   }
 
   // event handlers 
-  private handleslotchange = (e: Event) => {
+  @bind
+  private handleslotchange (e: Event) {
     if (e.target instanceof HTMLSlotElement) {
       const assignedElements = e.target.assignedElements();
 
@@ -97,7 +118,8 @@ export class Router extends CustomElement {
       }
     }
   }
-  private handlewindowpopstate = (event: PopStateEvent) => {
+  @bind
+  private handlewindowpopstate (event: PopStateEvent) {
     if (event.state?.url) {
       // Handle state restoration here
       this.internalpopstate = true;
@@ -124,6 +146,7 @@ export class Router extends CustomElement {
   }
 
   // private functions 
+  @debounce(150)
   private initiateurl() {
     if (!this.hasinitiated) {
       this.doupdateurl();

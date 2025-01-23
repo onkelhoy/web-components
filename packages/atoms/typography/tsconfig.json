@@ -15,7 +15,7 @@
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
-    "importHelpers": true,
+    
     "outDir": "lib",
     "sourceMap": true,
     "inlineSources": true,
@@ -24,12 +24,15 @@
     "declarationDir": "lib/types",
     "declaration": true,
     "incremental": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "baseUrl": "src",
+    "paths": {
+      "@papit/typography": ["./index"],
+    }
   },
   "include": [
-    "src/**/*.js",
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.d.ts"
+    "src",
+    "views",
+    "tests"
   ]
 }

@@ -1,7 +1,7 @@
 export {
-  Setting as ContextSetting,
-} from './types';
+  context,
+} from "./dectorator"
 
 export {
-  Decorator as context,
-} from './decorator';
+  Setting as ContextDecoratorSetting,
+} from './types';

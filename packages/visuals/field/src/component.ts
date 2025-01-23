@@ -1,6 +1,6 @@
 // import statements 
 // system 
-import { Radius, Size, debounce, html, property, CustomElementSetting, RenderType, CustomElementInternals } from "@papit/core";
+import { debounce, html, property, CustomElementInternals } from "@papit/core";
 
 
 // atoms
@@ -12,12 +12,13 @@ import "@papit/prefix-suffix";
 
 // local 
 import { style } from "./style";
-import { ValidityStateObject, Mode, State, RenderArgument, PrefixSuffixRender } from "./types";
+import { ValidityStateObject, Mode, State, RenderArgument, PrefixSuffixRender, Size, Radius } from "./types";
 
 export class Field extends CustomElementInternals {
   static styles = [style];
 
   @property({
+    rerender: true,
     attribute: 'default-value',
     after: function (this: Field, value: string) {
       if (!this.defaultinternal) this.value = value;
@@ -25,6 +26,7 @@ export class Field extends CustomElementInternals {
     }
   }) defaultValue?: string;
   @property({
+    rerender: true,
     type: Boolean,
     after: function (this: Field, value?: boolean) {
       if (value) {
@@ -38,6 +40,7 @@ export class Field extends CustomElementInternals {
   }) disabled?: boolean;
   @property({ rerender: false }) name: string = "missing-name";
   @property({
+    rerender: true,
     after: function (this: Field, value: string) {
       this.updateform(value);
       this.debouncedchange();
@@ -46,7 +49,7 @@ export class Field extends CustomElementInternals {
 
   @property({ rerender: false, attribute: 'custom-error', type: Object }) customDanger?: Partial<ValidityStateObject>;
   @property({ rerender: false, attribute: 'custom-warning', type: Object }) customWarning?: Partial<ValidityStateObject>;
-  @property() label?: string;
+  @property({ rerender: true }) label?: string;
   @property({
     type: Boolean,
     after: function (this: Field, value?: boolean) {
@@ -71,11 +74,12 @@ export class Field extends CustomElementInternals {
       }
     }
   }) readonly?: boolean;
-  @property() placeholder?: string;
+  @property({ rerender: true }) placeholder?: string;
   @property({ rerender: false }) size?: Size = "medium";
   @property({ rerender: false }) mode?: Mode = "fill";
   @property({ rerender: false }) radius?: Radius = "medium";
   @property({
+    rerender: true,
     set: function (this: Field, value?: string) {
       if (!value || value === "null") return "default";
       return value;
@@ -86,6 +90,7 @@ export class Field extends CustomElementInternals {
     }
   }) state?: State = "default";
   @property({
+    rerender: true,
     set: function (this: Field, value?: string) {
       if (value === "null") return undefined;
       return value;
@@ -141,16 +146,16 @@ export class Field extends CustomElementInternals {
   private fallbackstate: State = "default";
   private slotelements: Record<string, number> = {};
 
-  constructor(config?: Partial<CustomElementSetting>) {
-    super({ ...(config || {}), noblur: true, nofocus: true, delegatesFocus: true });
-    // TODO VERY IMPORTANT FEATURE NEEDED BUT BLOCKED BY NATURE OF DECORATOR
-    // this.attachShadow({ mode: 'open', delegatesFocus: true });
-    // console.log('attatch window');
+  // constructor(config?: Partial<CustomElementSetting>) {
+  //   super({ ...(config || {}), noblur: true, nofocus: true, delegatesFocus: true });
+  //   // TODO VERY IMPORTANT FEATURE NEEDED BUT BLOCKED BY NATURE OF DECORATOR
+  //   // this.attachShadow({ mode: 'open', delegatesFocus: true });
+  //   // console.log('attatch window');
 
-    // super({ ...(config || {}), noblur: true, nofocus: true, delegatesFocus: true });
-    this.slotvisibility = debounce(this.slotvisibility, 10);
-    this.debouncedchange = debounce(this.debouncedchange, 120);
-  }
+  //   // super({ ...(config || {}), noblur: true, nofocus: true, delegatesFocus: true });
+  //   this.slotvisibility = debounce(this.slotvisibility, 10);
+  //   this.debouncedchange = debounce(this.debouncedchange, 120);
+  // }
 
   public get validity(): ValidityState {
     if (this.element && 'validity' in this.element) {
@@ -184,6 +189,7 @@ export class Field extends CustomElementInternals {
       this._internals.setFormValue(value || null);
     }
   }
+  @debounce(120)
   protected debouncedchange() {
     this.dispatchEvent(new Event('change'));
     this.validateElement();
@@ -263,6 +269,7 @@ export class Field extends CustomElementInternals {
       }
     }
   }
+  @debounce(10)
   private slotvisibility() {
     let header = 0;
     let footer = 0;
@@ -328,7 +335,7 @@ export class Field extends CustomElementInternals {
     `
   }
 
-  render(render?: RenderArgument): RenderType {
+  render(render?: RenderArgument) {
     return html`
       ${this.renderHeader(render?.header)}
       ${this.renderMain(render?.main)}

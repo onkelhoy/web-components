@@ -1,7 +1,7 @@
 import http, { OutgoingHttpHeaders } from 'node:http';
 import url from 'node:url';
 import { SocketServer } from './socket';
-import { NetworkInfo } from './types/socket';
+import { type NetworkInfo } from './types/socket';
 
 export function app(wss: SocketServer) {
   return function (req: http.IncomingMessage, res: http.ServerResponse) {

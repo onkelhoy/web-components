@@ -1,76 +1,68 @@
+/**
+ * @fileoverview Provides the `@query` decorator for automatically wiring
+ * up DOM element references in `CustomElement` subclasses.
+ *
+ * The decorator stores metadata (selector, load callback, property key)
+ * that is later used by `CustomElement`'s `findQueries()` method to
+ * populate decorated properties.
+ *
+ * @author Henry Pap (GitHub: @onkelhoy)
+ * @created 2025-08-11
+ */
+
 import { Setting } from "./types";
+import { QueryMeta } from "@element/types";
 
-export function Decorator<T extends Element = HTMLElement>(setting: string | Setting<T>) {
-  const _setting: Setting<T> = {
-    selector: "",
+/**
+ * A property decorator that registers a DOM query for the decorated property.
+ *
+ * Can be used in two forms:
+ * - `@query` with no arguments → property name is used as selector
+ * - `@query('selector')` or `@query({ selector: '...', load: el => {} })`
+ *
+ * When the component updates, the matching element is assigned to the property.
+ *
+ * @template T The type of the element being queried (defaults to `HTMLElement`).
+ * @param settings Either a selector string, a partial `Setting<T>`, or omitted.
+ */
+export function query<T extends Element = HTMLElement>(settings: string | Partial<Setting<T>>): PropertyDecorator;
+
+/**
+ * Overload for decorator used without arguments.
+ * @param target The prototype of the class.
+ * @param propertyKey The name of the property.
+ */
+export function query(target: Object, propertyKey: PropertyKey): void;
+
+export function query<T extends Element = HTMLElement>(
+  targetOrSettings: Object | string | Partial<Setting<T>>,
+  propertyKey?: PropertyKey
+): void | PropertyDecorator {
+  // @query — no args
+  if (propertyKey) {
+    define<T>(targetOrSettings as Object, propertyKey, {});
+    return; // void → valid for this overload
   }
 
-  if (typeof setting === "string") {
-    _setting.selector = setting;
-  }
-  else {
-    _setting.selector = setting.selector;
-    _setting.load = setting.load;
-  }
+  // @query({...}) — with config
+  const settings: Partial<Setting<T>> =
+    typeof targetOrSettings === "string"
+      ? { selector: targetOrSettings }
+      : (targetOrSettings as Partial<Setting<T>>);
 
-  return function (target: HTMLElement, propertyKey: string) {
-    const renderattemptsKey = propertyKey + 'rerender_attempts_';
-    const timeoutattemptsKey = propertyKey + 'timeout_attempts_';
+  return function (target: Object, key: PropertyKey) {
+    define<T>(
+      target, 
+      key, 
+      settings,
+    );
+  };
+}
 
-    // Store the original connectedCallback, if it exists
-    const originalConnectedCallback = (target as any).connectedCallback || function () { };
-
-    // Override connectedCallback
-    (target as any).connectedCallback = function () {
-      // Call the original connectedCallback
-      originalConnectedCallback.call(this);
-
-      // init the search
-      initsearch.call(this);
-    };
-    function initsearch(this: any) {
-      if (!search.call(this)) {
-        rendersearch.call(this);
-      }
-    }
-    function rendersearch(this: any) {
-      let attempts = this[renderattemptsKey] || 0;
-      attempts++;
-      if (!search.call(this) && attempts < 5) {
-        this[timeoutattemptsKey] = 0;
-        this[renderattemptsKey] = attempts;
-        setTimeout(() => timeoutsearch.call(this), 100);
-
-        if (this.callAfterRender) this.callAfterRender.push(() => rendersearch.call(this));
-      }
-    }
-    function timeoutsearch(this: any) {
-      let attempts = this[timeoutattemptsKey] || 0;
-      attempts++;
-      if (!search.call(this) && attempts < 3) {
-        this[timeoutattemptsKey] = attempts;
-        setTimeout(() => timeoutsearch.call(this), 100);
-      }
-    }
-    function search(this: HTMLElement) {
-      if ((this as any)[propertyKey]) return true;
-
-      if (this.shadowRoot) {
-        const element = this.shadowRoot.querySelector<T>(_setting.selector);
-        if (element) {
-          (this as any)[propertyKey] = element;
-
-          if (typeof _setting === "object") {
-            if (_setting.load) {
-              _setting.load.call(this, element);
-            }
-          }
-
-          return true;
-        }
-      }
-
-      return false;
-    }
-  }
+function define<T extends Element = HTMLElement>(target: any, propertyKey: PropertyKey, settings: Partial<Setting<T>>): void {
+  const selector = String(settings.selector ?? propertyKey);
+  
+  // Always store on target
+  const meta: QueryMeta[] = target.queryMeta ??= [];
+  meta.push({ selector, load: settings.load, propertyKey });
 }

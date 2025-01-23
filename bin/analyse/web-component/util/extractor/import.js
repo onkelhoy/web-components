@@ -33,7 +33,7 @@ function extract_import(line) {
 
 // helper
 function checkimport(from) {
-  if (from.startsWith('@pap-it/system')) {
+  if (from.startsWith('@papit/core')) {
     return false;
   }
   if (!from.startsWith('@' + process.env.PROJECTSCOPE)) {

@@ -24,8 +24,14 @@
     ".config"
   ],
   "exports": {
-    "./react": "./lib/react/index.js",
-    ".": "./lib/bundle.js"
+    ".": {
+      "import": "./lib/bundle.js",
+      "types": "./lib/types/index.d.ts"
+    },
+    "./react": {
+      "import": "./lib/react/index.js",
+      "types": "./lib/types/index.d.ts"
+    }
   },
   "author": "GITNAME",
   "private": false,
@@ -39,8 +45,7 @@
     "url": "PLACEHOLDER_GITHUB_REPO.git"
   },
   "dependencies": {
-    "@papit/core": "^*",
-    "tslib": "^2.5.0"
+    "@papit/core": "^*"
   },
   "devDependencies": {
     "@papit/translator": "^*",

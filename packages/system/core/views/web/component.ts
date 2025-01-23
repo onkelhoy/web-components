@@ -12,7 +12,7 @@ type AO = {
 export class TestComponent1 extends CustomElement {
   static styles = [style]
 
-  @property() foo: string = "bar";
+  @property foo: string = "bar";
   @property({ type: Number }) bajs: number = 44;
   @property({ type: Boolean, attribute: 'foo-laa' }) fooLaa: boolean = true;
   @property({ type: Object, attribute: 'veryvery-goooood' }) good: AO = { bajs: 44, name: 'banan' };
@@ -38,10 +38,10 @@ export class TestComponent1 extends CustomElement {
 export class TestComponent2 extends CustomElement {
   static style = style;
 
-  @property() foo: string = "bar";
-  @property() OK: string = "bar";
-  @property() bajsapa: string = "bar";
-  @property() heheh: string = "bar";
+  @property foo: string = "bar";
+  @property OK: string = "bar";
+  @property bajsapa: string = "bar";
+  @property heheh: string = "bar";
 
   render() {
     return html`
@@ -57,8 +57,8 @@ export class TestComponent2 extends CustomElement {
 export class TestComponent3 extends TestComponent1 {
   static styles = [...TestComponent1.styles, ':host {background-color: red;color:black;}']
 
-  @property() snoske: string = "bar";
-  @property() foo: string = "BAAJS";
+  @property snoske: string = "bar";
+  @property foo: string = "BAAJS";
 
   render() {
     return html`
@@ -75,7 +75,7 @@ export class TestComponent3 extends TestComponent1 {
 export class TestComponent4 extends TestComponent3 {
   static style = ':host {background-color: yellow;}';
 
-  @property() SLISKENOCHPISKEN = "hejsansvejkasn"
+  @property SLISKENOCHPISKEN = "hejsansvejkasn"
 
   render() {
     return html`

@@ -1,5 +1,5 @@
 // utils 
-import { html, property, query, CustomElement, debounce } from "@papit/core";
+import { html, property, query, CustomElement, debounce, bind } from "@papit/core";
 
 // templates : visuals
 import "@papit/prefix-suffix";
@@ -24,7 +24,6 @@ export class Tabs extends CustomElement {
   @query('main') mainElement!: HTMLElement;
 
   @property({
-    rerender: false,
     after: function (this: Tabs) {
       if (!this.internalselect) {
         this.dispatchEvent(new Event('pre-change'));
@@ -33,18 +32,14 @@ export class Tabs extends CustomElement {
     }
   }) selected?: string;
   @property({ type: Boolean }) indicator: boolean = true;
-  @property({ rerender: false, type: Boolean }) scrolling: boolean = false;
+  @property({ type: Boolean }) scrolling: boolean = false;
 
   private internalselect = false;
   public selected_id?: string;
 
-  constructor() {
-    super();
-    this.initselect = debounce(this.initselect);
-  }
-
   // event handlers
-  private handleslotchange = (e: Event) => {
+  @bind
+  private handleslotchange(e: Event) {
     if (e.target instanceof HTMLSlotElement) {
       let selected: string | null = null;
       let firsttab: string | null = null;
@@ -95,7 +90,8 @@ export class Tabs extends CustomElement {
       }
     }
   }
-  private handletabclick = (e: Event) => {
+  @bind
+  private handletabclick(e: Event) {
     if (e.target instanceof TabsTrigger) {
       if (!this.scrollclick) {
         this.internalclick = true;
@@ -144,7 +140,9 @@ export class Tabs extends CustomElement {
       }
     }
   }
-  private handlescroll = (e: Event) => {
+
+  @bind
+  private handlescroll(e: Event) {
     if (this.scrolling && this.mainElement) {
       this.currentlyscrolling = true;
       const ST = this.mainElement.scrollTop;
@@ -161,14 +159,17 @@ export class Tabs extends CustomElement {
       }
     }
   }
-  private handlescrollend = (e: Event) => {
+  @bind
+  private handlescrollend(e: Event) {
     this.currentlyscrolling = false;
     this.internalclick = false;
     this.scrollclick = false;
   }
 
   // helper function
-  private initselect = (id: string) => {
+  @debounce
+  @bind
+  private initselect(id: string) {
     if (this.selected === undefined) {
       this.selected = id;
     }

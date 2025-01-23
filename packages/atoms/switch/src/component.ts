@@ -1,22 +1,24 @@
 // import statements 
 // system 
-import { html, property, Color, State, Radius, Size, CustomElement } from "@papit/core";
+import { html, property, bind } from "@papit/core";
 
 import { BinaryFormElement } from "@papit/binary-form-element";
 
 // local 
 import { style } from "./style";
+import { Color, Radius, Size } from "types";
 
 
 // TODO: inside the file "packages/system/core/src/class/element"
 export class Switch extends BinaryFormElement {
   static style = style;
 
-  @property({ rerender: false }) color: Color = "success";
-  @property({ rerender: false }) size: Size = "medium";
-  @property({ rerender: false }) radius: Radius = "circle";
+  @property color: Color = "success";
+  @property size: Size = "medium";
+  @property radius: Radius = "circle";
 
-  private handleslotchange = (e: Event) => {
+  @bind
+  private handleslotchange(e: Event) {
     if (e.target instanceof HTMLSlotElement) {
       const nodes = e.target.assignedNodes();
       const name = e.target.getAttribute("name") || "label";

@@ -8,12 +8,6 @@ import { style } from "./style";
 export class ColorCard extends CustomElement {
   static style = style;
 
-  constructor() {
-    super({
-      reactiveStyling: true,
-    })
-  }
-
   @property({
     set: function (this: ColorCard, value: string) {
       if (!value.startsWith("--")) {

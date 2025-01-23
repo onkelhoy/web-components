@@ -1,5 +1,5 @@
 // utils 
-import { CustomElement } from "@papit/core";
+import { bind, CustomElement } from "@papit/core";
 
 // local 
 import { style } from "./style";
@@ -17,7 +17,8 @@ export class TabsContent extends CustomElement {
   }
 
   // event handlers
-  private handlechange = (e: Event) => {
+  @bind 
+  private handlechange (e: Event) {
     // NOTE change can be bubbled so a input inside (slotted) would trigger -> make sure currentTarget & target is same meaning its tabs 
     if (e.target && e.currentTarget === e.target) {
       if ('selected' in e.target) {
