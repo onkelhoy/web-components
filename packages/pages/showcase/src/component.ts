@@ -35,22 +35,22 @@ export class PageShowcase extends CustomElement {
       <div key="${layer.name}">
         <p>${layer.displayname || layer.name}</p>
         ${layer.packages.map(pkg => {
-      let name, displayname;
-      if (typeof pkg === "object") {
-        name = pkg.name;
-        displayname = pkg.displayname || name;
-      }
-      else {
-        name = pkg;
-        displayname = name;
-      }
+          let name, displayname;
+          if (typeof pkg === "object") {
+            name = pkg.name;
+            displayname = pkg.displayname || name;
+          }
+          else {
+            name = pkg;
+            displayname = name;
+          }
 
-      return html`
-        <button @click="${this.handlepackageclick}" key="${layer.name}/${name}" data-url="${layer.name}/${name}">
-          ${displayname}
-        </button>
-      `;
-    })}
+          return html`
+            <button @click="${this.handlepackageclick}" key="${layer.name}/${name}" data-url="${layer.name}/${name}">
+              ${displayname}
+            </button>
+          `;
+      })}
       </div>
     `)
   }

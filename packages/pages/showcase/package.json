@@ -19,14 +19,15 @@
   "type": "module",
   "files": [
     "asset/",
-    "lib/"
+    "lib/",
+    "bin/generate.sh"
   ],
   "exports": {
     "./react": "./lib/react/index.js",
     ".": "./lib/bundle.js"
   },
   "bin": {
-    "showcase": "./lib/run.sh"
+    "showcase": "./bin/generate.sh"
   },
   "author": "Henry",
   "private": false,
