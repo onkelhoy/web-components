@@ -1,8 +1,9 @@
 // core
-import { Engine, InputEvents } from '@papit/game-engine';
+import { Engine } from '@papit/game-engine';
+import { InputEvents } from "@papit/game-input-events";
 
 // component
-import '@papit/game-engine';
+import '@papit/game-matrix';
 
 let engine, events;
 

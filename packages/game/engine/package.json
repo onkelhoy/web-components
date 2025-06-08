@@ -1,7 +1,7 @@
 {
   "name": "@papit/game-engine",
   "description": "",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "scripts": {
     "build": "bash ./bin/build.sh",
     "watch": "bash ./bin/watch.sh",
@@ -35,6 +35,7 @@
   },
   "devDependencies": {
     "@papit/codeblock": "^0.0.0",
+    "@papit/game-input-events": "0.0.5",
     "chokidar": "^3.6.0",
     "esbuild": "^0.17.18",
     "node-html-parser": "^6.1.11",

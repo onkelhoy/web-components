@@ -1,10 +1,14 @@
 import { describe, it, beforeEach } from "node:test";
 import assert from "node:assert";
 
-describe('A thing', () => {
-  beforeEach(() => console.log('about to run a test'));
+// import { InputEvents } from '@papit/game-input-events';
 
-  it('should work', () => {
-    assert.strictEqual(1, 1);
+describe.skip('@papit/game-input-events unit tests', () => {
+  // beforeEach(() => console.log('about to run a test'));
+
+  it('template test', () => {
+    // const temp = new InputEvents();
+    // temp.doSomething();
+    // assert.strictEqual(1, 1);
   });
 });

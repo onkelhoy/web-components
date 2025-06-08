@@ -1,10 +1,12 @@
 import { describe, it, beforeEach } from "node:test";
 import assert from "node:assert";
 
-describe('A thing', () => {
-  beforeEach(() => console.log('about to run a test'));
+// import { isPointInTriangle } from '@papit/game-intersection';
 
-  it('should work', () => {
-    assert.strictEqual(1, 1);
+describe.skip('@papit/game-intersection [triangle] unit tests', () => {
+  // beforeEach(() => console.log('about to run a test'));
+
+  it('template test', () => {
+    // assert.strictEqual(1, 1);
   });
 });
