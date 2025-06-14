@@ -4,22 +4,19 @@ import { CustomElement, html, property } from "@papit/core";
 
 // local 
 import { style } from "./style";
-import { ClickEvent } from "./types";
+import { Mode } from "./types";
 
 export class Accordion extends CustomElement {
   static style = style;
 
-  // properties 
-  @property({ type: Boolean }) foo: boolean = false;
-
-  // event handlers
-  private handleclick = () => {
-    this.dispatchEvent(new CustomEvent<ClickEvent>("main-click", { detail: { timestamp: performance.now() } }));
-  }
+  @property({ rerender: false, type: Boolean }) open: boolean = false;
+  @property({ rerender: false }) mode: Mode = "vertical";
 
   render() {
-    return html`
-      <p @click="${this.handleclick}">Llama Trauma Baby Mama</p>
+    return `
+      <div part="group">
+        <slot></slot>
+      </div>
     `
   }
 }
