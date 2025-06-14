@@ -95,7 +95,7 @@ if [[ $LOGLEVEL_VALUE -gt 1 ]]; then
 fi 
 
 if [[ -z "$LOCATION" ]]; then 
-  echo "[\x1b[31merror] no location provided\x1b[0m"
+  echo "no location provided"
   exit 1
 fi 
 
@@ -142,7 +142,7 @@ if [[ ${#asset_dirs_arr[@]} -gt 0 ]]; then
   export ASSET_DIRS="${asset_dirs_arr[*]}"
   
   if [[ $LOGLEVEL == "debug" ]]; then
-    echo "\x1b[32mExported Assets\x1b[0m: $ASSET_DIRS"
+    echo "Exported Assets: $ASSET_DIRS"
     echo ""
   fi
 fi
@@ -212,13 +212,13 @@ if [[ $DOOPEN == true ]]; then
       if command -v xdg-open >/dev/null 2>&1; then
         xdg-open "$URL"
       else
-        echo "[\x1b[33merror\x1b[0m] xdg-open is not available, please install it to open URLs."
+        echo "error xdg-open is not available, please install it to open URLs."
       fi
     elif [[ "$OSTYPE" == "cygwin" ]] || [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
       # Windows (Cygwin, Git Bash, or Windows Subsystem for Linux)
       start "$URL"
     else
-      echo "[\x1b[33merror\x1b[0m] unsupported OS: Cannot open URL automatically."
+      echo "error unsupported OS: Cannot open URL automatically."
     fi
   fi 
 fi 
