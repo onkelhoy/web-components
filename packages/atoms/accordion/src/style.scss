@@ -9,12 +9,12 @@
 
 :host([mode="vertical"]) {
   grid-template-rows: 0fr;
-  transition: grid-template-rows var(--accordion-easing, cubic-bezier(1, 0, 0, 1)) var(--accordion-duration, 200ms);
+  transition: grid-template-rows var(--accordion-easing, cubic-bezier(1, 0, 0, 1)) var(--timing-normal, 120ms);
 }
 
 :host([mode="horizontal"]) {
   grid-template-columns: 0fr;
-  transition: grid-template-columns var(--accordion-easing, cubic-bezier(1, 0, 0, 1)) var(--accordion-duration, 200ms);
+  transition: grid-template-columns var(--accordion-easing, cubic-bezier(1, 0, 0, 1)) var(--timing-normal, 120ms);
 
   &>* {
     white-space: nowrap;

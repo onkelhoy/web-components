@@ -17,9 +17,41 @@
 
 <body>
   <pap-card>
-    <pap-typography slot="header" variant="h4">Title</pap-typography>
     <pap-codeblock display="both">
-      <pap-accordion></pap-accordion>
+      <pap-typography slot="header">Default</pap-typography>
+      <pap-accordion id="target">
+        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis, sunt excepturi. Maxime nihil laborum
+          consectetur, ex iure accusamus, atque asperiores iusto culpa earum hic laboriosam quisquam nobis dolorum
+          excepturi odit!</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illo quam debitis facilis quo neque consectetur,
+          recusandae ex amet libero accusantium, sit aliquam quia perferendis error. Corrupti earum explicabo quo
+          excepturi!</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo illo aspernatur pariatur saepe fuga
+          officiis libero ad iste ducimus doloribus. Nostrum magni corporis laborum fuga dicta illo amet. Veniam, porro?
+        </p>
+      </pap-accordion>
+
+      <button id="openBTN">OPEN</button>
+      <button id="closeBTN">CLOSE</button>
+    </pap-codeblock>
+  </pap-card>
+  <pap-card>
+    <pap-codeblock display="both">
+      <pap-typography slot="header">Horizontal mode</pap-typography>
+      <pap-accordion id="horizontaltarget" mode="horizontal">
+        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis, sunt excepturi. Maxime nihil laborum
+          consectetur, ex iure accusamus, atque asperiores iusto culpa earum hic laboriosam quisquam nobis dolorum
+          excepturi odit!</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illo quam debitis facilis quo neque consectetur,
+          recusandae ex amet libero accusantium, sit aliquam quia perferendis error. Corrupti earum explicabo quo
+          excepturi!</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo illo aspernatur pariatur saepe fuga
+          officiis libero ad iste ducimus doloribus. Nostrum magni corporis laborum fuga dicta illo amet. Veniam, porro?
+        </p>
+      </pap-accordion>
+
+      <button id="horizontalopenBTN">OPEN</button>
+      <button id="horizontalcloseBTN">CLOSE</button>
     </pap-codeblock>
   </pap-card>
 </body>

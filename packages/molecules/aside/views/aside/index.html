@@ -17,9 +17,28 @@
 
 <body>
   <pap-card>
-    <pap-typography slot="header" variant="h4">Title</pap-typography>
+    <pap-button id="aside-show" variant="outlined" color="secondary">Open All</pap-button>
+  </pap-card>
+  <pap-card>
+    <pap-typography slot="header" variant="C1">Top & Bottom</pap-typography>
     <pap-codeblock display="both">
-      <pap-aside></pap-aside>
+      <pap-aside placement="top">
+        Hello im top content
+      </pap-aside>
+      <pap-aside placement="bottom">
+        Hello im bottom content
+      </pap-aside>
+    </pap-codeblock>
+  </pap-card>
+  <pap-card>
+    <pap-typography slot="header" variant="C1">Left & Right</pap-typography>
+    <pap-codeblock display="both">
+      <pap-aside placement="left">
+        Hello im left content
+      </pap-aside>
+      <pap-aside placement="right">
+        Hello im right content
+      </pap-aside>
     </pap-codeblock>
   </pap-card>
 </body>
