@@ -2,9 +2,23 @@
   display: flex;
 
   section {
-    width: 120px;
-    background-color: rgb(213, 213, 213);
+    width: 150px;
+    background-color: var(--pap-foreground);
     padding: 1rem;
+
+    div {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+
+      pap-button {
+
+        &::part(prefix-suffix) {
+          flex: 1;
+        }
+      }
+    }
   }
 
   main {

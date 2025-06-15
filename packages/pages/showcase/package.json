@@ -41,9 +41,11 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
+    "@papit/button": "^0.0.2",
     "@papit/core": "0.0.2",
     "@papit/router": "0.0.1",
-    "tslib": "^2.5.0"
+    "tslib": "^2.5.0",
+    "typography": "^0.16.24"
   },
   "devDependencies": {
     "@papit/codeblock": "^0.0.0",

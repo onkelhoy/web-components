@@ -18,10 +18,10 @@ export class Button extends CustomElementInternals {
   @property({ rerender: false }) color: Color = "primary";
   @property({ rerender: false }) size: Size = "medium";
   @property({ rerender: false }) radius: Radius = "circle";
-  @property({ rerender: false, type: Boolean }) ripple: boolean = true;
+  @property({ rerender: false, type: Boolean }) ripple: boolean = false;
 
   private pressed?: number = undefined;
-  
+
   constructor() {
     super();
 
@@ -69,13 +69,14 @@ export class Button extends CustomElementInternals {
     }
   }
   private handlepressfinished = () => {
-    if (this.pressed) {
-      const time = performance.now() - this.pressed;
-      this.pressed = undefined;
+    if (!this.pressed) return;
+    if (!this.ripple) return;
 
-      if (320 - time < 0) this.classList.remove("click");
-      else setTimeout(() => this.classList.remove("click"), 320 - time);
-    }
+    const time = performance.now() - this.pressed;
+    this.pressed = undefined;
+
+    if (320 - time < 0) this.classList.remove("click");
+    else setTimeout(() => this.classList.remove("click"), 320 - time);
   }
   private handleclick = () => {
     if (this.hasAttribute("disabled")) return;
@@ -98,6 +99,7 @@ export class Button extends CustomElementInternals {
   // helper 
   private calculatecircle(x?: number, y?: number) {
     if (this.pressed) return;
+    if (!this.ripple) return;
 
     if (!x || !y || this.hasAttribute("circle") || this.hasAttribute("square")) {
       this.style.setProperty("--x", "50%");

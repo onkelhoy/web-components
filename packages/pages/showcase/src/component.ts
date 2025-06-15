@@ -1,6 +1,11 @@
 // import statements 
 // system 
 import { CustomElement, html, property, query } from "@papit/core";
+
+// atoms 
+import "@papit/typography";
+import "@papit/button";
+
 // logicals
 import "@papit/router";
 
@@ -33,24 +38,32 @@ export class PageShowcase extends CustomElement {
   private renderlayer() {
     return this.data.map(layer => html`
       <div key="${layer.name}">
-        <p>${layer.displayname || layer.name}</p>
+        <pap-typography>${layer.displayname || layer.name}</pap-typography>
         ${layer.packages.map(pkg => {
-          let name, displayname;
-          if (typeof pkg === "object") {
-            name = pkg.name;
-            displayname = pkg.displayname || name;
-          }
-          else {
-            name = pkg;
-            displayname = name;
-          }
+      let name, displayname;
+      if (typeof pkg === "object") {
+        name = pkg.name;
+        displayname = pkg.displayname || name;
+      }
+      else {
+        name = pkg;
+        displayname = name;
+      }
 
-          return html`
-            <button @click="${this.handlepackageclick}" key="${layer.name}/${name}" data-url="${layer.name}/${name}">
-              ${displayname}
-            </button>
-          `;
-      })}
+      return html`
+          <pap-button 
+            variant="clear"
+            radius="small" 
+            size="small" 
+            key="${layer.name}/${name}" 
+            data-url="${layer.name}/${name}"
+            class="content-flex-start"
+            @click="${this.handlepackageclick}" 
+          >
+            ${displayname}
+          </pap-button>
+        `;
+    })}
       </div>
     `)
   }
