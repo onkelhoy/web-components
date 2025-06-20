@@ -2,9 +2,6 @@
 // system 
 import { CustomElement, html, property, Radius, RenderType } from "@papit/core";
 
-// atoms 
-import "@papit/accordion";
-
 // local 
 import { style } from "./style";
 import { Placement, Mode, Elevation, ElevationDirection } from "./types";
@@ -91,16 +88,14 @@ export class Aside extends CustomElement {
         part="wrapper" 
         @click="${this.handlewrapperclick}"
       >
-        <pap-accordion 
-          part="accordion"
-          open="${this.open}"
-          mode="${['left', 'right'].includes(this.placement) ? "horizontal" : "vertical"}"
-        >
-          <div part="content">
-            ${content}
-            <slot></slot>
+        <div part="accordion">
+          <div part="group">
+            <div part="content">
+              ${content}
+              <slot></slot>
+            </div>
           </div>
-        </pap-accordion>
+        </div>
       </div>
     `
   }

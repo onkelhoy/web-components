@@ -1,8 +1,8 @@
 import { Aside } from './component.js';
 
 // export 
-export * from "./component";
-export * from "./types";
+export * from "./component.js";
+export * from "./types.js";
 
 // Register the element with the browser
 

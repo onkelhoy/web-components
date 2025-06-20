@@ -13,6 +13,13 @@
 
     pap-accordion {
       height: 100%;
+
+      display: grid;
+      overflow: hidden;
+
+      div[part="group"] {
+        overflow: hidden;
+      }
     }
   }
 
@@ -99,6 +106,36 @@
   height: 100vh;
   width: 100vw;
 }
+
+:host([placement="left"]),
+:host([placement="right"]) {
+  grid-template-columns: 0fr;
+  transition: grid-template-columns var(--accordion-easing, cubic-bezier(1, 0, 0, 1)) var(--timing-normal, 120ms);
+
+  &>* {
+    white-space: nowrap;
+  }
+}
+
+:host([placement="top"]),
+:host([placement="bottom"]) {
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--accordion-easing, cubic-bezier(1, 0, 0, 1)) var(--timing-normal, 120ms);
+}
+
+
+:host([placement="left"][open="true"]),
+:host([placement="right"][open="true"]) {
+  grid-template-columns: 1fr;
+
+}
+
+:host([placement="top"][open="true"]),
+:host([placement="bottom"][open="true"]) {
+  grid-template-rows: 1fr;
+
+}
+
 
 :host([placement="right"]) {
   div[part="wrapper"] {
