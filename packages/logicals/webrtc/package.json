@@ -1,7 +1,7 @@
 {
   "name": "@papit/webrtc",
   "description": "",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "build": "bash ./bin/build.sh",
     "watch": "bash ./bin/watch.sh",
@@ -34,10 +34,10 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
-    "@papit/core": "^*",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
+    "@papit/core": "^*",
     "@papit/translator": "^*",
     "@papit/codeblock": "^*",
     "@types/node": "^22.10.2",

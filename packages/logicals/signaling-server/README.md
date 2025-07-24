@@ -14,28 +14,6 @@
 npm install @papit/signaling-server
 ```
 
-### to use in **html**
-
-```html
-<script type="module" defer>
-  import "@papit/signaling-server";
-</script>
-
-<></>
-```
-
-### to use in **react**
-
-```jsx
-import { SignalingServer } from "@papit/signaling-server/react";
-
-function Component() {
-  return (
-    <SignalingServer /> 
-  )
-}
-```
-
 ## Development
 
 Development takes place within the `src` folder. To add a new subcomponent, use the command `npm run component:add`. This command updates the `.env` file, creates a view folder, and adds a subfolder in the `components` folder (creating it if it doesn't exist) inside `src` with all the necessary files.

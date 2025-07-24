@@ -1,7 +1,7 @@
 {
   "name": "@papit/signaling-server",
   "description": "",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "build": "bash ./bin/build.sh",
     "watch": "bash ./bin/watch.sh",
@@ -24,6 +24,7 @@
   },
   "exports": {
     "./react": "./lib/react/index.js",
+    "./start": "./lib/start.js",
     ".": "./lib/bundle.js"
   },
   "author": "Henry",
@@ -38,11 +39,11 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
-    "@papit/core": "^*",
     "tslib": "^2.5.0",
     "ws": "^8.18.2"
   },
   "devDependencies": {
+    "@papit/core": "^*",
     "@papit/codeblock": "^*",
     "@papit/translator": "^*",
     "@playwright/test": "^1.45.3",
