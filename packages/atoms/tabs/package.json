@@ -1,7 +1,7 @@
 {
   "name": "@papit/tabs",
   "description": "",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "build:sass": "bash ./bin/_utils/sass.sh",
     "build:react": "bash ./bin/_utils/react.sh",
