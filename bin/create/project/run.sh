@@ -8,9 +8,6 @@ echo "project generate run"
 # get destination folder 
 destination=${1:-$(pwd)/projects}
 read -p "Project name: " name
-read -p "Project prefix: " prefix
-export name
-export prefix 
 
 echo "destination: [$destination]"
 echo ""
@@ -33,7 +30,6 @@ while [ -d "$destination" ]; do
     read -p "other destination: " destination
   fi 
 done
-export destination
 
 echo ""
 read -p "create project at ($destination) [1/0]: " confirm_create
@@ -70,13 +66,13 @@ eval "$rsync_cmd"
 # now copy the template stuff as well 
 rsync -av $SCRIPTDIR/project/template/ $destination
 
-fullname="@$prefix/$name"
+fullname="@$name/root"
 
 # replace names 
 sed -i '' "s#PROJECTSCOPE#$fullname#g" $destination/README.md
 sed -i '' "s#PROJECTSCOPE#$fullname#g" $destination/package.json
 sed -i '' "s#PLACEHOLDER_NAME#$name#g" $destination/package.json
-sed -i '' "s#PLACEHOLDER_PREFIX#$prefix#g" $destination/.config
+sed -i '' "s#PLACEHOLDER_PREFIX#$name#g" $destination/.config
 
 # Setup Git & Project install 
 cd $destination

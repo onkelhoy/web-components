@@ -1,6 +1,6 @@
 {
   "name": "PLACEHOLDER_FULL_NAME",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "build": "bash ./bin/build.sh",
     "start": "bash ./bin/start.sh",
