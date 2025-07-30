@@ -1,0 +1,12 @@
+body {
+  background-color: var(--pap-background, #DEDEDE);
+  color: var(--pap-text, #080808);
+}
+
+.tabs-scrolling-indicator > pap-tabs-content {
+  min-height: 20rem;
+}
+
+p[slot] {
+  margin-block: 0;
+}

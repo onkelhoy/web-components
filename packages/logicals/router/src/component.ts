@@ -98,14 +98,17 @@ export class Router extends CustomElement {
     }
   }
   private handlewindowpopstate = (event: PopStateEvent) => {
-
     if (event.state?.url) {
       // Handle state restoration here
       this.internalpopstate = true;
       this.url = event.state.url;
     }
     else {
-      this.cleanup();
+      if (this.hashbased)
+      {
+        this.url = tidy(window.location.pathname) + tidy(window.location.hash.replace("#", ""));
+      }
+      else this.cleanup();
     }
   }
 

@@ -19,7 +19,8 @@
   "type": "module",
   "files": [
     "asset/",
-    "lib/"
+    "lib/",
+    ".config"
   ],
   "exports": {
     "./react": "./lib/react/index.js",

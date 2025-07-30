@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tabs prototype</title>
+
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+
+  <script defer src="main.js"></script>
+</head>
+
+<body>
+  <pap-card>
+    <pap-typography variant="C1" slot="header">Pre selected</pap-typography>
+    <pap-codeblock display="both">
+      <pap-tabs selected="hello">
+        <pap-tabs-trigger>Tab A</pap-tabs-trigger>
+        <pap-tabs-trigger>Tab B</pap-tabs-trigger>
+        <pap-tabs-trigger id="hello">Tab C</pap-tabs-trigger>
+        <pap-tabs-trigger>Tab D</pap-tabs-trigger>
+
+        <pap-tabs-content>
+          Tab content A
+        </pap-tabs-content>
+        <pap-tabs-content>
+          Tab content B
+        </pap-tabs-content>
+        <pap-tabs-content>
+          Tab content C
+        </pap-tabs-content>
+        <pap-tabs-content>
+          Tab content D
+        </pap-tabs-content>
+      </pap-tabs>
+    </pap-codeblock>
+  </pap-card>
+  <pap-card>
+    <pap-typography variant="C1" slot="header">No pre selected</pap-typography>
+    <pap-codeblock display="both">
+      <pap-tabs selected="-1">
+        <pap-tabs-trigger>Tab A</pap-tabs-trigger>
+        <pap-tabs-trigger>Tab B</pap-tabs-trigger>
+        <pap-tabs-trigger>Tab C</pap-tabs-trigger>
+        <pap-tabs-trigger>Tab D</pap-tabs-trigger>
+
+        <pap-tabs-content>
+          Tab content A
+        </pap-tabs-content>
+        <pap-tabs-content>
+          Tab content B
+        </pap-tabs-content>
+        <pap-tabs-content>
+          Tab content C
+        </pap-tabs-content>
+        <pap-tabs-content>
+          Tab content D
+        </pap-tabs-content>
+      </pap-tabs>
+    </pap-codeblock>
+  </pap-card>
+  <pap-card>
+    <pap-typography variant="C1" slot="header">Prefix</pap-typography>
+    <pap-codeblock display="both">
+      <pap-tabs>
+        <pap-tabs-trigger>Tab A</pap-tabs-trigger>
+        <pap-tabs-trigger>Tab B</pap-tabs-trigger>
+
+        <pap-tabs-content>
+          Tab content A
+        </pap-tabs-content>
+        <pap-tabs-content>
+          Tab content B
+        </pap-tabs-content>
+
+        <p slot="header-prefix">PREFIX</p>
+      </pap-tabs>
+    </pap-codeblock>
+  </pap-card>
+  <pap-card>
+    <pap-typography variant="C1" slot="header">Suffix</pap-typography>
+    <pap-codeblock display="both">
+      <pap-tabs>
+        <pap-tabs-trigger>Tab A</pap-tabs-trigger>
+        <pap-tabs-trigger>Tab B</pap-tabs-trigger>
+
+        <pap-tabs-content>
+          Tab content A
+        </pap-tabs-content>
+        <pap-tabs-content>
+          Tab content B
+        </pap-tabs-content>
+
+        <p slot="header-suffix">SUFFIX</p>
+      </pap-tabs>
+    </pap-codeblock>
+  </pap-card>
+  <pap-card>
+    <pap-typography variant="C1" slot="header">Full usage of slots</pap-typography>
+    <pap-codeblock display="both">
+      <pap-tabs>
+        <pap-tabs-trigger>Tab A</pap-tabs-trigger>
+        <pap-tabs-trigger>Tab B</pap-tabs-trigger>
+
+        <pap-tabs-content>
+          Tab content A
+        </pap-tabs-content>
+        <pap-tabs-content>
+          Tab content B
+        </pap-tabs-content>
+
+        <p slot="header-prefix">PREFIX</p>
+        <p slot="header-suffix">SUFFIX</p>
+        <p slot="header-top">Im at the top</p>
+        <p slot="header-bottom">Im below the header</p>
+
+        <p slot="between">i exist between the header and content</p>
+      </pap-tabs>
+    </pap-codeblock>
+  </pap-card>
+  <pap-card>
+    <h1>Default</h1>
+    <pap-codeblock display="both">
+      <pap-tabs>
+        <pap-tabs-trigger text="Awesome Tab"></pap-tabs-trigger>
+        <pap-tabs-trigger>
+          <h2>IM SPECIAL</h2>
+        </pap-tabs-trigger>
+        <pap-tabs-trigger>
+          <h1>I am a very long tab name</h1>
+          <p>WOOOOOOOOOOW SO COOL</p>
+        </pap-tabs-trigger>
+        <pap-tabs-trigger text="I AM THE SELECTED ONE" class="selected"></pap-tabs-trigger>
+
+        <pap-tabs-content>I am the awesome tab</pap-tabs-content>
+        <pap-tabs-content>
+          <p>In a sea of clicks and scrolls, there lies a tab so fine,</p>
+          <p>Its design so clever, it’s UI so divine.</p>
+          <br />
+          <p>A tab not normal, unique you see,</p>
+          <p>Its colors bright as a blooming tree.</p>
+          <br />
+          <p>Tabby McTabface, a name quite grand,</p>
+          <p>Commanding attention in UI land.</p>
+          <br />
+          <p>With a wink and a click, it slides into place,</p>
+          <p>Filling the screen with its jovial grace.</p>
+          <br />
+          <p>Under its rule, errors cease,</p>
+          <p>Tabby McTabface, bring us peace!</p>
+          <br />
+          <p>To forget this tab would be a snub,</p>
+          <p>All hail Tabby, the king of the club!</p>
+        </pap-tabs-content>
+        <pap-tabs-content>
+          <p>With some extra stuff</p>
+          <p>I am the extra stuff</p>
+          <p>That was pretty cool</p>
+        </pap-tabs-content>
+        <pap-tabs-content>BONKERS</pap-tabs-content>
+      </pap-tabs>
+    </pap-codeblock>
+  </pap-card>
+  <pap-card>
+    <h1>Scrolling + Indicator</h1>
+    <pap-codeblock display="both">
+      <pap-tabs class="tabs-scrolling-indicator" selected="pre" scrolling="true" indicator="true">
+        <pap-tabs-trigger text="Awesome Tab"></pap-tabs-trigger>
+        <pap-tabs-trigger>
+          <h2>IM SPECIAL</h2>
+        </pap-tabs-trigger>
+        <pap-tabs-trigger id="special">
+          <h1>I am a very long tab name</h1>
+          <p>WOOOOOOOOOOW SO COOL</p>
+        </pap-tabs-trigger>
+        <pap-tabs-trigger text="I AM THE SELECTED ONE" id="pre"></pap-tabs-trigger>
+
+        <p slot="header-prefix">PREFIX</p>
+        <p slot="header-suffix">SUFFIX</p>
+
+        <pap-tabs-content>I am the awesome tab</pap-tabs-content>
+        <pap-tabs-content>
+          <p>In a sea of clicks and scrolls, there lies a tab so fine,</p>
+          <p>Its design so clever, it’s UI so divine.</p>
+          <br />
+          <p>A tab not normal, unique you see,</p>
+          <p>Its colors bright as a blooming tree.</p>
+          <br />
+          <p>Tabby McTabface, a name quite grand,</p>
+          <p>Commanding attention in UI land.</p>
+          <br />
+          <p>With a wink and a click, it slides into place,</p>
+          <p>Filling the screen with its jovial grace.</p>
+          <br />
+          <p>Under its rule, errors cease,</p>
+          <p>Tabby McTabface, bring us peace!</p>
+          <br />
+          <p>To forget this tab would be a snub,</p>
+          <p>All hail Tabby, the king of the club!</p>
+        </pap-tabs-content>
+        <pap-tabs-content id="special">
+          <p>With some extra stuff</p>
+          <p>I am the extra stuff</p>
+          <p>That was pretty cool</p>
+        </pap-tabs-content>
+        <pap-tabs-content>BONKERS</pap-tabs-content>
+      </pap-tabs>
+    </pap-codeblock>
+  </pap-card>
+  <pap-card>
+    <h1>Nested</h1>
+    <pap-codeblock display="both">
+      <pap-tabs>
+        <pap-tabs-trigger text="demo"></pap-tabs-trigger>
+        <pap-tabs-content>
+          <pap-tabs>
+            <pap-tabs-trigger text="Awesome Tab"></pap-tabs-trigger>
+            <pap-tabs-trigger>
+              <h2>IM SPECIAL</h2>
+            </pap-tabs-trigger>
+            <pap-tabs-trigger>
+              <h1>I am a very long tab name</h1>
+              <p>WOOOOOOOOOOW SO COOL</p>
+            </pap-tabs-trigger>
+            <pap-tabs-trigger text="I AM THE SELECTED ONE" class="selected"></pap-tabs-trigger>
+
+            <pap-tabs-content>I am the awesome tab</pap-tabs-content>
+            <pap-tabs-content>
+              <p>In a sea of clicks and scrolls, there lies a tab so fine,</p>
+              <p>Its design so clever, it’s UI so divine.</p>
+              <br />
+              <p>A tab not normal, unique you see,</p>
+              <p>Its colors bright as a blooming tree.</p>
+              <br />
+              <p>Tabby McTabface, a name quite grand,</p>
+              <p>Commanding attention in UI land.</p>
+              <br />
+              <p>With a wink and a click, it slides into place,</p>
+              <p>Filling the screen with its jovial grace.</p>
+              <br />
+              <p>Under its rule, errors cease,</p>
+              <p>Tabby McTabface, bring us peace!</p>
+              <br />
+              <p>To forget this tab would be a snub,</p>
+              <p>All hail Tabby, the king of the club!</p>
+            </pap-tabs-content>
+            <pap-tabs-content>
+              <p>With some extra stuff</p>
+              <p>I am the extra stuff</p>
+              <p>That was pretty cool</p>
+            </pap-tabs-content>
+            <pap-tabs-content>BONKERS</pap-tabs-content>
+          </pap-tabs>
+        </pap-tabs-content>
+      </pap-tabs>
+    </pap-codeblock>
+  </pap-card>
+
+  <pap-card>
+    <pap-typography variant="C2" slot="header">Dynamic Content</pap-typography>
+    <pap-codeblock display="both">
+      <pap-tabs></pap-tabs>
+      <pap-button color="secondary" radius="medium">LOAD</pap-button>
+      <script>
+        const currentScript = document.currentScript;
+
+        document.addEventListener("DOMContentLoaded", () => {
+          if (currentScript) {
+            const codeblock = currentScript.closest('pap-codeblock');
+            const tabs = codeblock.originalQuerySelector('pap-tabs');
+            const btn = codeblock.originalQuerySelector('pap-button');
+
+            btn.addEventListener('click', () => {
+              tabs.innerHTML = `
+                <pap-tabs-trigger>Tab 1</pap-tabs-trigger>
+                <pap-tabs-trigger>Tab 2</pap-tabs-trigger>
+                <pap-tabs-content>
+                  <form>
+                    <input name="a" />
+                    <input name="b" />
+                  </form>  
+                </pap-tabs-content>
+                <pap-tabs-content>Content 2</pap-tabs-content>
+              `
+            });
+          }
+        });
+      </script>
+    </pap-codeblock>
+  </pap-card>
+</body>
+
+</html>

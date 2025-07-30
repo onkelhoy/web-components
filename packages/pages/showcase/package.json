@@ -1,6 +1,6 @@
 {
   "name": "@papit/page-showcase",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
     "build:sass": "bash ./bin/_utils/sass.sh",
     "build:react": "bash ./bin/_utils/react.sh",
@@ -19,11 +19,16 @@
   "type": "module",
   "files": [
     "asset/",
-    "lib/"
+    "lib/",
+    "bin/generate.sh",
+    ".config"
   ],
   "exports": {
     "./react": "./lib/react/index.js",
     ".": "./lib/bundle.js"
+  },
+  "bin": {
+    "showcase": "./bin/generate.sh"
   },
   "author": "Henry",
   "private": false,
@@ -37,8 +42,11 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
+    "@papit/button": "^0.0.2",
     "@papit/core": "0.0.2",
-    "@papit/router": "0.0.1",
+    "@papit/router": "0.0.2",
+    "@papit/tabs": "^0.0.0",
+    "@papit/typography": "^0.0.2",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
@@ -47,8 +55,6 @@
     "@types/node": "^22.10.2",
     "chokidar": "^3.6.0",
     "esbuild": "^0.17.18",
-    "node-html-parser": "^6.1.11",
-    "playwright": "^1.45.3",
     "sass": "^1.70.0",
     "typescript": "^5.7.2"
   },

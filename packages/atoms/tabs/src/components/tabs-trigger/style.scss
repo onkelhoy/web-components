@@ -1,0 +1,45 @@
+:host {
+  color: var(--pap-color-text, #29292F);
+  cursor: var(--select-pointer, pointer);
+
+  user-select: none;
+  white-space: nowrap;
+
+  height: var(--field-size-medium, 40px);
+  padding-inline: var(--padding-large, 24px);
+  margin-top: auto;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: relative;
+}
+
+:host(:hover) {
+  color: var(--pap-color-text-hover);
+
+  &:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    height: var(--unit-size-1, 4px);
+    border-top-left-radius: var(--radius-small, 4px);
+    border-top-right-radius: var(--radius-small, 4px);
+
+    background-color: var(--pap-color-bg-secondary, #F6F7F8);
+  }
+}
+
+:host(:active) {
+  color: var(--pap-color-text-pressed); // TODO replace color this doesn't exist
+
+  &:after {
+    background-color: var(--pap-color-border-secondary, #DADDE3);
+  }
+}
+
+::slotted(*) {
+  pointer-events: none;
+}

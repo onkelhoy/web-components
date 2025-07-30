@@ -15,7 +15,8 @@
   "files": [
     "asset/",
     "lib/",
-    "bin/cli.sh"
+    "bin/cli.sh",
+    ".config"
   ],
   "exports": {
     ".": "./lib/bundle.js"

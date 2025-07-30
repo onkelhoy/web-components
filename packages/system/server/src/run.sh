@@ -190,7 +190,7 @@ elif [[ -f "$SCRIPTDIR/src/index.js" ]]; then
   node "$SCRIPTDIR/src/index.js" & 
   server_pid=$!
 elif [[ "$LOGLEVEL" == "debug" ]]; then
-  echo "[\x1b[31merror] could not find server scripts\x1b[0m"
+  echo "[error] could not find server scripts"
 fi
 
 echo "SERVER_PID=$server_pid" >> "$LOCATION/.temp/.info"

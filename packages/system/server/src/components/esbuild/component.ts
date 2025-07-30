@@ -104,6 +104,6 @@ export async function build(file_path: string, outfile: string | null = null) {
 }
 // Clean up all contexts
 export function cleanup() {
-  if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log('\x1b[32m- [esbuild] disposing watcher-contexts\x1b[0m')
+  if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log('[esbuild] disposing watcher-contexts')
   Object.values(contexts).forEach(v => v.ctx.dispose());
 }

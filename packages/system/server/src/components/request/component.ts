@@ -9,7 +9,7 @@ import { route as handleTheme } from "../theme";
 
 export function request(req: http.IncomingMessage, res: http.ServerResponse) {
   if (req.method !== "GET") {
-    if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log("\x1b[31mno get request\x1b[0m");
+    if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log("no get request");
     res.statusCode = 500;
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify({ error: `only accept get requests: ${req.method}`, code: "no-get" }));
@@ -17,13 +17,13 @@ export function request(req: http.IncomingMessage, res: http.ServerResponse) {
   }
 
   if (!req.url) {
-    if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log("\x1b[31mno url provided\x1b[0m");
+    if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log("no url provided");
     res.statusCode = 500;
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify({ error: "no url provided", code: "no-url" }));
     return;
   }
-  if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log("\x1b[36mincomming request\x1b[0m", req.url);
+  if (["verbose", "debug"].includes(process.env.LOGLEVEL || "")) console.log("\x1b[36mincomming request", req.url);
 
   // dealing with asset (info level)
   if (req.url.startsWith("/asset/")) {

@@ -143,15 +143,15 @@
 }
 
 // STATES 
-// :host(:hover) {
-//   border-color: transparent;
-//   // background: color-mix(in srgb, var(--background), var(--text-contrast) 20%);
-//   color: var(--text-hover, var(--text-contrast)); // in case one wants to override 
-// }
-
-:host(:active) {
+:host(:hover) {
   border-color: transparent;
+  background: color-mix(in srgb, var(--background), var(--text-contrast) 20%);
+  color: var(--text-hover, var(--text-contrast)); // in case one wants to override 
 }
+
+// :host(:active) {
+//   border-color: transparent;
+// }
 
 :host(.focus),
 :host(:focus-visible) {

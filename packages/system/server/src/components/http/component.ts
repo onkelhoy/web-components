@@ -18,7 +18,7 @@ export function start() {
   server.listen(PORT + attempts, () => {
     process.env.PORT = (PORT + attempts) + "";
     if (process.env.LOGLEVEL !== "none") {
-      console.log("\x1b[33m", `server:\x1b[36m${PORT + attempts}\x1b[33m  - running`, "\x1b[0m");
+      console.log("\x1b[33m", `server:\x1b[36m${PORT + attempts}\x1b[33m  - running`, "");
 
       fs.appendFileSync(path.join(process.env.LOCATION as string, ".temp/.info"), `PORT=${PORT + attempts}`)
     }
@@ -34,7 +34,7 @@ export function start() {
         start();
       }
       else if (process.env.LOGLEVEL !== "none") {
-        console.log(`[\x1b[31merror\x1b[0m] port spaces between [${process.env.PORT || 3000}, ${PORT + attempts}] are all taken, please free up some ports`);
+        console.log(`[error] port spaces between [${process.env.PORT || 3000}, ${PORT + attempts}] are all taken, please free up some ports`);
       }
     }
   });
@@ -46,6 +46,6 @@ export function start() {
 export function close() {
   server?.close();
   if (process.env.LOGLEVEL !== "none") {
-    console.log("\x1b[33m", `server:\x1b[36m${PORT + attempts}\x1b[33m - shutdown`, "\x1b[0m");
+    console.log("\x1b[33m", `server:\x1b[36m${PORT + attempts}\x1b[33m - shutdown`, "");
   }
 }

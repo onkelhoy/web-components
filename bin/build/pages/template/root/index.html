@@ -1,0 +1,25 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PLACEHOLDER_TITLE</title>
+
+PLACEHOLDER_THEMES 
+  <link rel="stylesheet" href="style.css" />
+
+  <script type="importmap">
+    {
+      "imports": {
+PLACEHOLDER_IMPORTMAP
+      }
+    }
+  </script>
+  <script type="module" defer src="main.js"></script>
+</head>
+<body>
+  <pap-router hash-based="true" url="/">
+    <div realpath="pages/home.html" path="/"></div>
+    <div realpath="pages/:page.html" path=":page" page-fallback="home"></div>
+  </pap-router>
+</body>
+</html>

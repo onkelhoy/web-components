@@ -74,3 +74,6 @@ find "$PACKAGE_LOCATION" -type f -not -name ".DS_Store" -not -name "*.svg" -not 
   sed -i '' "s#PLACEHOLDER_CLASS_NAME#${COMPONENT_CLASS_NAME}#g" "$file"
   sed -i '' "s#PLACEHOLDER_NAME#${COMPONENT_NAME}#g" "$file"
 done
+
+# cannot do this as we dont know which one is root.. 
+# echo "COMPONENT_HTML_NAME=\"$COMPONENT_PREFIX$COMPONENT_FULL_NAME\"" >> "$PACKAGE_LOCATION/.config"

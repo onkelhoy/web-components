@@ -28,12 +28,12 @@ export class PageThemeShowcase extends CustomElement {
           </showcase-units>
         </section>
         <section class="left">
-          <showcase-colors>
+          <showcase-colors mode="light">
             <slot name="color-main"></slot>
           </showcase-colors>
         </section>
-        <section part="theme-opposite" class="right">
-          <showcase-colors>
+        <section part="theme-opposite" class="right theme-opposite">
+          <showcase-colors mode="dark">
             <slot name="color-opposite"></slot>
           </showcase-colors>
         </section>
