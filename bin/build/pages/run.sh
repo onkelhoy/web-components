@@ -16,6 +16,9 @@ echo "pages folder: \"$PACKAGE_PAGES_DIR\""
 # setup github pages folder 
 GITHUB_DIR="${ROOTDIR%/}/.github/docs"
 
+rm "$SCRIPTDIR/pages/list" &> /dev/null
+touch "$SCRIPTDIR/pages/list"
+
 rm -rf "$GITHUB_DIR" &> /dev/null # clear files and sub-folders  
 mkdir -p "$GITHUB_DIR/dependencies" # initiate dependency folders
 mkdir -p "$GITHUB_DIR/pages" # initiate pages folder 
@@ -103,7 +106,9 @@ fi
 # expose pages array 
 export PAGE_PATHS=$(IFS=, ; echo "${PAGES[*]}")
 
-DEPENDENCIES=$(node "$SCRIPTDIR/pages/extract-dependencies.js")
+node "$SCRIPTDIR/pages/extract-dependencies.js"
+DEPENDENCIES=$(cat "$SCRIPTDIR/pages/list")
+
 if [[ "$DEPENDENCIES" == ERROR:* ]]; then 
   echo "$DEPENDENCIES"
   exit 1 
@@ -123,10 +128,24 @@ lower_case() {
 # papit has only one "bundle.js" file and will be taken 
 for dep in "${DEP_ARRAY[@]}"; do
 
-  if [[ -f "$dep/package.json" && -f "$dep/.config" ]]; then 
+  if [[ -f "$dep/package.json" ]]; then 
     cd "$dep"
 
-    source ".config"
+    FULL_NAME=""
+    NAME=""
+    PACKAGE_NAME=""
+
+    if [[ -f "$dep/.config" ]]; then 
+      source ".config"
+    else 
+      FULL_NAME=$(echo "$dep" | sed -E 's|.*/node_modules/(@[^/]+/[^/]+).*|\1|')
+
+      # Extract the short name (e.g., core)
+      NAME=$(echo "$FULL_NAME" | sed 's|.*/||')
+
+      # Set package_name equal to full_name
+      PACKAGE_NAME="$NAME"
+    fi 
 
     # only build if necessary 
     if [[ ! -d "./lib" || -n "$FORCE" ]]; then 
@@ -236,3 +255,5 @@ if [[ "$MOVE_ANS" == "1" ]]; then
   rm -rf "$ROOTDIR/docs" &> /dev/null
   cp -r "$GITHUB_DIR" "$ROOTDIR/docs"
 fi 
+
+rm "$SCRIPTDIR/pages/list" &> /dev/null
