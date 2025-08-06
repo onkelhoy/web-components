@@ -5,6 +5,10 @@ const SKIPS = ["tslib"];
 const LOCKFILE = JSON.parse(fs.readFileSync(path.join(process.env.ROOTDIR, "package-lock.json")));
 const pages = process.env.PAGE_PATHS.split(",");
 const dependencies = {};
+const listfilelocation = path.join(process.env.SCRIPTDIR, "pages/list");
+
+// TODO this file should like dependency-order write to a temp file instead 
+// this would allow the JS to print to console for errors 
 
 function reqursiveDependency(name) {
   if (dependencies[name]) return
@@ -14,6 +18,10 @@ function reqursiveDependency(name) {
   let _dependencies = [];
   let location = "";
 
+  if (!LOCKFILE.packages[lockname]) {
+    console.log('ERROR: cannot find package', lockname)
+    return;
+  }
   if (LOCKFILE.packages[lockname].dependencies || LOCKFILE.packages[lockname].resolved.startsWith("https://registry.npmjs.org")) {
     // its installed and exists inside "node_modules"
     location = lockname;
@@ -62,4 +70,4 @@ for (let base of basePackages) {
   }
 }
 
-console.log(Array.from(Object.values(dependencies)).join(","));
+fs.writeFileSync(listfilelocation, Array.from(Object.values(dependencies)).join(","), "utf-8");
