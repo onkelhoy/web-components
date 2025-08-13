@@ -13,7 +13,7 @@ function safe_sed() {
   fi
 }
 
-# example: output=$(get_network_data 10 "npm search --searchlimit=100 @pap-it --json")
+# example: output=$(get_network_data 10 "npm search --searchlimit=100 @papit --json")
 function get_network_data() {
   local timeout=$1
   shift

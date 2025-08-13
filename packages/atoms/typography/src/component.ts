@@ -9,11 +9,11 @@ import { Variant, Alignment, Weight } from "./types";
 export class Typography extends CustomElement {
   static style = style;
 
-  @property({ rerender: false }) variant: Variant = "p";
-  @property({ rerender: false }) weight: Weight = "normal";
-  @property({ rerender: false }) align: Alignment = "initial";
-  @property({ rerender: false, type: Boolean }) nowrap: boolean = false;
-  @property({ rerender: false, type: Boolean }) truncate: boolean = false;
+  @property variant: Variant = "p";
+  @property weight: Weight = "normal";
+  @property align: Alignment = "initial";
+  @property({ type: Boolean }) nowrap: boolean = false;
+  @property({ type: Boolean }) truncate: boolean = false;
 
   render() {
     return `<slot></slot>`

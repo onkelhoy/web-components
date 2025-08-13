@@ -1,11 +1,18 @@
-// decorators
-export * from './decorators';
+export { html } from "./html";
 
-// funtions
-export * from './functions';
+export * from "./element";
 
-// types
-export * from './types';
+// functions
+export * from "./functions/debounce";
+export * from "./functions/format-number";
+export * from "./functions/extract-slot-value";
+export * from "./functions/lerp";
+export * from "./functions/uuid";
+export * from "./functions/cumalative-offset";
+export * from "./functions/next-parent";
 
-// classes
-export * from './class'
+// decorators 
+export * from "./decorators/bind";
+export * from "./decorators/property";
+export * from "./decorators/debounce";
+export * from "./decorators/query";

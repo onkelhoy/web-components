@@ -1,6 +1,6 @@
 {
   "name": "@papit/core",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "scripts": {
     "build:sass": "bash ./bin/_utils/sass.sh",
     "build:react": "bash ./bin/_utils/react.sh",
@@ -23,8 +23,14 @@
     ".config"
   ],
   "exports": {
-    "./react": "./lib/react/index.js",
-    ".": "./lib/bundle.js"
+    ".": {
+      "import": "./lib/bundle.js",
+      "types": "./lib/types/index.d.ts"
+    },
+    "./react": {
+      "import": "./lib/react/index.js",
+      "types": "./lib/types/index.d.ts"
+    }
   },
   "author": "Henry",
   "private": false,
@@ -37,9 +43,7 @@
     "type": "git",
     "url": "https://github.com/onkelhoy/web-components.git"
   },
-  "dependencies": {
-    "tslib": "^2.5.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@papit/codeblock": "^0.0.0",
     "@types/node": "^22.10.2",

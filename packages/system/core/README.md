@@ -1,63 +1,137 @@
-# Core
+# @papit/core
 
-[![Github Repo](https://img.shields.io/badge/Git-@papit/core-blue?logo=github&link=https://github.com/onkelhoy/web-components/tree/main/packages/systems/core)](https://github.com/onkelhoy/web-components/tree/main/packages/systems/core)
-![Layer Type](https://img.shields.io/badge/Layer_Type-system-orange)
+[![Github Repo](https://img.shields.io/badge/Git-@papit/core-blue?logo=github&link=https://github.com/onkelhoy/web-components/tree/main/packages/core)](https://github.com/onkelhoy/web-components/tree/main/packages/core)
+![Layer Type](https://img.shields.io/badge/Layer_Type-core-orange)
 
 [![Tests](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml/badge.svg)](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml)
 [![NPM version](https://img.shields.io/npm/v/@papit/core.svg?logo=npm)](https://www.npmjs.com/package/@papit/core)
 
-This is the core package to be able to create web-components
+---
 
-## Use Case
+## Overview
 
-### installation
+**`@papit/core`** is a lightweight foundation for building fast, declarative web components — with powerful decorators, efficient HTML template rendering, and handy utilities.
+
+It’s minimal, framework-agnostic, and designed to be easy to integrate into both small standalone widgets and large-scale design systems.
+
+### Documentation
+
+📄 **[Full Documentation →](./docs/README.md)**
+
+### Acknowledgements
+
+💌 Special thanks to my loving wife **Phuong** — your support and patience make all the difference. 💛
+
+shoutout **Christian Norrman** to my collegue who opened my eyes for the way we can only update values without having to do hard core element diffing like previous versions
+
+---
+
+## Development Workflow
+
+Development takes place inside the `src` folder.
+
+### Adding a new subcomponent
 
 ```bash
-npm install @papit/core
+npm run component:add
 ```
 
-### to use in **html**
+This will:
 
-```html
-<script type="module" defer>
-  import "@papit/core";
-</script>
+- Update `.env`
+- Create a view folder
+- Create the corresponding folder under `src/components`
+- Generate starter files
 
-<pap-core></pap-core>
+---
+
+## Styling
+
+- Edit styles in `style.scss`
+- Styles are automatically compiled into `style.ts` for component consumption
+
+---
+
+## Live Preview
+
+To preview during development:
+
+```bash
+npm start
 ```
 
-### to use in **react**
+This launches a demo server from the `views` folder.
 
-```jsx
-import { Web } from "@papit/core/react";
-
-function Component() {
-  return (
-    <Web /> 
-  )
-}
-```
-
-## Development
-
-Development takes place within the `src` folder. To add a new subcomponent, use the command `npm run component:add`. This command updates the `.env` file, creates a view folder, and adds a subfolder in the `components` folder (creating it if it doesn't exist) inside `src` with all the necessary files.
-
-Styling is managed in the `style.scss` file, which automatically generates a `style.ts` file for use in the component.
-
-## Viewing
-
-To view the component, run `npm start`. This command is equivalent to `npm run start demo` and launches the development server for the demo folder located within the `views` folder. This allows you to preview your component during development.
+---
 
 ## Assets
 
-All assets required by the component, such as icons and images for translations, should be placed in the `assets` folder. This folder will already include an `icons` and `translations` folder with an `en.json` file for English translations. Use this structure to organize translations and make them easily accessible for other projects.
+- **Component assets** (icons, translations, etc.) → store in `assets/`
+- **Demo-only assets** → store in `views/<demo>/public/`
 
-For assets used solely for display or demo purposes, create a `public` folder under the relevant directory inside the `views` folder. These assets are not included in the component package.
+---
 
-## Commands
+## Available Commands
 
-- **build**: Builds the component in development mode. Use the `--prod` flag (`npm run build -- --prod`) for a production build, which includes minification.
-- **watch**: Watches for changes to the component files and rebuilds them automatically without starting the development server.
-- **start**: Starts the development server for a specific demo. The target folder within the `views` directory must contain an `index.html` file. Usage example: `npm run start --name=<folder>`.
-- **analyse**: Generates a comprehensive analysis file, mainly useful for React scripts and potentially for generating pages. The analysis file is only generated if it does not exist, unless the `--force` flag is used. Optional flags include `--verbose` and `--force`.
-- **react**: Generates the necessary React code based on the web component code, including any subcomponents. The generated code will not overwrite existing files, allowing for manual customization. Flags: `--verbose` & `--force`.
+| Command     | Description                                                                        |
+| ----------- | ---------------------------------------------------------------------------------- |
+| **build**   | Builds the component. Add `--prod` for minification.                               |
+| **watch**   | Watches for file changes and rebuilds.                                             |
+| **start**   | Starts the demo server for a specific view.                                        |
+| **analyse** | Generates an analysis file (with `--verbose` and/or `--force` flags).              |
+| **react**   | Generates React wrappers for components (with `--verbose` and/or `--force` flags). |
+
+---
+
+## Example — Creating a Counter Component
+
+Below is a small but complete example showing several key features in `@papit/core`:
+
+- **Reactive properties** via `@property`
+- **DOM queries** via `@query`
+- **Event debouncing** via `@debounce` and `debounceFn`
+- **Method binding** via `@bind`
+- **Declarative rendering** via the `html` tag
+
+```ts
+import {
+  CustomElement,
+  html,
+  property,
+  query,
+  debounce,
+  bind,
+  debounceFn,
+} from "@papit/core";
+
+class MyCounter extends CustomElement {
+  @property({ type: Number }) count = 0;
+  @query("#incBtn") incrementButton!: HTMLButtonElement;
+
+  @debounce(300)
+  handleIncrement() {
+    this.count++;
+  }
+
+  @bind
+  handleReset() {
+    this.count = 0;
+  }
+
+  render() {
+    return html`
+      <h2>Count: ${this.count}</h2>
+      <button id="incBtn" @click=${this.handleIncrement}>+1</button>
+      <button @click=${this.handleReset}>Reset</button>
+    `;
+  }
+}
+
+customElements.define("my-counter", MyCounter);
+```
+
+Once registered, you can use it anywhere:
+
+```html
+<my-counter></my-counter>
+```

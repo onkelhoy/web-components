@@ -20,8 +20,14 @@
     ".config"
   ],
   "exports": {
-    "./react": "./lib/react/index.js",
-    ".": "./lib/bundle.js"
+    ".": {
+      "import": "./lib/bundle.js",
+      "types": "./lib/types/index.d.ts"
+    },
+    "./react": {
+      "import": "./lib/react/index.js",
+      "types": "./lib/types/index.d.ts"
+    }
   },
   "author": "Henry",
   "private": false,
@@ -35,11 +41,10 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
-    "@papit/core": "^*",
-    "tslib": "^2.5.0"
+    "@papit/core": "0.1.0"
   },
   "devDependencies": {
-    "@papit/translator": "^*",
+    "@papit/translator": "0.0.2",
     "@papit/codeblock": "^*",
     "@types/node": "^22.10.2",
     "esbuild": "^0.17.18",

@@ -1,4 +1,4 @@
-export interface Setting<T extends Element> {
+export type Setting<T extends Element> = {
   selector: string;
-  load?: (element: T) => void;
+  load(element: T): void;
 }
