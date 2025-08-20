@@ -1,4 +1,4 @@
-export interface Setting {
+export type Setting = {
   name?: string;
   attribute?: string;
   applyattribute?: boolean;

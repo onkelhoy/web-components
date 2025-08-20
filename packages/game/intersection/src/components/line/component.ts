@@ -12,12 +12,12 @@ export function LineIntersection(p1:VectorObject, p2:VectorObject, p3:VectorObje
   const D1 = Vector.Subtract(p2, p1);
   const D2 = Vector.Subtract(p4, p3);
   
-  const denominator = Vector.Cross(D1, D2);
+  const denominator = Vector.Cross(D1, D2).z;
   if (denominator === 0) return false;
   
   const D3 = Vector.Subtract(p3, p1);
-  const t = Vector.Cross(D3, D2) / denominator;
-  const u = Vector.Cross(D3, D1) / denominator;
+  const t = Vector.Cross(D3, D2).z / denominator;
+  const u = Vector.Cross(D3, D1).z / denominator;
 
   return {
     x: p1.x + t * D1.x,

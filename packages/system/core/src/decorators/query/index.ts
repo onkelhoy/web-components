@@ -1,7 +1,8 @@
 export {
-  Setting as QuerySetting
-} from './types';
+  query,
+} from "./decorator";
 
 export {
-  Decorator as query,
-} from './decorator';
+  Setting as QueryDecoratorSetting,
+} from './types';
+

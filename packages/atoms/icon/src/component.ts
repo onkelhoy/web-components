@@ -1,8 +1,8 @@
-import { property, html, Size, query, CustomElement } from '@papit/core';
+import { property, html, query, CustomElement } from '@papit/core';
 import { Asset } from '@papit/asset';
 
 import { style } from './style.js';
-import { Container, CountryEmojiSet } from './types.js';
+import { Container, CountryEmojiSet, Size } from './types.js';
 
 export class Icon extends Asset {
   static style = style;
@@ -17,28 +17,24 @@ export class Icon extends Asset {
     }
   }) svgElement!: SVGSVGElement;
 
-  @property({ rerender: false }) container?: Container;
-  @property() viewbox = "0 96 960 960";
+  @property({ rerender: true }) container?: Container;
+  @property({ rerender: true }) viewbox = "0 96 960 960";
   @property({
-    rerender: false,
     after: function (this: Icon, value: string) {
       this.file = value + ".svg";
     }
   }) name?: string;
   @property({
-    rerender: false,
     after: function (this: Icon) {
       if (this.color) this.style.color = this.color;
     }
   }) color?: string;
   @property({
-    rerender: false,
     after: function (this: Icon) {
       this.style.removeProperty("--icon-custom-size");
     }
   }) size: Size = "medium";
   @property({
-    rerender: false,
     attribute: "custom-size",
     type: Number,
     after: function (this: Icon) {
@@ -46,7 +42,6 @@ export class Icon extends Asset {
     }
   }) customSize?: number;
   @property({
-    rerender: false,
     attribute: 'country-flag',
     after: function (this: Icon, value: string, old: string) {
       if (value !== old) {

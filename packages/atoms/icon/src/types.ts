@@ -1,4 +1,4 @@
-import { Size } from "@papit/core";
+export type Size = 'small' | 'medium' | 'large';
 
 export type Container = Size | 'smaller';
 

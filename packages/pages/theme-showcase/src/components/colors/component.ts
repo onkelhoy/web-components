@@ -7,7 +7,7 @@ import { style } from "./style";
 
 export class Colors extends CustomElement {
   static style = style;
-  @property() mode: "light" | "dark" = "light";
+  @property mode: "light" | "dark" = "light";
   @property({ type: Array }) colors: string[] = ["primary", "secondary", "tertiary", "error", "success", "warning", "information"];
 
   render() {

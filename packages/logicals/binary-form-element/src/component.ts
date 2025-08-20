@@ -1,12 +1,13 @@
 // import statements 
 // system 
-import { CustomElementInternals, property } from "@papit/core";
+import { bind, CustomElementInternals, property } from "@papit/core";
 
 export class BinaryFormElement extends CustomElementInternals {
 
   @property({
     rerender: false,
     type: Boolean,
+    removeAttribute: true,
     attribute: 'default-checked',
     after: function (this: BinaryFormElement) {
       if (this.defaultchecked !== undefined && this.checked === undefined) {
@@ -15,12 +16,21 @@ export class BinaryFormElement extends CustomElementInternals {
       }
     }
   }) defaultchecked?: boolean;
+
   @property({
     type: Boolean,
+    rerender: true,
+    attribute: true,
     removeAttribute: true,
     aria: 'aria-checked',
-    after: function (this: BinaryFormElement) {
-      this.afterchecked();
+    after: function (this: BinaryFormElement, value) {
+      if (this._internals !== undefined) {
+        this._internals.setFormValue(typeof this.checked === "boolean" ? String(this.checked as boolean) : null);
+      }
+      if (!this.internalflag) {
+        this.dispatchEvent(new Event("change"));
+      }
+      this.internalflag = false;
     }
   }) checked?: boolean;
   private internalflag = false;
@@ -49,7 +59,8 @@ export class BinaryFormElement extends CustomElementInternals {
     }, 100);
   }
 
-  private handleblur_internal = () => {
+  @bind
+  private handleblur_internal () {
     this.classList.remove("active");
   };
 
@@ -57,20 +68,9 @@ export class BinaryFormElement extends CustomElementInternals {
     return this.getAttribute("name");
   }
 
-  // protected methods
-  protected afterchecked() {
-    // update the form value?
-    if (this._internals !== undefined) {
-      this._internals.setFormValue(typeof this.checked === "boolean" ? String(this.checked as boolean) : null);
-    }
-    if (!this.internalflag) {
-      this.dispatchEvent(new Event("change"));
-    }
-    this.internalflag = false;
-  }
-
   // event handlers
-  private handlekeydown = (e: KeyboardEvent) => {
+  @bind
+  private handlekeydown(e: KeyboardEvent) {
     if (this.hasAttribute("disabled")) return;
     if (this.hasAttribute("readonly")) return;
 
@@ -78,7 +78,8 @@ export class BinaryFormElement extends CustomElementInternals {
       this.classList.add('active');
     }
   }
-  private handlepressfinished = (e: KeyboardEvent) => {
+  @bind
+  private handlepressfinished (e: KeyboardEvent) {
     if (this.hasAttribute("disabled")) return;
     if (this.hasAttribute("readonly")) return;
 
@@ -87,10 +88,11 @@ export class BinaryFormElement extends CustomElementInternals {
       this.dispatchEvent(new Event("click"));
     }
   }
-  private handleclick = () => {
+  @bind
+  private handleclick () {
     if (this.hasAttribute("disabled")) return;
     if (this.hasAttribute("readonly")) return;
-
+    
     this.checked = !this.checked;
   }
 

@@ -25,8 +25,6 @@
   cursor: pointer;
 
   padding-inline: var(--padding-small, 8px);
-  transition: background-color var(--timing-slow, 120ms) ease,
-    color var(--timing-fast, 30ms) ease;
 
   pap-prefix-suffix {
     // flex: 1;
@@ -39,31 +37,6 @@
       align-items: center;
       padding-inline: var(--padding-small, 8px);
       gap: var(--button-content-gap, var(--gap-small, 8px));
-    }
-  }
-
-  span[part=overlay] {
-    overflow: hidden;
-    z-index: -1;
-    display: inline-block;
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    width: calc(100% + 4px);
-    height: calc(100% + 4px);
-
-    &::after {
-      content: '';
-      position: absolute;
-      top: var(--y, 50%);
-      left: var(--x, 50%);
-      translate: -50% -50%;
-      width: 10%;
-      aspect-ratio: 1;
-      border-radius: 50%;
-
-      opacity: 0;
-      background-color: color-mix(in srgb, var(--background), var(--text-contrast) 30%);
     }
   }
 }
@@ -94,7 +67,7 @@
   --background: var(--pap-secondary, #f7f7f7);
   --text: var(--pap-secondary-text, #f7f7f7);
   --text-contrast: var(--pap-secondary-contrast, #080808);
-  // --text-active: var(--pap-text-inverse, #f7f7f7);
+  --text-active: var(--pap-text-inverse, #f7f7f7);
 }
 
 :host([color=tertiary]) {
@@ -145,8 +118,13 @@
 // STATES 
 :host(:hover) {
   border-color: transparent;
-  background: color-mix(in srgb, var(--background), var(--text-contrast) 20%);
+  background: color-mix(in srgb, var(--background), var(--text-contrast) 10%);
   color: var(--text-hover, var(--text-contrast)); // in case one wants to override 
+}
+:host(:active) {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--background), var(--text-contrast) 25%);
+  color: var(--text-active, var(--text-contrast)); // in case one wants to override 
 }
 
 // :host(:active) {
@@ -157,23 +135,6 @@
 :host(:focus-visible) {
   outline-offset: 2px;
   outline: 2px solid var(--pap-border-strong, #29292F);
-}
-
-:host(.click) {
-  background-color: color-mix(in srgb, var(--background), var(--text-contrast) 30%);
-  color: var(--text-active, var(--pap-text, #080808));
-  transition: background-color 1ms var(--timing-slow, 320ms) linear,
-    color var(--timing-fast, 30ms) var(--timing-slow, 320ms) ease;
-
-  span[part=overlay]::after {
-    animation: click-circle-animation var(--timing-slow, 320ms) ease-out;
-  }
-}
-
-:host([ripple="false"]) {
-  span[part=overlay] {
-    display: none;
-  }
 }
 
 // DISABLED
@@ -252,16 +213,4 @@
 
 :host([size=large]) {
   min-height: calc(var(--field-large, 48px) - 4px);
-}
-
-@keyframes click-circle-animation {
-  from {
-    opacity: 0;
-    scale: 1;
-  }
-
-  to {
-    opacity: 1;
-    scale: var(--grow-target, 10);
-  }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@papit/typography",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "scripts": {
     "build:sass": "bash ./bin/_utils/sass.sh",
     "build:react": "bash ./bin/_utils/react.sh",
@@ -23,8 +23,14 @@
     ".config"
   ],
   "exports": {
-    "./react": "./lib/react/index.js",
-    ".": "./lib/bundle.js"
+    ".": {
+      "import": "./lib/bundle.js",
+      "types": "./lib/types/index.d.ts"
+    },
+    "./react": {
+      "import": "./lib/react/index.js",
+      "types": "./lib/types/index.d.ts"
+    }
   },
   "author": "Henry",
   "private": false,
@@ -38,12 +44,11 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
-    "@papit/core": "0.0.2",
-    "tslib": "^2.5.0"
+    "@papit/core": "0.1.0"
   },
   "devDependencies": {
     "@papit/codeblock": "^0.0.0",
-    "@papit/translator": "0.0.1",
+    "@papit/translator": "0.0.2",
     "@playwright/test": "^1.45.3",
     "@types/node": "^22.10.2",
     "chokidar": "^3.6.0",

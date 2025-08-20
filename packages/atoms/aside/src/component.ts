@@ -1,10 +1,10 @@
 // import statements 
 // system 
-import { CustomElement, html, property, Radius, RenderType } from "@papit/core";
+import { bind, CustomElement, html, property } from "@papit/core";
 
 // local 
 import { style } from "./style";
-import { Placement, Mode, Elevation, ElevationDirection } from "./types";
+import { Placement, Mode, Elevation, ElevationDirection, Radius } from "./types";
 
 export class Aside extends CustomElement {
   static style = style;
@@ -12,6 +12,7 @@ export class Aside extends CustomElement {
   @property({ rerender: false, type: Boolean }) backdrop: boolean = true;
   @property({ rerender: false, type: Boolean }) hideonoutsideclick: boolean = true;
   @property({
+    rerender: true,
     type: Boolean,
     after: function (this: Aside) {
       this.opened = performance.now();
@@ -25,18 +26,16 @@ export class Aside extends CustomElement {
   @property({
     rerender: false,
     after: function (this: Aside) {
-      if (this.hasrendered) {
-        if (this.width) {
-          let value = this.width;
-          // check for number -> then we treat as pixel
-          if (!Number.isNaN(Number(value))) {
-            value += "px";
-          }
-          this.style.setProperty('--aside-width', value);
+      if (this.width) {
+        let value = this.width;
+        // check for number -> then we treat as pixel
+        if (!Number.isNaN(Number(value))) {
+          value += "px";
         }
-        else {
-          this.style.removeProperty('--aside-width');
-        }
+        this.style.setProperty('--aside-width', value);
+      }
+      else {
+        this.style.removeProperty('--aside-width');
       }
     }
   }) width?: string;
@@ -54,7 +53,8 @@ export class Aside extends CustomElement {
   }
 
   // event handlers
-  private handlewindowclick = () => {
+  @bind
+  private handlewindowclick(){
     const now = performance.now();
 
     if (!this.inside && this.hideonoutsideclick && now - this.opened > 200) {
@@ -64,7 +64,8 @@ export class Aside extends CustomElement {
     // always reset inside
     this.inside = false;
   }
-  private handlewrapperclick = () => {
+  @bind
+  private handlewrapperclick () {
     // so window click wont close (if hideonoutsideclick)
     this.inside = true;
   }
@@ -79,7 +80,7 @@ export class Aside extends CustomElement {
     this.dispatchEvent(new Event('show'));
   }
 
-  render(content?: RenderType) {
+  render(content?: string|Element) {
     return html`
       <div 
         radius="${this.radius}" 

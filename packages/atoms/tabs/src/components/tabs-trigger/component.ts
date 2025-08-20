@@ -1,5 +1,5 @@
 // system
-import { html, property, CustomElement } from "@papit/core";
+import { html, property, CustomElement, bind } from "@papit/core";
 
 // local 
 import { style } from "./style";
@@ -9,7 +9,7 @@ export type ClickEvent = { sectionHeight: number };
 export class TabsTrigger extends CustomElement {
   static style = style;
 
-  @property() text: string = "Tab";
+  @property({ rerender: true }) text: string = "Tab";
 
   // class functions
   connectedCallback() {
@@ -22,7 +22,8 @@ export class TabsTrigger extends CustomElement {
   }
 
   // event handlers
-  private handleprechange = (e: Event) => {
+  @bind 
+  private handleprechange(e: Event) {
     // NOTE change can be bubbled so a input inside (slotted) would trigger -> make sure currentTarget & target is same meaning its tabs 
     if (e.target && e.currentTarget === e.target) {
       if ('selected' in e.target) {

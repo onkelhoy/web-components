@@ -1,11 +1,11 @@
 // system
-import { debounce, html, property, query, CustomElement } from "@papit/core";
+import { debounce, html, property, query, CustomElement, bind } from "@papit/core";
 
 import { style } from "./style";
 import { Reveal, Placement, PlacementInfo, TBLR, OPPOSITE, ROTATED, Scores, PLACEMENTS, TBLRC } from './types';
 
 export class PopoverProperties extends CustomElement {
-  @property() revealby: Reveal = 'hover';
+  @property({ rerender: true }) revealby: Reveal = 'hover';
   @property({
     after: function (this: PopoverProperties) {
       if (!this.internal) {
@@ -16,10 +16,10 @@ export class PopoverProperties extends CustomElement {
       this.reposition();
     }
   }) placement: Placement = 'bottom-center';
-  @property({ type: Boolean }) hideonoutsideclick: boolean = true;
+  @property({ type: Boolean, rerender: true }) hideonoutsideclick: boolean = true;
   @property({
     type: Boolean,
-    rerender: false,
+    removeAttribute: false,
     before: function (this: Popover) {
       this.reposition();
     },
@@ -57,7 +57,6 @@ export class Popover extends PopoverProperties {
   constructor() {
     super();
 
-    this.reposition = debounce(this.reposition, 100);
     this.addEventListener('mouseenter', this.handlemouseenter, { passive: true });
     this.addEventListener('mouseleave', this.handlemouseleave, { passive: true });
   }
@@ -95,32 +94,37 @@ export class Popover extends PopoverProperties {
   }
 
   // event handlers
-  private handlemouseenter = () => {
+  @bind
+  private handlemouseenter () {
     this.outside = false;
 
     if (this.revealby === "hover") {
       this.show();
     }
   }
-  private handlemouseleave = () => {
+  @bind
+  private handlemouseleave () {
     this.outside = true;
 
     if (this.revealby === "hover") {
       this.hide();
     }
   }
-  private handlemousedown = () => {
+  @bind
+  private handlemousedown () {
     if (this.revealby === "click") {
       this.show();
     }
   }
-  private handlewindowclick = (e: Event) => {
+  @bind
+  private handlewindowclick (e: Event) {
     if (this.hideonoutsideclick && this.outside && this.revealby === "click") {
       this.hide();
     }
   }
 
   // private functions
+  @debounce(100)
   override reposition() {
     if (!this.wrapperelement) return;
 

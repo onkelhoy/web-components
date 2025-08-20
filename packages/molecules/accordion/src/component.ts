@@ -1,6 +1,6 @@
 // import statements 
 // system 
-import { CustomElement, html, property } from "@papit/core";
+import { bind, CustomElement, html, property } from "@papit/core";
 
 // atoms 
 import "@papit/icon";
@@ -13,7 +13,8 @@ export class Accordion extends CustomElement {
 
   @property({ rerender: false, type: Boolean }) open: boolean = false;
 
-  private handleclick = () => {
+  @bind
+  private handleclick() {
     this.open = !this.open;
   }
 

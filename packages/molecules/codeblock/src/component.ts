@@ -32,11 +32,16 @@ export class Codeblock extends CustomElement {
   @query<Typography>('header > pap-button > pap-typography') copytext!: Typography;
   @query('fieldset') fieldsetElement!: HTMLFieldSetElement;
 
-  @property() display: Display = "code";
-  @property() direction: "row" | "column" = "column";
-  @property() color: "canvas" | "background" | "checker" = "checker";
+  @property display: Display = "code";
+  @property direction: "row" | "column" = "column";
+  @property color: "canvas" | "background" | "checker" = "checker";
   @property({ type: Boolean, attribute: "theme-toggle" }) themetoggle: boolean = true;
-  @property({ rerender: false, onUpdate: "setLanguage" }) lang!: string;
+  @property({ 
+    rerender: false, 
+    after: function (this: Codeblock, value:string) {
+      this.setLanguage(value);
+    } 
+  }) lang!: string;
 
   private value: string = "";
   private timer: NodeJS.Timeout|null = null;

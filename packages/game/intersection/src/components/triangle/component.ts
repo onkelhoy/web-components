@@ -19,5 +19,5 @@ function pointintriangle_helper(p:VectorObject, triangle:VectorObject[], index:n
   const ab = Vector.Subtract(triangle[(index + 1) % triangle.length], triangle[index]); // b - a 
   const ap = Vector.Subtract(p, triangle[index]); // p - a 
 
-  return Vector.Cross(ab, ap) >= 0;
+  return Vector.Cross(ab, ap).z >= 0;
 }

@@ -1,5 +1,4 @@
 // tools
-// import '@pap-it/system-doc/wc';
 
 // component
 import '@papit/translator';
