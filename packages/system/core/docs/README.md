@@ -25,8 +25,6 @@ Enhance your classes with powerful decorators:
 
 Write declarative HTML templates with dynamic bindings and efficient updates.
 
-Here’s the updated **### 4. Functions** section for `docs/README.md` with all the utilities included:
-
 ---
 
 ### 4. [Functions](./functions/README.md)
