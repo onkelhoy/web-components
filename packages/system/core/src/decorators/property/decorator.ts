@@ -16,6 +16,7 @@
 import { parseValue, sameValue, stringifyValue } from "@functions/value";
 import { Setting } from "./types";
 import { PropertyMeta } from "@element/types";
+import { resolve } from "@functions/resolve";
 
 const defaultSettings: Partial<Setting> = {
   readonly: false,
@@ -48,7 +49,8 @@ export function property(
   maybeKey?: PropertyKey
 ): void | PropertyDecorator {
   // @property — no args
-  if (typeof maybeKey === "string" || typeof maybeKey === "symbol") {
+  if (typeof maybeKey === "string" || typeof maybeKey === "symbol")
+  {
     define(targetOrSettings as Object, maybeKey, {});
     return; // void → valid for this overload
   }
@@ -61,96 +63,98 @@ export function property(
 }
 
 function define(target: any, propertyKey: PropertyKey, _settings: Partial<Setting>): void {
-  const privateKey = String(`__${String(propertyKey)}`);
-  const settings = {
-    ...defaultSettings,
-    ..._settings,
-  }
+  const privateKey = `__${String(propertyKey)}`;
+  const updateKey = Symbol(`${String(propertyKey)}_internalUpdate`);
 
+  const settings = { ...defaultSettings, ..._settings };
+  let attributeName: string | null = null;
+  // let updateKey = false;
 
-  let internalUpdate = false;
-  let attributeName:null|string = null;
   if (settings.attribute)
   {
-    const constructor = target.constructor as any;
-    if (!constructor.observedAttributes) constructor.observedAttributes = [];
     attributeName = typeof settings.attribute === "string" ? settings.attribute : String(propertyKey);
-    constructor.observedAttributes.push(attributeName);
+
+    const ctor = target.constructor as any;
+
+    // ensure observedAttributes getter exists
+    if (!Array.isArray(ctor._observedAttributes)) ctor._observedAttributes = [];
+    ctor._observedAttributes.push(attributeName);
+
+    if (!Object.getOwnPropertyDescriptor(ctor, "observedAttributes"))
+    {
+      Object.defineProperty(ctor, "observedAttributes", {
+        get() { return ctor._observedAttributes; }
+      });
+    }
 
     const meta: PropertyMeta = target.propertyMeta ??= new Map();
     meta.set(attributeName, function (this: any, newValue, oldValue) {
-      if (internalUpdate)
+      if (this[updateKey])
       {
-        internalUpdate = false;
+        this[updateKey] = false;
         return;
       }
 
-      let nvalue;
-      if (settings.type?.name === "Boolean" && newValue === "") 
-      {
-        nvalue = true;
-      }
-      else 
-      {
-        nvalue = parseValue(newValue, settings.type);
-      }
+      this[updateKey] = true;
 
-      if (newValue === oldValue || sameValue(nvalue, this[propertyKey])) return;
+      const nvalue = parseValue(newValue, settings.type);
+      if (settings.hasChanged && !settings.hasChanged(nvalue, this[propertyKey])) return;
+      else if (sameValue(nvalue, this[propertyKey], settings.maxReqursiveSteps)) return;
 
-      internalUpdate = true;
-
-      this[privateKey] = nvalue;
-      this[propertyKey] = nvalue;
+      this[propertyKey] = nvalue; // assign directly
     });
   }
 
   Object.defineProperty(target, propertyKey, {
     configurable: settings.configurable ?? true,
     enumerable: settings.enumerable ?? true,
-    get() { 
+    get() {
       const data = this[privateKey];
       return settings?.get ? settings.get.call(this, data) : data;
     },
-    set(value) {
+    async set(value) {
       const isInitial = !Object.hasOwn(this, privateKey);
 
-      // --- NEW: if it's initial set AND attribute exists, skip overriding ---
-      if (isInitial && attributeName && this.hasAttribute(attributeName)) {
-        return; // Let attributeChangedCallback handle it (not tested)
+      if (isInitial && attributeName && this.hasAttribute(attributeName))
+      {
+        // parse existing attribute immediately
+        value = parseValue(this.getAttribute(attributeName), settings.type);
+        if (settings.set) value = settings.set(value);
       }
 
-      if (settings.readonly && Object.hasOwn(this, privateKey))
+      if (settings.readonly && !isInitial)
       {
         throw new TypeError(`Cannot reassign readonly property '${String(propertyKey)}'`);
       }
 
+      if (settings.set) value = await resolve(settings.set(value));
+
       const oldVal = this[privateKey];
-      if (!internalUpdate && sameValue(value, oldVal)) return;
+      if (settings.hasChanged && !settings.hasChanged(value, oldVal)) return;
+      else if (sameValue(value, oldVal, settings.maxReqursiveSteps)) return;
 
       const valuestring = stringifyValue(value, settings.type);
       if (settings.aria) this.setAttribute(settings.aria, valuestring);
 
-      const isAttributeUpdate = internalUpdate;
+      if (settings.before) settings.before.call(this, value, oldVal, isInitial, false);
 
-      if (settings.before) settings.before.call(this, value, oldVal, isInitial, isAttributeUpdate);
-      
       this[privateKey] = value;
 
-      if (attributeName && !internalUpdate)
+      if (attributeName && settings.reflect !== false)
       {
-        internalUpdate = true;
+        this[updateKey] = true;
         if (settings.removeAttribute && (value === null || value === undefined || value === false))
         {
           this.removeAttribute(attributeName);
-        } 
-        else 
+        }
+        else
         {
           this.setAttribute(attributeName, valuestring);
         }
       }
-      internalUpdate = false;
+      this[updateKey] = false;
 
-      if (settings.after) settings.after.call(this, value, oldVal, isInitial, isAttributeUpdate);
+      if (settings.after) settings.after.call(this, value, oldVal, isInitial, false);
       if (!isInitial && settings.rerender) this.requestUpdate?.();
       if (settings.context) this.dispatchEvent(new Event(`context-${String(propertyKey)}`));
     },

@@ -36,7 +36,7 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "devDependencies": {
-    "@papit/codeblock": "^0.0.0",
+    "@papit/codeblock": "0.0.1",
     "@papit/game-engine": "0.0.4",
     "@papit/game-input-events": "0.0.5",
     "@papit/game-vector": "0.0.1",

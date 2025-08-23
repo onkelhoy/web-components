@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@papit/translator": "0.0.2",
-    "@papit/codeblock": "^*",
+    "@papit/codeblock": "0.0.1",
     "@types/node": "^22.10.2",
     "esbuild": "^0.17.18",
     "sass": "^1.70.0",

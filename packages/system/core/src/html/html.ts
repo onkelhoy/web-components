@@ -39,11 +39,11 @@
 
 // Metadata map to associate root elements with their dynamic values
 // Used to store the latest set of values applied to a rendered template
-const metadataMap = new WeakMap<Element, any[]>();
+const metadataMap = new WeakMap<Node, any[]>();
 
 // Cache storing compiled root elements per unique template literal strings array
 // Prevents re-parsing and re-creating DOM for the same template literal strings
-const cachedElements = new WeakMap<TemplateStringsArray, Element>();
+const cachedElements = new WeakMap<TemplateStringsArray, Node>();
 
 /**
  * Parses a raw HTML string into a normalized DOM `Element`.
@@ -55,7 +55,7 @@ const cachedElements = new WeakMap<TemplateStringsArray, Element>();
  * const el = html("<slot></slot>");
  * document.body.appendChild(el);
  */
-export function html(template: string): Element;
+export function html(template: string): Node;
 /**
  * Creates a DOM `Element` from a tagged template literal, inserting dynamic values.
  * 
@@ -67,10 +67,11 @@ export function html(template: string): Element;
  * const el = html`<div>${content}</div>`;
  * document.body.appendChild(el);
  */
-export function html(templateStringArray: TemplateStringsArray, ...values: unknown[]): Element;
+export function html(templateStringArray: TemplateStringsArray, ...values: unknown[]): Node;
 
-export function html(templateOrStrings: string|TemplateStringsArray, ...values: unknown[]): Element {
-  if (typeof templateOrStrings === "string") {
+export function html(templateOrStrings: string | TemplateStringsArray, ...values: unknown[]): Node {
+  if (typeof templateOrStrings === "string")
+  {
     const t = document.createElement("template");
     t.innerHTML = templateOrStrings;
     return normalizeRoot(t.content.cloneNode(true) as DocumentFragment);
@@ -79,7 +80,7 @@ export function html(templateOrStrings: string|TemplateStringsArray, ...values: 
   // Compile or get cached DOM for this template string array
   const proto = compile(templateOrStrings, values);
 
-  const root = proto.cloneNode(true) as Element;
+  const root = proto.cloneNode(true);
 
   // mark this clone as an actual template root and attach its values
   (root as any).__isTemplateRoot = true;
@@ -97,9 +98,10 @@ export function html(templateOrStrings: string|TemplateStringsArray, ...values: 
  * @param templateStringArray The template literal strings array
  * @returns Root Element of the compiled template
  */
-function compile(templateStringArray: TemplateStringsArray, values: unknown[]): Element {
+function compile(templateStringArray: TemplateStringsArray, values: unknown[]): Node {
   // Return cached root element if it exists
-  if (cachedElements.has(templateStringArray)) {
+  if (cachedElements.has(templateStringArray))
+  {
     return cachedElements.get(templateStringArray)!;
   }
 
@@ -111,18 +113,20 @@ function compile(templateStringArray: TemplateStringsArray, values: unknown[]): 
 
   // Join template strings inserting comment markers to mark dynamic parts
   let result = '';
-  for (let i=0; i<templateStringArray.length; i++)
+  for (let i = 0; i < templateStringArray.length; i++)
   {
     let fixedStr = templateStringArray[i];
 
     // If last string ended with '=', ensure next string starts with '"'
-    if (expectQuote) {
+    if (expectQuote)
+    {
       if (!fixedStr.startsWith('"')) fixedStr = '"' + fixedStr;
       expectQuote = false;
     }
 
     // If current string ends with '=', prepare to add opening quote next time
-    if (fixedStr.endsWith('=')) {
+    if (fixedStr.endsWith('='))
+    {
       fixedStr += '"';
       expectQuote = true;
     }
@@ -133,9 +137,9 @@ function compile(templateStringArray: TemplateStringsArray, values: unknown[]): 
     if (i >= values.length) continue;
 
     // now append the markers 
-    if (Array.isArray(values[i])) 
+    if (Array.isArray(values[i]))
       result += '<!--list-marker-->';
-    else 
+    else
       result += '<!--marker-->';
   }
   template.innerHTML = result;
@@ -160,8 +164,8 @@ function compile(templateStringArray: TemplateStringsArray, values: unknown[]): 
  * @param element Root element created by `html` function
  * @returns Array of dynamic values or undefined if none stored
  */
-export function getValues(element: Element) {
-  return metadataMap.get(element);
+export function getValues(node: Node) {
+  return metadataMap.get(node);
 }
 
 /**
@@ -170,8 +174,8 @@ export function getValues(element: Element) {
  * @param node The node to check
  * @returns True if the node is a text node and empty/whitespace only
  */
-function isEmptyTextNode(node: Node): boolean {
-  return (
+function isNotEmptyTextNode(node: Node): boolean {
+  return !(
     node.nodeType === Node.TEXT_NODE &&
     !/\S/.test(node.textContent || '')
   );
@@ -190,31 +194,15 @@ function isEmptyTextNode(node: Node): boolean {
  * @param fragment DocumentFragment containing template content
  * @returns Root Element for the template
  */
-function normalizeRoot(fragment: DocumentFragment): Element {
-  // Filter out empty text nodes among direct children
-  const filteredChildren = Array.from(fragment.childNodes).filter(
-    (node) => !isEmptyTextNode(node)
-  );
 
-  if (filteredChildren.length === 0) {
-    // No non-empty children - return empty div as fallback
-    return document.createElement('div');
-  }
-  
-  if (filteredChildren.length === 1) {
-    const single = filteredChildren[0];
-    // If single child is an element, return it directly
-    if (single.nodeType === Node.ELEMENT_NODE) return single as Element;
-    
-    // Otherwise, wrap it in a div to ensure an Element is returned
-    const wrapper = document.createElement('div');
-    wrapper.appendChild(single);
-    return wrapper;
-  }
-  
-  // Multiple children - wrap all in a div container
-  const wrapper = document.createElement('div');
-  filteredChildren.forEach((node) => wrapper.appendChild(node));
+function normalizeRoot(fragment: DocumentFragment): Node {
+  const filtered = Array.from(fragment.childNodes).filter(isNotEmptyTextNode);
+
+  if (filtered.length === 0) return document.createDocumentFragment();
+  if (filtered.length === 1) return filtered[0];
+
+  // Return a DocumentFragment with multiple children (do not wrap in div)
+  const wrapper = document.createDocumentFragment();
+  filtered.forEach(node => wrapper.appendChild(node));
   return wrapper;
 }
-

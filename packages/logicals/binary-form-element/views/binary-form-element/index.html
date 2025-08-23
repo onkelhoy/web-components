@@ -21,11 +21,15 @@
 
 <body>
   <form data-testid="form">
+    <binary-test data-testid="disabled1" disabled="false" name="disabled1"></binary-test>
+    <binary-test data-testid="disabled2" disabled="true" name="disabled2"></binary-test>
     <binary-test data-testid="disabled" disabled name="disabled"></binary-test>
 
     <binary-test data-testid="a" name="a"></binary-test>
     <binary-test data-testid="b" name="b" default-checked></binary-test>
     <binary-test data-testid="c" name="c" checked></binary-test>
+
+    <binary-test data-testid="d" default-checked="false" name="d"></binary-test>
 
     <button data-testid="submit" type="submit">submit</button>
     <button data-testid="reset" type="reset">reset</button>

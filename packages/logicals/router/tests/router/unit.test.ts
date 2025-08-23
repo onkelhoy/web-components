@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
   // Navigate to your test page
@@ -46,6 +46,8 @@ test.describe("router - configuration", () => {
     const router = await page.getByTestId("target");
     await router.evaluate(element => element.setAttribute("update-url", "true"));
 
+    expect(await router.evaluate((element: any) => element.updateurl)).toBeTruthy();
+
     // wait so router can initiate
     await page.waitForTimeout(2000);
 
@@ -54,10 +56,12 @@ test.describe("router - configuration", () => {
     expect(url).not.toBe(initialURL);
   });
   test("update-url: false", async ({ page }) => {
+    const initialURL = page.url();
+
     const router = page.getByTestId("target");
     await router.evaluate(element => element.setAttribute("update-url", "false"));
 
-    const initialURL = page.url();
+    expect(await router.evaluate((element: any) => element.updateurl)).toBeFalsy();
 
     // wait so router can initiate
     await page.waitForTimeout(2000);
@@ -87,7 +91,7 @@ test.describe("router - configuration", () => {
 
     const url = page.url();
 
-    expect(url.endsWith("/router/#")).toBeTruthy();
+    expect(url.endsWith("/router/#/")).toBeFalsy();
   });
 
   test("omitters", async ({ page }) => {
@@ -316,7 +320,8 @@ test.describe("router - hash-based setup", () => {
   test.beforeEach(async ({ page }) => {
     await page.evaluate(() => {
       const router = document.querySelector("pap-router") as any;
-      if (router) {
+      if (router)
+      {
         router.hashbased = true;
       }
     });

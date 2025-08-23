@@ -2,6 +2,7 @@
 import '@papit/core';
 
 // component
+import '@papit/icon';
 import '@papit/button';
 
 window.onload = () => {

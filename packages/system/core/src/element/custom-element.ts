@@ -56,7 +56,9 @@ export class CustomElement extends HTMLElement {
    * List of attributes to observe for changes.
    * Should be populated by decorators or subclasses.
    */
-  static observedAttributes = [];
+  static get observedAttributes() {
+    return [];
+  };
 
   /**
    * Style string(s)
@@ -70,13 +72,14 @@ export class CustomElement extends HTMLElement {
    * - Else, if the element has a shadow root, returns it
    * - Else, returns the element itself
    */
-  get root () {
-    if (this.templateInstance?.element) return this.templateInstance.element;
+  get root() {
     if (this.shadowRoot) return this.shadowRoot;
     return this as HTMLElement;
   }
 
-  private styleElement: HTMLStyleElement|null = null;
+  private styleElement: HTMLStyleElement | null = null;
+
+  originalHTML: string;
 
   /**
    * Creates a new custom element.
@@ -92,7 +95,9 @@ export class CustomElement extends HTMLElement {
 
     this.attachShadow(settings);
     this.requestUpdate = debounceFn(this.update, settings.requestUpdateTimeout ?? 50);
+    this.originalHTML = this.outerHTML;
   }
+
 
   /**
    * Lifecycle: called when element is added to the DOM.
@@ -106,7 +111,7 @@ export class CustomElement extends HTMLElement {
    * Lifecycle: called when element is removed from the DOM.
    * Empty by default, but subclasses can override.
    */
-  disconnectedCallback() {}
+  disconnectedCallback() { }
 
   /**
    * Lifecycle: called when an observed attribute changes.
@@ -117,7 +122,7 @@ export class CustomElement extends HTMLElement {
    */
   attributeChangedCallback(name: string, oldValue: any, newValue: any) {
     if (!this.propertyMeta) return;
-    
+
     const update = this.propertyMeta.get(name);
     if (update) update.call(this, newValue, oldValue);
   }
@@ -155,8 +160,8 @@ export class CustomElement extends HTMLElement {
 
     if (this.templateInstance == null)
     {
-      this.root.append(newRoot);
-      this.templateInstance = new TemplateInstance(newRoot, partFactory);
+      this.root.appendChild(newRoot);
+      this.templateInstance = new TemplateInstance(this.root, partFactory);
       this.firstRender();
       this.dispatchEvent(new Event("first-render"));
     }
@@ -166,7 +171,7 @@ export class CustomElement extends HTMLElement {
       const newValues = getValues(newRoot);
       if (!newValues) return void console.error("[error] values could not be found")
 
-      this.templateInstance.update(newValues);
+      if (this.templateInstance) this.templateInstance.update(newValues);
     }
 
     this.findQueries();
@@ -176,7 +181,7 @@ export class CustomElement extends HTMLElement {
    * Requests an update to the DOM.
    * The update is debounced according to `requestUpdateTimeout`.
    */
-  requestUpdate() {}
+  requestUpdate() { }
 
   /**
    * Queries for the first matching element within this element's render root.
@@ -200,12 +205,12 @@ export class CustomElement extends HTMLElement {
    * - An Element (template root)
    * @returns string|Element
    */
-  render():string|Element {
+  render(): string | Node {
     return "Phuong is so kool"
   }
 
   // helper variables & private functions 
-  private templateInstance: TemplateInstance|null = null;
+  private templateInstance: TemplateInstance | null = null;
 
   // decorator query 
   private queryMeta?: QueryMeta[];
@@ -223,7 +228,7 @@ export class CustomElement extends HTMLElement {
       if (meta.load) meta.load.call(this, elm);
       (this as any)[meta.propertyKey] = elm;
     }
-  } 
+  }
 
   /**
    * Calls getStyle and populates to the styleElement 
@@ -245,7 +250,7 @@ export class CustomElement extends HTMLElement {
    * combines both the static style together with the styles to form one big style 
    * @returns string
    */
-  getStyle () {
+  getStyle() {
     // Get the constructor of the child class
     const childConstructor = (this.constructor as any) as typeof CustomElement & { style?: string; styles?: string[]; };
 

@@ -1,8 +1,8 @@
 import { property, html, query, CustomElement } from '@papit/core';
 import { Asset } from '@papit/asset';
 
-import { style } from './style.js';
-import { Container, CountryEmojiSet, Size } from './types.js';
+import { style } from './style';
+import { Container, CountryEmojiSet, Size } from './types';
 
 export class Icon extends Asset {
   static style = style;
@@ -12,7 +12,7 @@ export class Icon extends Asset {
 
   @query({
     selector: 'svg',
-    load: function (this: Icon) {
+    load: function (this: Icon, value) {
       this.setSVG();
     }
   }) svgElement!: SVGSVGElement;
@@ -44,7 +44,8 @@ export class Icon extends Asset {
   @property({
     attribute: 'country-flag',
     after: function (this: Icon, value: string, old: string) {
-      if (value !== old) {
+      if (value !== old)
+      {
         this.setFlag();
       }
     }
@@ -53,43 +54,46 @@ export class Icon extends Asset {
   // class functions
   constructor() {
     super();
-
-    // this.render_mode = "greedy";
     this.assetBase = "/icons";
   }
 
-  protected override async handleResponse(response: Response | string) {
+
+  override async handleResponse(response: Response | string) {
     let content, viewbox = "0 96 960 960"; // default google icon's
-    if (typeof response === "string") {
+    if (typeof response === "string")
+    {
       content = response;
     }
-    else {
+    else
+    {
+      console.log(1)
       content = await response.text();
       const [parsed_content, parsed_viewbox] = this.extractSvgContent(content);
 
-
-      if (parsed_viewbox) {
+      if (parsed_viewbox) 
+      {
         viewbox = parsed_viewbox;
       }
-      if (parsed_content) {
+      if (parsed_content) 
+      {
         content = `SVG:${viewbox}##${parsed_content.trim()}`;
         this.cacheData(this.file, content);
       }
     }
 
-
-    if (content.startsWith("SVG:")) {
-      this.setAttribute('data-hide-slot', 'true');
+    if (content.startsWith("SVG:"))
+    {
+      this.toggleAttribute("data-hide-slot", true);
       this.content = content;
-      if (this.getAttribute("show")) console.log(content)
       this.setSVG();
     }
-    else {
-      this.setAttribute('data-hide-slot', 'false');
+    else
+    {
+      this.toggleAttribute("data-hide-slot", false);
     }
   }
-  protected override handleError() {
-    this.setAttribute('data-hide-slot', 'false');
+  override handleError(response: Response | null, error?: any) {
+    this.toggleAttribute("data-hide-slot", false);
   }
 
   // helper functions
@@ -97,45 +101,44 @@ export class Icon extends Asset {
     const parser = new DOMParser();
     const svgDoc = parser.parseFromString(svgString, 'image/svg+xml');
     const svgElement = svgDoc.querySelector('svg');
-    if (svgElement) {
+    if (svgElement)
+    {
       return [svgElement.innerHTML, svgElement.getAttribute("viewBox")];
     }
     return ["", ""];
   }
   private setSVG() {
-    if (this.svgElement) {
+    if (!this.svgElement) return;
 
-      const parsed = /SVG:(.*)##/.exec(this.content);
-      if (parsed) {
-        const content = this.content.split(parsed[1])[1];
-        this.viewbox = parsed[1];
-        // this.svgElement.setAttribute('viewBox', );
-        // if (this.getAttribute("show")) console.log(this.content, parsed, content)
-        this.svgElement.innerHTML = content;
-      }
-    }
+    const parsed = /SVG:([^#]+)##/.exec(this.content);
+    if (!parsed) return;
+
+    const content = this.content.split(parsed[1])[1];
+    this.viewbox = parsed[1];
+    if (this.hasAttribute("show")) console.log(this.content, parsed, content, this.svgElement)
+    this.svgElement.innerHTML = content;
   }
   private setFlag() {
-    if (this.countryFlag) {
-      let text = this.countryFlag;
-      if (text.toLowerCase() === 'en') text = 'gb';
+    if (!this.countryFlag) return;
 
-      let error = false;
+    let text = this.countryFlag;
+    if (text.toLowerCase() === 'en') text = 'gb';
 
-      this.flag = text
-        .toUpperCase()
-        .split('')
-        .map(v => {
-          if (CountryEmojiSet[v]) return CountryEmojiSet[v];
-          error = true;
-          console.error('please provide valid country-region code: ' + this.countryFlag);
-        })
-        .join('');
+    let error = false;
 
-      if (!error) {
-        (this as CustomElement).requestUpdate?.();
-        return;
-      }
+    this.flag = text
+      .toUpperCase()
+      .split('')
+      .map(v => {
+        if (CountryEmojiSet[v]) return CountryEmojiSet[v];
+        error = true;
+        console.error('please provide valid country-region code: ' + this.countryFlag);
+      })
+      .join('');
+
+    if (!error)
+    {
+      (this as CustomElement).requestUpdate?.();
     }
   }
 

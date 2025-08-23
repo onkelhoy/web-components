@@ -45,7 +45,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@papit/codeblock": "^0.0.0",
+    "@papit/codeblock": "0.0.1",
     "@types/node": "^22.10.2",
     "chokidar": "^3.6.0",
     "esbuild": "^0.17.18",

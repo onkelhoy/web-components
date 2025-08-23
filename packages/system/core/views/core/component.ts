@@ -8,7 +8,6 @@ export class Basic extends CustomElement {
   @property({
     type: Boolean,
     rerender: true,
-
   })
   private show = false;
 
@@ -17,7 +16,7 @@ export class Basic extends CustomElement {
     type: Number,
     rerender: true,
     attribute: "counter",
-    after: function(this: Basic, value:number, old:number, initial: boolean, isAttribute) {
+    after: function (this: Basic, value: number, old: number, initial: boolean, isAttribute) {
       if (isAttribute) this.arr = new Array(value).fill(0).map((_v, i) => i);
     }
   })
@@ -27,7 +26,7 @@ export class Basic extends CustomElement {
     type: Array,
     rerender: true,
   })
-  private arr:number[] = [];
+  private arr: number[] = [];
 
   @property({
     rerender: true,
@@ -50,7 +49,7 @@ export class Basic extends CustomElement {
   }) hejsan!: HTMLSpanElement;
 
   @bind
-  private handleshow () {
+  private handleshow() {
     this.show = true;
   }
 
@@ -60,7 +59,7 @@ export class Basic extends CustomElement {
   }
 
   @bind
-  private handleinc () {
+  private handleinc() {
     this.count++;
     this.arr.push(this.arr.length);
   }
@@ -71,7 +70,7 @@ export class Basic extends CustomElement {
     this.arr.pop();
   }
 
-  @bind 
+  @bind
   private handlename() {
     this.nameindex++;
     this.name = arr[this.nameindex % arr.length];
@@ -85,17 +84,20 @@ export class Basic extends CustomElement {
     `
   }
   renderCountButtons() {
-    return html`
+    const countButtons = html`
       <h3>count: ${this.count}</h3>
       <button onclick=${this.handleinc}>inc</button>
       <button onclick=${this.handledec}>dec</button>
     `
+
+    console.log(typeof countButtons, countButtons,)
+    return countButtons;
   }
 
   renderListAdvanced() {
 
     // const a = html`<a href="#bajs">im anchor</a>`
-      // ${a}
+    // ${a}
 
     return html`
       <span>WOW</span>
@@ -191,20 +193,38 @@ export class Basic extends CustomElement {
     `
   }
 
+  renderSimpleCase() {
+    const a = html`<a>ANCHOR</a>`
+    const nested = html`
+      <p>nested</p>
+      <div>
+        ${a}
+        ${a}
+        ${a}
+      </div>
+    `
 
+    return html`
+      <h1>HELLO WORLD</h1>
+
+      ${nested}
+    `
+  }
 
   render() {
-    return this.renderListInternal();
+    return this.renderConditional();
   }
 }
 
 // Register the element with the browser
 const cElements = customElements ?? window?.customElements;
 
-if (!cElements) {
+if (!cElements)
+{
   throw new Error('Custom Elements not supported');
 }
 
-if (!cElements.get('pap-core-basic')) {
+if (!cElements.get('pap-core-basic'))
+{
   cElements.define('pap-core-basic', Basic);
 }

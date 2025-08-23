@@ -158,30 +158,28 @@ touch "$LOCATION/.temp/.info"
 
 has_cleaned=false
 function cleanup() {
-  if [[ $has_cleaned == false ]]; then 
-    has_cleaned=true
-  else 
-    echo ""
-    exit 0
-  fi 
+  if [[ $has_cleaned == true ]]; then 
+    return
+  fi
+  has_cleaned=true
 
-  # run all necessary cleanups 
-  if [[ -n "$server_pid" ]]; then
-    kill $server_pid > /dev/null
+  # Kill server if still running
+  if [[ -n "$server_pid" ]] && kill -0 "$server_pid" 2>/dev/null; then
+    kill "$server_pid" 2>/dev/null || true
+    wait "$server_pid" 2>/dev/null || true
   fi
-  
+
+  # Remove temp folder
   if [[ -d "$LOCATION/.temp" ]]; then 
-    rm -rf "$LOCATION/.temp" 
+    rm -rf "$LOCATION/.temp"
   fi
-  echo ""
 }
 
 if [[ $NOSIG == true ]]; then 
   trap cleanup EXIT
 else 
-  # Trap to call cleanup function when the script receives a SIGINT (Ctrl+C)
-  trap cleanup SIGINT EXIT SIGTERM
-fi 
+  trap cleanup SIGINT SIGTERM EXIT
+fi
 
 if [[ -f "$SCRIPTDIR/bundle.js" ]]; then 
   node "$SCRIPTDIR/bundle.js" & 
@@ -193,7 +191,10 @@ elif [[ "$LOGLEVEL" == "debug" ]]; then
   echo "[error] could not find server scripts"
 fi
 
+# Export server PID for other scripts/tools
 echo "SERVER_PID=$server_pid" >> "$LOCATION/.temp/.info"
+
+# Sleep a bit to let server start
 sleep 1
 
 if [[ $DOOPEN == true ]]; then 
@@ -223,4 +224,7 @@ if [[ $DOOPEN == true ]]; then
   fi 
 fi 
 
-wait
+# Only wait on server PID if it exists
+if [[ -n "$server_pid" ]] && kill -0 "$server_pid" 2>/dev/null; then
+  wait "$server_pid" 2>/dev/null || true
+fi

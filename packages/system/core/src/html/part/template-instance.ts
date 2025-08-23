@@ -31,14 +31,26 @@ type Meta = {
  * @see getDescriptors
  * 
  * @created 2025-08-12
+ * @updated 2025-08-21
  * @author Henry
  */
 export class TemplateInstance implements ITemplateInstance {
   private meta: Meta[];
   private indexList: number[];
 
+  get element(): Element|null {
+    if (this.root instanceof Element) return this.root;
+    if (this.root instanceof DocumentFragment) {
+      // Pick the first element child as the "representative root"
+      return Array.from(this.root.childNodes).find(
+        n => n.nodeType === Node.ELEMENT_NODE
+      ) as Element | null;
+    }
+    return null;
+  }
+
   constructor(
-    private root: Element,
+    private root: Element|DocumentFragment,
     private partFactory: PartFactory,
   ) {
     const descriptors = getDescriptors(root);
@@ -89,9 +101,5 @@ export class TemplateInstance implements ITemplateInstance {
     this.meta.forEach(meta => meta.part.remove());
     this.meta = [];
     this.root.parentNode?.removeChild(this.root);
-  }
-
-  get element() {
-    return this.root;
   }
 }

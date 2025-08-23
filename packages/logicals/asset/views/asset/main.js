@@ -2,7 +2,7 @@
 import '@papit/core';
 
 // component
-import 'asset';
+import '@papit/asset';
 
 window.onload = () => {
   console.log('[demo]: window loaded');

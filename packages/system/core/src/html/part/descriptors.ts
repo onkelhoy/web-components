@@ -9,16 +9,22 @@ import { PartDescriptor } from "./types";
  * attribute, or an event binding). These are later turned into `Part`
  * objects by the `partFactory` inside `TemplateInstance`.
  *
- * @param {Element} root - The root DOM element of the rendered template.
+ * @param {Node} root - The root DOM element of the rendered template.
  * @returns {PartDescriptor[]} An array of descriptors representing dynamic
  * parts of the template.
  * 
  * @created 2025-08-11
  * @author Henry
  */
-export function getDescriptors(root: Element): PartDescriptor[] {
+export function getDescriptors(root: Node): PartDescriptor[] {
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_COMMENT);
-  let node: Node | null = walker.currentNode;
+  let node: Node | null;
+
+  if (root instanceof DocumentFragment)
+    node = walker.nextNode();
+  else
+    node = walker.currentNode;
+
   const descriptors: PartDescriptor[] = [];
 
   while (node) 
@@ -27,14 +33,15 @@ export function getDescriptors(root: Element): PartDescriptor[] {
     {
       if (node.nodeValue === 'list-marker') descriptors.push({ kind: 'list', marker: node as Comment });
       else if (node.nodeValue === 'marker') descriptors.push({ kind: 'value', marker: node as Comment });
-    } 
+    }
     else if (node.nodeType === Node.ELEMENT_NODE) 
     {
       const el = node as Element;
+
       for (const attr of Array.from(el.attributes)) 
       {
-        
-        if (/\<!--marker--\>/.test(attr.value)) 
+
+        if (/<!--marker-->/.test(attr.value)) 
         {
           const eventMatch = attr.name.match(/^(on|@)(?<name>.*)/);
           if (eventMatch) 
@@ -42,7 +49,8 @@ export function getDescriptors(root: Element): PartDescriptor[] {
             el.removeAttribute(attr.name);
             descriptors.push({ kind: 'event', element: el, name: eventMatch.groups?.name! });
           }
-          else {
+          else
+          {
             const strings = attr.value.split("<!--marker-->").filter(Boolean);
             if (attr.name === "key")
             {

@@ -1,3 +1,5 @@
+import { Resolvable } from "../../functions/resolve";
+
 export type Setting<T = any> = {
   /**
    * Enables verbose logging for this property — useful during development or debugging.
@@ -53,11 +55,6 @@ export type Setting<T = any> = {
   type: Function;
 
   /**
-   * The default value to assign to the property when the component initializes.
-   */
-  default: T;
-
-  /**
    * Makes the property read-only. Any external assignment will be ignored or throw in strict mode.
    */
   readonly: boolean;
@@ -101,7 +98,7 @@ export type Setting<T = any> = {
    * Custom setter logic.
    * ⚠️ Called every time a value is set, regardless of whether it changed. Use cautiously.
    */
-  set(value: T): T;
+  set(value: Resolvable<T>): Resolvable<T>;
 
   /**
    * Custom getter logic.
