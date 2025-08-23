@@ -82,18 +82,20 @@
   }
 
   code {
-    div {
-      background-color: var(--pap-foreground-3, #F6F7F8);
+    &>div {
+      background-color: var(--pap-foreground, #f5f5f5);
       overflow: hidden;
       display: block;
       border-radius: var(--radius-small, 4px);
+      border: threedface groove 2px; // same as fieldset 
 
       header {
         display: grid;
         grid-template-columns: 1fr auto 1fr;
         align-items: center;
         color: inherit;
-        background-color: var(--pap-background-1, #EAEBEF);
+        background-color: var(--pap-foreground-2, #d1d1d1);
+        border-bottom: threedface groove 1px;
 
         &>pap-typography {
           text-indent: var(--padding-large, 16px);
@@ -118,15 +120,18 @@
 
       main {
         min-height: var(--unit-size5, 32px);
-        padding: var(--padding-large, 16px) var(--padding-large, 24px);
+        padding: var(--padding-large, 16px);
       }
     }
   }
 
   fieldset {
     display: flex;
+    margin-inline: 0;
+    flex-wrap: wrap;
     gap: var(--gap-small, 8px);
     margin-bottom: var(--margin-small, 8px);
+    border-radius: var(--radius-small, 4px);
   }
 }
 

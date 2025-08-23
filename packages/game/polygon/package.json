@@ -41,7 +41,7 @@
     "@papit/game-vector": "0.0.1"
   },
   "devDependencies": {
-    "@papit/codeblock": "0.0.1",
+    "@papit/codeblock": "0.0.2",
     "@papit/game-engine": "0.0.4",
     "@papit/game-input-events": "0.0.5",
     "chokidar": "^3.6.0",

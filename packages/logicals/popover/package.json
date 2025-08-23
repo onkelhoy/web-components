@@ -49,7 +49,7 @@
   },
   "devDependencies": {
     "@papit/button": "0.0.3",
-    "@papit/codeblock": "0.0.1",
+    "@papit/codeblock": "0.0.2",
     "@papit/translator": "0.0.2",
     "@playwright/test": "^1.45.3",
     "@types/node": "^22.10.2",

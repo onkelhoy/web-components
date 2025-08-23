@@ -1,7 +1,7 @@
 {
   "name": "@papit/signaling-server",
   "description": "",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "build": "bash ./bin/build.sh",
     "watch": "bash ./bin/watch.sh",
@@ -48,8 +48,10 @@
     "ws": "^8.18.2"
   },
   "devDependencies": {
-    "@papit/codeblock": "0.0.1",
+    "@papit/card": "^0.0.1",
+    "@papit/codeblock": "0.0.2",
     "@papit/translator": "0.0.2",
+    "@papit/typography": "^0.0.3",
     "@playwright/test": "^1.45.3",
     "@types/node": "^22.10.2",
     "@types/ws": "^8.18.1",

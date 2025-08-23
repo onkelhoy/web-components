@@ -15,7 +15,6 @@
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
-    
     "outDir": "lib",
     "sourceMap": true,
     "inlineSources": true,
@@ -24,7 +23,13 @@
     "declarationDir": "lib/types",
     "declaration": true,
     "incremental": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "baseUrl": "src",
+    "paths": {
+      "@papit/codeblock": [
+        "./index"
+      ],
+    }
   },
   "include": [
     "src/**/*.js",

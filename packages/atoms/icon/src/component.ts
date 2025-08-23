@@ -66,7 +66,6 @@ export class Icon extends Asset {
     }
     else
     {
-      console.log(1)
       content = await response.text();
       const [parsed_content, parsed_viewbox] = this.extractSvgContent(content);
 
@@ -83,17 +82,17 @@ export class Icon extends Asset {
 
     if (content.startsWith("SVG:"))
     {
-      this.toggleAttribute("data-hide-slot", true);
+      this.setAttribute("data-hide-slot", "true");
       this.content = content;
       this.setSVG();
     }
     else
     {
-      this.toggleAttribute("data-hide-slot", false);
+      this.setAttribute("data-hide-slot", "false");
     }
   }
   override handleError(response: Response | null, error?: any) {
-    this.toggleAttribute("data-hide-slot", false);
+    this.setAttribute("data-hide-slot", "false");
   }
 
   // helper functions

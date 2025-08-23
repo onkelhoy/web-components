@@ -1,5 +1,9 @@
 // core
 import '@papit/core';
+import '@papit/translator';
+import "@papit/typography";
+import "@papit/card";
+import "@papit/codeblock";
 
 // component
 import '@papit/icon';
@@ -19,7 +23,8 @@ let index = 0;
 
 
 function change() {
-  if (ticker % 30 === 0) {
+  if (ticker % 30 === 0)
+  {
     index++;
     // console.log('tick', window.animation)
     window.animation.name = circleIcons[index % circleIcons.length];

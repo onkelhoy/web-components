@@ -1,7 +1,7 @@
 {
   "name": "@papit/game-circle",
   "description": "",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "build": "bash ./bin/build.sh",
     "watch": "bash ./bin/watch.sh",
@@ -36,10 +36,11 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
-    "@papit/game-shape": "*"
+    "@papit/game-shape": "*",
+    "@papit/game-vector": "^0.0.1"
   },
   "devDependencies": {
-    "@papit/codeblock": "0.0.1",
+    "@papit/codeblock": "0.0.2",
     "@papit/game-engine": "0.0.4",
     "@papit/game-input-events": "0.0.5",
     "esbuild": "^0.17.18",

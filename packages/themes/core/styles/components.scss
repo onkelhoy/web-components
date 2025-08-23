@@ -8,3 +8,12 @@ pap-button:not(:defined) {
   color: var(--pap-text);
   border-radius: 1000px;
 }
+
+pap-codeblock:not(:defined) {
+  background-color: var(--pap-foreground, #f5f5f5);
+  display: block;
+  border-radius: var(--radius-small, 4px);
+  border: threedface groove 2px;
+  min-height: var(--unit-size5, 32px);
+  padding: var(--padding-large, 16px);
+}

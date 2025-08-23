@@ -1,7 +1,7 @@
 {
   "name": "@papit/codeblock",
   "description": "",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
     "build:sass": "bash ./bin/_utils/sass.sh",
     "build:react": "bash ./bin/_utils/react.sh",
@@ -47,11 +47,12 @@
   "dependencies": {
     "@papit/button": "0.0.3",
     "@papit/core": "0.1.0",
-    "@papit/icon": "0.0.4",
+    "@papit/icon": "0.0.5",
     "@papit/switch": "0.0.1",
-    "@papit/typography": "0.0.3"
+    "@papit/typography": "^0.0.3"
   },
   "devDependencies": {
+    "@papit/card": "^0.0.1",
     "@papit/translator": "0.0.2",
     "@playwright/test": "^1.45.3",
     "@types/node": "^22.10.2",
