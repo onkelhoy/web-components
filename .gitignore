@@ -7,6 +7,8 @@ isolated/
 .npm/
 temp/
 
+bin/version/.config
+
 
 # Ignore OS-specific files
 Thumbs.db

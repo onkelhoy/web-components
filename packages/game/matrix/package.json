@@ -1,7 +1,7 @@
 {
   "name": "@papit/game-matrix",
   "description": "",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "build": "bash ./bin/build.sh",
     "watch": "bash ./bin/watch.sh",
@@ -36,7 +36,7 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "devDependencies": {
-    "@papit/codeblock": "0.0.1",
+    "@papit/codeblock": "0.0.2",
     "@papit/game-engine": "^*",
     "@papit/game-input-events": "^*",
     "@papit/game-vector": "^0.0.1",

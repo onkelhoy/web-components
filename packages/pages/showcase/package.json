@@ -55,7 +55,10 @@
     "@papit/typography": "0.0.3"
   },
   "devDependencies": {
-    "@papit/codeblock": "0.0.1",
+    "@papit/card": "^0.0.1",
+    "@papit/codeblock": "0.0.2",
+    "@papit/translator": "^0.0.2",
+    "@papit/typography": "^0.0.3",
     "@playwright/test": "^1.45.3",
     "@types/node": "^22.10.2",
     "chokidar": "^3.6.0",

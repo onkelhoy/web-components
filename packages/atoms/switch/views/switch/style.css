@@ -2,24 +2,3 @@ body {
   background-color: var(--pap-background, #DEDEDE);
   color: var(--pap-text, #080808);
 }
-
-pap-card {
-  background: var(--pap-foreground);
-  padding: var(--padding-large);
-  margin-block: var(--margin-medium);
-  border-radius: var(--radius-medium);
-  display: block;
-
-  &>pap-typography {
-    margin-bottom: var(--margin-large);
-    display: block;
-    font-size: 16pt;
-    color: var(--pap-text);
-  }
-}
-
-pap-codeblock {
-  display: flex;
-  gap: var(--gap-medium);
-  flex-wrap: wrap;
-}

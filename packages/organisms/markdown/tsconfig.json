@@ -24,7 +24,13 @@
     "declarationDir": "lib/types",
     "declaration": true,
     "incremental": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "baseUrl": "src",
+    "paths": {
+      "@papit/markdown": [
+        "./index"
+      ],
+    }
   },
   "include": [
     "src/**/*.js",

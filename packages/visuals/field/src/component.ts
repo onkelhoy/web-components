@@ -29,15 +29,17 @@ export class Field extends CustomElementInternals {
     rerender: true,
     type: Boolean,
     after: function (this: Field, value?: boolean) {
-      if (value) {
+      if (value)
+      {
         this.setAttribute('aria-disabled', 'true');
       }
-      else {
+      else
+      {
         this.removeAttribute("disabled");
         this.setAttribute('aria-disabled', 'false');
       }
     }
-  }) disabled?: boolean;
+  }) disabled: boolean | undefined;
   @property({ rerender: false }) name: string = "missing-name";
   @property({
     rerender: true,
@@ -53,10 +55,12 @@ export class Field extends CustomElementInternals {
   @property({
     type: Boolean,
     after: function (this: Field, value?: boolean) {
-      if (value) {
+      if (value)
+      {
         this.setAttribute('aria-required', 'true');
       }
-      else {
+      else
+      {
         this.removeAttribute("required");
         this.setAttribute('aria-required', 'false');
       }
@@ -65,10 +69,12 @@ export class Field extends CustomElementInternals {
   @property({
     type: Boolean,
     after: function (this: Field, value?: boolean) {
-      if (value) {
+      if (value)
+      {
         this.setAttribute('aria-readonly', 'true');
       }
-      else {
+      else
+      {
         this.removeAttribute("readonly");
         this.setAttribute('aria-readonly', 'false');
       }
@@ -96,7 +102,8 @@ export class Field extends CustomElementInternals {
       return value;
     },
     after: function (this: Field) {
-      if (!this.internalmessage) {
+      if (!this.internalmessage)
+      {
         this.fallbackmessage = this.message || undefined;
       }
       this.internalmessage = false;
@@ -110,7 +117,8 @@ export class Field extends CustomElementInternals {
       return value;
     },
     after: function (this: Field) {
-      if (!this.internalheader) {
+      if (!this.internalheader)
+      {
         this.outsideheader = this.header;
       }
 
@@ -125,7 +133,8 @@ export class Field extends CustomElementInternals {
       return value;
     },
     after: function (this: Field) {
-      if (!this.internalfooter) {
+      if (!this.internalfooter)
+      {
         this.outsidefooter = this.footer;
       }
 
@@ -158,7 +167,8 @@ export class Field extends CustomElementInternals {
   // }
 
   public get validity(): ValidityState {
-    if (this.element && 'validity' in this.element) {
+    if (this.element && 'validity' in this.element)
+    {
       return this.element.validity as ValidityState;
     }
     if (this._internals === undefined) return { valid: true } as ValidityState;
@@ -166,7 +176,8 @@ export class Field extends CustomElementInternals {
   }
 
   public get validationMessage(): string {
-    if (this.element && 'validationMessage' in this.element) {
+    if (this.element && 'validationMessage' in this.element)
+    {
       return this.element.validationMessage as string;
     }
     if (this._internals === undefined) return "";
@@ -185,7 +196,8 @@ export class Field extends CustomElementInternals {
     });
   }
   protected updateform(value?: string) {
-    if (this._internals !== undefined) {
+    if (this._internals !== undefined)
+    {
       this._internals.setFormValue(value || null);
     }
   }
@@ -197,33 +209,40 @@ export class Field extends CustomElementInternals {
   // NOTE this function is called inside the debouncedInput so we dont need to overload with calls
   protected validateElement() {
 
-    if (this.customValidation) {
+    if (this.customValidation)
+    {
       const ret = this.customValidation(this);
-      if (ret) {
+      if (ret)
+      {
         this.setMessage(ret.message, ret.state);
         return;
       }
     }
 
     const validity = this.validity;
-    if (validity.valid) {
+    if (validity.valid)
+    {
       this.setMessage();
       return;
     }
 
-    for (const name in validity) {
+    for (const name in validity)
+    {
       const vname = name as keyof ValidityState;
       if (!validity[vname]) continue; // skip valid stuff
 
-      if (this.customDanger && this.customDanger[vname]) {
+      if (this.customDanger && this.customDanger[vname])
+      {
         this.setMessage(this.customDanger[vname], 'error');
         break;
       }
-      else if (this.customWarning && this.customWarning[vname]) {
+      else if (this.customWarning && this.customWarning[vname])
+      {
         this.setMessage(this.customWarning[vname], 'warning');
         break;
       }
-      else {
+      else
+      {
         this.setMessage(this.validationMessage, 'error');
         break;
       }
@@ -238,7 +257,8 @@ export class Field extends CustomElementInternals {
   private getFooterPrefixSlot() {
     if (!this.message) return "";
 
-    switch (this.state) {
+    switch (this.state)
+    {
       case "error":
         return '<pap-icon cache="true" name="error" slot="prefix"></pap-icon>';
       case "warning":
@@ -254,15 +274,18 @@ export class Field extends CustomElementInternals {
 
   public formResetCallback() {
     this.value = this.defaultValue;
-    if (this.element && 'value' in this.element) {
+    if (this.element && 'value' in this.element)
+    {
       this.element.value = this.value || "";
     }
   }
 
   private handleslotchange = (e: Event) => {
-    if (e.target instanceof HTMLSlotElement) {
+    if (e.target instanceof HTMLSlotElement)
+    {
       const name = e.target.getAttribute('name');
-      if (typeof name === "string") {
+      if (typeof name === "string")
+      {
         const assignedNodes = e.target.assignedNodes();
         this.slotelements[name] = assignedNodes.length;
         this.slotvisibility();
@@ -273,7 +296,8 @@ export class Field extends CustomElementInternals {
   private slotvisibility() {
     let header = 0;
     let footer = 0;
-    for (const name in this.slotelements) {
+    for (const name in this.slotelements)
+    {
       if (name.startsWith('header')) header += this.slotelements[name];
       else footer += this.slotelements[name];
     }
@@ -286,7 +310,8 @@ export class Field extends CustomElementInternals {
 
   // render functions 
   protected renderHeader(header?: PrefixSuffixRender) {
-    if (header) {
+    if (header)
+    {
       this.header = true;
     }
 
@@ -303,7 +328,8 @@ export class Field extends CustomElementInternals {
     `
   }
   protected renderFooter(footer?: PrefixSuffixRender) {
-    if (footer) {
+    if (footer)
+    {
       this.header = true;
     }
 
