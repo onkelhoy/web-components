@@ -110,12 +110,17 @@ function compile(templateStringArray: TemplateStringsArray, values: unknown[]): 
 
   // This flag helps fix attribute quoting issues by adding quotes where needed
   let expectQuote = false;
+  let insideTag = false;
 
   // Join template strings inserting comment markers to mark dynamic parts
   let result = '';
   for (let i = 0; i < templateStringArray.length; i++)
   {
     let fixedStr = templateStringArray[i];
+
+    // Determine if we're entering or exiting a tag
+    if (fixedStr.lastIndexOf('<') > fixedStr.lastIndexOf('>')) insideTag = true;
+    if (fixedStr.lastIndexOf('>') > fixedStr.lastIndexOf('<')) insideTag = false;
 
     // If last string ended with '=', ensure next string starts with '"'
     if (expectQuote)
@@ -136,12 +141,22 @@ function compile(templateStringArray: TemplateStringsArray, values: unknown[]): 
     // guess this case should not happend but just for sanity 
     if (i >= values.length) continue;
 
-    // now append the markers 
-    if (Array.isArray(values[i]))
-      result += '<!--list-marker-->';
+    const val = values[i];
+
+    if (insideTag)
+    {
+      if (/='?"?$/.test(fixedStr))
+        result += '__marker__';
+      else
+        result += `marker-standalone-${i}="${i}"`;
+    }
     else
-      result += '<!--marker-->';
+    {
+      // Regular DOM content: use comment markers
+      result += Array.isArray(val) ? '<!--list-marker-->' : '<!--marker-->';
+    }
   }
+
   template.innerHTML = result;
 
   // Clone content from the template element to create a DocumentFragment
@@ -149,8 +164,6 @@ function compile(templateStringArray: TemplateStringsArray, values: unknown[]): 
 
   // Normalize the fragment into a root Element (unwraps single node or wraps multiple in a div)
   const root = normalizeRoot(fragment);
-
-  // (root as any).__isTemplateRoot = true;
 
   // Cache the compiled root element for reuse
   cachedElements.set(templateStringArray, root);

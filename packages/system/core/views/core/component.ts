@@ -216,6 +216,36 @@ export class Basic extends CustomElement {
   }
 }
 
+
+class InsideComponent extends CustomElement {
+  @property({ rerender: true }) name = "bajs";
+
+  render() {
+    return html`
+      <span>INSIDE: ${this.name}</span>
+      <p><slot></slot></p>
+    `
+  }
+}
+
+class OutsideComponent extends CustomElement {
+  @property({ rerender: true }) name = "henry";
+
+  render() {
+    return html`
+      <select>
+        <option value="henry" ${this.name === "henry" && "selected"}>henry is selcted</option>
+        <option value="oscar" ${this.name === "oscar" && "selected"}>oscar is selcted</option>
+        <option value="bajs" ${this.name === "bajs" && "selected"}>bajs is selcted</option>
+      </select>
+      <br />
+      <h1>HELLO WORLD ${this.name}</h1>
+      <p>OUTISDE: ${this.name}</p>
+      <core-inside name="${this.name}">WOOOOOOW</core-inside>
+    `
+  }
+}
+
 // Register the element with the browser
 const cElements = customElements ?? window?.customElements;
 
@@ -227,4 +257,13 @@ if (!cElements)
 if (!cElements.get('pap-core-basic'))
 {
   cElements.define('pap-core-basic', Basic);
+}
+
+if (!cElements.get('core-inside'))
+{
+  cElements.define('core-inside', InsideComponent);
+}
+if (!cElements.get('core-outside'))
+{
+  cElements.define('core-outside', OutsideComponent);
 }

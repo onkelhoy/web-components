@@ -1,6 +1,6 @@
 {
   "name": "@papit/typography",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "scripts": {
     "build:sass": "bash ./bin/_utils/sass.sh",
     "build:react": "bash ./bin/_utils/react.sh",
@@ -44,13 +44,13 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
-    "@papit/core": "0.1.0"
+    "@papit/core": "1.0.0"
   },
   "devDependencies": {
-    "@papit/card": "^0.0.1",
-    "@papit/codeblock": "0.0.2",
-    "@papit/translator": "0.0.2",
-    "@papit/typography": "^0.0.3",
+    "@papit/card": "0.0.2",
+    "@papit/codeblock": "0.0.3",
+    "@papit/translator": "0.0.3",
+    "@papit/typography": "0.0.4",
     "@playwright/test": "^1.45.3",
     "@types/node": "^22.10.2",
     "chokidar": "^3.6.0",

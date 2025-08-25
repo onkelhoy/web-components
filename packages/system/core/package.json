@@ -1,6 +1,6 @@
 {
   "name": "@papit/core",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "scripts": {
     "build:sass": "bash ./bin/_utils/sass.sh",
     "build:react": "bash ./bin/_utils/react.sh",
@@ -45,10 +45,10 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@papit/card": "^0.0.1",
-    "@papit/codeblock": "0.0.2",
-    "@papit/translator": "^0.0.2",
-    "@papit/typography": "^0.0.3",
+    "@papit/card": "0.0.2",
+    "@papit/codeblock": "0.0.3",
+    "@papit/translator": "0.0.3",
+    "@papit/typography": "0.0.4",
     "@types/node": "^22.10.2",
     "chokidar": "^3.6.0",
     "esbuild": "^0.17.18",
