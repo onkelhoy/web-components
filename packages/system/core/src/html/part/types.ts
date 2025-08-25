@@ -2,7 +2,7 @@ export type PartDescriptor =
   | { kind: 'value', marker: Comment }
   | { kind: 'list', marker: Comment }
   | { kind: 'nested', marker: Comment }
-  | { kind: 'attr', element: Element, name: string, strings: string[] }
+  | { kind: 'attr', element: Element, name: string, strings: string[], standalone?: boolean }
   | { kind: 'event', element: Element, name: string };
 
 export interface Part {
@@ -15,7 +15,7 @@ export type PartFactory = (desc: PartDescriptor, helpers: PartHelpers) => Part;
 
 export type PartHelpers = {
   createPart: (desc: PartDescriptor) => Part;
-  createTemplateInstance: (rootElement: Element|DocumentFragment) => ITemplateInstance;
+  createTemplateInstance: (rootElement: Element | DocumentFragment) => ITemplateInstance;
 };
 
 export interface ITemplateInstance {

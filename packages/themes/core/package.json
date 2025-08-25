@@ -30,10 +30,10 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "devDependencies": {
-    "@papit/card": "^0.0.1",
-    "@papit/codeblock": "0.0.2",
-    "@papit/translator": "^0.0.2",
-    "@papit/typography": "^0.0.3",
+    "@papit/card": "0.0.2",
+    "@papit/codeblock": "0.0.3",
+    "@papit/translator": "0.0.3",
+    "@papit/typography": "0.0.4",
     "@playwright/test": "^1.45.3",
     "@types/node": "^22.10.2",
     "node-html-parser": "^6.1.5",

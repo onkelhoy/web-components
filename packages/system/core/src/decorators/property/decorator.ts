@@ -95,13 +95,13 @@ function define(target: any, propertyKey: PropertyKey, _settings: Partial<Settin
         return;
       }
 
-      this[updateKey] = true;
-
       const nvalue = parseValue(newValue, settings.type);
       if (settings.hasChanged && !settings.hasChanged(nvalue, this[propertyKey])) return;
-      else if (sameValue(nvalue, this[propertyKey], settings.maxReqursiveSteps)) return;
+      if (sameValue(nvalue, this[propertyKey], settings.maxReqursiveSteps)) return;
 
+      this[updateKey] = true;
       this[propertyKey] = nvalue; // assign directly
+      this[updateKey] = false;
     });
   }
 
@@ -140,7 +140,7 @@ function define(target: any, propertyKey: PropertyKey, _settings: Partial<Settin
 
       this[privateKey] = value;
 
-      if (attributeName && settings.reflect !== false)
+      if (attributeName && settings.reflect !== false && !this[updateKey])
       {
         this[updateKey] = true;
         if (settings.removeAttribute && (value === null || value === undefined || value === false))

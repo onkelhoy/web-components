@@ -16,11 +16,12 @@ import { NestedPart } from './parts/nested-part';
  * @throws {Error} If the descriptor kind is not recognized.
  */
 export const partFactory: PartFactory = (desc, helpers) => {
-  switch (desc.kind) {
+  switch (desc.kind)
+  {
     case 'value': return new ValuePart(desc.marker, helpers);
     case 'list': return new ListPart(desc.marker, helpers);
     case 'nested': return new NestedPart(desc.marker, helpers);
-    case 'attr': return new AttributePart(desc.element, desc.name, desc.strings);
+    case 'attr': return new AttributePart(desc.element, desc.name, desc.strings, desc.standalone);
     case 'event': return new EventPart(desc.element, desc.name);
     default: throw new Error(`Unknown part kind: ${(desc as any).kind}`);
   }

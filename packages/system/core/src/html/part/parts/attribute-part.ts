@@ -20,21 +20,22 @@ import type { Part } from "@html/part/types";
  */
 export class AttributePart implements Part {
 
-  private value:string|null = null;
+  private value: string | null = null;
 
   constructor(
-    private element:Element,
-    private name:string,
+    private element: Element,
+    private name: string,
     public strings: string[],
-  ) {}
-  
+    private standalone?: boolean,
+  ) { }
+
   /**
    * Updates the attribute with new values.
    * @param values String fragments matching the `strings` template parts.
    */
-  apply(values: (string|null)[]) {
+  apply(values: (string | null)[]) {
     let value = "";
-    for (let i=0; i<values.length; i++) 
+    for (let i = 0; i < values.length; i++) 
     {
       value += this.strings[i];
       value += values[i];
@@ -45,14 +46,26 @@ export class AttributePart implements Part {
 
     if (this.name === "key")
       (this.element as any).key = value;
-    else 
+    else if (this.standalone)
+    {
+      if (value && typeof value === "string" && !/false/.test(value))
+      {
+        this.name = value;
+        this.element.toggleAttribute(value, true);
+      }
+      else
+      {
+        this.element.toggleAttribute(this.name, false);
+      }
+    }
+    else
       this.element.setAttribute(this.name, value);
   }
 
   clear() {
-    if (this.name === "key") 
-      delete (this.element as any).key; 
-    else 
+    if (this.name === "key")
+      delete (this.element as any).key;
+    else
       this.element.removeAttribute(this.name);
   }
 

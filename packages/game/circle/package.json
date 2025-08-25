@@ -40,7 +40,7 @@
     "@papit/game-vector": "0.0.2"
   },
   "devDependencies": {
-    "@papit/codeblock": "0.0.2",
+    "@papit/codeblock": "0.0.3",
     "@papit/game-engine": "0.0.4",
     "@papit/game-input-events": "0.0.6",
     "esbuild": "^0.17.18",

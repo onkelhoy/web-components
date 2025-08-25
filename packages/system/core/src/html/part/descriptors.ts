@@ -40,8 +40,13 @@ export function getDescriptors(root: Node): PartDescriptor[] {
 
       for (const attr of Array.from(el.attributes)) 
       {
-
-        if (/<!--marker-->/.test(attr.value)) 
+        // Example::<option ${sel && "selected"} /> 
+        if (/marker-standalone-(\d)+/.test(attr.name)) 
+        {
+          el.removeAttribute(attr.name);
+          descriptors.push({ kind: 'attr', element: el, name: attr.name, strings: [''], standalone: true });
+        }
+        else if (/__marker__/.test(attr.value)) 
         {
           const eventMatch = attr.name.match(/^(on|@)(?<name>.*)/);
           if (eventMatch) 
@@ -51,7 +56,7 @@ export function getDescriptors(root: Node): PartDescriptor[] {
           }
           else
           {
-            const strings = attr.value.split("<!--marker-->").filter(Boolean);
+            const strings = attr.value.split("__marker__").filter(Boolean);
             if (attr.name === "key")
             {
               el.removeAttribute("key");
