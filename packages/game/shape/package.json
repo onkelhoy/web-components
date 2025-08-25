@@ -1,7 +1,7 @@
 {
   "name": "@papit/game-shape",
   "description": "",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "build": "bash ./bin/build.sh",
     "watch": "bash ./bin/watch.sh",
@@ -36,10 +36,8 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "devDependencies": {
-    "@papit/codeblock": "0.0.2",
     "@papit/game-engine": "0.0.4",
-    "@papit/game-input-events": "0.0.5",
-    "@papit/game-vector": "^0.0.1",
+    "@papit/game-input-events": "0.0.6",
     "chokidar": "^3.6.0",
     "esbuild": "^0.17.18",
     "node-html-parser": "^6.1.11",
@@ -48,5 +46,8 @@
   "keywords": [
     "game",
     "typescript"
-  ]
+  ],
+  "dependencies": {
+    "@papit/game-vector": "0.0.2"
+  }
 }

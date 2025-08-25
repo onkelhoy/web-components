@@ -15,7 +15,6 @@
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
-    "importHelpers": true,
     "outDir": "lib",
     "sourceMap": true,
     "inlineSources": true,
