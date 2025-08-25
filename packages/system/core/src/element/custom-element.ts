@@ -78,6 +78,7 @@ export class CustomElement extends HTMLElement {
   }
 
   private styleElement: HTMLStyleElement | null = null;
+  private __connected: boolean = false;
 
   originalHTML: string;
 
@@ -105,6 +106,7 @@ export class CustomElement extends HTMLElement {
    */
   connectedCallback() {
     this.update();
+    this.__connected = true;
   }
 
   /**

@@ -1,4 +1,4 @@
-import { html, CustomElement, property, } from "@papit/core";
+import { html, CustomElement, property, bind, } from "@papit/core";
 
 
 class InsideComponent extends CustomElement {
@@ -35,6 +35,32 @@ class SelectComponent extends CustomElement {
   }
 }
 
+class EventInsideComponent extends CustomElement {
+  @property({ rerender: true, type: Number }) count = 7;
+
+  render() {
+    return html`
+      <p count=${this.count}>${this.count}</p>
+    `
+  }
+}
+class EventComponent extends CustomElement {
+  @property({ rerender: true, type: Number }) count = 3;
+
+  @bind
+  method() {
+    this.count++;
+  }
+
+  render() {
+    return html`
+      <attr-event-inside count=${this.count} @click=${this.method}></attr-event-inside>
+    `
+  }
+}
+
+window.customElements.define("attr-event-inside", EventInsideComponent);
+window.customElements.define("attr-event", EventComponent);
 window.customElements.define("attr-select", SelectComponent);
 window.customElements.define("attr-inside", InsideComponent);
 window.customElements.define("attr-outside", OutsideComponent);

@@ -89,6 +89,7 @@ function define(target: any, propertyKey: PropertyKey, _settings: Partial<Settin
 
     const meta: PropertyMeta = target.propertyMeta ??= new Map();
     meta.set(attributeName, function (this: any, newValue, oldValue) {
+      if (!this.__connected) return;
       if (this[updateKey])
       {
         this[updateKey] = false;
@@ -119,7 +120,8 @@ function define(target: any, propertyKey: PropertyKey, _settings: Partial<Settin
       {
         // parse existing attribute immediately
         value = parseValue(this.getAttribute(attributeName), settings.type);
-        if (settings.set) value = settings.set(value);
+        this[privateKey] = value; // <-- initialize directly, but don't trigger update
+        return; // skip rest of setter
       }
 
       if (settings.readonly && !isInitial)
@@ -127,7 +129,10 @@ function define(target: any, propertyKey: PropertyKey, _settings: Partial<Settin
         throw new TypeError(`Cannot reassign readonly property '${String(propertyKey)}'`);
       }
 
-      if (settings.set) value = await resolve(settings.set(value));
+      if (settings.set) 
+      {
+        value = await resolve(settings.set(value));
+      }
 
       const oldVal = this[privateKey];
       if (settings.hasChanged && !settings.hasChanged(value, oldVal)) return;
