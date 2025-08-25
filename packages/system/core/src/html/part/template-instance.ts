@@ -38,9 +38,10 @@ export class TemplateInstance implements ITemplateInstance {
   private meta: Meta[];
   private indexList: number[];
 
-  get element(): Element|null {
+  get element(): Element | null {
     if (this.root instanceof Element) return this.root;
-    if (this.root instanceof DocumentFragment) {
+    if (this.root instanceof DocumentFragment)
+    {
       // Pick the first element child as the "representative root"
       return Array.from(this.root.childNodes).find(
         n => n.nodeType === Node.ELEMENT_NODE
@@ -50,7 +51,7 @@ export class TemplateInstance implements ITemplateInstance {
   }
 
   constructor(
-    private root: Element|DocumentFragment,
+    private root: Element | DocumentFragment,
     private partFactory: PartFactory,
   ) {
     const descriptors = getDescriptors(root);
@@ -60,13 +61,13 @@ export class TemplateInstance implements ITemplateInstance {
       createTemplateInstance: (el) => new TemplateInstance(el, this.partFactory),
     };
 
-    let attributes:number[] = [];
-    let rest:number[] = [];
+    let attributes: number[] = [];
+    let rest: number[] = [];
 
     this.meta = descriptors.map((descriptor, index) => {
       if (["attr", "event"].includes(descriptor.kind))
         attributes.push(index);
-      else 
+      else
         rest.push(index);
 
       return {
@@ -83,6 +84,7 @@ export class TemplateInstance implements ITemplateInstance {
    * @param values The array of values corresponding to part indices.
    */
   update(values: any[]) {
+    console.log('indexlist', this.indexList, this.meta)
     for (const i of this.indexList) 
     {
       if (this.meta[i].descriptor.kind === "attr")

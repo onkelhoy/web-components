@@ -68,5 +68,7 @@ export function getDescriptors(root: Node): PartDescriptor[] {
     }
     node = walker.nextNode();
   }
+
+  console.log('descriptors', descriptors)
   return descriptors;
 }

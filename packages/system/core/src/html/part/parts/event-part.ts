@@ -19,25 +19,30 @@ import type { Part } from "@html/part/types";
  */
 export class EventPart implements Part {
 
-  private value: EventListenerOrEventListenerObject|null = null;
+  private value: EventListenerOrEventListenerObject | null = null;
 
   constructor(
-    private element:Element,
-    private name:string,
-  ) {}
+    private element: Element,
+    private name: string,
+  ) { }
 
   /**
    * Attaches a new listener and removes any previously bound one.
    * @param value The event listener or `EventListenerObject`, or `null` to unbind.
    */
-  apply( 
+  apply(
     value: EventListenerOrEventListenerObject | null
   ) {
-    if (this.value) {
+
+    console.log('element', this.element, value)
+
+    if (this.value)
+    {
       this.element.removeEventListener(this.name as keyof ElementEventMap, this.value);
     }
 
-    if (value) {
+    if (value)
+    {
       this.element.addEventListener(this.name as keyof ElementEventMap, value);
     }
 

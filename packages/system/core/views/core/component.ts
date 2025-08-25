@@ -246,6 +246,31 @@ class OutsideComponent extends CustomElement {
   }
 }
 
+class ManyAttributeCase extends CustomElement {
+  @property({ rerender: true, type: Number }) count1 = 0;
+
+  render() {
+    return html`
+      <p count1=${this.count1}>${this.count1}</p>
+    `
+  }
+}
+
+class ManyAttributeCase2 extends CustomElement {
+  @property({ rerender: true, type: Number }) count1 = 0;
+
+  handleclick() { }
+
+  render() {
+    return html`
+      <pap-core-many
+        count1=${this.count1}
+        @click=${this.handleclick}
+      ></pap-core-many>
+    `
+  }
+}
+
 // Register the element with the browser
 const cElements = customElements ?? window?.customElements;
 
@@ -257,6 +282,18 @@ if (!cElements)
 if (!cElements.get('pap-core-basic'))
 {
   cElements.define('pap-core-basic', Basic);
+}
+
+
+if (!cElements.get('pap-core-many'))
+{
+  cElements.define('pap-core-many', ManyAttributeCase);
+}
+
+
+if (!cElements.get('pap-core-many2'))
+{
+  cElements.define('pap-core-many2', ManyAttributeCase2);
 }
 
 if (!cElements.get('core-inside'))
