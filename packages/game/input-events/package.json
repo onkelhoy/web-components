@@ -1,7 +1,7 @@
 {
   "name": "@papit/game-input-events",
   "description": "",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "scripts": {
     "build": "bash ./bin/build.sh",
     "watch": "bash ./bin/watch.sh",
@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@papit/game-engine": "0.0.4",
-    "@papit/game-vector": "0.0.1"
+    "@papit/game-vector": "0.0.2"
   },
   "devDependencies": {
     "@papit/codeblock": "0.0.2",

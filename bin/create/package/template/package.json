@@ -49,7 +49,9 @@
   },
   "devDependencies": {
     "@papit/translator": "^*",
+    "@papit/card": "^*",
     "@papit/codeblock": "^*",
+    "@papit/typography": "^*",
     "@types/node": "^22.10.2",
     "esbuild": "^0.17.18",
     "sass": "^1.70.0",
