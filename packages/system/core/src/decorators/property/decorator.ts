@@ -115,11 +115,12 @@ function define(target: any, propertyKey: PropertyKey, _settings: Partial<Settin
     async set(value) {
       const isInitial = !Object.hasOwn(this, privateKey);
 
+      let initialAttribute = false;
       if (isInitial && attributeName && this.hasAttribute(attributeName))
       {
         // parse existing attribute immediately
         value = parseValue(this.getAttribute(attributeName), settings.type);
-        if (settings.set) value = settings.set(value);
+        initialAttribute = true;
       }
 
       if (settings.readonly && !isInitial)
@@ -127,7 +128,10 @@ function define(target: any, propertyKey: PropertyKey, _settings: Partial<Settin
         throw new TypeError(`Cannot reassign readonly property '${String(propertyKey)}'`);
       }
 
-      if (settings.set) value = await resolve(settings.set(value));
+      if (settings.set) 
+      {
+        value = await resolve(settings.set(value));
+      }
 
       const oldVal = this[privateKey];
       if (settings.hasChanged && !settings.hasChanged(value, oldVal)) return;
@@ -140,7 +144,7 @@ function define(target: any, propertyKey: PropertyKey, _settings: Partial<Settin
 
       this[privateKey] = value;
 
-      if (attributeName && settings.reflect !== false && !this[updateKey])
+      if (!initialAttribute && attributeName && settings.reflect !== false && !this[updateKey])
       {
         this[updateKey] = true;
         if (settings.removeAttribute && (value === null || value === undefined || value === false))

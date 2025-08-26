@@ -56,4 +56,17 @@ test.describe("attribute cases", () => {
     expect(option).not.toBeNull();
     expect(option).toBe("henry");
   });
+
+  test("child must allow parent to know which attributes are markers", async ({ page }) => {
+    const component = page.getByTestId("event");
+    expect(component).not.toBeNull();
+    expect(component).toHaveAttribute("count", "5");
+    await page.waitForTimeout(300); // allow to load
+    const insideAttr = await component.evaluate((el: any) => el.querySelector("attr-event-inside")?.getAttribute("count"));
+    expect(insideAttr).toBe("5");
+    const pAttribute = await component.evaluate((el: any) => el.querySelector("attr-event-inside")?.querySelector("p")?.getAttribute("count"));
+    const pContent = await component.evaluate((el: any) => el.querySelector("attr-event-inside")?.querySelector("p")?.textContent);
+    expect(pAttribute).toBe("5");
+    expect(pContent).toBe("5");
+  });
 });
