@@ -47,8 +47,15 @@
   --timing-slow: 320ms;
 
   /* BREAKPOINTS */
-  --breakpoint-mobile: 320px;
-  --breakpoint-pad: 768px;
-  --breakpoint-laptop: 1024px;
-  --breakpoint-desktop: 1440px;
+  --breakpoint-mobile: 320px; // legacy 
+  --breakpoint-pad: 768px; // legacy 
+  --breakpoint-laptop: 1024px; // legacy 
+  --breakpoint-desktop: 1280px; // legacy 
+
+  // from tailwind
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
 }
