@@ -86,7 +86,7 @@ export class TemplateInstance implements ITemplateInstance {
     });
 
     // apply events last - thought it didnt not solve current problem.. 
-    this.indexList = [...attributes, ...rest, ...events];
+    this.indexList = [...attributes, ...events, ...rest];
   }
 
   /**

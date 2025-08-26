@@ -89,7 +89,6 @@ function define(target: any, propertyKey: PropertyKey, _settings: Partial<Settin
 
     const meta: PropertyMeta = target.propertyMeta ??= new Map();
     meta.set(attributeName, function (this: any, newValue, oldValue) {
-      if (!this.__connected) return;
       if (this[updateKey])
       {
         this[updateKey] = false;
@@ -116,12 +115,12 @@ function define(target: any, propertyKey: PropertyKey, _settings: Partial<Settin
     async set(value) {
       const isInitial = !Object.hasOwn(this, privateKey);
 
+      let initialAttribute = false;
       if (isInitial && attributeName && this.hasAttribute(attributeName))
       {
         // parse existing attribute immediately
         value = parseValue(this.getAttribute(attributeName), settings.type);
-        this[privateKey] = value; // <-- initialize directly, but don't trigger update
-        return; // skip rest of setter
+        initialAttribute = true;
       }
 
       if (settings.readonly && !isInitial)
@@ -145,7 +144,7 @@ function define(target: any, propertyKey: PropertyKey, _settings: Partial<Settin
 
       this[privateKey] = value;
 
-      if (attributeName && settings.reflect !== false && !this[updateKey])
+      if (!initialAttribute && attributeName && settings.reflect !== false && !this[updateKey])
       {
         this[updateKey] = true;
         if (settings.removeAttribute && (value === null || value === undefined || value === false))
