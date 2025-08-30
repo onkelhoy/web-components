@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@papit/card": "0.0.3",
-    "@papit/codeblock": "0.0.4",
+    "@papit/codeblock": "0.0.5",
     "@papit/translator": "0.0.4",
     "@papit/typography": "0.0.5",
     "@playwright/test": "^1.45.3",

@@ -1,6 +1,6 @@
 {
   "name": "@papit/page-showcase",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "scripts": {
     "build:sass": "bash ./bin/_utils/sass.sh",
     "build:react": "bash ./bin/_utils/react.sh",
@@ -48,7 +48,7 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
-    "@papit/button": "0.0.5",
+    "@papit/button": "0.0.6",
     "@papit/core": "1.0.1",
     "@papit/router": "0.0.5",
     "@papit/tabs": "0.0.4",
@@ -56,7 +56,7 @@
   },
   "devDependencies": {
     "@papit/card": "0.0.3",
-    "@papit/codeblock": "0.0.4",
+    "@papit/codeblock": "0.0.5",
     "@papit/translator": "0.0.4",
     "@papit/typography": "0.0.5",
     "@playwright/test": "^1.45.3",

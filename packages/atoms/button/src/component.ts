@@ -1,8 +1,6 @@
 // import statements 
 // system 
-import { bind, CustomElementInternals, html, property } from "@papit/core";
-// visuals 
-import "@papit/prefix-suffix";
+import { bind, CustomElementInternals, property } from "@papit/core";
 
 // local 
 import { style } from "./style";
@@ -42,7 +40,7 @@ export class Button extends CustomElementInternals {
   // event handlers
   @bind
   private handlekeyup(e: KeyboardEvent) {
-    if ((e.key || e.code).toLowerCase() === "enter") {
+    if (["enter", "numpadenter"].includes((e.key || e.code).toLowerCase())) {
       this.dispatchEvent(new Event("click"));
     }
   }
@@ -66,14 +64,7 @@ export class Button extends CustomElementInternals {
   }
 
   render() {
-    return `
-      <span part="overlay"></span>
-      <pap-prefix-suffix part="prefix-suffix">
-        <slot slot="prefix" name="prefix"></slot>
-        <slot></slot>
-        <slot slot="suffix" name="suffix"></slot>
-      </pap-prefix-suffix>
-    `;
+    return "<slot></slot>";
   }
 }
 

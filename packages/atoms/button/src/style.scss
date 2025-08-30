@@ -19,36 +19,15 @@
   height: fit-content;
   position: relative;
   isolation: isolate;
-
-  font-size: 1.1rem;
-  letter-spacing: 0.01rem;
   cursor: pointer;
 
-  padding-inline: var(--padding-small, 8px);
-
-  pap-prefix-suffix {
-    // flex: 1;
-    gap: 0;
-    padding-inline: var(--padding-small, 4px);
-
-    &::part(content) {
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      padding-inline: var(--padding-small, 8px);
-      gap: var(--button-content-gap, var(--gap-small, 8px));
-    }
-  }
+  padding-inline: var(--padding-medium, 8px);
 }
 
 :host([square]),
 :host([circle]) {
   aspect-ratio: 1;
   padding: 0;
-
-  pap-prefix-suffix {
-    padding: 0;
-  }
 }
 
 :host([circle]) {
@@ -168,17 +147,6 @@
   display: flex;
   width: 100%;
   box-sizing: border-box;
-}
-
-:host(.content-flex-start) {
-  pap-prefix-suffix {
-    // flex: 1;
-
-    &::part(content) {
-      justify-content: flex-start;
-      overflow-x: auto;
-    }
-  }
 }
 
 // radius 

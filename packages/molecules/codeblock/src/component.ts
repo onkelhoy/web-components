@@ -31,7 +31,7 @@ export class Codeblock extends CustomElement {
     }
   }) main!: HTMLElement;
   @query<Typography>('#language') languageElement!: Typography;
-  @query<Typography>('header > pap-button > pap-typography') copytext!: Typography;
+  @query<Typography>('header > pap-button pap-typography') copytext!: Typography;
   @query('fieldset') fieldsetElement!: HTMLFieldSetElement;
 
   @property display: Display = "code";
@@ -508,8 +508,8 @@ export class Codeblock extends CustomElement {
               mode="hug"
               @click="${this.handlecopy}" 
             >
-              <pap-icon cache name="done" slot="prefix"></pap-icon>
-              <pap-icon cache name="content_paste" slot="prefix"></pap-icon>
+              <pap-icon name="done"></pap-icon>
+              <pap-icon name="content_paste"></pap-icon>
               <pap-typography>Copy code</pap-typography>
             </pap-button>
           </header>
