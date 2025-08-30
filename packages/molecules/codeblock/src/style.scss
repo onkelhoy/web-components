@@ -107,7 +107,11 @@
 
         pap-button {
           margin-left: auto;
+          gap: var(--gap-small, 4px);
 
+          pap-icon {
+            color: var(--pap-text);
+          }
           pap-icon[name="done"] {
             display: none;
           }

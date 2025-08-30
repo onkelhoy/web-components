@@ -48,8 +48,8 @@
     "@papit/core": "1.0.1"
   },
   "devDependencies": {
-    "@papit/button": "0.0.5",
-    "@papit/codeblock": "0.0.4",
+    "@papit/button": "0.0.6",
+    "@papit/codeblock": "0.0.5",
     "@papit/translator": "0.0.4",
     "@playwright/test": "^1.45.3",
     "@types/node": "^22.10.2",

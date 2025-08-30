@@ -50,7 +50,7 @@
   "devDependencies": {
     "@papit/translator": "^*",
     "@papit/card": "^*",
-    "@papit/codeblock": "^*",
+    "@papit/codeblock": "0.0.5",
     "@papit/typography": "^*",
     "@types/node": "^22.10.2",
     "esbuild": "^0.17.18",
