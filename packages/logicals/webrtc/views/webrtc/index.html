@@ -1,0 +1,43 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebRTC</title>
+
+  <link rel="stylesheet" href="style.css">
+  <script defer type="module" src="main.js"></script>
+</head>
+
+<body>
+  <section id="join">
+    <h1>Join Network Test</h1>
+    <div>
+      <label for="network">Network</label>
+      <input type="text" id="network" placeholder="example-name" />
+      <button id="create">create network</button>
+    </div>
+
+
+    <div>
+      <label for="name">Set Name</label>
+      <input type="text" id="name" placeholder="example-name" />
+      <button id="setname">set name</button>
+    </div>
+
+    <h3>Networks</h3>
+    <button id="refresh">refresh</button>
+    <ul class="select"></ul>
+  </section>
+  <section id="network" class="hide">
+    <button>Disconnect</button>
+    <div id="info"></div>
+    <div id="peers">
+      <h4>Peer List</h4>
+      <ul></ul>
+    </div>
+  </section>
+</body>
+
+</html>

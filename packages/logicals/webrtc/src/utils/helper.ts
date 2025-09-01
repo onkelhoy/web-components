@@ -1,5 +1,5 @@
 import { PrintFunction } from "../types";
-import { Global } from "./global";
+import { GlobalInfo } from "./global";
 import { Reactor } from "./reactor";
 
 const reactor = new Reactor();
@@ -15,12 +15,14 @@ export function print(name: string, printtype: 'error' | 'log' = 'log'): PrintFu
 }
 
 export async function trycatch(type: string, func: Function, printerror: PrintFunction): Promise<null | any> {
-  try {
+  try
+  {
     await func();
     return null;
   }
-  catch (e) {
-    if (["error", "warning", "debug"].includes(Global.logger)) printerror(type, e);
+  catch (e)
+  {
+    if (["error", "warning", "debug"].includes(GlobalInfo.logger)) printerror(type, e);
     return e;
   }
 }
@@ -34,7 +36,8 @@ export function tryuntil(type: string, func: (attempt: number) => void, tries: n
       if (error) errors.push(error);
       attempts++;
 
-      if (!error || attempts >= tries) {
+      if (!error || attempts >= tries)
+      {
         clearInterval(interval);
         resolve(errors);
       }

@@ -1,7 +1,7 @@
 import { IncomingMessageType, Message, OutgoingMessage, ErrorMessage } from './types/socket.message';
 import { Reactor } from './utils/reactor';
 import { print } from './utils/helper';
-import { Global } from './utils/global';
+import { GlobalInfo } from './utils/global';
 import { Events } from './types';
 
 const MAX_ATTEMPTS = 10;
@@ -38,15 +38,17 @@ export class Socket {
     this.ws.onerror = this.error;
     this.ws.onopen = this.open;
     this.ws.onclose = () => {
-      if (["info", "debug"].includes(Global.logger)) this.log('connection', 'closed');
+      if (["info", "debug"].includes(GlobalInfo.logger)) this.log('connection', 'closed');
     }
   }
 
   private message = (msg: MessageEvent) => {
-    if (typeof msg.data === "string") {
+    if (typeof msg.data === "string")
+    {
       const message: Message = JSON.parse(msg.data);
 
-      switch (message.type) {
+      switch (message.type)
+      {
         default: {
           // target, update-ack, register-ack, connection-ack
           reactor.dispatch(message.type, message);
@@ -60,12 +62,12 @@ export class Socket {
         }
         case IncomingMessageType.ConnectionACK: {
           const { id } = message;
-          Global.user = { ...Global.user, id };
-          if (["info", "debug"].includes(Global.logger)) this.log('welcome-id', id);
+          GlobalInfo.user = { ...GlobalInfo.user, id };
+          if (["info", "debug"].includes(GlobalInfo.logger)) this.log('welcome-id', id);
           break;
         }
         case IncomingMessageType.Error: {
-          if (["error", "warning", "info", "debug"].includes(Global.logger)) this.printerror("message", (message as ErrorMessage).error);
+          if (["error", "warning", "info", "debug"].includes(GlobalInfo.logger)) this.printerror("message", (message as ErrorMessage).error);
           break;
         }
       }
@@ -74,24 +76,28 @@ export class Socket {
   }
 
   private error = (event: Event) => {
-    if (!([WebSocket.OPEN, WebSocket.CONNECTING] as number[]).includes(this.ws.readyState)) {
-      if (this.attempts < MAX_ATTEMPTS) {
+    if (!([WebSocket.OPEN, WebSocket.CONNECTING] as number[]).includes(this.ws.readyState))
+    {
+      if (this.attempts < MAX_ATTEMPTS)
+      {
         this.attempts++;
         setTimeout(() => {
           this.setup();
         }, (Math.sign(this.attempts) + (this.attempts / MAX_ATTEMPTS)) * RECONNECT_TIME_INTERVAL_STEP)
       }
-      else if (["fatal", "error", "warning", "debug"].includes(Global.logger)) this.printerror("connection", "attempts maxed out", this.attempts);
+      else if (["fatal", "error", "warning", "debug"].includes(GlobalInfo.logger)) this.printerror("connection", "attempts maxed out", this.attempts);
     }
-    else if (["error", "warning", "debug"].includes(Global.logger)) this.printerror("connection", event);
+    else if (["error", "warning", "debug"].includes(GlobalInfo.logger)) this.printerror("connection", event);
   }
 
   private open = () => {
-    if (["info", "debug"].includes(Global.logger)) this.log('connection', 'established');
+    if (["info", "debug"].includes(GlobalInfo.logger)) this.log('connection', 'established');
     this.attempts = 0;
-    while (this.offline.length > 0) {
+    while (this.offline.length > 0)
+    {
       const message = this.offline.pop();
-      if (message) {
+      if (message)
+      {
         this.send(message); // will send the rest
         return;
       }
@@ -106,9 +112,11 @@ export class Socket {
 
   public send(message: OutgoingMessage) {
     const msg = JSON.stringify(message);
-    if (this.ws.readyState === WebSocket.OPEN) {
+    if (this.ws.readyState === WebSocket.OPEN)
+    {
       this.ws.send(msg);
-      while (this.offline.length > 0) {
+      while (this.offline.length > 0)
+      {
         const message = this.offline.pop();
         if (message) this.send(message);
       }

@@ -1,0 +1,112 @@
+import "@papit/webrtc"
+let connected = false;
+
+window.onload = async function () {
+  const joinshow = document.querySelector('section#join');
+  const networkshow = document.querySelector('section#network');
+
+  const network_peers = document.querySelector('section#network div#peers');
+  const network_info = document.querySelector('section#network div#info');
+
+  const join_list = document.querySelector('section#join ul');
+  const join_input = document.querySelector('section#join input');
+  const join_createbutton = document.querySelector('section#join button#create');
+  const join_setnamebutton = document.querySelector('section#join button#setname');
+  const join_refreshbutton = document.querySelector('section#join button#refresh');
+
+  p2pclient.init({
+    logger: 'info',
+    socket: {
+      url: 'ws://localhost:3000'
+    }
+  });
+
+  p2pclient.on('network', (info) => {
+    // we are connected or it got updated
+    if (!connected)
+    {
+      connected = true;
+      initiateNetowork(info);
+
+      joinshow.classList.toggle('hide');
+      networkshow.classList.toggle('hide');
+    }
+    else
+    {
+      // update but wont have it for now
+    }
+  });
+
+  p2pclient.on('add-peer', peerinfo => {
+    const li = document.createElement('li');
+    li.innerText = peerinfo.name || 'Bob Lazar ' + peerinfo.id;
+    li.setAttribute('id', peerinfo.id);
+    network_peers.querySelector('ul').appendChild(li);
+  });
+
+  p2pclient.on('delete-peer', id => {
+    const target = network_peers.querySelector(`ul > li#${id}`);
+    if (target) target.parentNode().removeChild(target);
+  });
+
+  function initiateNetowork(info) {
+    const name = document.createElement('h4');
+    name.innerText = "Network - " + info.name;
+
+    const me = document.createElement('p');
+    me.innerText = `Me: ${p2pclient.info.user.name}`;
+
+    network_info.appendChild(name);
+    network_info.appendChild(me);
+  }
+
+  join_createbutton.onclick = function () {
+    if (join_input.value)
+    {
+      p2pclient.register({
+        name: join_input.value
+      });
+    }
+  }
+
+  join_setnamebutton.onclick = function () {
+    p2pclient.set('user', {name: joinshow.querySelector('input#name').value});
+  }
+
+  function join(e) {
+    const id = e.target.getAttribute('id');
+    p2pclient.join(id);
+  }
+
+  join_refreshbutton.onclick = function () {
+    refresh();
+  }
+  refresh();
+
+  function addListItem(text) {
+    const li = document.createElement("li");
+    join_list.appendChild(li);
+    li.innerText = text;
+
+    return li;
+  }
+
+  async function refresh() {
+    join_list.innerHTML = "";
+    const res = await fetch("http://localhost:3000/network");
+    const json = await res.json();
+
+    if (json.length > 0)
+    {
+      json.map(network => {
+        const li = addListItem(network.name);
+        li.setAttribute('id', network.id);
+        li.onclick = join;
+      })
+    }
+    else
+    {
+      addListItem('no network');
+    }
+  }
+}

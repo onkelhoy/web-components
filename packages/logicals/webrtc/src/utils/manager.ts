@@ -7,7 +7,7 @@ import { TargetMessage } from '../types/socket.message';
 // modules
 import { Peer } from '../peer';
 import { Reactor } from './reactor';
-import { Global } from './global';
+import { GlobalInfo } from './global';
 import { print } from "./helper";
 import { Medium } from './medium';
 import { NetworkInfo } from '../types/network';
@@ -30,8 +30,10 @@ export class PeerManager {
   }
 
   private network = (info: NetworkInfo) => {
-    if (info.host === Global.user.id) {
-      if (!this.media.channels.has("system")) {
+    if (info.host === GlobalInfo.user.id)
+    {
+      if (!this.media.channels.has("system"))
+      {
         const config: DataChannelConfig = {
           label: 'system',
         };
@@ -40,11 +42,12 @@ export class PeerManager {
     }
   }
   add = (message: SignalMessage) => {
-    if (this.peers.has(message.sender)) {
-      if (["debug"].includes(Global.logger)) this.log('adding', 'dupplicate', message.sender);
+    if (this.peers.has(message.sender))
+    {
+      if (["debug"].includes(GlobalInfo.logger)) this.log('adding', 'dupplicate', message.sender);
       return;
     }
-    if (["info", "debug"].includes(Global.logger)) this.log('adding', message.sender);
+    if (["info", "debug"].includes(GlobalInfo.logger)) this.log('adding', message.sender);
 
     this.peers.set(message.sender, new Peer({
       id: message.sender,
@@ -57,8 +60,9 @@ export class PeerManager {
 
   remove(id: ID) {
     const p = this.peers.get(id);
-    if (p) {
-      if (["info", "debug"].includes(Global.logger)) this.log('removing', id);
+    if (p)
+    {
+      if (["info", "debug"].includes(GlobalInfo.logger)) this.log('removing', id);
       p.close();
       this.peers.delete(id);
     }
@@ -67,15 +71,17 @@ export class PeerManager {
   signal(message: SignalMessage) {
     const { signal, data } = message;
     if (signal === SignalType.offer) this.add(message);
-    else {
+    else
+    {
       reactor.dispatch(`peer-${message.sender}-${signal}`, data);
     }
   }
 
   forward(message: TargetMessage, target: ID) {
     const p = this.peers.get(target);
-    if (!p) {
-      if (Global.logger !== "none") this.error("forward", "not found", target);
+    if (!p)
+    {
+      if (GlobalInfo.logger !== "none") this.error("forward", "not found", target);
       return;
     }
 
@@ -85,8 +91,9 @@ export class PeerManager {
   send(channel: string, target: ID, message: string): boolean {
     const p = this.peers.get(target);
 
-    if (!p) {
-      if (["warning", "debug"].includes(Global.logger)) this.error("send", "peer not found");
+    if (!p)
+    {
+      if (["warning", "debug"].includes(GlobalInfo.logger)) this.error("send", "peer not found");
       return false;
     }
 
