@@ -1,12 +1,17 @@
-import { DataChannelConfig, MediaConfig, MediaType } from "../types/peer";
-import { print } from "./helper";
-import { GlobalInfo } from './global';
-import { Reactor } from "./reactor";
-import { Events } from "../types";
+// types
+import { Events } from "types";
+
+// utils
+import { GlobalInfo } from "utils/global";
+import { Reactor } from "utils/reactor";
+import { Logger } from "utils/logger";
+
+// locals
+import { DataChannelConfig, MediaConfig, MediaType } from "./types";
 
 const reactor = new Reactor();
 export class Medium {
-  private printerror = print("medium", "error");
+  private printerror = Logger("medium", "error");
 
   public streams: Map<Omit<MediaType, 'data'>, MediaStream>;
   public channels: Map<string, RTCDataChannelInit | undefined>;

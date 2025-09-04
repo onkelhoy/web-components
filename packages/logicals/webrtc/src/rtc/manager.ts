@@ -1,24 +1,27 @@
 // types
-import { Events, ID } from '../types';
-import { SignalMessage, SignalType } from '../types/peer.message';
-import { DataChannelConfig, MediaType } from '../types/peer';
-import { TargetMessage } from '../types/socket.message';
+import { TargetMessage } from "types.message";
+import { Events, NetworkInfo } from "types";
 
-// modules
-import { Peer } from '../peer';
-import { Reactor } from './reactor';
-import { GlobalInfo } from './global';
-import { print } from "./helper";
-import { Medium } from './medium';
-import { NetworkInfo } from '../types/network';
+// utils 
+import { Reactor } from "utils/reactor";
+import { Logger } from "utils/logger";
+import { GlobalInfo } from "utils/global";
+
+// media 
+import { Medium } from "media/medium";
+import { DataChannelConfig, MediaType } from "media/types";
+
+// locals
+import { Connection } from "./connection";
+import { PeerSignalMessage, PeerSignalType } from "./types";
 
 // variables
 const reactor = new Reactor();
 
-export class PeerManager {
-  public peers: Map<ID, Peer> = new Map();
-  private log = print("peer-manager");
-  private error = print("peer-manager", "error");
+export class Manager {
+  public peers: Map<string, Connection> = new Map();
+  private log = Logger("peer-manager");
+  private error = Logger("peer-manager", "error");
   public media = new Medium();
   private config?: RTCConfiguration;
 
@@ -38,7 +41,7 @@ export class PeerManager {
     };
     this.media.add(MediaType.Data, config);
   }
-  add = (message: SignalMessage) => {
+  add = (message: PeerSignalMessage) => {
     if (this.peers.has(message.sender))
     {
       if (["debug"].includes(GlobalInfo.logger)) this.log('adding', 'dupplicate', message.sender);
@@ -46,16 +49,16 @@ export class PeerManager {
     }
     if (["info", "debug"].includes(GlobalInfo.logger)) this.log('adding', message.sender);
 
-    this.peers.set(message.sender, new Peer({
+    this.peers.set(message.sender, new Connection({
       id: message.sender,
       rtcConfiguration: this.config,
-      offer: message.signal === SignalType.offer ? message.data as RTCSessionDescriptionInit : undefined,
+      offer: message.signal === PeerSignalType.offer ? message.data as RTCSessionDescriptionInit : undefined,
       streams: this.media.streams,
       channels: this.media.channels,
     }));
   }
 
-  remove(id: ID) {
+  remove(id: string) {
     const peer = this.peers.get(id);
     if (!peer) return;
 
@@ -64,16 +67,16 @@ export class PeerManager {
     this.peers.delete(id);
   }
 
-  signal(message: SignalMessage) {
+  signal(message: PeerSignalMessage) {
     const { signal, data } = message;
-    if (signal === SignalType.offer) this.add(message);
+    if (signal === PeerSignalType.offer) this.add(message);
     else
     {
       reactor.dispatch(`peer-${message.sender}-${signal}`, data);
     }
   }
 
-  forward(message: TargetMessage, target: ID) {
+  forward(message: TargetMessage, target: string) {
     const peer = this.peers.get(target);
     if (!peer)
     {
@@ -84,7 +87,7 @@ export class PeerManager {
     peer.systemsend(message);
   }
 
-  send(channel: string, target: ID, message: string): boolean {
+  send(channel: string, target: string, message: string): boolean {
     const peer = this.peers.get(target);
 
     if (!peer)

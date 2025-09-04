@@ -1,6 +1,3 @@
-export type ID = string;
-export type LogType = 'fatal' | 'error' | 'warning' | 'info' | 'debug' | 'none';
-export type PrintFunction = (type: string, ...args: any[]) => void;
 
 export enum Events {
   Error = "error",
@@ -17,19 +14,30 @@ export enum Events {
   PeerMessage = 'peer-message', // onMessage
 }
 
-export type CustomErrorEvent = {
-  type: "socket";
-  reason: string;
+export enum EventErrorType {
+  Socket = "socket",
 }
-
-export enum SetType {
-  User = 'user',
-  Network = 'network',
-  Media = "media",
+export type EventError = {
+  type: EventErrorType;
+  reason: string;
 }
 
 // everything you'd like goes here (updatable)
 export type SparseUserInfo = Record<string, any>;
 export type UserInfo = SparseUserInfo & {
-  id: ID;
+  id: string;
+}
+
+export type PeerType = "calling" | "receiving";
+
+export type PartialNetworkInfo = Record<string, any> & {
+  limit?: number;
+  current?: number;
+  name?: string;
+}
+
+// required fields
+export type NetworkInfo = PartialNetworkInfo & {
+  id: string;
+  host: string;
 }

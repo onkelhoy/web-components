@@ -1,18 +1,19 @@
-// events
-import { JoinMessage, MessageType, TargetMessage, TargetType } from "../types/socket.message";
-import { NetworkInfo, RouterInfo } from "../types/network";
-import { Events, ID, UserInfo } from "../types";
+// types 
+import { Events, NetworkInfo, UserInfo } from "types";
+import { SystemMessageType, TargetMessage, TargetMessageType } from "types.message";
 
 // utils
-import { Reactor } from "./reactor";
-import { GlobalInfo } from "./global";
-import { print } from "./helper";
-import { SystemType } from "../types/peer.message";
+import { Reactor } from "utils/reactor";
+import { Logger } from "utils/logger";
+import { GlobalInfo } from "utils/global";
+
+// local
+import type { NetworkJoinMessage, RouterInfo } from "./types";
 
 const reactor = new Reactor();
 export class Network {
-  private router: Map<ID, RouterInfo>;
-  private log = print("network");
+  private router: Map<string, RouterInfo>;
+  private log = Logger("network");
 
   constructor(info?: Partial<NetworkInfo>) {
     this.router = new Map();
@@ -62,14 +63,14 @@ export class Network {
         // });
 
         reactor.dispatch(`peer-${id}-system-send`, {
-          type: SystemType.Connect,
+          type: SystemMessageType.Connect,
           target: peer.id,
         });
       }
     });
   }
 
-  removepeer = (peer: ID) => {
+  removepeer = (peer: string) => {
     this.router.delete(peer);
   }
 
@@ -82,7 +83,7 @@ export class Network {
   }
 
 
-  forward(message: TargetMessage): ID | undefined {
+  forward(message: TargetMessage): string | undefined {
     const target = this.router.get(message.target);
     if (target) return message.target;
 
@@ -106,7 +107,7 @@ export class Network {
     reactor.dispatch(Events.PeerAdd, message);
   }
 
-  join(message: JoinMessage) {
+  join(message: NetworkJoinMessage) {
     if (this.router.has(message.target))
     {
       if (["info", "debug"].includes(GlobalInfo.logger)) this.log("join", "we already have the connection");
@@ -123,38 +124,11 @@ export class Network {
     else
     {
       reactor.dispatch(Events.SendTarget, {
-        targetType: TargetType.Reject,
+        targetType: TargetMessageType.Reject,
         target: message.sender,
       });
     }
   }
-
-  // // Accept a new peer into the network
-  // accept = (message: JoinMessage): boolean => {
-  //   const peerId = message.sender;
-
-  //   // Already connected → reject
-  //   if (this.router.has(peerId)) {
-  //     return false;
-  //   }
-
-  //   // Register peer
-  //   this.router.set(peerId, {
-  //     connection: [Global.user.id],
-  //     type: message.type || "peer", // fallback if missing
-  //   });
-
-  //   // Notify system that a new peer has joined
-  //   reactor.dispatch(Events.PeerAdd, message);
-
-  //   return true;
-  // }
-
-  // // Remove a peer from the network
-  // leave = (peerId: ID) => {
-  //   this.router.delete(peerId);
-  //   reactor.dispatch(Events.PeerDelete, peerId);
-  // }
 
   // Expose size of connected peers (including self if needed)
   get size() {

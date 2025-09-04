@@ -1,8 +1,14 @@
-import { IncomingMessageType, Message, OutgoingMessage, ErrorMessage } from './types/socket.message';
-import { Reactor } from './utils/reactor';
-import { print } from './utils/helper';
-import { GlobalInfo } from './utils/global';
-import { CustomErrorEvent, Events } from './types';
+// types
+import { EventError, EventErrorType, Events } from "types";
+import { Message } from "types.message";
+
+// utils
+import { Reactor } from "utils/reactor";
+import { GlobalInfo } from "utils/global";
+import { Logger } from "utils/logger";
+
+// locals
+import { SocketErrorMessage, SocketIncomingMessageType, SocketOutgoingMessage } from "./types";
 
 const MAX_ATTEMPTS = 10;
 const RECONNECT_TIME_INTERVAL_STEP = 700; // with attempt=10 => 1400 (total time = 10850)
@@ -11,11 +17,11 @@ const reactor = new Reactor();
 export class Socket {
   private ws!: WebSocket;
   private attempts: number;
-  private offline: OutgoingMessage[];
+  private offline: SocketOutgoingMessage[];
   private protocols?: string | string[];
   private url: string | URL;
-  private printerror = print("socket", "error");
-  private log = print("socket");
+  private printerror = Logger("socket", "error");
+  private log = Logger("socket");
 
   constructor(url: string | URL, protocols?: string | string[]) {
     this.attempts = 0;
@@ -54,20 +60,22 @@ export class Socket {
           reactor.dispatch(message.type, message);
           break;
         }
-        case IncomingMessageType.RegisterACK:
+        case SocketIncomingMessageType.RegisterACK:
         // reactor.dispatch()
-        case IncomingMessageType.UpdateACK: {
+        case SocketIncomingMessageType.UpdateACK: {
           reactor.dispatch(Events.NetworkUpdate, message.network);
           break;
         }
-        case IncomingMessageType.ConnectionACK: {
+        case SocketIncomingMessageType.ConnectionACK: {
           const { id } = message;
           GlobalInfo.user = { ...GlobalInfo.user, id };
           if (["info", "debug"].includes(GlobalInfo.logger)) this.log('welcome-id', id);
           break;
         }
-        case IncomingMessageType.Error: {
-          if (["error", "warning", "info", "debug"].includes(GlobalInfo.logger)) this.printerror("message", (message as ErrorMessage).error);
+        case SocketIncomingMessageType.Error: {
+          const reason = (message as SocketErrorMessage).error;
+          if (["error", "warning", "info", "debug"].includes(GlobalInfo.logger)) this.printerror("message", reason);
+          reactor.dispatch(Events.Error, { type: EventErrorType.Socket, reason: "unknown" } as EventError);
           break;
         }
       }
@@ -78,7 +86,7 @@ export class Socket {
   private error = (event: Event) => {
     if (([WebSocket.OPEN, WebSocket.CONNECTING] as number[]).includes(this.ws.readyState))
     {
-      reactor.dispatch(Events.Error, { type: "socket", reason: "unknown" } as CustomErrorEvent);
+      reactor.dispatch(Events.Error, { type: EventErrorType.Socket, reason: "unknown" } as EventError);
       if (["error", "warning", "debug"].includes(GlobalInfo.logger)) this.printerror("connection", event);
       return;
     }
@@ -92,7 +100,7 @@ export class Socket {
     }
     else 
     {
-      reactor.dispatch(Events.Error, { type: "socket", reason: "attempts maxed out" } as CustomErrorEvent);
+      reactor.dispatch(Events.Error, { type: EventErrorType.Socket, reason: "attempts maxed out" } as EventError);
       if (["fatal", "error", "warning", "debug"].includes(GlobalInfo.logger)) this.printerror("connection", "attempts maxed out", this.attempts);
     }
   }
@@ -119,7 +127,7 @@ export class Socket {
     this.setup();
   }
 
-  public send(message: OutgoingMessage) {
+  public send(message: SocketOutgoingMessage) {
     const msg = JSON.stringify(message);
     if (this.ws.readyState === WebSocket.OPEN)
     {

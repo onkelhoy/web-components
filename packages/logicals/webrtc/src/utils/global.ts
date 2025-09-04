@@ -1,8 +1,10 @@
-import { ID, UserInfo, LogType } from "../types";
-import { NetworkInfo } from "../types/network";
+import { UserInfo, NetworkInfo } from "types";
+
+// local 
+import { LogLevel } from "./logger";
 
 export class GlobalInfo {
-  static logger: LogType;
+  static logger: LogLevel;
   static user: UserInfo;
   static network?: NetworkInfo;
 }

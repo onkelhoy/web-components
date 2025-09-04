@@ -1,20 +1,7 @@
-import { PrintFunction } from "../types";
 import { GlobalInfo } from "./global";
-import { Reactor } from "./reactor";
+import { LogFunction } from "./logger";
 
-const reactor = new Reactor();
-
-export function print(name: string, printtype: 'error' | 'log' = 'log'): PrintFunction {
-  return (type: string, ...args: any[]) => {
-    const label = `[${name.toUpperCase()}:${printtype} ${type}]`;
-    if (printtype === 'log')
-      console.log(label, ...args);
-    else
-      console.error(label, ...args);
-  }
-}
-
-export async function trycatch(type: string, func: Function, printerror: PrintFunction): Promise<null | any> {
+export async function trycatch(type: string, func: Function, log: LogFunction): Promise<null | any> {
   try
   {
     await func();
@@ -22,17 +9,17 @@ export async function trycatch(type: string, func: Function, printerror: PrintFu
   }
   catch (e)
   {
-    if (["error", "warning", "debug"].includes(GlobalInfo.logger)) printerror(type, e);
+    if (["error", "warning", "debug"].includes(GlobalInfo.logger)) log(type, e);
     return e;
   }
 }
 
-export function tryuntil(type: string, func: (attempt: number) => void, tries: number, printerror: PrintFunction, duration = 100): Promise<any[]> {
+export function tryuntil(type: string, func: (attempt: number) => void, tries: number, log: LogFunction, duration = 100): Promise<any[]> {
   return new Promise((resolve) => {
     let attempts = 0;
     const errors = [] as any[];
     const interval = setInterval(async () => {
-      const error = await trycatch(type, () => func(attempts), printerror);
+      const error = await trycatch(type, () => func(attempts), log);
       if (error) errors.push(error);
       attempts++;
 
@@ -45,30 +32,34 @@ export function tryuntil(type: string, func: (attempt: number) => void, tries: n
   })
 }
 
-export function EventWait(event: string, executor: Function) {
-  return new Promise((success, error) => {
-    const successEvent = `${event}-success`;
-    const errorEvent = `${event}-error`;
 
-    const onsuccess = callback(success);
-    const onerror = callback(error);
+// ONLY FOR TEST ?! HEEEL NAH -> move to test helper instead
 
-    reactor.on(successEvent, onsuccess);
-    reactor.on(errorEvent, onerror);
+// import { Reactor } from "./reactor";
+// const reactor = new Reactor();
+// export function EventWait(event: string, executor: Function) {
+//   return new Promise((success, error) => {
+//     const successEvent = `${event}-success`;
+//     const errorEvent = `${event}-error`;
 
-    executor();
+//     const onsuccess = callback(success);
+//     const onerror = callback(error);
 
-    function callback(handler: Function) {
-      return (data: any) => {
-        reactor.removeEventListener(successEvent, onsuccess);
-        reactor.removeEventListener(errorEvent, onerror);
+//     reactor.on(successEvent, onsuccess);
+//     reactor.on(errorEvent, onerror);
 
-        handler(data);
-      }
-    }
-  });
-}
+//     executor();
 
-export async function wait(x: number = 100): Promise<void> {
-  return await new Promise((r) => setTimeout(r, x));
-}
+//     function callback(handler: Function) {
+//       return (data: any) => {
+//         reactor.removeEventListener(successEvent, onsuccess);
+//         reactor.removeEventListener(errorEvent, onerror);
+
+//         handler(data);
+//       }
+//     }
+//   });
+// }
+// export async function wait(x: number = 100): Promise<void> {
+//   return await new Promise((r) => setTimeout(r, x));
+// }

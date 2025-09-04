@@ -1,4 +1,4 @@
-import {P2Pclient} from "@papit/webrtc"
+import {Peer} from "@papit/webrtc"
 let connected = false, p2pclient;
 
 window.onload = async function () {
@@ -32,7 +32,7 @@ window.onload = async function () {
   }
 
 
-  p2pclient = new P2Pclient({
+  p2pclient = new Peer({
     logLevel: 'info',
     // server: 'https://render-webrtc-signal-server.onrender.com',
     // socket: {

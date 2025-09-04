@@ -1,10 +1,10 @@
-interface IEvent {
+type ErrorType = {
   name: string;
   callbacks: Function[];
 }
 
 export class Reactor {
-  private events!: Map<string, IEvent>;
+  private events!: Map<string, ErrorType>;
 
   private static instance: Reactor;
 
@@ -31,7 +31,7 @@ export class Reactor {
   public register(name: string) {
     if (this.has(name)) return;
 
-    const event: IEvent = {
+    const event: ErrorType = {
       name,
       callbacks: [],
     };

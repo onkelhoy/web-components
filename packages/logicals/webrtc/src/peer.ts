@@ -1,280 +1,293 @@
-import { Reactor } from "./utils/reactor";
-import { Events, ID, PrintFunction, UserInfo } from "./types";
-import { DataChannelConfig, MediaType, PeerConfiguration, PeerType } from "./types/peer";
-import { ConnectMessage, SignalData, SignalMessage, SignalType, SystemInitMessage, SystemMessage, SystemType } from "./types/peer.message";
-import { Message, MessageType, TargetType } from "./types/socket.message";
-import { print, trycatch, tryuntil } from "./utils/helper";
-import { GlobalInfo } from "./utils/global";
+// types 
+import { Events, NetworkInfo, PartialNetworkInfo, SparseUserInfo, UserInfo } from "types";
+import { Message, MessageType, TargetMessage, TargetMessageSparse, TargetMessageType } from "types.message";
+
+// utils
+import { GlobalInfo } from "utils/global";
+import { tryuntil } from "utils/helper";
+import { LogFunction, Logger, LogLevel } from "utils/logger";
+import { Reactor } from "utils/reactor";
+
+// media
+import { MediaConfig, MediaType } from "media/types";
+
+// network
+import { Network, Socket } from "network";
+import { NetworkJoinMessage, SocketOutgoingMessageType } from "network/types";
+
+// rtc
+import { PeerManager } from "rtc";
+import { PeerSignalMessage } from "rtc/types";
+
+export type Settings = {
+  printName?: string;
+  network?: Partial<NetworkInfo>;
+  forbiddenEvents?: string[];
+
+  logLevel?: LogLevel;
+  server?: string | URL; // use this for some public server 
+  socket?: {
+    url?: string | URL;
+    protocols?: string | string[];
+  };
+  user?: SparseUserInfo;
+  // NOTE good page for stun servers: 
+  // https://ourcodeworld.com/articles/read/1536/list-of-free-functional-public-stun-servers-2021
+  rtcConfiguration?: RTCConfiguration;
+}
+
+export enum SetType {
+  User = 'user',
+  Network = 'network',
+  Media = "media",
+}
 
 const reactor = new Reactor();
-
-// TODO add propper documentation
 export class Peer {
-  public id: ID;
-  private type: PeerType;
-  private connection!: RTCPeerConnection;
-  private log: PrintFunction;
-  private printerror: PrintFunction;
-  private userinfo!: UserInfo;
-  private channels: Map<string, RTCDataChannel>;
-  private pendingCandidates: RTCIceCandidate[] = [];
+  // variables
+  private network: Network;
+  private manager: PeerManager;
+  private error: LogFunction;
+  private log: LogFunction;
+  private socket!: Socket;
+  private forbiddenEvents: string[];
 
-  constructor(config: PeerConfiguration) {
-    this.id = config.id;
-    this.type = config.offer ? "receiving" : "calling";
-    this.printerror = print(`PEER#${this.id}`, 'error');
-    this.log = print(`PEER#${this.id}`);
-    this.channels = new Map();
+  constructor(settings: Settings) {
 
-    this.setup(config);
-  }
+    this.log = Logger(settings.printName ?? "Peer");
+    this.error = Logger(settings.printName ?? "Peer", "error");
+    this.network = new Network(settings.network);
 
-  private setup(config: PeerConfiguration) {
-    this.connection = new RTCPeerConnection(config.rtcConfiguration);
-    this.connection.onicecandidate = (event) => {
-      if (event.candidate)
-      {
-        // transport this message to corresponding peer
-        this.signal(SignalType.candidate, event.candidate);
-      }
-    }
-    this.connection.onicecandidateerror = (event) => {
-      this.printerror("candidate", event);
-    }
-    // NOTE this will handle reconnection and trigger offer with iceRestart as option
-    this.connection.oniceconnectionstatechange = () => {
-      if (this.connection.iceConnectionState === "failed" && this.type === "calling")
-      {
-        this.createOffer(false);
-      }
-      else if (this.connection.iceConnectionState === "disconnected")
-      {
-        reactor.dispatch(Events.PeerDelete, this.id);
-      }
-    }
+    GlobalInfo.logger = settings.logLevel || 'none';
+    this.set(SetType.User, (settings.user || {}) as UserInfo);
 
-    reactor.on(Events.NewDataChannel, (config: DataChannelConfig) => this.addChannel(config.label, config.dataChannelDict))
-    reactor.on(`peer-${this.id}-candidate`, this.reveiceCandidate);
-    reactor.on(`peer-${this.id}-answer`, this.receiveAnswer);
-    reactor.on(`peer-${this.id}-system-send`, this.systemsend);
-    this.connection.ondatachannel = e => {
-      this.setupChannel(e.channel);
+    reactor.on(Events.Target, this.onTargetMessage);
+    reactor.on(Events.SendTarget, this.sendTargetMessage);
+    reactor.on(Events.PeerConnectionOpen, this.newConnection);
 
-      reactor.dispatch(Events.IncommingMedia, {
-        type: MediaType.Data,
-        config: { label: e.channel.label }
-      });
-    }
+    this.forbiddenEvents = settings.forbiddenEvents ?? [];
 
-    if (this.type === "calling")
+    this.manager = new PeerManager(settings.rtcConfiguration ?? {
+      iceServers: [
+        { urls: "stun:stun.l.google.com:19302" },
+        { urls: "stun:stun1.l.google.com:19302" }
+      ]
+    });
+
+    let serverurl = settings.server ?? !settings.socket?.url ? 'https://render-webrtc-signal-server.onrender.com' : undefined;
+
+    if (serverurl) 
     {
-      // create an offer
-      this.createOffer();
-      config.channels.forEach((config, label) => {
-        this.addChannel(label, config);
-      });
+      tryuntil("server-connection", async (attempts) => {
+        this.log("server-connection", "trying to connect", { attempts });
+
+        const res = await fetch(serverurl + "/network");
+        const networks = await res.json();
+
+        if (!Array.isArray(networks)) throw new Error("response is not of array")
+      }, 10, this.error, 3000).then(() => {
+        this.socket = new Socket(
+          settings.socket?.url ?? serverurl as string,
+          settings.socket?.protocols,
+        );
+      })
     }
-    else
+    else if (settings.socket?.url)
     {
-      // create an answer
-      this.createAnswer(config.offer as RTCSessionDescriptionInit);
+      this.socket = new Socket(
+        settings.socket.url,
+        settings.socket.protocols,
+      );
+    }
+    else 
+    {
+      throw new Error("[Peer] must have either socker.url or server in settings");
     }
   }
 
-  public close() {
-    this.connection.close();
-  }
-
-  public get info() {
-    return this.userinfo;
-  }
-
-  //#region handshake
-  private reveiceCandidate = (candidate: RTCIceCandidate) => {
-    tryuntil("receive-candidate", async () => {
-      if (!this.connection.remoteDescription)
-      {
-        this.pendingCandidates.push(candidate);
-        return;
-      }
-      await this.connection.addIceCandidate(candidate)
-    }, 3, this.printerror);
-  }
-  private receiveAnswer = (answer: RTCSessionDescriptionInit) => {
-    tryuntil("receive-answer", async () => {
-      await this.connection.setRemoteDescription(answer);
-
-      // process any queued candidates
-      this.pendingCandidates.forEach(c => this.connection.addIceCandidate(c).catch(this.printerror));
-      this.pendingCandidates = [];
-    }, 3, this.printerror);
-  }
-  private createOffer(first = true) {
-    tryuntil("create-offer", async () => {
-      let options: RTCOfferOptions | undefined = undefined;
-      if (!first) options = { iceRestart: true };
-      const offer = await this.connection.createOffer(options);
-      await this.connection.setLocalDescription(offer);
-
-      this.signal(SignalType.offer, offer);
-    }, 3, this.printerror);
-  }
-  private createAnswer(offer: RTCSessionDescriptionInit) {
-    tryuntil("create-answer", async () => {
-      await this.connection.setRemoteDescription(new RTCSessionDescription(offer));
-      const answer = await this.connection.createAnswer();
-      await this.connection.setLocalDescription(answer);
-      this.signal(SignalType.answer, answer);
-    }, 3, this.printerror);
-  }
-  //#endregion
-
-  //#region send methods
-  private signal(type: SignalType, data: SignalData) {
-    reactor.dispatch(Events.SendTarget, {
-      signal: type,
-      type: MessageType.Target,
-      target: this.id,
-      targetType: TargetType.Signal,
-      data,
+  // getters 
+  get info() {
+    return {
       user: GlobalInfo.user,
-    } as SignalMessage);
+      logger: GlobalInfo.logger,
+      network: GlobalInfo.network,
+    };
   }
-  public onSignal(message: SignalMessage) {
-    const { signal, data } = message
-    switch (signal)
+
+  get id() {
+    return GlobalInfo.user.id;
+  }
+
+  get host() {
+    return GlobalInfo.network?.host;
+  }
+
+  getPeerInfo(id: string) {
+    return this.manager.peers.get(id)?.info;
+  }
+
+  // public functions
+  public send(channel: string, to: string, data: any) {
+    const message = data instanceof Object ? JSON.stringify(data) : data;
+
+    if (channel === "system") this.error("send", "forbidden channel");
+    else this.manager.send(channel, to, message);
+  }
+
+  public broadcast(channel: string, data: any) {
+    const message = data instanceof Object ? JSON.stringify(data) : data;
+
+    if (channel === "system") this.error("send", "forbidden channel");
+    else this.manager.broadcast(channel, message);
+  }
+
+  public on(event: string, callback: Function) {
+    if (this.forbiddenEvents.includes(event)) return;
+    reactor.on(event, callback);
+  }
+
+  public onMessage(channel: string, callback: (data: { id: string, message: any }) => void) {
+    reactor.on(`${Events.PeerMessage}-${channel}`, callback);
+  }
+
+  public register(network: PartialNetworkInfo) {
+    if (["info", "debug"].includes(GlobalInfo.logger)) this.log('register', network);
+    this.socket.send({
+      type: SocketOutgoingMessageType.Register,
+      network,
+    } as Message);
+  }
+
+  public join(network: string, config?: Record<string, any>) {
+    this.sendTargetMessage({
+      target: network,
+      targetType: TargetMessageType.Join,
+      config,
+    });
+  }
+
+  public set(type: SetType, data: any) {
+    switch (type)
     {
-      case SignalType.candidate: {
-        tryuntil("signal-candidate", async () => {
-          await this.connection.addIceCandidate(data as RTCIceCandidate);
-        }, 3, this.printerror);
+      case SetType.User: {
+        if (!GlobalInfo.user) GlobalInfo.user = data;
+        else GlobalInfo.user = { ...(data || {}), id: GlobalInfo.user.id };
+
+        if (["info", "debug"].includes(GlobalInfo.logger)) this.log("userinfo", GlobalInfo.user);
         break;
       }
-      case SignalType.answer: {
-        trycatch("signal-answer", async () => {
-          const remoteDesc = new RTCSessionDescription(data as RTCSessionDescriptionInit);
-          await this.connection.setRemoteDescription(remoteDesc);
-        }, this.printerror);
+      case SetType.Network: {
+        // TODO update so network can have both host & id seperate 
+        // and before updating we should check if we are host 
+        reactor.dispatch(Events.NetworkUpdate, data);
         break;
       }
-      default:
-        if (["error", "debug"].includes(GlobalInfo.logger)) this.printerror("signaling", `incorrect signaling type::${signal}`);
-    }
-  }
-  public send(label: string, message: string): boolean {
-    const channel = this.channels.get(label)
-    if (!channel)
-    {
-      if (["warning", "debug"].includes(GlobalInfo.logger)) this.printerror("send", "cant find channel", label);
-      return false;
-    }
+      case SetType.Media: {
+        let type = MediaType.Data;
+        let config: MediaConfig | undefined = undefined;
 
-    channel.send(message);
-    return true;
-  }
-  //#endregion
-
-  //#region data-channel
-  private addChannel(label: string, config?: RTCDataChannelInit) {
-    if (this.channels.has(label))
-    {
-      // NOTE this is most likly caused when another peer creates it
-      if (["debug"].includes(GlobalInfo.logger)) this.printerror("data-channel-add", "duplicate channel");
-      return;
-    }
-
-    const channel = this.connection.createDataChannel(label, config);
-    this.setupChannel(channel);
-  }
-  private setupChannel(channel: RTCDataChannel) {
-    // NOTE its going to circle around twice (onDataChannel [->here] -> media.add -> newDataChannel -> here) see: 2x here
-    if (this.channels.get(channel.label))
-    {
-      return;
-    }
-    channel.onopen = () => {
-      if (channel.label === 'system')
-      {
-        this.systemopen();
-      }
-      else if (["info", "debug"].includes(GlobalInfo.logger)) this.log('channel-open', channel.label);
-    }
-    if (channel.label === "system")
-    {
-      channel.onmessage = this.systemmessage;
-    }
-    else
-    {
-      channel.onmessage = (e) => {
-        reactor.dispatch(`${Events.PeerMessage}-${channel.label}`, { id: this.id, message: e.data })
-      }
-    }
-    channel.onerror = (e) => {
-      // do something
-      console.error("[PEER] channel error", e);
-    }
-
-    this.channels.set(channel.label, channel);
-  }
-  //#endregion
-
-  //#region system-data-chanel
-  public systemsend = (message: Message): boolean => {
-    const channel = this.channels.get('system');
-    if (!channel)
-    {
-      if (["fatal", "error", "warning", "debug"].includes(GlobalInfo.logger)) this.printerror('system-send', 'channel not found');
-      return false;
-    }
-
-    channel.send(JSON.stringify(message));
-    return true;
-  }
-  private systemmessage = (event: MessageEvent) => {
-    const message: SystemMessage = JSON.parse(event.data);
-    switch (message.type)
-    {
-      case SystemType.Target: {
-        reactor.dispatch(Events.Target, message);
-        break;
-      }
-      case SystemType.Init: {
-        const { user, network } = message as SystemInitMessage;
-        if (network && (!GlobalInfo.network || GlobalInfo.network?.host === user.id))
+        if (typeof data === "object")
         {
-          reactor.dispatch(Events.NetworkUpdate, network);
+          if ('type' in data) type = data.type;
+          if ('config' in data) config = data.config;
         }
-        reactor.dispatch(Events.PeerConnectionOpen, { ...user, type: this.type });
-        this.userinfo = user;
-        break;
-      }
-      case SystemType.Connect: {
-        const { target } = message as ConnectMessage;
-        const smsg = {
-          sender: target
-        } as SignalMessage;
-        reactor.dispatch(Events.PeerAdd, smsg);
+        else if (typeof data === "string")
+        {
+          if (["audio", "data", "screen", "video"].includes(data)) type = data as MediaType;
+          else 
+          {
+            config = {
+              label: data,
+            };
+          }
+        }
+
+        this.manager.media.add(type, config);
         break;
       }
       default: {
-
+        if (["warning", "info", "debug"].includes(GlobalInfo.logger)) this.error("set", "unssuported type", type);
       }
     }
   }
-  private systemopen() {
-    // exchange info 
-    this.systemsend({
-      type: SystemType.Init,
-      user: GlobalInfo.user,
-      network: GlobalInfo.network,
-    } as SystemInitMessage);
 
-    if (this.type === "calling")
+
+  // private functions 
+  private newConnection = (user: UserInfo) => {
+    if (GlobalInfo.user.id !== GlobalInfo.network?.host)
     {
-      // reactor.dispatch()
+      this.socket.close();
+    }
+  }
+
+  private forward(message: TargetMessage): boolean {
+    if (this.network.registered) 
+    {
+      // forward to someone else (or target : based on Topology)
+      const forward = this.network.forward(message);
+      if (forward !== undefined)
+      {
+        this.manager.forward(message, forward);
+        return true;
+      }
+      else if (["error", "warning", "debug"].includes(GlobalInfo.logger)) this.error("forward", "not found", message.target);
     }
 
-    if (["info", "debug"].includes(GlobalInfo.logger)) this.log('connection', 'established');
+    return false;
   }
-  //#endregion
+
+  private sendTargetMessage = (sparsemessage: TargetMessageSparse) => {
+    let message: TargetMessage;
+    if (sparsemessage.type && sparsemessage.sender)
+    {
+      // its just a forward 
+      message = sparsemessage as TargetMessage;
+    }
+    else
+    {
+      message = {
+        ...sparsemessage,
+        sender: GlobalInfo.user.id,
+        type: MessageType.Target,
+      };
+    }
+
+    if (["debug"].includes(GlobalInfo.logger)) this.log("send-target-message", message);
+
+    // network or forward is null : thus socket transport
+    if (!this.forward(message)) this.socket.send(message);
+  }
+
+  private onTargetMessage = (message: TargetMessage) => {
+    if (["debug"].includes(GlobalInfo.logger)) this.log("on-target-message", message);
+
+    if (message.target !== GlobalInfo.user.id)
+    {
+      if (this.forward(message)) return;
+    }
+
+    switch (message.targetType)
+    {
+      case TargetMessageType.Join: {
+        if (this.network.registered)
+        {
+          this.network.join(message as NetworkJoinMessage);
+        }
+        else this.error("network-join", "no network", message.target);
+        break;
+      }
+      case TargetMessageType.Reject: {
+        this.log("join-request", "we got rejected");
+        break;
+      }
+      case TargetMessageType.Signal: {
+        this.manager.signal(message as PeerSignalMessage);
+        break;
+      }
+      default: {
+        this.error("target-message", "unsupported type", message.targetType);
+        break;
+      }
+    }
+  }
 }
