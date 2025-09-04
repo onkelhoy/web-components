@@ -2,7 +2,7 @@ import { IncomingMessageType, Message, OutgoingMessage, ErrorMessage } from './t
 import { Reactor } from './utils/reactor';
 import { print } from './utils/helper';
 import { GlobalInfo } from './utils/global';
-import { Events } from './types';
+import { CustomErrorEvent, Events } from './types';
 
 const MAX_ATTEMPTS = 10;
 const RECONNECT_TIME_INTERVAL_STEP = 700; // with attempt=10 => 1400 (total time = 10850)
@@ -76,18 +76,25 @@ export class Socket {
   }
 
   private error = (event: Event) => {
-    if (!([WebSocket.OPEN, WebSocket.CONNECTING] as number[]).includes(this.ws.readyState))
+    if (([WebSocket.OPEN, WebSocket.CONNECTING] as number[]).includes(this.ws.readyState))
     {
-      if (this.attempts < MAX_ATTEMPTS)
-      {
-        this.attempts++;
-        setTimeout(() => {
-          this.setup();
-        }, (Math.sign(this.attempts) + (this.attempts / MAX_ATTEMPTS)) * RECONNECT_TIME_INTERVAL_STEP)
-      }
-      else if (["fatal", "error", "warning", "debug"].includes(GlobalInfo.logger)) this.printerror("connection", "attempts maxed out", this.attempts);
+      reactor.dispatch(Events.Error, { type: "socket", reason: "unknown" } as CustomErrorEvent);
+      if (["error", "warning", "debug"].includes(GlobalInfo.logger)) this.printerror("connection", event);
+      return;
     }
-    else if (["error", "warning", "debug"].includes(GlobalInfo.logger)) this.printerror("connection", event);
+
+    if (this.attempts < MAX_ATTEMPTS)
+    {
+      this.attempts++;
+      setTimeout(() => {
+        this.setup();
+      }, (Math.sign(this.attempts) + (this.attempts / MAX_ATTEMPTS)) * RECONNECT_TIME_INTERVAL_STEP)
+    }
+    else 
+    {
+      reactor.dispatch(Events.Error, { type: "socket", reason: "attempts maxed out" } as CustomErrorEvent);
+      if (["fatal", "error", "warning", "debug"].includes(GlobalInfo.logger)) this.printerror("connection", "attempts maxed out", this.attempts);
+    }
   }
 
   private open = () => {
@@ -102,6 +109,8 @@ export class Socket {
         return;
       }
     }
+
+    reactor.dispatch(Events.SocketOpen);
   }
 
   // public methods

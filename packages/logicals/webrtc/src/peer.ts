@@ -17,6 +17,7 @@ export class Peer {
   private printerror: PrintFunction;
   private userinfo!: UserInfo;
   private channels: Map<string, RTCDataChannel>;
+  private pendingCandidates: RTCIceCandidate[] = [];
 
   constructor(config: PeerConfiguration) {
     this.id = config.id;
@@ -38,7 +39,7 @@ export class Peer {
       }
     }
     this.connection.onicecandidateerror = (event) => {
-      if (["warning", "debug"].includes(GlobalInfo.logger)) this.printerror("candidate", event);
+      this.printerror("candidate", event);
     }
     // NOTE this will handle reconnection and trigger offer with iceRestart as option
     this.connection.oniceconnectionstatechange = () => {
@@ -84,15 +85,28 @@ export class Peer {
     this.connection.close();
   }
 
+  public get info() {
+    return this.userinfo;
+  }
+
   //#region handshake
   private reveiceCandidate = (candidate: RTCIceCandidate) => {
-    tryuntil("receive-answer", async () => {
+    tryuntil("receive-candidate", async () => {
+      if (!this.connection.remoteDescription)
+      {
+        this.pendingCandidates.push(candidate);
+        return;
+      }
       await this.connection.addIceCandidate(candidate)
     }, 3, this.printerror);
   }
   private receiveAnswer = (answer: RTCSessionDescriptionInit) => {
     tryuntil("receive-answer", async () => {
       await this.connection.setRemoteDescription(answer);
+
+      // process any queued candidates
+      this.pendingCandidates.forEach(c => this.connection.addIceCandidate(c).catch(this.printerror));
+      this.pendingCandidates = [];
     }, 3, this.printerror);
   }
   private createOffer(first = true) {
@@ -197,6 +211,7 @@ export class Peer {
     }
     channel.onerror = (e) => {
       // do something
+      console.error("[PEER] channel error", e);
     }
 
     this.channels.set(channel.label, channel);

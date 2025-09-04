@@ -30,16 +30,13 @@ export class PeerManager {
   }
 
   private network = (info: NetworkInfo) => {
-    if (info.host === GlobalInfo.user.id)
-    {
-      if (!this.media.channels.has("system"))
-      {
-        const config: DataChannelConfig = {
-          label: 'system',
-        };
-        this.media.add(MediaType.Data, config);
-      }
-    }
+    if (info.host !== GlobalInfo.user.id) return;
+    if (this.media.channels.has("system")) return;
+
+    const config: DataChannelConfig = {
+      label: 'system',
+    };
+    this.media.add(MediaType.Data, config);
   }
   add = (message: SignalMessage) => {
     if (this.peers.has(message.sender))
@@ -59,13 +56,12 @@ export class PeerManager {
   }
 
   remove(id: ID) {
-    const p = this.peers.get(id);
-    if (p)
-    {
-      if (["info", "debug"].includes(GlobalInfo.logger)) this.log('removing', id);
-      p.close();
-      this.peers.delete(id);
-    }
+    const peer = this.peers.get(id);
+    if (!peer) return;
+
+    if (["info", "debug"].includes(GlobalInfo.logger)) this.log('removing', id);
+    peer.close();
+    this.peers.delete(id);
   }
 
   signal(message: SignalMessage) {
@@ -78,26 +74,26 @@ export class PeerManager {
   }
 
   forward(message: TargetMessage, target: ID) {
-    const p = this.peers.get(target);
-    if (!p)
+    const peer = this.peers.get(target);
+    if (!peer)
     {
       if (GlobalInfo.logger !== "none") this.error("forward", "not found", target);
       return;
     }
 
-    p.systemsend(message);
+    peer.systemsend(message);
   }
 
   send(channel: string, target: ID, message: string): boolean {
-    const p = this.peers.get(target);
+    const peer = this.peers.get(target);
 
-    if (!p)
+    if (!peer)
     {
       if (["warning", "debug"].includes(GlobalInfo.logger)) this.error("send", "peer not found");
       return false;
     }
 
-    return p.send(channel, message);
+    return peer.send(channel, message);
   }
 
   broadcast(channel: string, message: string) {

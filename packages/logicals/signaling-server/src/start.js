@@ -26,7 +26,7 @@ const wss = new SocketServer({
 server.on("request", app(wss));
 
 server.listen(PORT, () => {
-  console.log("server listening on port", PORT);
+  console.log("signaling server listening on port", PORT);
 });
 
 process.on('SIGINT', () => {

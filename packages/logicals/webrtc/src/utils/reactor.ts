@@ -45,21 +45,24 @@ export class Reactor {
 
   public dispatch(name: string, eventArgs?: any) {
     const event = this.get(name);
-    if (event) {
+    if (event)
+    {
       event.callbacks.forEach(callback => callback(eventArgs));
     }
   }
 
   public addEventListener(name: string, callback: Function) {
     const event = this.get(name);
-    if (event) {
+    if (event)
+    {
       event.callbacks.push(callback);
     }
   }
 
   public removeEventListener(name: string, callback: Function) {
     const event = this.get(name);
-    if (event) {
+    if (event)
+    {
       event.callbacks = event.callbacks.filter(cb => cb !== callback);
     }
   }

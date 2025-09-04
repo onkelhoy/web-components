@@ -6,7 +6,7 @@ const reactor = new Reactor();
 
 export function print(name: string, printtype: 'error' | 'log' = 'log'): PrintFunction {
   return (type: string, ...args: any[]) => {
-    const label = `[${name.toUpperCase()} ${type}-${printtype}]`;
+    const label = `[${name.toUpperCase()}:${printtype} ${type}]`;
     if (printtype === 'log')
       console.log(label, ...args);
     else
@@ -32,7 +32,7 @@ export function tryuntil(type: string, func: (attempt: number) => void, tries: n
     let attempts = 0;
     const errors = [] as any[];
     const interval = setInterval(async () => {
-      const error = await trycatch(type, func.bind(null, attempts), printerror);
+      const error = await trycatch(type, () => func(attempts), printerror);
       if (error) errors.push(error);
       attempts++;
 

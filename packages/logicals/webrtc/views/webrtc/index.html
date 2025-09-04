@@ -11,7 +11,9 @@
 </head>
 
 <body>
-  <section id="join">
+  <section id="loading">loading..</section>
+
+  <section id="join" class="hide">
     <h1>Join Network Test</h1>
     <div>
       <label for="network">Network</label>
@@ -30,12 +32,23 @@
     <button id="refresh">refresh</button>
     <ul class="select"></ul>
   </section>
+
   <section id="network" class="hide">
     <button>Disconnect</button>
     <div id="info"></div>
     <div id="peers">
       <h4>Peer List</h4>
       <ul></ul>
+    </div>
+
+    <div id="messages">
+      <h3>CHAT</h3>
+      <ul></ul>
+
+      <form>
+        <textarea name="text" rows="5"></textarea>
+        <button type="submit">send</button>
+      </form>
     </div>
   </section>
 </body>
