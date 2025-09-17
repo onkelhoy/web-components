@@ -1,2 +1,2 @@
-export { } from "./component";
-export { } from "./types";
+export { Media } from "./component";
+export { Settings as MediaSettings } from "./types";

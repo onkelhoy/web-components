@@ -1,23 +1,19 @@
 import { Topology } from "./topology";
-import { Settings } from "./types";
+import { ITopology, Settings } from "./types";
 
 export class Network extends EventTarget {
+  private fingertable: Set<string>;
 
   constructor(
     private settings: Settings
   ) {
     super();
+    this.fingertable = new Set<string>
   }
 
   // public methods 
   public forward(target: string) {
-    switch (this.settings.topology.type)
-    {
-      case "custom":
-        return this.settings.topology.forward(target, this.settings);
-      default:
-        return Topology[this.settings.topology.type].forward(target, this.settings);
-    }
+    return this.getTopology().forward(target, this.settings);
   }
   public join(id: string, password?: string) {
     if (this.settings.password && password !== this.settings.password)
@@ -25,22 +21,18 @@ export class Network extends EventTarget {
       return false;
     }
 
-    switch (this.settings.topology.type)
-    {
-      case "custom":
-        return this.settings.topology.join(id, this.settings);
-      default:
-        return Topology[this.settings.topology.type].join(id, this.settings);
-    }
+    return this.getTopology().join(id, this.settings);
   }
   public remove(id: string) {
+    return this.getTopology().remove(id, this.settings);
+  }
 
-    switch (this.settings.topology.type)
+  private getTopology(): ITopology {
+    if (this.settings.topology.type == "custom")
     {
-      case "custom":
-        return this.settings.topology.remove(id, this.settings);
-      default:
-        return Topology[this.settings.topology.type].remove(id, this.settings);
+      return this.settings.topology;
     }
+
+    return Topology[this.settings.topology.type];
   }
 }

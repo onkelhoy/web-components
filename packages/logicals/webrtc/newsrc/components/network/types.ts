@@ -1,3 +1,8 @@
+export type ITopology = {
+  join(id: string, network: Settings): boolean;
+  remove(id: string, network: Settings): void;
+  forward(target: string, network: Settings): string;
+}
 
 export type Topology =
   | MeshTopology
@@ -18,12 +23,10 @@ type StarTopology = {
 type CordTopology = {
   type: "cord";
 }
-type CustomTopology = {
+type CustomTopology = ITopology & {
   type: "custom";
-  join(id: string, network: Settings): boolean;
-  remove(id: string, network: Settings): void;
-  forward(target: string, network: Settings): string;
 }
+
 
 export type Settings = {
   password?: string;

@@ -1,13 +1,13 @@
-import { Settings } from "../types";
+import { ITopology, Settings } from "../types";
 
-export class CordTopology {
-  static join(id: string, network: Settings) {
+export const CordTopology: ITopology = {
+  join(id: string, network: Settings) {
     return true;
-  }
-  static remove(id: string, network: Settings) {
+  },
+  remove(id: string, network: Settings) {
 
-  }
-  static forward(target: string, network: Settings) {
+  },
+  forward(target: string, network: Settings) {
     return target;
   }
 }
