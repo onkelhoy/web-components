@@ -1,7 +1,7 @@
 import { Media } from "../media";
 import { Socket } from "../socket";
 
-import { MediaSettings, StreamSettings, Settings, PrimitiveChannelData } from "./types";
+import { MediaSettings, StreamSettings, Settings, PrimitiveChannelData, ChannelEvent, SystemMessage } from "./types";
 
 export class Peer extends EventTarget {
   private connection: RTCPeerConnection;
@@ -124,49 +124,46 @@ export class Peer extends EventTarget {
   }
   private setupChannel(channel: RTCDataChannel) {
     if (channel.label === "system") return void this.setupSystemChannel(channel);
-    channel.addEventListener("close", () => {
-      this.dispatchChannel(channel.label, "close");
+    channel.addEventListener("close", (event) => {
+      this.dispatchChannel(channel, "close", event);
       this.incomingMedia.remove(channel.label);
       this.outgoingMedia.remove(channel.label);
     });
 
-    channel.addEventListener("open", () => {
-      this.dispatchChannel(channel.label, "open", channel);
+    channel.addEventListener("open", (event) => {
+      this.dispatchChannel(channel, "open", null, event);
     });
 
     channel.addEventListener("message", (event: MessageEvent<PrimitiveChannelData>) => {
-      this.dispatchChannel(channel.label, "message", Peer.extractChannelMessage(event));
+      this.dispatchChannel(channel, "message", Peer.extractChannelMessage(event), event);
     });
 
     channel.addEventListener("error", (event: RTCErrorEvent) => {
-      this.dispatchChannel(channel.label, "error", event);
+      this.dispatchChannel(channel, "error", null, event);
       this.dispatchError("channel", channel.label, event);
     });
   }
   private setupSystemChannel(channel: RTCDataChannel) {
-    channel.addEventListener("close", () => {
+    channel.addEventListener("close", (event) => {
       // close the entire peer connection ? 
     });
 
-    channel.addEventListener("open", () => {
-      // send offline data ? 
+    channel.addEventListener("open", (event: Event) => {
     });
 
     channel.addEventListener("message", (event: MessageEvent<string>) => {
-      const data = Peer.extractChannelMessage(event);
+      const data = Peer.extractChannelMessage<SystemMessage>(event);
 
-      // do something
     });
 
     channel.addEventListener("error", (event: RTCErrorEvent) => {
-      this.dispatchChannel(channel.label, "error", event);
-      this.dispatchError("channel", channel.label, event);
+
     });
   }
-  private static extractChannelMessage(event: MessageEvent<PrimitiveChannelData>): PrimitiveChannelData | Object {
+  private static extractChannelMessage<T = Object>(event: MessageEvent<PrimitiveChannelData>): PrimitiveChannelData | T {
     if (typeof event.data == "string" && ["{", "|"].includes(event.data[0]))
     {
-      return JSON.parse(event.data);
+      return JSON.parse(event.data) as T;
     }
 
     return event.data;
@@ -176,7 +173,7 @@ export class Peer extends EventTarget {
   private dispatchError(type: string, error: string, payload?: any) {
     this.dispatchEvent(new CustomEvent("error", { detail: { type, error, payload } }));
   }
-  private dispatchChannel(label: string, event: string, payload?: any) {
-    this.dispatchEvent(new CustomEvent(`${label}-${event}`, { detail: payload }));
+  private dispatchChannel(channel: RTCDataChannel, type: string, payload: any, event: Event) {
+    this.dispatchEvent(new CustomEvent<ChannelEvent>(`${channel.label}-${type}`, { detail: { payload, event } }));
   }
 }

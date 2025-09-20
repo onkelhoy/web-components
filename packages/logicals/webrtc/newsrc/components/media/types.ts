@@ -4,7 +4,7 @@ export type Medium =
   | AudioMedium
   | ScreenMedium;
 
-type DataMedium = {
+export type DataMedium = {
   type: "data";
   dataChannelDict: RTCDataChannelInit | undefined;
   channel: RTCDataChannel;
