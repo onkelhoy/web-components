@@ -1,38 +1,47 @@
-import { PeerType } from "types";
-import { Message, MessageType, TargetMessage, TargetMessageType } from "types.message";
-
-export type RouterInfo = {
-  connection: string[];
-  type: PeerType;
+export type Settings = {
+  ttl?: number;
+  hopLimit?: number;
+  host: string;
+  password?: string;
+  limit?: number;
 }
 
-export type NetworkJoinMessage = TargetMessage & {
-  targetType: TargetMessageType.Join;
-  config?: Record<string, any>;
+type BareNetworkMessage = {
+  sender: string;
+  receiver: string;
+  hops?: string[];
+  ttl?: number;
+  hopLimit?: number;
+  relay?: string;
 }
 
-// outgoing messages 
-export enum SocketIncomingMessageType {
-  Error = "error",
-  ConnectionACK = "socket-connection-ack",
-  RegisterACK = "network-register-ack",
-  UpdateACK = "network-update-ack",
+export type NetworkInternalMessage =
+  | NetworkJoin
+  | NetworkLeave
+  | NetworkUpdate;
+
+type NetworkJoin = BareNetworkMessage & {
+  type: "network";
+  payload: {
+    event: "join";
+  }
 }
-export type SocketIncomingMessage = Message & {
-  type: SocketIncomingMessageType | MessageType;
+type NetworkLeave = BareNetworkMessage & {
+  type: "network";
+  payload: {
+    event: "leave";
+  }
 }
-// export type NetworkMessage = SocketIncomingMessage & {
-//   network: NetworkInfo;
-// }
-export type SocketErrorMessage = SocketIncomingMessage & {
-  error: string;
+type NetworkUpdate = BareNetworkMessage & {
+  type: "network";
+  payload: {
+    event: "update";
+  }
 }
 
-// incomming messages
-export enum SocketOutgoingMessageType {
-  Register = "network-register",
-  Update = "network-update",
-}
-export type SocketOutgoingMessage = Message & {
-  type: SocketOutgoingMessageType | MessageType;
-}
+export type NetworkMessage =
+  | NetworkInternalMessage
+  | BareNetworkMessage & {
+    type: Exclude<string, "network">;
+    payload: any;
+  };

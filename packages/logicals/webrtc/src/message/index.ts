@@ -1,7 +1,7 @@
 export {
-  Network
+  Message,
 } from "./component";
 
 export {
-  NetworkMessage,
+  MessageType,
 } from "./types";

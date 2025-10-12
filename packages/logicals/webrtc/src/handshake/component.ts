@@ -5,7 +5,7 @@ export class Handshake extends EventTarget {
 
   private pendingIceCandidates: RTCIceCandidate[] = [];
   private iceRestarting = false;
-  private timer: ReturnType<typeof setTimeout> | null;
+  private timer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     public readonly me: string,

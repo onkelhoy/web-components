@@ -29,6 +29,12 @@
       "@papit/webrtc": [
         "./index"
       ],
+      "@message": [
+        "./message"
+      ],
+      "@message/*": [
+        "./message/*"
+      ],
     }
   },
   "include": [

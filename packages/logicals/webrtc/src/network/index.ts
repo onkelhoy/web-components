@@ -1,11 +1,7 @@
 export {
   Network
-} from "./network";
+} from "./component";
 
 export {
-  Medium
-} from "../media/medium";
-
-export {
-  Socket
-} from "./socket";
+  NetworkMessage,
+} from "./types";
