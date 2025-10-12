@@ -131,15 +131,19 @@ describe("coder unit tests", () => {
     }
 
     const large = Compare(message);
-    assert.ok(large.coder < large.json);
-    console.log(large);
+    assert.ok(
+      large.coder < large.json,
+      `Expected Coder to be faster for large objects (got ${large.coder} vs ${large.json})`
+    );
+    // console.log(large); // { coder: 0.0018937732000017548, json: 0.19564647850000189 }
 
-
-    // message.payload = "payload";
-    // const small = Compare(message);
-    // const result = small.coder - small.json;
-    // assert.ok(small.coder > small.json);
-    // assert.ok(small.coder > small.json);
+    message.payload = "payload";
+    const small = Compare(message);
+    assert.ok(
+      small.coder > small.json,
+      `Expected JSON to be faster for small objects (got ${small.coder} vs ${small.json})`
+    );
+    // console.log(small); // { coder: 0.0021225363999989896, json: 0.0007050355999990188 }
 
   });
 });
