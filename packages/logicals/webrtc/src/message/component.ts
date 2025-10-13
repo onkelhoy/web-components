@@ -1,4 +1,4 @@
-import { Coder } from "./coder";
+import { Codec } from "./codec";
 import { Meta } from "./types";
 
 export class Message<MetaType, Payload> {
@@ -20,7 +20,7 @@ export class Message<MetaType, Payload> {
   }
 
   static From<MetaType = string>(data: Uint8Array<ArrayBufferLike>, parsePayload?: boolean) {
-    const message = Coder.Decode<MetaType>(data);
-    return new Message(message.meta, parsePayload ? JSON.parse(message.payload) : message.payload);
+    const message = Codec.Decode<MetaType>(data, parsePayload);
+    return new Message(message.meta, message.payload);
   }
 }
