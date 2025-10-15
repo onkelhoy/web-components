@@ -1,3 +1,5 @@
+import { MessageType } from "@message";
+
 export type Settings = {
   ttl?: number;
   hopLimit?: number;
@@ -6,42 +8,21 @@ export type Settings = {
   limit?: number;
 }
 
-type BareNetworkMessage = {
-  sender: string;
-  receiver: string;
-  hops?: string[];
-  ttl?: number;
-  hopLimit?: number;
-  relay?: string;
-}
-
 export type NetworkInternalMessage =
   | NetworkJoin
   | NetworkLeave
   | NetworkUpdate;
 
-type NetworkJoin = BareNetworkMessage & {
-  type: "network";
-  payload: {
-    event: "join";
-  }
-}
-type NetworkLeave = BareNetworkMessage & {
-  type: "network";
-  payload: {
-    event: "leave";
-  }
-}
-type NetworkUpdate = BareNetworkMessage & {
-  type: "network";
-  payload: {
-    event: "update";
-  }
-}
+type NetworkJoin = MessageType<"network", {
+  event: "join";
+}>
+type NetworkLeave = MessageType<"network", {
+  event: "leave";
+}>
+type NetworkUpdate = MessageType<"network", {
+  event: "update";
+}>
 
 export type NetworkMessage =
   | NetworkInternalMessage
-  | BareNetworkMessage & {
-    type: Exclude<string, "network">;
-    payload: any;
-  };
+  | MessageType;

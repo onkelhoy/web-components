@@ -35,6 +35,12 @@
       "@message/*": [
         "./message/*"
       ],
+      "@network": [
+        "./network"
+      ],
+      "@network/*": [
+        "./network/*"
+      ],
     }
   },
   "include": [

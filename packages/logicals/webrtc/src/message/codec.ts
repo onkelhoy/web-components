@@ -4,7 +4,11 @@ export class Codec {
   private static encoder = new TextEncoder();
   private static decoder = new TextDecoder();
 
-  static Encode(message: MessageType): Uint8Array {
+  static Parse<Payload>(payload: AllowSharedBufferSource) {
+    return JSON.parse(Codec.decoder.decode(payload)) as Payload;
+  }
+
+  static Encode<MetaType, Payload = string>(message: MessageType<MetaType, Payload>): Uint8Array {
     // Encoding
     const meta = JSON.stringify(message.meta);
     const metaBytes = Codec.encoder.encode(meta);
@@ -23,7 +27,7 @@ export class Codec {
   }
 
   // Decode Uint8Array -> MessageObject<MetaType>
-  static Decode<MetaType = string>(data: Uint8Array, parsePayload?: boolean): MessageType<MetaType, Uint8Array<ArrayBufferLike>> {
+  static Decode<MetaType = string, Payload = any>(data: Uint8Array, parsePayload?: boolean): MessageType<MetaType, Payload | AllowSharedBufferSource> {
     const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
     const metaLen = view.getUint32(0, false);
 
@@ -33,10 +37,15 @@ export class Codec {
     const meta = JSON.parse(metaStr);
 
     // zero-copy: payload view
-    let payload = data.subarray(4 + metaLen);
+    let payload: AllowSharedBufferSource | Payload;
+    const rawPayload = data.subarray(4 + metaLen);
     if (parsePayload)
     {
-      payload = JSON.parse(Codec.decoder.decode(payload));
+      payload = Codec.Parse<Payload>(rawPayload);
+    }
+    else 
+    {
+      payload = rawPayload;
     }
 
     return {

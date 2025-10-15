@@ -1,11 +1,35 @@
 import { Codec } from "./codec";
-import { Meta } from "./types";
+import { MessageType, Meta } from "./types";
 
-export class Message<MetaType, Payload> {
+export class Message<MetaType = string, Payload = any> implements MessageType<MetaType, Payload | AllowSharedBufferSource> {
+  private parsed = false;
   constructor(
     public meta: Meta<MetaType>,
-    public payload: Payload | string,
+    public payload: Payload | AllowSharedBufferSource,
   ) { }
+
+  public toBinary() {
+    return Codec.Encode<MetaType, Payload | AllowSharedBufferSource>(this);
+  }
+
+  public parse<T extends Payload = Payload>(): T {
+    if (this.parsed) return this.payload as T;
+    this.parsed = true;
+
+    let payload = this.payload;
+
+    // Only parse if payload is a buffer type
+    if (payload instanceof Uint8Array || payload instanceof ArrayBuffer || ArrayBuffer.isView(payload))
+    {
+      this.payload = Codec.Parse<T>(payload);
+    } else
+    {
+      // Already parsed, just cast it
+      this.payload = payload as T;
+    }
+
+    return this.payload as T;
+  }
 
   static Create<MetaType = string, Payload = Object | string>(meta: Partial<Meta<MetaType>> & { type: MetaType }, payload: Payload) {
     return new Message<MetaType, Payload>(
@@ -19,8 +43,11 @@ export class Message<MetaType, Payload> {
     );
   }
 
-  static From<MetaType = string>(data: Uint8Array<ArrayBufferLike>, parsePayload?: boolean) {
-    const message = Codec.Decode<MetaType>(data, parsePayload);
-    return new Message(message.meta, message.payload);
+  static FromBinary<MetaType = string, Payload = any>(data: Uint8Array<ArrayBufferLike>, parsePayload?: boolean) {
+    const message = Codec.Decode<MetaType, Payload>(data, parsePayload);
+
+    const msg = new Message(message.meta, message.payload);
+    msg.parsed = !!parsePayload;
+    return msg;
   }
 }

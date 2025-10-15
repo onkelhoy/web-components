@@ -6,7 +6,7 @@ export type Meta<Type = string> = {
   hopLimit?: number;
   relay?: string;
   type: Type;
-  timestamp: number;
+  timestamp?: number;
 }
 
 export type MessageType<MetaType = string, Payload = any> = {

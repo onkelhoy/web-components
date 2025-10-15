@@ -1,7 +1,8 @@
-import { Network, NetworkMessage } from "../network";
+import { Network, NetworkMessage } from "@network";
 import { HandshakeMessage, Message } from "./types";
+import { Emitter } from "emitter";
 
-export class Handshake extends EventTarget {
+export class Handshake extends Emitter {
 
   private pendingIceCandidates: RTCIceCandidate[] = [];
   private iceRestarting = false;
@@ -63,7 +64,7 @@ export class Handshake extends EventTarget {
     }
     catch 
     {
-      this.dispatchEvent(new CustomEvent("fatal", { detail: "create-offer" }));
+      this.emit("fatal", "create-offer");
     }
   }
   private async flushPendingIceCandidates() {
@@ -85,25 +86,21 @@ export class Handshake extends EventTarget {
   // helper functions 
   private send(payload: Message) {
     this.network.send({
-      type: "handshake",
+      meta: {
+        type: "handshake",
+        receiver: this.target,
+        sender: this.me,
+      },
       payload,
-      receiver: this.target,
-      sender: this.me,
     });
-  }
-  private error(type: string, message: string, payload: any) {
-    this.dispatchEvent(new CustomEvent("error", { detail: { type, message, payload } }));
-  }
-  private debug(type: string, message: string, payload: any) {
-    this.dispatchEvent(new CustomEvent("debug", { detail: { type, message, payload } }));
   }
 
   // event handlers 
   private handlenetworkmessage = (event: Event) => {
     if (!(event instanceof CustomEvent)) return;
     const networkMessage = event.detail as NetworkMessage;
-    if (networkMessage.type !== "handshake") return;
-    if (networkMessage.receiver !== this.me) return;
+    if (networkMessage.meta.type !== "handshake") return;
+    if (networkMessage.meta.receiver !== this.me) return;
 
     const message = event.detail as HandshakeMessage;
     switch (message.payload.type)
@@ -197,7 +194,7 @@ export class Handshake extends EventTarget {
     }
     catch 
     {
-      this.dispatchEvent(new CustomEvent("fatal", { detail: "create-answer" }));
+      this.emit("fatal", "create-answer");
     }
   }
   private async handleIncomingAnswer(answer: RTCSessionDescriptionInit) {
@@ -210,7 +207,7 @@ export class Handshake extends EventTarget {
     }
     catch 
     {
-      this.dispatchEvent(new CustomEvent("fatal", { detail: "handle-answer" }));
+      this.emit("fatal", "handle-answer");
     }
   }
   private async handleIncomingCandidate(candidate: RTCIceCandidate) {

@@ -1,6 +1,8 @@
+import { Emitter } from "emitter";
+import { Message, MessageType } from "@message";
 import { NetworkMessage, Settings, NetworkInternalMessage } from "./types";
 
-export class Network extends EventTarget {
+export class Network extends Emitter {
   private hopLimit: number = 10;
   private ttl: number = 1; // this gets updated on each join + leave event 
 
@@ -14,31 +16,31 @@ export class Network extends EventTarget {
     if (this.settings.hopLimit) this.hopLimit = this.settings.hopLimit;
   }
 
-  public send(message: NetworkMessage) {
-    if (message.receiver === this.id)
+  public send(message: MessageType) {
+    if (message.meta.receiver === this.id)
     {
-      return void this.dispatchEvent(new CustomEvent("message", { detail: message }));
+      return void this.emit("message", message);
     }
 
-    message.hops ??= [];
-    message.ttl ??= this.ttl ?? 10;
-    message.hopLimit ??= this.hopLimit;
+    message.meta.hops ??= [];
+    message.meta.ttl ??= this.ttl ?? 10;
+    message.meta.hopLimit ??= this.hopLimit;
 
     // record this peer as a relay
-    if (!message.hops.includes(this.id))
+    if (!message.meta.hops.includes(this.id))
     {
-      message.hops.push(this.id);
+      message.meta.hops.push(this.id);
     }
     else 
     {
-      message.hopLimit--;
+      message.meta.hopLimit--;
     }
 
-    message.ttl--;
+    message.meta.ttl--;
 
-    if (message.ttl <= 0 || message.hopLimit <= 0)
+    if (message.meta.ttl <= 0 || message.meta.hopLimit <= 0)
     {
-      this.dispatchEvent(new CustomEvent("network-drop", { detail: message }));
+      this.emit("drop", message);
       return;
     }
 
@@ -60,16 +62,16 @@ export class Network extends EventTarget {
     //   })
     // );
 
-    this.dispatchEvent(new CustomEvent("forward", {
-      detail: {
-        ...message,
-        relay: message.receiver, // TODO: change later so topology will give us this one. 
-      }
-    }))
+    // this.dispatchEvent(new CustomEvent("relay", {
+    //   detail: {
+    //     ...message,
+    //     relay: message.receiver, // TODO: change later so topology will give us this one. 
+    //   }
+    // }))
   }
 
   private isInternalMessage(message: NetworkMessage): message is NetworkInternalMessage {
-    return message.type === "network";
+    return message.meta.type === "network";
   }
 
 
@@ -88,14 +90,5 @@ export class Network extends EventTarget {
         this.error("network-event", "invalid type", message);
         break;
     }
-  }
-
-
-  // util functions 
-  private error(type: string, message: string, payload: any) {
-    this.dispatchEvent(new CustomEvent("error", { detail: { type, message, payload } }));
-  }
-  private debug(type: string, message: string, payload: any) {
-    this.dispatchEvent(new CustomEvent("debug", { detail: { type, message, payload } }));
   }
 }

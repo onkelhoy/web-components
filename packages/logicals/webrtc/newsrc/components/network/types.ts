@@ -1,7 +1,7 @@
 export type ITopology = {
   join(id: string, network: Settings): boolean;
   remove(id: string, network: Settings): void;
-  forward(target: string, network: Settings): string;
+  relay(target: string, network: Settings): string;
 }
 
 export type Topology =

@@ -4,4 +4,5 @@ export {
 
 export {
   NetworkMessage,
+  Settings as NetworkConfiguration
 } from "./types";
