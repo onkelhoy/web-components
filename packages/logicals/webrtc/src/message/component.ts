@@ -3,13 +3,17 @@ import { MessageType, Meta } from "./types";
 
 export class Message<MetaType = string, Payload = any> implements MessageType<MetaType, Payload | AllowSharedBufferSource> {
   private parsed = false;
+  private binary:Uint8Array<ArrayBufferLike>|undefined = undefined;
   constructor(
     public meta: Meta<MetaType>,
     public payload: Payload | AllowSharedBufferSource,
   ) { }
 
-  public toBinary() {
-    return Codec.Encode<MetaType, Payload | AllowSharedBufferSource>(this);
+  public toBinary(force?: boolean) {
+    if (force) this.binary = undefined;
+    if (!this.binary) this.binary = Codec.Encode<MetaType, Payload | AllowSharedBufferSource>(this);
+
+    return this.binary;
   }
 
   public parse<T extends Payload = Payload>(): T {

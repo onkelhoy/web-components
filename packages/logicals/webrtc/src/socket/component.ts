@@ -8,7 +8,7 @@ const RECONNECT_TIME_INTERVAL_STEP = 700; // with attempt=10 => 1400 (total time
 export class Socket extends Emitter {
   private ws!: WebSocket;
   private attempts = 0;
-  private offline: any[] = [];
+  private offline: Message[] = [];
   public id: string | null = null;
 
   constructor(
@@ -74,15 +74,14 @@ export class Socket extends Emitter {
     this.ws.close();
   }
 
-  public send(message: any, offloading?: boolean) {
-    const msg = JSON.stringify(message);
+  public send(message: Message, offloading?: boolean) {
     if (!this.connected)
     {
       this.offline.push(message);
       return false;
     }
 
-    this.ws.send(msg);
+    this.ws.send(message.toBinary());
 
     if (!offloading) this.offload();
     return true;
