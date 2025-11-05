@@ -1,3 +1,8 @@
 // exports
-export * from "./component";
-export * from "./types";
+export {
+  MetaMessage,
+} from "./component";
+
+export {
+  MessageType,
+} from "./types";

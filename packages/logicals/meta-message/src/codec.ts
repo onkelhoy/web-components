@@ -8,7 +8,7 @@ export class Codec {
     return JSON.parse(Codec.decoder.decode(payload)) as Payload;
   }
 
-  static Encode<MetaType, Payload = string>(message: MessageType<MetaType, Payload>): Uint8Array {
+  static Encode<Meta extends Object = object, Payload = string>(message: MessageType<Meta, Payload>): Uint8Array {
     // Encoding
     const meta = JSON.stringify(message.meta);
     const metaBytes = Codec.encoder.encode(meta);
@@ -27,7 +27,7 @@ export class Codec {
   }
 
   // Decode Uint8Array -> MessageObject<MetaType>
-  static Decode<MetaType = string, Payload = any>(data: Uint8Array, parsePayload?: boolean): MessageType<MetaType, Payload | AllowSharedBufferSource> {
+  static Decode<Meta extends Object = object, Payload = any>(data: Uint8Array, parsePayload?: boolean): MessageType<Meta, Payload | AllowSharedBufferSource> {
     const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
     const metaLen = view.getUint32(0, false);
 

@@ -41,7 +41,8 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
-    "@papit/core": "1.0.1"
+    "@papit/core": "1.0.1",
+    "@papit/meta-message": "^0.0.1"
   },
   "devDependencies": {
     "@papit/codeblock": "0.0.5",
