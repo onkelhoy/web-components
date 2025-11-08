@@ -1,5 +1,5 @@
-import { Message } from "@message";
 import { Emitter } from "emitter";
+import { Message } from "message";
 import { SocketMessage, SocketMessageType } from "./types";
 
 const MAX_ATTEMPTS = 10;
@@ -48,7 +48,7 @@ export class Socket extends Emitter {
         this.dispatchEvent(new Event("connected"));
         break;
       case "error":
-        this.error("signaling error", message.error, null);
+        this.error("signaling", message.error, null);
         break;
     }
   }

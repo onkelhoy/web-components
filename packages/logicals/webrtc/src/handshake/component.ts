@@ -1,6 +1,6 @@
-import { Network, NetworkMessage } from "@network";
-import { HandshakeMessage, Message } from "./types";
 import { Emitter } from "emitter";
+import { Network, NetworkMessage } from "network";
+import { HandshakeMessage, Message } from "./types";
 
 export class Handshake extends Emitter {
 

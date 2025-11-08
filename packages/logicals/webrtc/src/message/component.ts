@@ -4,6 +4,7 @@ import { MessageType, Meta } from "./types";
 
 export class Message<MetaType = string, Payload = any> extends MetaMessage<Meta<MetaType>, Payload> {
 
+
   // static FromBinary<MetaType = string, Payload = any>(data: Uint8Array<ArrayBufferLike>, parsePayload?: boolean): Message<Meta<MetaType>, Payload> {
   //   return MetaMessage.FromBinary<MetaMessage<Meta<MetaType>, Payload>, Meta<MetaType>, Payload>(data, parsePayload);
   // }

@@ -1,5 +1,5 @@
 import { Emitter } from "emitter";
-import { Message, MessageType } from "@message";
+import { Message, MessageType } from "message";
 import { NetworkMessage, Settings, NetworkInternalMessage } from "./types";
 
 export class Network extends Emitter {
