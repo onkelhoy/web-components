@@ -3,13 +3,13 @@ import { MessageType } from "./types";
 
 export class MetaMessage<Meta extends Object = object, Payload = any> implements MessageType<Meta, Payload | AllowSharedBufferSource> {
   private parsed = false;
-  private binary:Uint8Array<ArrayBufferLike>|undefined = undefined;
+  private binary: Uint8Array<ArrayBufferLike> | undefined = undefined;
   constructor(
     public meta: Meta,
     public payload: Payload | AllowSharedBufferSource,
   ) { }
 
-  public toBinary(force?: boolean) {
+  public encode(force?: boolean) {
     if (force) this.binary = undefined;
     if (!this.binary) this.binary = Codec.Encode<Meta, Payload | AllowSharedBufferSource>(this);
 
@@ -37,7 +37,7 @@ export class MetaMessage<Meta extends Object = object, Payload = any> implements
 
   static Create<
     This extends new (meta: any, payload: any) => MetaMessage<any, any>,
-    Meta extends Object = object, 
+    Meta extends Object = object,
     Payload = Object | string
   >(this: This, meta: Meta, payload: Payload) {
     return new this(
@@ -52,8 +52,8 @@ export class MetaMessage<Meta extends Object = object, Payload = any> implements
   }
 
   static FromBinary<
-    This extends new (meta: any, payload: any) => MetaMessage<any, any>, 
-    Meta extends Object = object, 
+    This extends new (meta: any, payload: any) => MetaMessage<any, any>,
+    Meta extends Object = object,
     Payload = any
   >(this: This, data: Uint8Array<ArrayBufferLike>, parsePayload?: boolean): InstanceType<This> {
     const message = Codec.Decode<Meta, Payload>(data, parsePayload);
