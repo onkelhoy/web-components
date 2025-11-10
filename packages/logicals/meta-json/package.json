@@ -10,7 +10,7 @@
     "preversion": "bash ./bin/_utils/preversion.sh",
     "postversion": "bash ./bin/_utils/postversion.sh",
     "component": "npm run create --include-workspace-root=true --workspace=$(npm prefix) -- --component --location=$(pwd)",
-    "test": "node --test"
+    "test": "NODE_OPTIONS='--no-warnings' node --loader ts-node/esm --test \"tests/**/*.test.ts\" --test-verbose --test-fail-fast"
   },
   "main": "./lib/bundle.js",
   "types": "./lib/types/index.d.ts",
@@ -35,10 +35,6 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "devDependencies": {
-    "@papit/codeblock": "^*",
-    "@papit/game-engine": "^*",
-    "@papit/game-input-events": "^*",
-    "@papit/game-vector": "^*",
     "esbuild": "^0.17.18",
     "typescript": "^5.7.2",
     "node-html-parser": "^6.1.11",
