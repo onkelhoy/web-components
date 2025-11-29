@@ -1,7 +1,7 @@
 {
   "name": "@papit/popover",
   "description": "",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "scripts": {
     "build:sass": "bash ./bin/_utils/sass.sh",
     "build:react": "bash ./bin/_utils/react.sh",
@@ -45,17 +45,16 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "dependencies": {
-    "@papit/core": "1.0.1"
+    "@papit/core": "1.0.2"
   },
   "devDependencies": {
     "@papit/button": "0.0.6",
     "@papit/codeblock": "0.0.5",
-    "@papit/translator": "0.0.4",
+    "@papit/translator": "0.0.5",
     "@playwright/test": "^1.45.3",
     "@types/node": "^22.10.2",
     "chokidar": "^3.6.0",
     "esbuild": "^0.17.18",
-    "node-html-parser": "^6.1.11",
     "playwright": "^1.45.3",
     "sass": "^1.70.0",
     "typescript": "^5.7.2"

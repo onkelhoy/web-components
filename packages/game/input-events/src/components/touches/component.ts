@@ -7,7 +7,7 @@ export class ExtendedTouch {
   movement: Vector;
 
   start: number;
-  end: null|number;
+  end: null | number;
   identifier!: number;
   screenX!: number;
   screenY!: number;
@@ -21,7 +21,7 @@ export class ExtendedTouch {
   force!: number;
   target!: EventTarget;
 
-  constructor(touch:Touch) {
+  constructor(touch: Touch) {
     this.position = Vector.Zero;
     this.movement = Vector.Zero;
 
@@ -35,7 +35,7 @@ export class ExtendedTouch {
     return this.identifier;
   }
 
-  update(touch:Touch) {
+  update(touch: Touch) {
     this.identifier = touch.identifier;
     this.screenX = touch.screenX;
     this.screenY = touch.screenY;
@@ -56,9 +56,9 @@ export class ExtendedTouch {
     }
     else 
     {
-      const old = this.position.copy();
-      this.position.set(this.clientX, this.clientY);
-      this.movement = this.position.Sub(old);
+      const old = this.position.clone();
+      this.position.set([this.clientX, this.clientY]);
+      this.movement = Vector.Subtract(this.position, old);
     }
   }
 
@@ -69,14 +69,14 @@ export class ExtendedTouch {
 }
 
 export class Touches extends EventTarget {
-  mouse: ExtendedTouch|null;
+  mouse: ExtendedTouch | null;
   position: Vector;
   movement: Vector;
   touches: Record<number, ExtendedTouch>;
   changedTouches: ExtendedTouch[];
   verbose: boolean;
 
-  constructor(canvas:HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement) {
     super();
     this.position = Vector.Zero; // first move 
     this.movement = Vector.Zero;
@@ -85,9 +85,9 @@ export class Touches extends EventTarget {
     this.touches = {};
     this.changedTouches = [];
     this.verbose = false;
-    
+
     canvas.addEventListener("touchstart", this.handletouchstart, { passive: true });
-    canvas.addEventListener("touchend", this. handletouchend);
+    canvas.addEventListener("touchend", this.handletouchend);
     canvas.addEventListener("touchmove", this.handletouchmove, { passive: true });
     canvas.addEventListener("touchcancel", this.handletouchcancel);
   }
@@ -102,9 +102,9 @@ export class Touches extends EventTarget {
   }
 
   // event handlers 
-  handletouchstart = (e:TouchEvent) => {
+  handletouchstart = (e: TouchEvent) => {
     this.changedTouches = [];
-    
+
     const oldmouse = this.mouse?.id;
     for (const eventtouch of e.changedTouches)
     {
@@ -113,21 +113,21 @@ export class Touches extends EventTarget {
       this.position.set(touch.position);
       this.movement.set(touch.movement);
     }
-    
-    
+
+
     const lastdown = oldmouse !== this.mouse?.id;
     if (lastdown)
     {
       this.dispatchEvent(new Event("last-down"));
     }
-    
+
     if (this.verbose)
     {
       logscreen("touch start", lastdown);
     }
     this.dispatchEvent(new Event("down"));
   }
-  handletouchend = (e:TouchEvent) => {
+  handletouchend = (e: TouchEvent) => {
     this.changedTouches = [];
 
     for (const eventtouch of e.changedTouches)
@@ -151,7 +151,7 @@ export class Touches extends EventTarget {
     }
     this.dispatchEvent(new Event("up"));
   }
-  handletouchmove = (e:TouchEvent) => {
+  handletouchmove = (e: TouchEvent) => {
     this.changedTouches = [];
 
     for (const eventtouch of e.changedTouches)
@@ -169,9 +169,9 @@ export class Touches extends EventTarget {
 
     this.dispatchEvent(new Event("move"));
   }
-  handletouchcancel = (e:TouchEvent) => {
+  handletouchcancel = (e: TouchEvent) => {
     this.changedTouches = [];
-    
+
     for (const eventtouch of e.changedTouches)
     {
       const touch = this.touchChange(eventtouch);
@@ -185,7 +185,7 @@ export class Touches extends EventTarget {
         this.dispatchEvent(new Event("last-up"));
       }
     }
-      
+
     this.position.set(0, 0);
     this.movement.set(0, 0);
 
@@ -193,7 +193,7 @@ export class Touches extends EventTarget {
   }
 
   // helper 
-  touchChange(touch:Touch) {
+  touchChange(touch: Touch) {
     const id = touch.identifier;
     if (this.touches[id])
     {

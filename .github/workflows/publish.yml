@@ -10,6 +10,10 @@ on:
         required: false
         default: false
         type: boolean 
+
+permissions:
+  id-token: write  # Required for OIDC
+
 jobs:
   initialise:
     uses: ./.github/workflows/initialise.yml
@@ -48,6 +52,5 @@ jobs:
       - name: Publish to npmjs.com
         run: npm run publish -- --ci --verbose
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           CI: true 
           

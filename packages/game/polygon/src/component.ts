@@ -1,25 +1,25 @@
-import {Vector, VectorObject} from "@papit/game-vector";
-import {Triangulate} from "./components/triangulate";
+import { Vector2, VectorValue } from "@papit/game-vector";
+import { Triangulate } from "./components/triangulate";
 // import { Shape } from "@papit/game-shape";
 
 export class Polygon {
 
   static instances = 0;
-  verticies: VectorObject[];
+  verticies: Vector2[];
   triangles: number[];
-  boundaryindex: null|number[];
+  boundaryindex: null | number[];
   concave?: boolean;
   id: number;
-  centeroffset?: Vector;
+  centeroffset?: Vector2;
 
-  constructor(...verticies: VectorObject[]) {
+  constructor(...verticies: VectorValue[]) {
     // super(0, 0, 0); 
 
     this.verticies = [];
     this.triangles = [];
     this.boundaryindex = null;
     this.id = Polygon.instances++;
-    this.verticies = verticies.map(v => new Vector(v));
+    this.verticies = verticies.map(v => new Vector2(v));
 
     if (this.verticies.length > 0)
     {
@@ -29,18 +29,19 @@ export class Polygon {
 
   get boundary() {
     if (!this.boundaryindex) this.recalculate();
-    if (!this.boundaryindex) {
+    if (!this.boundaryindex)
+    {
       throw new Error("polygon has no boundary-index, attempt of recalucating has been made but no success");
     }
 
     return {
       x: this.verticies[this.boundaryindex[0]].x,
       y: this.verticies[this.boundaryindex[1]].y,
-      w: this.verticies[this.boundaryindex[2]].x - this.verticies[this.boundaryindex[0]].x, 
-      h: this.verticies[this.boundaryindex[3]].y - this.verticies[this.boundaryindex[1]].y, 
+      w: this.verticies[this.boundaryindex[2]].x - this.verticies[this.boundaryindex[0]].x,
+      h: this.verticies[this.boundaryindex[3]].y - this.verticies[this.boundaryindex[1]].y,
     }
   }
-  supportFunction(direction: VectorObject) {
+  supportFunction(direction: VectorValue) {
     // TODO fix me to return the furtherst away point nearest to the direction based on center (in a smart way)
     return {
       x: 0,
@@ -67,29 +68,29 @@ export class Polygon {
   get center() {
     if (!this.centeroffset)
     {
-      return Vector.Zero;
+      return Vector2.Zero;
     }
 
-    return this.centeroffset.Add(this.verticies[0]);
+    return this.centeroffset.clone.add(this.verticies[0]);
   }
 
-  private debouncedmove(x:number|VectorObject, y?:number) {
-    
+  private debouncedmove(x: VectorValue, y?: number) {
+
   }
 
-  move(x:number|VectorObject, y?:number) {
-    
+  move(x: VectorValue, y?: number) {
+
   }
 
   recalculate() {
     // setting properties
-    this.centeroffset = Vector.Zero;
+    this.centeroffset = Vector2.Zero;
     this.boundaryindex = [];
     this.concave = false;
 
     // no point for polygons less then or equal to 2 
     if (this.verticies.length <= 2) return;
-    
+
     // boundary calculation
     let minx = Number.MAX_SAFE_INTEGER;
     let miny = Number.MAX_SAFE_INTEGER;
@@ -102,18 +103,18 @@ export class Polygon {
 
     // keep track on number of convex and concave to determine if concave + counter clockwise direction
     let convex = 0, concave = 0;
-    for (let i=0; i<this.verticies.length; i++)
+    for (let i = 0; i < this.verticies.length; i++)
     {
       const v = this.verticies[i];
       const prev = (i - 1 + this.verticies.length) % this.verticies.length;
       const next = (i + 1) % this.verticies.length;
 
       // vector AB : previous to current 
-      const AB = Vector.Subtract(v, this.verticies[prev]);
+      const AB = Vector2.subtract(v, this.verticies[prev]);
       // vector BC : current to next
-      const BC = Vector.Subtract(this.verticies[next], v);
+      const BC = Vector2.subtract(this.verticies[next], v);
 
-      const crossproduct = Vector.Cross(AB, BC);
+      const crossproduct = Vector2.Cross(AB, BC);
 
       if (crossproduct > 0)
       {
@@ -160,7 +161,7 @@ export class Polygon {
         maxyindex = i;
       }
     }
-    
+
     // set the boundary 
     this.boundaryindex = [minxindex, minyindex, maxxindex, maxyindex];
 
@@ -168,7 +169,7 @@ export class Polygon {
     {
       // counter clockwise
       this.verticies = this.verticies.reverse();
-      
+
       // need to flip the boundary indexes
       this.boundaryindex = this.boundaryindex.map(i => this.verticies.length - 1 - i);
     }
@@ -176,7 +177,7 @@ export class Polygon {
 
     // set the center to median of verticies 
     this.centeroffset.divide(this.verticies.length);
-    this.centeroffset.sub(this.verticies[0]);
+    this.centeroffset.subtract(this.verticies[0]);
 
     // call triangulation
     this.triangulate();
@@ -186,7 +187,7 @@ export class Polygon {
     Triangulate(this);
   }
 
-  getTriangle(i:number) {
+  getTriangle(i: number) {
     return [
       this.verticies[this.triangles[i * 3]],
       this.verticies[this.triangles[i * 3 + 1]],
@@ -195,74 +196,77 @@ export class Polygon {
   }
   getTriangles() {
     const triangles = [];
-    for (let i=0; i<(this.triangles.length/3); i++) {
+    for (let i = 0; i < (this.triangles.length / 3); i++)
+    {
       triangles.push(this.getTriangle(i));
     }
 
     return triangles;
   }
 
-  draw(ctx:CanvasRenderingContext2D, strokecolor="black", fillcolor="rgba(0,0,0,0.1)", r=1) {
-    ctx.strokeStyle = strokecolor;
-    
-    this.verticies.forEach((v, i) => {
-      Vector.Draw(v, ctx, strokecolor, r * 3);
+  // draw(ctx: CanvasRenderingContext2D, strokecolor = "black", fillcolor = "rgba(0,0,0,0.1)", r = 1) {
+  //   ctx.strokeStyle = strokecolor;
 
-      ctx.fillText(String(i), v.x, v.y - 10);
-    });
+  //   this.verticies.forEach((v, i) => {
+  //     Vector2.Draw(v, ctx, strokecolor, r * 3);
 
-    const c = this.center;
-    ctx.fillText(String(this.id), c.x, c.y);
-    
-    ctx.lineWidth = r / 2;
-    ctx.setLineDash([10, 15]);
-    for (let i=0; i<this.triangles.length; i+=3) {
-      const a = this.verticies[this.triangles[i]];
-      const b = this.verticies[this.triangles[i + 1]];
-      const c = this.verticies[this.triangles[i + 2]];
+  //     ctx.fillText(String(i), v.x, v.y - 10);
+  //   });
 
-      ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.lineTo(c.x, c.y);
-        ctx.lineTo(a.x, a.y);
-        ctx.stroke();
-      ctx.closePath();
-    }
+  //   const c = this.center;
+  //   ctx.fillText(String(this.id), c.x, c.y);
 
-    ctx.setLineDash([]);
-    ctx.lineWidth = r;
-    if (this.verticies.length > 1)
-    {
-      ctx.beginPath();
-      for (let i=0; i<this.verticies.length; i++) {
-        if (i === 0)
-        {
-          ctx.moveTo(this.verticies[i].x, this.verticies[i].y);
-        }
-        else 
-        {
-          ctx.lineTo(this.verticies[i].x, this.verticies[i].y);
-        }
-      }
-  
-      ctx.lineTo(this.verticies[0].x, this.verticies[0].y);
-  
-      ctx.stroke();
-      ctx.fillStyle = fillcolor;
-      ctx.fill();
-      ctx.closePath();
+  //   ctx.lineWidth = r / 2;
+  //   ctx.setLineDash([10, 15]);
+  //   for (let i = 0; i < this.triangles.length; i += 3)
+  //   {
+  //     const a = this.verticies[this.triangles[i]];
+  //     const b = this.verticies[this.triangles[i + 1]];
+  //     const c = this.verticies[this.triangles[i + 2]];
 
-      const boundary = this.boundary;
-      if (boundary)
-      {
-        ctx.beginPath();
-          ctx.lineWidth = r / 2;
-          ctx.setLineDash([10, 15]);
-          ctx.rect(boundary.x, boundary.y, boundary.w, boundary.h);
-          ctx.stroke();
-        ctx.closePath();
-      }
-    }
-  }
+  //     ctx.beginPath();
+  //     ctx.moveTo(a.x, a.y);
+  //     ctx.lineTo(b.x, b.y);
+  //     ctx.lineTo(c.x, c.y);
+  //     ctx.lineTo(a.x, a.y);
+  //     ctx.stroke();
+  //     ctx.closePath();
+  //   }
+
+  //   ctx.setLineDash([]);
+  //   ctx.lineWidth = r;
+  //   if (this.verticies.length > 1)
+  //   {
+  //     ctx.beginPath();
+  //     for (let i = 0; i < this.verticies.length; i++)
+  //     {
+  //       if (i === 0)
+  //       {
+  //         ctx.moveTo(this.verticies[i].x, this.verticies[i].y);
+  //       }
+  //       else 
+  //       {
+  //         ctx.lineTo(this.verticies[i].x, this.verticies[i].y);
+  //       }
+  //     }
+
+  //     ctx.lineTo(this.verticies[0].x, this.verticies[0].y);
+
+  //     ctx.stroke();
+  //     ctx.fillStyle = fillcolor;
+  //     ctx.fill();
+  //     ctx.closePath();
+
+  //     const boundary = this.boundary;
+  //     if (boundary)
+  //     {
+  //       ctx.beginPath();
+  //       ctx.lineWidth = r / 2;
+  //       ctx.setLineDash([10, 15]);
+  //       ctx.rect(boundary.x, boundary.y, boundary.w, boundary.h);
+  //       ctx.stroke();
+  //       ctx.closePath();
+  //     }
+  //   }
+  // }
 }

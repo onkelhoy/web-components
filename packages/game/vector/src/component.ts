@@ -1,330 +1,252 @@
-import { VectorObject, PrintSettings, DEFAULT_PRINT_SETTINGS } from "./types";
+import { toArray } from "./helper";
+import { Value, VectorObject } from "./types";
 
-export class Vector implements VectorObject {
-  x: number;
-  y: number;
-  z: number;
-
-  constructor(x: number|VectorObject, y: number = 0, z:number = 0) {
-    if (typeof x === "object")
-    {
-      this.x = x.x || 0;
-      this.y = x.y || 0;
-      this.z = x.z || 0;
-    }
-    else 
-    {
-      this.x = x;
-      this.y = y;
-      this.z = z;
-    }
+export class Vector extends Float32Array {
+  constructor(dimension: number);
+  constructor(record: VectorObject);
+  constructor(values: number[] | Float32Array);
+  constructor(...rest: number[]);
+  constructor(value: Value);
+  constructor(a: Value, ...rest: number[]) {
+    super(toArray(a, ...rest));
   }
 
-  get magnitude() {
-    return Vector.Magnitude(this);
+  public get magnitude() {
+    let sum = 0;
+    for (let i = 0; i < this.length; i++)
+    {
+      sum += this[i] * this[i];
+    }
+    return Math.sqrt(sum);
   }
+  public set magnitude(value: number) {
+    const mag = this.magnitude;
+    if (mag === 0) return;
+
+    const scale = value / mag;
+    this.mapThis(v => v * scale);
+  }
+
+  // getters
+  get x() { return this[0] }
+  get y() { return this[1] }
+  get z() { return this[2] }
+  get w() { return this[3] }
+  // colors 
+  get r() { return this[0] }
+  get g() { return this[1] }
+  get b() { return this[2] }
+  get a() { return this[3] }
+
+  // setters
+  set x(value: number) { this[0] = value }
+  set y(value: number) { this[1] = value }
+  set z(value: number) { this[2] = value }
+  set w(value: number) { this[3] = value }
+  // colors
+  set r(value: number) { this[0] = value }
+  set g(value: number) { this[1] = value }
+  set b(value: number) { this[2] = value }
+  set a(value: number) { this[3] = value }
+
+  public dot(value: Value) {
+    const coerced = Vector.coerce(value);
+
+    let sum = 0;
+    for (let i = 0; i < this.length; i++)
+    {
+      sum += this[i] * coerced[i % coerced.length];
+    }
+    return sum;
+  }
+  add(...values: number[]): this;
+  add(value: Value): this;
+  public add(value: Value, ...rest: number[]): this {
+    const coerced = Vector.coerce(value, ...rest);
+    return this.mapThis((value, index) => value + coerced[index % coerced.length]);
+  }
+  subtract(...values: number[]): this;
+  subtract(value: Value): this;
+  public subtract(value: Value, ...rest: number[]): this {
+    const coerced = Vector.coerce(value, ...rest);
+    return this.mapThis((value, index) => value - coerced[index % coerced.length]);
+  }
+  multiply(...values: number[]): this;
+  multiply(value: Value): this;
+  public multiply(value: Value, ...rest: number[]): this {
+    const coerced = Vector.coerce(value, ...rest);
+    return this.mapThis((value, index) => value * coerced[index % coerced.length]);
+  }
+  divide(...values: number[]): this;
+  divide(value: Value): this;
+  public divide(value: Value, ...rest: number[]): this {
+    const coerced = Vector.coerce(value, ...rest);
+    return this.mapThis((value, index) => value / coerced[index % coerced.length]);
+  }
+  public normalize(): this {
+    const mag = this.magnitude;
+    if (mag === 0) return this;
+
+    return this.mapThis(v => v / mag);
+  }
+  public get clone(): this {
+    // @ts-expect-error TS does not fully understand this dynamic constructor
+    return new (this.constructor as { new(values: Value): this })(this);
+  }
+
+  slice(): Float32Array<ArrayBuffer>;
+  slice(start: number, end: number): Float32Array<ArrayBuffer>;
+  public slice(start?: number, end?: number): Float32Array<ArrayBuffer> {
+    const s = start || 0;
+    const e = end || this.length;
+    const diff = e - s;
+
+    const data = new Float32Array(diff);
+    for (let i = 0; i < diff; i++)
+    {
+      data[i] = this[i + s];
+    }
+
+    return data;
+  }
+  // public assign(vector: Value, ...rest: number[]) {
+
+  // }
+
+  public override map(callbackfn: (value: number, index: number, array: this) => number): this {
+    return this.clone.mapThis((v, i, a) => callbackfn(v, i, a as this));
+  }
+  public mapThis(callbackfn: (value: number, index: number, array: this) => number): this {
+    for (let i = 0; i < this.length; i++)
+    {
+      this[i] = callbackfn(this[i], i, this);
+    }
+
+    return this;
+  }
+
+  static distance(a: Value, b: Value) {
+    return this.subtract(a, b).magnitude;
+  }
+  static coerce(value: Value, ...rest: number[]) {
+    return toArray(value, ...(typeof value === "number" ? [value] : rest))
+  }
+  static dot(a: Value, b: Value) {
+    return new this(a).dot(b);
+  }
+
+  // vector returns 
+  static create<T extends typeof Vector>(this: T, value: Value): InstanceType<T> {
+    return new this(value) as InstanceType<T>;
+  }
+  static add<T extends typeof Vector>(this: T, a: Value, b: Value): InstanceType<T> {
+    return new this(a).add(b) as InstanceType<T>;
+  }
+  static subtract<T extends typeof Vector>(this: T, a: Value, b: Value): InstanceType<T> {
+    return new this(a).subtract(b) as InstanceType<T>;
+  }
+  static multiply<T extends typeof Vector>(this: T, a: Value, b: Value): InstanceType<T> {
+    return new this(a).multiply(b) as InstanceType<T>;
+  }
+  static divide<T extends typeof Vector>(this: T, a: Value, b: Value): InstanceType<T> {
+    return new this(a).divide(b) as InstanceType<T>;
+  }
+}
+
+export class Vector2 extends Vector {
+
   get angle() {
     return Math.atan2(this.y, this.x);
   }
-
-  set magnitude(value) {
-    const angle = this.angle;
-    this.x = Math.cos(angle) * value;
-    this.y = Math.sin(angle) * value;
-  }
-  set angle(value) {
+  set angle(value: number) {
     const mag = this.magnitude;
     this.x = Math.cos(value) * mag;
     this.y = Math.sin(value) * mag;
   }
 
-  // affectors
-  /**
-   * Sets vector to value
-   * @param {Vector|number} v 
-   * @param {undefined|number} y 
-   * @param {undefined|number} z 
-   * @returns Vector
-   */
-  set(v: VectorObject|number, y = 0, z = 0) {
-    const vv = Vector.toVector(v, y, z);
-    this.x = vv.x;
-    this.y = vv.y;
-    this.z = vv.z;
+  static perpendicular(a: Value, b: Value, windingorder: "clockwise" | "counter-clockwise" = "clockwise") {
+    const aCoerced = Vector2.coerce(a);
+    const bCoerced = Vector2.coerce(b);
 
-    return this;
-  }
-  /**
-   * Adds another vector to original
-   * @param {Vector|number} v 
-   * @param {undefined|number} y 
-   * @param {undefined|number} z 
-   * @returns Vector
-   */
-  add(v: VectorObject|number, y = 0, z = 0) {
-    const vv = Vector.toVector(v, y, z);
-    this.x += vv.x;
-    this.y += vv.y;
-    this.z += vv.z;
+    if (aCoerced.length < 2) throw new Error("vector dimension missmatch");
+    if (bCoerced.length < 2) throw new Error("vector dimension missmatch");
 
-    return this;
+    const delta = {
+      x: bCoerced[0] - aCoerced[0],
+      y: bCoerced[1] - aCoerced[1],
+    }
+    if (windingorder === "clockwise") return new Vector2(-delta.y, delta.x);
+    return new Vector2(delta.y, -delta.x);
   }
-  /**
-   * Subtracts another vector to original
-   * @param {Vector|number} v 
-   * @param {undefined|number} y 
-   * @param {undefined|number} z 
-   * @returns Vector
-   */
-  sub(v: VectorObject|number, y = 0, z = 0) {
-    const vv = Vector.toVector(v, y, z);
-    this.x -= vv.x;
-    this.y -= vv.y;
-    this.z -= vv.z;
+  static cross(a: Value, b: Value) {
+    const aCoerced = Vector2.coerce(a);
+    const bCoerced = Vector2.coerce(b);
 
-    return this;
-  }
-  /**
-   * Divides another vector to original
-   * @param {Vector|number} v 
-   * @param {undefined|number} y 
-   * @param {undefined|number} z 
-   * @returns Vector
-   */
-  divide(v: VectorObject|number, y = 0, z = 0) {
-    const vv = Vector.toVector(v, y, z);
-    this.x /= vv.x;
-    this.y /= vv.y;
-    this.z /= vv.z;
+    if (aCoerced.length < 2) throw new Error("vector dimension missmatch");
+    if (bCoerced.length < 2) throw new Error("vector dimension missmatch");
 
-    return this;
+    return aCoerced[0] * bCoerced[1] - aCoerced[1] * bCoerced[0];
   }
-  /**
-   * Multiplies another vector to original
-   * @param {Vector|number} v 
-   * @param {undefined|number} y 
-   * @param {undefined|number} z 
-   * @returns Vector
-   */
-  mul(v: VectorObject|number, y = 0, z = 0) {
-    const vv = Vector.toVector(v, y, z);
-    this.x *= vv.x;
-    this.y *= vv.y;
-    this.z *= vv.z;
+  static angle(a: Value) {
+    return Vector2.create(a).angle;
+  }
+
+  static get zero() {
+    return new Vector2(2);
+  }
+}
+
+export class Vector3 extends Vector {
+
+  public rotate(angle: number, plane: number[]) {
+    const [plane0 = 0, plane1 = 1] = plane;
+
+    const c = Math.cos(angle);
+    const s = Math.sin(angle);
+
+    const x = this[plane0] * c - this[plane1] * s;
+    const y = this[plane0] * s + this[plane1] * c;
+
+    this[plane0] = x;
+    this[plane1] = y;
 
     return this;
   }
 
-  // copy
-  /**
-   * Adds 2 vectors without modifying the original
-   * @param {Vector|number} v 
-   * @param {undefined|number} y 
-   * @param {undefined|number} z 
-   * @returns new Vector
-   */
-  Add(v: VectorObject|number, y = 0, z = 0) {
-    const vv = Vector.toVector(v, y, z);
-    const copy = Vector.Copy(this);
-    copy.x += vv.x;
-    copy.y += vv.y;
-    copy.z += vv.z;
-
-    return copy;
-  }
-    /**
-   * Subtracts 2 vectors without modifying the original
-   * @param {Vector|number} v 
-   * @param {undefined|number} y 
-   * @param {undefined|number} z 
-   * @returns new Vector
-   */
-  Sub(v: VectorObject|number, y = 0, z = 0) {
-    const vv = Vector.toVector(v, y, z);
-    const copy = Vector.Copy(this);
-    copy.x -= vv.x;
-    copy.y -= vv.y;
-    copy.z -= vv.z;
-
-    return copy;
-  }
-  /**
-   * Divides 2 vectors without modifying the original
-   * @param {Vector|number} v 
-   * @param {undefined|number} y 
-   * @param {undefined|number} z 
-   * @returns new Vector
-   */
-  Divide(v: VectorObject|number, y = 0, z = 0) {
-    const vv = Vector.toVector(v, y, z);
-    const copy = Vector.Copy(this);
-    copy.x /= vv.x;
-    copy.y /= vv.y;
-    copy.z /= vv.z;
-
-    return copy;
-  }
-  /**
-   * Multiplies 2 vectors without modifying the original
-   * @param {Vector|number} v 
-   * @param {undefined|number} y 
-   * @param {undefined|number} z 
-   * @returns new Vector
-   */
-  Mul(v: VectorObject|number, y = 0, z = 0) {
-    const vv = Vector.toVector(v, y, z);
-    const copy = Vector.Copy(this);
-    copy.x *= vv.x;
-    copy.y *= vv.y;
-    copy.z *= vv.z;
-
-    return copy;
-  }
-  get opposite() {
-    return this.mul(-1);
-  }
-  get Opposite() {
-    return Vector.toVector(this).opposite;
+  public rotateX(angle: number) {
+    this.rotate(angle, [1, 2]);
   }
 
-  normalise() {
-    const mag = this.magnitude;
-    if (mag >= 0.00001) {
-      this.x /= mag;
-      this.y /= mag;
-      this.z /= mag;
-    }
-    else {
-      this.x = 0;
-      this.y = 0;
-      this.z = 0;
-    }
+  public rotateY(angle: number) {
+    this.rotate(angle, [0, 2]);
+  }
+
+  public rotateZ(angle: number) {
+    this.rotate(angle, [0, 1]);
+  }
+
+
+  public cross(v: Value) {
+    const coerced = Vector3.coerce(v);
+    if (coerced.length < 3) throw new Error("vector dimension missmatch");
+
+    const x = this[1] * coerced[2] - this[2] * coerced[1];
+    const y = this[2] * coerced[0] - this[0] * coerced[2];
+    const z = this[0] * coerced[1] - this[1] * coerced[0];
+
+    this[0] = x;
+    this[1] = y;
+    this[2] = z;
 
     return this;
   }
 
-  toString(settings?:Partial<PrintSettings>) {
-    const _settings = {
-      ...DEFAULT_PRINT_SETTINGS,
-      ...(settings||{}),
-    }
-    let print = '';
-    if (_settings.round) print = `${Math.round(this.x * 100) / 100}, ${Math.round(this.y * 100) / 100}`;
-    else print = `${this.x}, ${this.y}`;
-    if (_settings.z) 
-    {
-      if (_settings.round) print += ", "+ Math.round(this.z * 100) / 100;
-      else print += ", " + this.z;
-    }
-    return `[${print}]`;
+  static cross(a: Value, b: Value) {
+    const aVec = new Vector3(a);
+    return aVec.cross(b);
   }
 
-  dot(b:VectorObject) {
-    return this.x * b.x + this.y * b.y + this.z * (b.z||1);
-  }
-
-  draw(ctx:CanvasRenderingContext2D, color = "black") {
-    this.drawDot(ctx, color);
-  }
-  drawDot(ctx:CanvasRenderingContext2D, color = "black", r:number = 1) {
-    ctx.beginPath();
-      ctx.arc(this.x, this.y, r/2, 0, Math.PI * 2);
-      ctx.fillStyle = color;
-      ctx.fill();
-    ctx.closePath();
-  }
-
-  copy() {
-    return new Vector(this.x, this.y, this.z);
-  }
-  
-  // static function 
-  // mathematical
-  static Multiply(a:VectorObject, b:VectorObject) {
-    return new Vector(a).mul(b);
-  }
-  static Divide(a:VectorObject, b:VectorObject) {
-    return new Vector(a).divide(b);
-  }
-  static Add(a:VectorObject, b:VectorObject) {
-    return new Vector(a).add(b);
-  }
-  static Subtract(a:VectorObject, b:VectorObject) {
-    return new Vector(a).sub(b);
-  }
-  static CrossProduct(a:VectorObject, b:VectorObject) {
-    return new Vector(
-      a.y * (b.z||1) - (a.z || 1) * b.y,
-      (a.z || 1) * b.x - a.x * (b.z||1),
-      a.x * b.y - a.y * b.x,
-    )
-  }
-  static Cross(a:VectorObject, b:VectorObject) {
-    let x = 0;
-    let y = 0;
-    if (a.z !== undefined && b.z !== undefined) {
-      x = a.y * b.z - a.z * b.y;
-      y = a.z * b.x - a.x * b.z;
-    }
-    return new Vector(x, y, a.x * b.y - a.y * b.x);
-  }
-  static Magnitude(v:VectorObject) {
-    return Math.sqrt(v.x*v.x + v.y*v.y);
-  }
-  static Distance(a:VectorObject, b:VectorObject) {
-    return Vector.Subtract(a, b).magnitude;
-  }
-  static Perpendicular(a:VectorObject, b:VectorObject, windingorder="clickwise") {
-    const v = Vector.Subtract(b, a);
-    if (windingorder === "clockwise") return new Vector(-v.y, v.x);
-    return new Vector(v.y, -v.x);
-  }
-  static Normalise(v:VectorObject) {
-    const copy = new Vector(v);
-    copy.normalise();
-    return copy;
-  }
-  static Dot(a:VectorObject, b:VectorObject) {
-    return Vector.toVector(a).dot(b);
-  }
-  static Angle(v:VectorObject) {
-    return Math.atan2(v.y, v.x);
-  }
-
-  // basic functions
-  static toVector(v: VectorObject|number, y = 0, z = 0) {
-    if (typeof v === "number") 
-    {
-      return new Vector(v, y ?? v, z ?? v);
-    }
-
-    if (v instanceof Vector) 
-    {
-      return v;
-    }
-    if (typeof v === "object")
-    {
-      return new Vector(v);
-    }
-
-    throw new Error(`This ${v} could not be reshaped into a vector`);
-  }
-  static Copy(v:VectorObject) {
-    return new Vector(v);
-  }
-  static get Zero() {
-    return new Vector(0, 0, 0);
-  }
-  static get Random() {
-    return new Vector(
-      -1 + Math.random() * 2, 
-      -1 + Math.random() * 2, 
-      -1 + Math.random() * 2,
-    );
-  }
-
-  static Draw(v:VectorObject, ctx:CanvasRenderingContext2D, color = "black", r = 1) {
-    const vv = Vector.toVector(v);
-    vv.drawDot(ctx, color, r);
+  static get zero() {
+    return new Vector3(3);
   }
 }

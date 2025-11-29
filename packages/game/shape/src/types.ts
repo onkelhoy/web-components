@@ -1,29 +1,31 @@
-import { VectorObject } from "@papit/game-vector";
-
-export type RectangleObject = VectorObject & {
-  w: number; 
+export type Vector2Object = {
+  x: number;
+  y: number;
+}
+export type RectangleObject = Vector2Object & {
+  w: number;
   h: number;
 }
 
-export type CircleObject = VectorObject & {
-  r: number; 
+export type CircleObject = Vector2Object & {
+  r: number;
 }
 
 export interface PolygonObject {
-  verticies: VectorObject[];
+  verticies: Vector2Object[];
   triangles: number[];
-  boundaryindex: null|number[];
+  boundaryindex: null | number[];
   concave?: boolean;
   id: number;
-  centeroffset?: VectorObject;
+  centeroffset?: Vector2Object;
 
-  get boundary():null|RectangleObject;
-  get center():VectorObject;
+  get boundary(): null | RectangleObject;
+  get center(): Vector2Object;
 
-  getTriangle(i:number): VectorObject[];
+  getTriangle(i: number): Vector2Object[];
 }
 export type SimplePolygonObject = {
-  verticies: VectorObject[];
+  verticies: Vector2Object[];
   triangles: number[];
 }
 

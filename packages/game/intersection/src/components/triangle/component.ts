@@ -1,11 +1,11 @@
-import { Vector, VectorObject } from "@papit/game-vector";
+import { Vector2, VectorValue } from "@papit/game-vector";
 
 /**
  * 
- * @param {VectorObject} p 
- * @param {VectorObject[]} triangle 
+ * @param {VectorValue} p 
+ * @param {VectorValue[]} triangle 
  */
-export function isPointInTriangle(p:VectorObject, ...triangle: VectorObject[]) {
+export function isPointInTriangle(p: VectorValue, ...triangle: VectorValue[]) {
   if (triangle.length !== 3) throw new Error(`${triangle} is not a triangle`);
 
   if (!pointintriangle_helper(p, triangle, 0)) return false; // a -> p
@@ -15,9 +15,9 @@ export function isPointInTriangle(p:VectorObject, ...triangle: VectorObject[]) {
   return true;
 }
 
-function pointintriangle_helper(p:VectorObject, triangle:VectorObject[], index:number) {
-  const ab = Vector.Subtract(triangle[(index + 1) % triangle.length], triangle[index]); // b - a 
-  const ap = Vector.Subtract(p, triangle[index]); // p - a 
+function pointintriangle_helper(p: VectorValue, triangle: VectorValue[], index: number) {
+  const ab = Vector2.subtract(triangle[(index + 1) % triangle.length], triangle[index]); // b - a 
+  const ap = Vector2.subtract(p, triangle[index]); // p - a 
 
-  return Vector.Cross(ab, ap).z >= 0;
+  return Vector2.cross(ab, ap) >= 0;
 }

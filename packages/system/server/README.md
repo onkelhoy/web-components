@@ -2,18 +2,17 @@
 
 Papit Server is the only web server you'll need.
 
-
-[![Github Repo](https://img.shields.io/badge/Git-@papit/server-blue?logo=github&link=https://github.com/onkelhoy/web-components/tree/main/packages/systems/server)](https://github.com/onkelhoy/web-components/tree/main/packages/systems/server)
-![Layer Type](https://img.shields.io/badge/Layer_Type-system-orange)
-
-[![Tests](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml/badge.svg)](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml)
-[![NPM version](https://img.shields.io/npm/v/@papit/server.svg?logo=npm)](https://www.npmjs.com/package/@papit/server)
-
-## Introduction
-
 `@papit/server` is a highly configurable, lightweight static file server designed to serve your content dynamically while intelligently handling dependencies and assets. By leveraging [esbuild](https://esbuild.github.io/), the server compiles JavaScript on-the-fly, ensuring optimal performance and seamless integration with themes and assets. Ideal for applications requiring rapid setup, flexibility, and scalability, `@papit/server` provides built-in support for themes, bundles, and fallback mechanisms.
 
 Whether you're developing a theme-driven application or need to serve static files with precision, `@papit/server` helps you stay in control with its customizable configurations and robust dependency management.
+
+---
+
+![Type](https://img.shields.io/badge/Type-system-orange)
+[![Tests](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml/badge.svg)](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml)
+[![NPM version](https://img.shields.io/npm/v/@papit/server.svg?logo=npm)](https://www.npmjs.com/package/@papit/server)
+
+---
 
 ## Features
 
@@ -75,4 +74,4 @@ You can serve multiple themes, or even bundles of themes, by ensuring they share
 
 ## Custom Dependency Management
 
-The server utilizes a smart system for managing project dependencies. It scans your `package-lock.json` to locate and load packages, allowing for cross-package dependencies within a monorepo. Only relevant local dependencies are loaded, ensuring an optimized and modular approach to serving assets. 
+The server utilizes a smart system for managing project dependencies. It scans your `package-lock.json` to locate and load packages, allowing for cross-package dependencies within a monorepo. Only relevant local dependencies are loaded, ensuring an optimized and modular approach to serving assets.

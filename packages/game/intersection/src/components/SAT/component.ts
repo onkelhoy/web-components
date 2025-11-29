@@ -1,4 +1,4 @@
-import { Vector, VectorObject } from "@papit/game-vector";
+import { Vector2 } from "@papit/game-vector";
 import { PolygonObject, SimplePolygonObject } from "@papit/game-shape";
 import { AABB } from "../rectangle";
 
@@ -7,13 +7,13 @@ import { AABB } from "../rectangle";
  * @param {PolygonObject} a 
  * @param {PolygonObject} b 
  */
-export function SAT(a:PolygonObject, b:PolygonObject) {
-  const aboundary = a.boundary; 
+export function SAT(a: PolygonObject, b: PolygonObject) {
+  const aboundary = a.boundary;
   const bboundary = b.boundary;
 
   if (aboundary && bboundary && !AABB(aboundary, bboundary)) return false;
-  
-  const direction = Vector.Subtract(a.center, b.center);
+
+  const direction = Vector2.subtract(a.center, b.center);
 
   if (a.concave)
   {
@@ -35,8 +35,7 @@ export function SAT(a:PolygonObject, b:PolygonObject) {
 }
 
 //#region SAT convex convex
-function sat_convex_convex(a:SimplePolygonObject, b:SimplePolygonObject, direction:VectorObject) 
-{
+function sat_convex_convex(a: SimplePolygonObject, b: SimplePolygonObject, direction: Vector2) {
   const ainfo = sat_helper(a, b);
   if (!ainfo) return false;
 
@@ -50,11 +49,11 @@ function sat_convex_convex(a:SimplePolygonObject, b:SimplePolygonObject, directi
   }
 
   const normalmag = target.axis.magnitude;
-  const normal = target.axis.normalise();
+  const normal = target.axis.normalize();
 
-  if (Vector.Dot(direction, normal) > 0)
+  if (Vector2.dot(direction, normal) > 0)
   {
-    normal.mul(-1); // flip
+    normal.multiply(-1); // flip
   }
 
   return {
@@ -62,14 +61,14 @@ function sat_convex_convex(a:SimplePolygonObject, b:SimplePolygonObject, directi
     normal,
   }
 }
-function sat_helper(a:SimplePolygonObject, b:SimplePolygonObject) {
+function sat_helper(a: SimplePolygonObject, b: SimplePolygonObject) {
   let depth = Number.MAX_SAFE_INTEGER;
-  let axis = Vector.Zero;
+  let axis = Vector2.zero;
 
-  for (let i=0; i<a.verticies.length; i++) 
+  for (let i = 0; i < a.verticies.length; i++) 
   {
-    const localaxis = Vector.Perpendicular(a.verticies[i], a.verticies[(i+1) % a.verticies.length]).normalise();
-    
+    const localaxis = Vector2.perpendicular(a.verticies[i], a.verticies[(i + 1) % a.verticies.length]).normalize();
+
     const [mina, maxa] = sat_project(a.verticies, localaxis);
     const [minb, maxb] = sat_project(b.verticies, localaxis);
 
@@ -83,14 +82,14 @@ function sat_helper(a:SimplePolygonObject, b:SimplePolygonObject) {
     }
   }
 
-  return {axis, depth};
+  return { axis, depth };
 }
-function sat_project(verticies:VectorObject[], axis:VectorObject) {
+function sat_project(verticies: Vector2[], axis: Vector2) {
   let min = Number.MAX_SAFE_INTEGER;
   let max = Number.MIN_SAFE_INTEGER;
   for (const v of verticies) 
   {
-    const projection = Vector.Dot(v, axis);
+    const projection = Vector2.dot(v, axis);
     if (projection < min) min = projection;
     if (projection > max) max = projection;
   }
@@ -100,11 +99,10 @@ function sat_project(verticies:VectorObject[], axis:VectorObject) {
 //#endregion
 
 //#region SAT concave convex
-function sat_concave_convex(a:PolygonObject, b:PolygonObject, direction:VectorObject)
-{
-  const ta: SimplePolygonObject = {verticies: [], triangles: []};
+function sat_concave_convex(a: PolygonObject, b: PolygonObject, direction: Vector2) {
+  const ta: SimplePolygonObject = { verticies: [], triangles: [] };
 
-  for (let i=0; i<a.triangles.length/3; i++)
+  for (let i = 0; i < a.triangles.length / 3; i++)
   {
     ta.verticies = a.getTriangle(i);
 
@@ -118,16 +116,15 @@ function sat_concave_convex(a:PolygonObject, b:PolygonObject, direction:VectorOb
 //#endregion
 
 //#region SAT concave concave
-function sat_concave_concave(a:PolygonObject, b:PolygonObject, direction:VectorObject)
-{
-  const ta: SimplePolygonObject = {verticies:[], triangles: []};
-  const tb: SimplePolygonObject = {verticies:[], triangles: []};
+function sat_concave_concave(a: PolygonObject, b: PolygonObject, direction: Vector2) {
+  const ta: SimplePolygonObject = { verticies: [], triangles: [] };
+  const tb: SimplePolygonObject = { verticies: [], triangles: [] };
 
-  for (let i=0; i<a.triangles.length/3; i++)
+  for (let i = 0; i < a.triangles.length / 3; i++)
   {
     ta.verticies = a.getTriangle(i);
 
-    for (let j=0; j<b.triangles.length/3; j++)
+    for (let j = 0; j < b.triangles.length / 3; j++)
     {
       tb.verticies = b.getTriangle(j);
 
