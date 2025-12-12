@@ -13,7 +13,8 @@ on:
 
 permissions:
   id-token: write  # Required for OIDC
-
+  contents: read
+  
 jobs:
   initialise:
     uses: ./.github/workflows/initialise.yml
@@ -31,6 +32,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
+          registry-url: 'https://registry.npmjs.org'
+          always-auth: true
 
         # caching: node_modules
       - name: Cache node modules

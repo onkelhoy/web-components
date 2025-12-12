@@ -1,4 +1,4 @@
-import { Vector } from "@papit/game-vector";
+import { Vector2 } from "@papit/game-vector";
 
 import { DefaultMouseSettings, Mouse } from "./components/mouse";
 import { Keyboard } from "./components/keyboard";
@@ -10,8 +10,8 @@ export class InputEvents extends EventTarget {
   mouse: Mouse;
   touch: Touches;
   keyboard: Keyboard;
-  position: Vector;
-  movement: Vector;
+  position: Vector2;
+  movement: Vector2;
   pressing: boolean = false;
 
   constructor(canvas:HTMLCanvasElement, settings?: Partial<Settings>) {
@@ -21,8 +21,8 @@ export class InputEvents extends EventTarget {
     this.mouse = new Mouse(canvas, this.settings.mouse);
     this.touch = new Touches(canvas);
     this.keyboard = new Keyboard();
-    this.position = Vector.Zero;
-    this.movement = Vector.Zero;
+    this.position = Vector2.zero;
+    this.movement = Vector2.zero;
     this.verbose = !!this.settings.verbose;
 
     this.mouse.on("down", this.handledown);
