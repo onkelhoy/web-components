@@ -1,5 +1,5 @@
 import { Vector2 } from "@papit/game-vector";
-import { PolygonObject, SimplePolygonObject } from "@papit/game-shape";
+import { PolygonObject, SimplePolygonObject, Vector2Object } from "@papit/game-shape";
 import { AABB } from "../rectangle";
 
 /**
@@ -35,7 +35,7 @@ export function SAT(a: PolygonObject, b: PolygonObject) {
 }
 
 //#region SAT convex convex
-function sat_convex_convex(a: SimplePolygonObject, b: SimplePolygonObject, direction: Vector2) {
+function sat_convex_convex(a: SimplePolygonObject, b: SimplePolygonObject, direction: Vector2Object) {
   const ainfo = sat_helper(a, b);
   if (!ainfo) return false;
 
@@ -84,7 +84,7 @@ function sat_helper(a: SimplePolygonObject, b: SimplePolygonObject) {
 
   return { axis, depth };
 }
-function sat_project(verticies: Vector2[], axis: Vector2) {
+function sat_project(verticies: Vector2Object[], axis: Vector2Object) {
   let min = Number.MAX_SAFE_INTEGER;
   let max = Number.MIN_SAFE_INTEGER;
   for (const v of verticies) 
@@ -99,7 +99,7 @@ function sat_project(verticies: Vector2[], axis: Vector2) {
 //#endregion
 
 //#region SAT concave convex
-function sat_concave_convex(a: PolygonObject, b: PolygonObject, direction: Vector2) {
+function sat_concave_convex(a: PolygonObject, b: PolygonObject, direction: Vector2Object) {
   const ta: SimplePolygonObject = { verticies: [], triangles: [] };
 
   for (let i = 0; i < a.triangles.length / 3; i++)
@@ -116,7 +116,7 @@ function sat_concave_convex(a: PolygonObject, b: PolygonObject, direction: Vecto
 //#endregion
 
 //#region SAT concave concave
-function sat_concave_concave(a: PolygonObject, b: PolygonObject, direction: Vector2) {
+function sat_concave_concave(a: PolygonObject, b: PolygonObject, direction: Vector2Object) {
   const ta: SimplePolygonObject = { verticies: [], triangles: [] };
   const tb: SimplePolygonObject = { verticies: [], triangles: [] };
 
