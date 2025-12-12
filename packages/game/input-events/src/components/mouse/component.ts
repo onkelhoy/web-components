@@ -1,9 +1,9 @@
-import { Vector } from "@papit/game-vector";
+import { Vector2 } from "@papit/game-vector";
 import { ButtonState, Setting, MouseEventMap, MouseButtonMap } from "./types";
 
 export class Mouse extends EventTarget {
-  position: Vector;
-  movement: Vector;
+  position: Vector2;
+  movement: Vector2;
   setting: Setting;
   lastpointerlock: number;
   clicked: boolean;
@@ -18,8 +18,8 @@ export class Mouse extends EventTarget {
   constructor(canvas:HTMLCanvasElement, setting: Setting) {
     super();
     // x = 0, y = 0
-    this.position = Vector.Zero;
-    this.movement = Vector.Zero;
+    this.position = Vector2.zero;
+    this.movement = Vector2.zero;
     this.setting = setting;
 
     this.lastpointerlock = performance.now() - 1000;
@@ -59,14 +59,14 @@ export class Mouse extends EventTarget {
     if (document.pointerLockElement)
     {
       this.position.add(e.movementX, e.movementY);
-      this.movement.set(e.movementX, e.movementY);
+      this.movement.set([e.movementX, e.movementY]);
     }
     else
     {
       const dx = this.position.x - e.clientX;
       const dy = this.position.y - e.clientY;
-      this.position.set(e.clientX, e.clientY);
-      this.movement.set(dx, dy);
+      this.position.set([e.clientX, e.clientY]);
+      this.movement.set([dx, dy]);
     }
     this.dispatchEvent(new Event("move"));
   }
@@ -104,7 +104,7 @@ export class Mouse extends EventTarget {
     const canvas = e.target as HTMLCanvasElement;
     const {clientX, clientY} = e;
     const time = Math.max(0, 1500 - (performance.now() - this.lastpointerlock));
-    this.position.set(clientX, clientY);
+    this.position.set([clientX, clientY]);
 
     if (this.pointerlocktimer) clearTimeout(this.pointerlocktimer);
     this.pointerlocktimer = setTimeout(async () => {

@@ -1,10 +1,10 @@
-import { Vector } from "@papit/game-vector";
+import { Vector2 } from "@papit/game-vector";
 import { logscreen } from "@papit/game-engine";
 import { TouchesEventMap } from "./types";
 
 export class ExtendedTouch {
-  position: Vector;
-  movement: Vector;
+  position: Vector2;
+  movement: Vector2;
 
   start: number;
   end: null | number;
@@ -22,8 +22,8 @@ export class ExtendedTouch {
   target!: EventTarget;
 
   constructor(touch: Touch) {
-    this.position = Vector.Zero;
-    this.movement = Vector.Zero;
+    this.position = Vector2.zero;
+    this.movement = Vector2.zero;
 
     this.start = performance.now();
     this.end = null;
@@ -51,14 +51,14 @@ export class ExtendedTouch {
 
     if (this.position === null)
     {
-      this.movement = Vector.Zero;
-      this.position = new Vector(this.clientX, this.clientY);
+      this.movement = Vector2.zero;
+      this.position = new Vector2(this.clientX, this.clientY);
     }
     else 
     {
-      const old = this.position.clone();
+      const old = this.position.clone;
       this.position.set([this.clientX, this.clientY]);
-      this.movement = Vector.Subtract(this.position, old);
+      this.movement = Vector2.subtract(this.position, old);
     }
   }
 
@@ -70,16 +70,16 @@ export class ExtendedTouch {
 
 export class Touches extends EventTarget {
   mouse: ExtendedTouch | null;
-  position: Vector;
-  movement: Vector;
+  position: Vector2;
+  movement: Vector2;
   touches: Record<number, ExtendedTouch>;
   changedTouches: ExtendedTouch[];
   verbose: boolean;
 
   constructor(canvas: HTMLCanvasElement) {
     super();
-    this.position = Vector.Zero; // first move 
-    this.movement = Vector.Zero;
+    this.position = Vector2.zero; // first move 
+    this.movement = Vector2.zero;
     this.mouse = null;
 
     this.touches = {};
@@ -186,8 +186,8 @@ export class Touches extends EventTarget {
       }
     }
 
-    this.position.set(0, 0);
-    this.movement.set(0, 0);
+    this.position.set([0, 0]);
+    this.movement.set([0, 0]);
 
     this.dispatchEvent(new Event("cancel"));
   }
