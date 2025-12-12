@@ -47,7 +47,6 @@ else
 
   export SEMANTIC_VERSION=0
   export ROOTDIR=$(pwd)
-  export NPM_TOKEN=$NPM_TOKEN
 fi
 
 # compute the list
@@ -64,8 +63,7 @@ echo "$LIST" | while IFS=' ' read -r name package version changed; do
   echo "::group::$name 📦"
 
   cd "$package"
-  # output=$(npm publish --access public --registry https://registry.npmjs.org/ --//registry.npmjs.org/:_authToken=${NPM_TOKEN} --verbose --dry-run)
-  output=$(npm publish --access public --registry https://registry.npmjs.org/ --//registry.npmjs.org/:_authToken=${NPM_TOKEN} --verbose)
+  output=$(npm publish --access public  --verbose)
 
   while IFS= read -r line; do
     line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
@@ -91,8 +89,6 @@ echo "$LIST" | while IFS=' ' read -r name package version changed; do
   echo "::endgroup::"
   sleep 1
 done
-
-unset NPM_TOKEN
 
 # cleanup
 rm "$ROOTDIR/bin/version/.config" &> /dev/null
