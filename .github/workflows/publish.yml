@@ -13,7 +13,8 @@ on:
 
 permissions:
   id-token: write  # Required for OIDC
-
+  contents: read
+  
 jobs:
   initialise:
     uses: ./.github/workflows/initialise.yml
