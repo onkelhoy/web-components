@@ -1,10 +1,14 @@
-# Codeblock
+# @papit/codeblock
 
-[![Github Repo](https://img.shields.io/badge/Git-@papit/codeblock-blue?logo=github&link=https://github.com/onkelhoy/web-components/tree/main/packages/molecules/codeblock)](https://github.com/onkelhoy/web-components/tree/main/packages/molecules/codeblock)
-![Layer Type](https://img.shields.io/badge/Layer_Type-molecule-orange)
+Whops, abstract is missing!
 
+---
+
+![Type](https://img.shields.io/badge/Type-molecule-orange)
 [![Tests](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml/badge.svg)](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml)
 [![NPM version](https://img.shields.io/npm/v/@papit/codeblock.svg?logo=npm)](https://www.npmjs.com/package/@papit/codeblock)
+
+---
 
 ## Use Case
 
@@ -30,9 +34,7 @@ npm install @papit/codeblock
 import { Codeblock } from "@papit/codeblock/react";
 
 function Component() {
-  return (
-    <Codeblock /> 
-  )
+  return <Codeblock />;
 }
 ```
 
@@ -59,3 +61,24 @@ For assets used solely for display or demo purposes, create a `public` folder un
 - **start**: Starts the development server for a specific demo. The target folder within the `views` directory must contain an `index.html` file. Usage example: `npm run start --name=<folder>`.
 - **analyse**: Generates a comprehensive analysis file, mainly useful for React scripts and potentially for generating pages. The analysis file is only generated if it does not exist, unless the `--force` flag is used. Optional flags include `--verbose` and `--force`.
 - **react**: Generates the necessary React code based on the web component code, including any subcomponents. The generated code will not overwrite existing files, allowing for manual customization. Flags: `--verbose` & `--force`.
+
+## Contributing
+
+Contributions are welcome! Please follow the development guidelines above and ensure all tests pass before submitting a pull request.
+
+## License
+
+Licensed under the @Papit License 1.0 - Copyright (c) 2024 Henry Pap (@onkelhoy)
+
+**Key points:**
+
+- ✅ Free to use in commercial projects
+- ✅ Free to modify and distribute
+- ✅ Attribution required
+- ❌ Cannot resell the component itself as a standalone product
+
+See the [LICENSE](https://github.com/onkelhoy/web-components/blob/main/LICENSE) file for full details.
+
+## Support
+
+For issues, questions, or contributions, please visit the [GitHub repository](https://github.com/onkelhoy/web-components).

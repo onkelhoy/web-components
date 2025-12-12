@@ -1,14 +1,10 @@
 export type VectorObject = {
-  x: number;
-  y: number;
+  x?: number;
+  y?: number;
   z?: number;
-}
-export type Vector3Object = VectorObject & {
-  z: number;
-}
-export type PrintSettings = {
-  z: boolean;
-  round: boolean;
-}
-
-export const DEFAULT_PRINT_SETTINGS: PrintSettings = {z: false, round: true};
+  w?: number;
+  order?: string[];
+} & {
+  [key: string]: number; // numeric keys only for extra stuff
+};
+export type Value = number | number[] | Float32Array | VectorObject;

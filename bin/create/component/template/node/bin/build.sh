@@ -21,16 +21,7 @@ for arg in "$@"; do
 done
 
 if [[ "$PROD" == false && "$DEV" == false ]]; then 
-  echo "Choose which build option you want" 
-  echo "1. develpment"
-  echo "2. production"
-  echo ""
-  read -p "choose: " build_type
-  if [ "$build_type" == "1" ]; then 
-    DEV=true 
-  else 
-    PROD=true 
-  fi 
+  PROD=true
 fi
 
 # get environment variables

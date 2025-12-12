@@ -1,10 +1,14 @@
-# PageThemeShowcase
+# @papit/page-theme-showcase
 
-[![Github Repo](https://img.shields.io/badge/Git-@papit/page-theme-showcase-blue?logo=github&link=https://github.com/onkelhoy/web-components/tree/main/packages/pages/theme-showcase)](https://github.com/onkelhoy/web-components/tree/main/packages/pages/theme-showcase)
-![Layer Type](https://img.shields.io/badge/Layer_Type-page-orange)
+`@papit/page-theme-showcase` WIP
 
+---
+
+![Type](https://img.shields.io/badge/Type-page-orange)
 [![Tests](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml/badge.svg)](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml)
 [![NPM version](https://img.shields.io/npm/v/@papit/page-theme-showcase.svg?logo=npm)](https://www.npmjs.com/package/@papit/page-theme-showcase)
+
+---
 
 ## Use Case
 
@@ -30,9 +34,7 @@ npm install @papit/page-theme-showcase
 import { PageThemeShowcase } from "@papit/page-theme-showcase/react";
 
 function Component() {
-  return (
-    <PageThemeShowcase /> 
-  )
+  return <PageThemeShowcase />;
 }
 ```
 

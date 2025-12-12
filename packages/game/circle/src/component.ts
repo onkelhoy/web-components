@@ -1,19 +1,14 @@
 import { Shape, CircleObject } from "@papit/game-shape";
-import {Vector, VectorObject } from "@papit/game-vector";
+import { Vector2, VectorObject } from "@papit/game-vector";
 
 export class Circle extends Shape implements CircleObject {
-  r: number;
-  
-  constructor(x:number|CircleObject, y?:number, r?:number) {
-    super(x, y);
-    if (typeof x === "object")
-    {
-      this.r = x.r;
-    }
-    else 
-    {
-      this.r = r || 1;
-    }
+
+  get r() {
+    return this[2];
+  }
+
+  set r(value: number) {
+    this[2] = value;
   }
 
   get boundary() {
@@ -24,23 +19,23 @@ export class Circle extends Shape implements CircleObject {
       h: this.r * 2,
     };
   }
-  supportFunction(direction: VectorObject): VectorObject {
-    const angle = Vector.Angle(direction);
+  supportFunction(direction: VectorObject) {
+    const angle = Vector2.angle(direction);
     return this.add(Math.cos(angle) * this.r, Math.sin(angle) * this.r);
   }
 
-  draw(ctx: CanvasRenderingContext2D, strokecolor = "black", fillcolor="rgba(0,0,0,0.1)") {
+  draw(ctx: CanvasRenderingContext2D, strokecolor = "black", fillcolor = "rgba(0,0,0,0.1)") {
     ctx.beginPath();
-      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-      ctx.strokeStyle = strokecolor;
-      ctx.fillStyle = fillcolor;
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      ctx.fill();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.strokeStyle = strokecolor;
+    ctx.fillStyle = fillcolor;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fill();
     ctx.closePath();
   }
 
-  static toCircle(value:CircleObject, r:number) {
+  static toCircle(value: CircleObject, r: number) {
     const c = new Circle(value);
     c.r = r;
 

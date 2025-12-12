@@ -1,10 +1,14 @@
-# Field
+# @papit/field
 
-[![Github Repo](https://img.shields.io/badge/Git-@papit/field-blue?logo=github&link=https://github.com/onkelhoy/web-components/tree/main/packages/logicals/field)](https://github.com/onkelhoy/web-components/tree/main/packages/logicals/field)
-![Layer Type](https://img.shields.io/badge/Layer_Type-locical-orange)
+`@papit/field` is a visiual layout for form-fields, think of a wrapper for all kinds of form-fields, with the use of error/warning messages.
 
+---
+
+![Type](https://img.shields.io/badge/Type-locical-orange)
 [![Tests](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml/badge.svg)](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml)
 [![NPM version](https://img.shields.io/npm/v/@papit/field.svg?logo=npm)](https://www.npmjs.com/package/@papit/field)
+
+---
 
 ## Use Case
 
@@ -30,9 +34,7 @@ npm install @papit/field
 import { Field } from "@papit/field/react";
 
 function Component() {
-  return (
-    <Field /> 
-  )
+  return <Field />;
 }
 ```
 

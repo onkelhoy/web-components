@@ -1,10 +1,14 @@
-# PrefixSuffix
+# @papit/prefix-suffix
 
-[![Github Repo](https://img.shields.io/badge/Git-@papit/prefix-suffix-blue?logo=github&link=https://github.com/onkelhoy/web-components/tree/main/packages/visuals/prefix-suffix)](https://github.com/onkelhoy/web-components/tree/main/packages/visuals/prefix-suffix)
-![Layer Type](https://img.shields.io/badge/Layer_Type-visual-orange)
+`@papit/prefix-suffix` Prefix and Suffix is a placeholder component that allows slots to be passed and layout in a neat way.
 
+---
+
+![Type](https://img.shields.io/badge/Type-visual-orange)
 [![Tests](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml/badge.svg)](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml)
 [![NPM version](https://img.shields.io/npm/v/@papit/prefix-suffix.svg?logo=npm)](https://www.npmjs.com/package/@papit/prefix-suffix)
+
+---
 
 ## Use Case
 
@@ -30,9 +34,7 @@ npm install @papit/prefix-suffix
 import { PrefixSuffix } from "@papit/prefix-suffix/react";
 
 function Component() {
-  return (
-    <PrefixSuffix /> 
-  )
+  return <PrefixSuffix />;
 }
 ```
 

@@ -1,8 +1,8 @@
 import { isPointInTriangle } from "@papit/game-intersection";
 import { SimplePolygonObject } from "@papit/game-shape";
-import { Vector } from "@papit/game-vector";
+import { Vector2 } from "@papit/game-vector";
 
-export function Triangulate(polygon:SimplePolygonObject) {
+export function Triangulate(polygon: SimplePolygonObject) {
   let indexlist = polygon.verticies.map((_v, i) => i);
   const triangles = [];
 
@@ -12,24 +12,25 @@ export function Triangulate(polygon:SimplePolygonObject) {
     return [false, "polygon has less then 3 verticies"];
   }
 
-  while (indexlist.length > 3) {
+  while (indexlist.length > 3)
+  {
     const startinglenght = indexlist.length;
 
-    for (let i=0; i<indexlist.length; i++)
+    for (let i = 0; i < indexlist.length; i++)
     {
       const a = indexlist[i];
       const b = getitem(indexlist, i - 1);
       const c = getitem(indexlist, i + 1);
-  
+
       const va = polygon.verticies[a];
       const vb = polygon.verticies[b];
       const vc = polygon.verticies[c];
-  
-      const va_to_vb = Vector.Subtract(vb, va);
-      const va_to_vc = Vector.Subtract(vc, va);
+
+      const va_to_vb = Vector2.subtract(vb, va);
+      const va_to_vc = Vector2.subtract(vc, va);
 
       // check if convex
-      if (Vector.Cross(va_to_vb, va_to_vc) > 0)
+      if (Vector2.Cross(va_to_vb, va_to_vc) > 0)
       {
         console.log('convex');
         continue;
@@ -37,7 +38,8 @@ export function Triangulate(polygon:SimplePolygonObject) {
 
       let isear = true;
       // check if any points inside potential triangle
-      for (let j=0; j<polygon.verticies.length; j++) {
+      for (let j = 0; j < polygon.verticies.length; j++)
+      {
         if (j === a || j === b || j === c)
         {
           continue;
@@ -50,7 +52,8 @@ export function Triangulate(polygon:SimplePolygonObject) {
         }
       }
 
-      if (isear) {
+      if (isear)
+      {
         triangles.push(b);
         triangles.push(a);
         triangles.push(c);
@@ -82,7 +85,7 @@ export function Triangulate(polygon:SimplePolygonObject) {
   return [true];
 }
 
-function getitem(array:number[], index:number) {
+function getitem(array: number[], index: number) {
   let v = index % array.length;
   if (v < 0) v += array.length;
 

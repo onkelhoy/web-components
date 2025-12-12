@@ -1,3 +1,3 @@
 // exports
 export * from "./component";
-export * from "./types";
+export { VectorObject, Value as VectorValue } from "./types";

@@ -1,18 +1,16 @@
 # @papit/core
 
-[![Github Repo](https://img.shields.io/badge/Git-@papit/core-blue?logo=github&link=https://github.com/onkelhoy/web-components/tree/main/packages/core)](https://github.com/onkelhoy/web-components/tree/main/packages/core)
-![Layer Type](https://img.shields.io/badge/Layer_Type-core-orange)
+**`@papit/core`** is a lightweight foundation for building fast, declarative web components — with powerful decorators, efficient HTML template rendering, and handy utilities.
 
+It’s minimal, framework-agnostic, and designed to be easy to integrate into both small standalone widgets and large-scale design systems.
+
+---
+
+![Type](https://img.shields.io/badge/Type-core-orange)
 [![Tests](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml/badge.svg)](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml)
 [![NPM version](https://img.shields.io/npm/v/@papit/core.svg?logo=npm)](https://www.npmjs.com/package/@papit/core)
 
 ---
-
-## Overview
-
-**`@papit/core`** is a lightweight foundation for building fast, declarative web components — with powerful decorators, efficient HTML template rendering, and handy utilities.
-
-It’s minimal, framework-agnostic, and designed to be easy to integrate into both small standalone widgets and large-scale design systems.
 
 ### Documentation
 

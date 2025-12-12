@@ -49,16 +49,16 @@
   },
   "dependencies": {
     "@papit/button": "0.0.6",
-    "@papit/core": "1.0.1",
-    "@papit/router": "0.0.5",
-    "@papit/tabs": "0.0.4",
-    "@papit/typography": "0.0.5"
+    "@papit/core": "1.0.2",
+    "@papit/router": "0.0.6",
+    "@papit/tabs": "0.0.5",
+    "@papit/typography": "0.0.6"
   },
   "devDependencies": {
-    "@papit/card": "0.0.3",
+    "@papit/card": "0.0.4",
     "@papit/codeblock": "0.0.5",
-    "@papit/translator": "0.0.4",
-    "@papit/typography": "0.0.5",
+    "@papit/translator": "0.0.5",
+    "@papit/typography": "0.0.6",
     "@playwright/test": "^1.45.3",
     "@types/node": "^22.10.2",
     "chokidar": "^3.6.0",
