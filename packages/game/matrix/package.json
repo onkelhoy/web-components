@@ -1,6 +1,6 @@
 {
   "name": "@papit/game-matrix",
-  "description": "",
+  "description": "High-performance column-major matrix math library for games, WebGL, and real-time graphics.",
   "version": "1.0.0",
   "scripts": {
     "build": "bash ./bin/build.sh",
@@ -15,6 +15,7 @@
   },
   "main": "./lib/bundle.js",
   "types": "./lib/types/index.d.ts",
+  "sideEffects": false,
   "type": "module",
   "files": [
     "asset/",
@@ -22,7 +23,10 @@
     ".config"
   ],
   "exports": {
-    ".": "./lib/bundle.js"
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/bundle.js"
+    }
   },
   "author": "Henry",
   "private": false,
@@ -30,10 +34,15 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "license": "",
+  "license": "Papit-1.0",
+  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/game/matrix",
+  "bugs": {
+    "url": "https://github.com/onkelhoy/web-components/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/onkelhoy/web-components.git"
+    "url": "https://github.com/onkelhoy/web-components.git",
+    "directory": "packages/game/matrix"
   },
   "devDependencies": {
     "@papit/game-engine": "0.0.5",
@@ -43,7 +52,14 @@
     "typescript": "^5.7.2"
   },
   "keywords": [
-    "game",
+    "matrix",
+    "math",
+    "linear-algebra",
+    "game-dev",
+    "graphics",
+    "webgl",
+    "opengl",
+    "3d",
     "typescript"
   ],
   "dependencies": {

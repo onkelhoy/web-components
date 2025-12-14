@@ -1,6 +1,10 @@
 # @papit/game-matrix
 
-Whops, abstract is missing!
+A high‑performance column‑major matrix math library for games, WebGL, and real‑time simulations.
+
+It provides **general M×N matrices** plus optimized **3×3 and 4×4 transformation matrices**, with a clean, chainable API designed for **graphics pipelines**, **linear algebra**, and **engine‑level math**.
+
+The library is intentionally low‑level, allocation‑aware, and predictable — suitable for hot paths in render loops.
 
 ---
 
@@ -10,79 +14,236 @@ Whops, abstract is missing!
 
 ---
 
-## Use Case
+## Features
 
-### installation
+* ✅ **Column‑major storage** (WebGL / OpenGL friendly)
+* ✅ General **M×N matrices** via `Matrix`
+* ✅ Specialized `Matrix3` `Matrix4` and `MatrixN`
+* ✅ Chainable **mutating instance API**
+* ✅ Functional **static helpers** (immutable style)
+* ✅ Built‑in support for **TRS transforms**
+* ✅ Perspective, orthographic & frustum projections
+* ✅ Right‑handed & left‑handed coordinate systems
+* ✅ Zero external dependencies (except `@papit/game-vector`)
+
+---
+
+## Installation
 
 ```bash
 npm install @papit/game-matrix
 ```
 
-### to use in **html**
+---
 
-```html
-<script type="module" defer>
-  import "@papit/game-matrix";
-</script>
+## Quick Start
 
-<matrix></matrix>
+```ts
+import { Matrix4 } from "@papit/game-matrix";
+
+const m = new Matrix4();
+
+m.translate(0, 0, -5)
+ .rotateY(Math.PI / 4)
+ .scale(1, 2, 1);
 ```
 
-### to use in **react**
+All instance methods **mutate** the matrix and return `this` for chaining.
 
-```jsx
-import { GameMatrix } from "@papit/game-matrix/react";
+---
 
-function Component() {
-  return <GameMatrix />;
-}
+## Matrix Types
+
+### `Matrix`
+
+General‑purpose **M×N matrix** backed by `Float32Array`.
+
+```ts
+const m = new Matrix(2, 3);   // 2 rows, 3 columns
+m.add(1).multiply(2);
 ```
 
-## Development
+Useful for:
 
-Development takes place within the `src` folder. To add a new subcomponent, use the command `npm run component:add`. This command updates the `.env` file, creates a view folder, and adds a subfolder in the `components` folder (creating it if it doesn't exist) inside `src` with all the necessary files.
+* Arbitrary linear algebra
+* Data transforms
+* Non‑graphics use cases
 
-Styling is managed in the `style.scss` file, which automatically generates a `style.ts` file for use in the component.
+---
 
-## Viewing
+### `Matrix3`
 
-To view the component, run `npm start`. This command is equivalent to `npm run start demo` and launches the development server for the demo folder located within the `views` folder. This allows you to preview your component during development.
+Optimized **3×3 matrix**, commonly used for:
 
-## Assets
+* 2D transforms
+* Normal matrices
+* Rotation + scale (no translation)
 
-All assets required by the component, such as icons and images for translations, should be placed in the `assets` folder. This folder will already include an `icons` and `translations` folder with an `en.json` file for English translations. Use this structure to organize translations and make them easily accessible for other projects.
+```ts
+const m = new Matrix3();
+m.rotate(Math.PI / 2);
+```
 
-For assets used solely for display or demo purposes, create a `public` folder under the relevant directory inside the `views` folder. These assets are not included in the component package.
+---
 
-## Commands
+### `Matrix4`
 
-- **build**: Builds the component in development mode. Use the `--prod` flag (`npm run build -- --prod`) for a production build, which includes minification.
-- **watch**: Watches for changes to the component files and rebuilds them automatically without starting the development server.
-- **start**: Starts the development server for a specific demo. The target folder within the `views` directory must contain an `index.html` file. Usage example: `npm run start --name=<folder>`.
-- **analyse**: Generates a comprehensive analysis file, mainly useful for React scripts and potentially for generating pages. The analysis file is only generated if it does not exist, unless the `--force` flag is used. Optional flags include `--verbose` and `--force`.
-- **react**: Generates the necessary React code based on the web component code, including any subcomponents. The generated code will not overwrite existing files, allowing for manual customization. Flags: `--verbose` & `--force`.
+Optimized **4×4 homogeneous transform matrix** for 3D graphics.
 
-## Contributing
+Supports:
 
-Contributions are welcome! Please follow the development guidelines above and ensure all tests pass before submitting a pull request.
+* Translation
+* Rotation (X/Y/Z & arbitrary axis)
+* Scaling
+* Projection
+* Camera transforms
+
+```ts
+const view = new Matrix4()
+  .lookAt([0, 0, 5], [0, 0, 0], [0, 1, 0]);
+```
+
+---
+
+## Transform Operations
+
+### Translation
+
+```ts
+m.translate(x, y, z);
+```
+
+### Rotation
+
+```ts
+m.rotateX(angle);
+m.rotateY(angle);
+m.rotateZ(angle);
+```
+
+Or generic N‑dimensional rotation:
+
+```ts
+m.rotate(angle, [0, 1]); // rotate plane (axis indices)
+```
+
+### Scale
+
+```ts
+m.scale(1, 2, 1);
+```
+
+---
+
+## Projection
+
+### Perspective
+
+```ts
+m.perspective(fovY, aspect, near, far);
+```
+
+### Orthographic
+
+```ts
+m.orthographic(left, right, bottom, top, near, far);
+```
+
+### Frustum
+
+```ts
+m.frustum(left, right, bottom, top, near, far);
+```
+
+---
+
+## Inversion
+
+Optimized **TRS inverse** (translation, rotation, scale):
+
+```ts
+m.inverse();           // defaults to TRS
+m.inverse("TRS");
+```
+
+Gaussian elimination is planned but not yet implemented.
+
+---
+
+## Mutating vs Functional Style
+
+### Mutating (fast, no allocations)
+
+```ts
+m.translate(1, 0, 0).rotateY(a);
+```
+
+### Functional (immutable)
+
+```ts
+const m2 = Matrix4.rotateY(m, a);
+```
+
+Static helpers clone automatically.
+
+---
+
+## Storage Layout
+
+All matrices are **column‑major**:
+
+```
+index = column * rows + row
+```
+
+This matches:
+
+* WebGL uniforms
+* GLSL expectations
+* OpenGL conventions
+
+Row‑major input (nested arrays) is automatically transposed on creation.
+
+---
+
+## Design Philosophy
+
+* ⚡ Performance first
+* 🧠 Explicit math (no hidden magic)
+* 🔁 Predictable mutation
+* 🎮 Game‑engine friendly
+
+This library is intended as a **math primitive**, not a scene graph or engine.
+
+---
+
+## Related Packages
+
+* [`@papit/game-vector`](https://www.npmjs.com/package/@papit/game-vector) — Vector math used internally
+
+---
 
 ## License
 
-Licensed under the @Papit License 1.0 - Copyright (c) 2024 Henry Pap (@onkelhoy)
+Licensed under the **@Papit License 1.0**
+Copyright (c) 2024–2025 Henry Pap (@onkelhoy)
 
-**Key points:**
+**You may:**
 
 - ✅ Free to use in commercial projects
 - ✅ Free to modify and distribute
 - ✅ Attribution required
-- ❌ Cannot resell the component itself as a standalone product
 
-See the [LICENSE](https://github.com/onkelhoy/web-components/blob/main/LICENSE) file for full details.
+**You may not:**
 
-## Related Components
+* ❌ Resell this package as a standalone product
 
-- [@papit/game-engine](https://github.com/onkelhoy/web-components/tree/main/packages/game/engine): No game without a game engine.
+Attribution required. See the LICENSE file for details.
+
+---
 
 ## Support
 
-For issues, questions, or contributions, please visit the [GitHub repository](https://github.com/onkelhoy/web-components).
+Issues, discussions, and contributions are welcome:
+
+👉 [https://github.com/onkelhoy/web-components](https://github.com/onkelhoy/web-components)
