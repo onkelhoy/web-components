@@ -1,6 +1,10 @@
 # @papit/game-vector
 
-Whops, abstract is missing!
+A high‑performance vector math library for games, graphics, physics, and real‑time simulations.
+
+It provides **arbitrary‑dimension vectors** plus specialized **Vector2 and Vector3** classes, with a clean, chainable API suitable for **graphics pipelines**, **linear algebra**, and **engine‑level computations**.
+
+The library is intentionally **low‑level, allocation‑aware, and predictable** — ideal for hot paths in physics loops or rendering.
 
 ---
 
@@ -10,79 +14,191 @@ Whops, abstract is missing!
 
 ---
 
-## Use Case
+## Features
 
-### installation
+* ✅ **Float32Array-backed vectors** for speed
+* ✅ General **N‑dimensional vectors** via `Vector`
+* ✅ Specialized **Vector2** and **Vector3** classes
+* ✅ Chainable **mutating instance API**
+* ✅ Functional **static helpers** (immutable style)
+* ✅ Common vector operations: `dot`, `cross`, `distance`, `normalize`
+* ✅ Vector rotation (`rotateX/Y/Z`) for 3D
+* ✅ Perpendicular and angle helpers for 2D
+* ✅ Zero dependencies
+
+---
+
+## Installation
 
 ```bash
 npm install @papit/game-vector
 ```
 
-### to use in **html**
+---
 
-```html
-<script type="module" defer>
-  import "@papit/game-vector";
-</script>
+## Quick Start
 
-<vector></vector>
+```ts
+import { Vector3 } from "@papit/game-vector";
+
+const v = new Vector3(1, 2, 3);
+
+v.add([1, 0, -1])
+ .normalize()
+ .multiply(5);
+
+console.log(v.magnitude); // 5
 ```
 
-### to use in **react**
+All instance methods **mutate** the vector and return `this` for chaining.
 
-```jsx
-import { GameVector } from "@papit/game-vector/react";
+---
 
-function Component() {
-  return <GameVector />;
-}
+## Vector Types
+
+### `Vector`
+
+General-purpose **N-dimensional vector**:
+
+```ts
+const v = new Vector(4); // 4D vector
+v.add([1, 2, 3, 4]);
 ```
 
-## Development
+Useful for:
 
-Development takes place within the `src` folder. To add a new subcomponent, use the command `npm run component:add`. This command updates the `.env` file, creates a view folder, and adds a subfolder in the `components` folder (creating it if it doesn't exist) inside `src` with all the necessary files.
+* Arbitrary linear algebra
+* Physics simulations
+* Data transformations
 
-Styling is managed in the `style.scss` file, which automatically generates a `style.ts` file for use in the component.
+---
 
-## Viewing
+### `Vector2`
 
-To view the component, run `npm start`. This command is equivalent to `npm run start demo` and launches the development server for the demo folder located within the `views` folder. This allows you to preview your component during development.
+Specialized **2D vector**:
 
-## Assets
+```ts
+const v = new Vector2(3, 4);
+console.log(v.angle); // angle in radians
+v.angle = Math.PI / 2; // rotate vector
+```
 
-All assets required by the component, such as icons and images for translations, should be placed in the `assets` folder. This folder will already include an `icons` and `translations` folder with an `en.json` file for English translations. Use this structure to organize translations and make them easily accessible for other projects.
+Includes:
 
-For assets used solely for display or demo purposes, create a `public` folder under the relevant directory inside the `views` folder. These assets are not included in the component package.
+* 2D rotation helpers
+* Perpendicular computation
+* Angle calculation
 
-## Commands
+---
 
-- **build**: Builds the component in development mode. Use the `--prod` flag (`npm run build -- --prod`) for a production build, which includes minification.
-- **watch**: Watches for changes to the component files and rebuilds them automatically without starting the development server.
-- **start**: Starts the development server for a specific demo. The target folder within the `views` directory must contain an `index.html` file. Usage example: `npm run start --name=<folder>`.
-- **analyse**: Generates a comprehensive analysis file, mainly useful for React scripts and potentially for generating pages. The analysis file is only generated if it does not exist, unless the `--force` flag is used. Optional flags include `--verbose` and `--force`.
-- **react**: Generates the necessary React code based on the web component code, including any subcomponents. The generated code will not overwrite existing files, allowing for manual customization. Flags: `--verbose` & `--force`.
+### `Vector3`
 
-## Contributing
+Specialized **3D vector**:
 
-Contributions are welcome! Please follow the development guidelines above and ensure all tests pass before submitting a pull request.
+```ts
+const v = new Vector3(1, 0, 0);
+v.rotateY(Math.PI / 2).cross([0, 1, 0]);
+```
+
+Includes:
+
+* 3D rotations (`rotateX`, `rotateY`, `rotateZ`)
+* Cross product
+* Vector arithmetic
+
+---
+
+## Vector Operations
+
+### Arithmetic
+
+```ts
+v.add([1, 2, 3]);
+v.subtract([0, 1, 0]);
+v.multiply(2);
+v.divide([2, 2, 2]);
+```
+
+### Normalization & Magnitude
+
+```ts
+v.normalize(); // unit vector
+v.magnitude;   // length
+v.magnitude = 10; // scale to new length
+```
+
+### Dot & Cross Products
+
+```ts
+Vector3.dot(a, b);
+Vector3.cross(a, b);
+Vector2.cross(a, b); // scalar in 2D
+```
+
+### Distance
+
+```ts
+Vector.distance(a, b);
+```
+
+---
+
+## Mutating vs Functional Style
+
+### Mutating (fast, no allocations)
+
+```ts
+v.add([1, 0, 0]).rotateY(Math.PI/4);
+```
+
+### Functional (immutable)
+
+```ts
+const v2 = Vector3.add(a, b);
+```
+
+Static helpers automatically clone vectors.
+
+---
+
+## Design Philosophy
+
+* ⚡ **Performance first**
+* 🧠 Explicit math (no hidden magic)
+* 🔁 Predictable mutation
+* 🎮 **Game-engine friendly**
+
+This library is a **math primitive**, not a scene graph or engine.
+
+---
+
+## Related Packages
+
+* [`@papit/game-matrix`](https://www.npmjs.com/package/@papit/game-matrix) — Matrix math for transformations and graphics pipelines
+
+---
 
 ## License
 
-Licensed under the @Papit License 1.0 - Copyright (c) 2024 Henry Pap (@onkelhoy)
+Licensed under the **@Papit License 1.0**
+Copyright (c) 2024–2025 Henry Pap (@onkelhoy)
 
-**Key points:**
+**You may:**
 
-- ✅ Free to use in commercial projects
-- ✅ Free to modify and distribute
-- ✅ Attribution required
-- ❌ Cannot resell the component itself as a standalone product
+* ✅ Use in commercial projects
+* ✅ Modify and distribute
+* ✅ Attribution required
 
-See the [LICENSE](https://github.com/onkelhoy/web-components/blob/main/LICENSE) file for full details.
+**You may not:**
 
-## Related Components
+* ❌ Resell as a standalone product
 
-- [@papit/game-engine](https://github.com/onkelhoy/web-components/tree/main/packages/game/engine): No game without a game engine.
+See LICENSE for full details.
+
+---
 
 ## Support
 
-For issues, questions, or contributions, please visit the [GitHub repository](https://github.com/onkelhoy/web-components).
+Issues, discussions, and contributions are welcome:
+
+👉 [https://github.com/onkelhoy/web-components](https://github.com/onkelhoy/web-components)

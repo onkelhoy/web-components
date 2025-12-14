@@ -1,6 +1,6 @@
 {
   "name": "@papit/game-vector",
-  "description": "",
+  "description": "High-performance vector math library for games, WebGL, and real-time simulations.",
   "version": "1.0.0",
   "scripts": {
     "build": "bash ./bin/build.sh",
@@ -10,11 +10,11 @@
     "preversion": "bash ./bin/_utils/preversion.sh",
     "postversion": "bash ./bin/_utils/postversion.sh",
     "component": "npm run create --include-workspace-root=true --workspace=$(npm prefix) -- --component --location=$(pwd)",
-    "test": "node --test",
-    "build:sass": "echo hello world"
+    "test": "node --test"
   },
   "main": "./lib/bundle.js",
   "types": "./lib/types/index.d.ts",
+  "sideEffects": false,
   "type": "module",
   "files": [
     "asset/",
@@ -22,7 +22,10 @@
     ".config"
   ],
   "exports": {
-    ".": "./lib/bundle.js"
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/bundle.js"
+    }
   },
   "author": "Henry",
   "private": false,
@@ -30,10 +33,15 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "license": "",
+  "license": "Papit-1.0",
+  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/game/vector",
+  "bugs": {
+    "url": "https://github.com/onkelhoy/web-components/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/onkelhoy/web-components.git"
+    "url": "https://github.com/onkelhoy/web-components.git",
+    "directory": "packages/game/vector"
   },
   "devDependencies": {
     "chokidar": "^3.6.0",
@@ -43,7 +51,16 @@
     "typescript": "^5.7.2"
   },
   "keywords": [
-    "game",
+    "vector",
+    "math",
+    "linear-algebra",
+    "game-dev",
+    "graphics",
+    "webgl",
+    "opengl",
+    "2d",
+    "3d",
     "typescript"
-  ]
+  ],
+  "dependencies": {}
 }
