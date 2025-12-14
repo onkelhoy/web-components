@@ -40,9 +40,18 @@
     "registry": "https://registry.npmjs.org/"
   },
   "license": "PROJECTLICENSE",
+  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/PLACEHOLDER_LAYER_FOLDER/PLACEHOLDER_NAME",
+  "bugs": {
+    "url": "https://github.com/onkelhoy/web-components/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "PLACEHOLDER_GITHUB_REPO.git"
+    "url": "PLACEHOLDER_GITHUB_REPO.git",
+    "directory": "packages/PLACEHOLDER_LAYER_FOLDER/PLACEHOLDER_NAME"
+  },
+  "sideEffects": true,
+  "engines": {
+    "node": ">=18"
   },
   "dependencies": {
     "@papit/core": "^*"
@@ -64,5 +73,10 @@
     "web-component",
     "typescript",
     "sass"
+  ],
+  "browserslist": [
+    "defaults",
+    "not IE 11",
+    "not dead"
   ]
 }

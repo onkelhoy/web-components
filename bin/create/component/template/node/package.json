@@ -21,7 +21,14 @@
     ".config"
   ],
   "exports": {
-    ".": "./lib/bundle.js"
+    ".": {
+      "import": "./lib/bundle.js",
+      "types": "./lib/types/index.d.ts"
+    }
+  },
+  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/PLACEHOLDER_LAYER_FOLDER/PLACEHOLDER_NAME",
+  "bugs": {
+    "url": "https://github.com/onkelhoy/web-components/issues"
   },
   "author": "Henry",
   "private": false,
@@ -29,10 +36,15 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "license": "",
+  "license": "PROJECTLICENSE",
   "repository": {
     "type": "git",
-    "url": "https://github.com/onkelhoy/web-components.git"
+    "url": "https://github.com/onkelhoy/web-components.git",
+    "directory": "packages/PLACEHOLDER_LAYER_FOLDER/PLACEHOLDER_NAME"
+  },
+  "sideEffects": true,
+  "engines": {
+    "node": ">=18"
   },
   "devDependencies": {
     "esbuild": "^0.17.18",
@@ -40,7 +52,7 @@
     "chokidar": "^3.6.0"
   },
   "keywords": [
-    "game",
+    "node",
     "typescript"
   ]
 }
