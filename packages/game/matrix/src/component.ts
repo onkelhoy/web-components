@@ -225,6 +225,31 @@ export class Matrix extends Float32Array {
 
     return toMatrix(a, b, c);
   }
+
+  static add<T extends typeof Matrix>(this: T, mat: T | Value, value: Value): InstanceType<T> {
+    if (mat instanceof Matrix)
+    {
+      return mat.clone.add(value) as InstanceType<T>;
+    }
+
+    return new this(mat as any).add(value) as InstanceType<T>;
+  }
+  static multiply<T extends typeof Matrix>(this: T, mat: T | Value, value: Value): InstanceType<T> {
+    if (mat instanceof Matrix)
+    {
+      return mat.clone.multiply(value) as InstanceType<T>;
+    }
+
+    return new this(mat as any).multiply(value) as InstanceType<T>;
+  }
+  static transpose<T extends typeof Matrix>(this: T, mat: T | Value): InstanceType<T> {
+    if (mat instanceof Matrix)
+    {
+      return mat.clone.transpose() as InstanceType<T>;
+    }
+
+    return new this(mat as any).transpose() as InstanceType<T>;
+  }
 }
 
 export class MatrixN extends Matrix {
