@@ -59,10 +59,10 @@
     "@papit/core": "1.0.2"
   },
   "devDependencies": {
-    "@papit/translator": "workspace:*",
-    "@papit/card": "workspace:*",
-    "@papit/codeblock": "workspace:*",
-    "@papit/typography": "workspace:*",
+    "@papit/translator": "0.0.5",
+    "@papit/card": "0.0.4",
+    "@papit/codeblock": "0.0.5",
+    "@papit/typography": "0.0.6",
     "@types/node": "^22.10.2",
     "esbuild": "^0.17.18",
     "sass": "^1.70.0",

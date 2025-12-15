@@ -22,8 +22,9 @@
     "typescript",
     "sass"
   ],
+  "packageManager": "npm@11.6.2",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "author": "Henry Pap",
   "license": "Papit-1.0",

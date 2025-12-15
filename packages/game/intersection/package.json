@@ -57,12 +57,12 @@
     "@papit/game-vector": "1.0.0"
   },
   "devDependencies": {
-    "@papit/codeblock": "workspace:*",
-    "@papit/game-circle": "workspace:*",
-    "@papit/game-engine": "workspace:*",
-    "@papit/game-input-events": "workspace:*",
-    "@papit/game-line": "workspace:*",
-    "@papit/game-rectangle": "workspace:*",
+    "@papit/codeblock": "0.0.5",
+    "@papit/game-circle": "0.0.3",
+    "@papit/game-engine": "0.0.5",
+    "@papit/game-input-events": "0.0.7",
+    "@papit/game-line": "0.0.3",
+    "@papit/game-rectangle": "0.0.3",
     "chokidar": "^3.6.0",
     "esbuild": "^0.17.18",
     "typescript": "^5.7.2"

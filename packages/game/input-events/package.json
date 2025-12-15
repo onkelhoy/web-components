@@ -53,7 +53,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "@papit/game-engine": "workspace:*",
+    "@papit/game-engine": "0.0.5",
     "@papit/game-vector": "1.0.0"
   },
   "devDependencies": {

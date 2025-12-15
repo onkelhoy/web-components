@@ -54,8 +54,8 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.45.3",
-    "@papit/game-engine": "workspace:*",
-    "@papit/game-input-events": "workspace:*",
+    "@papit/game-engine": "0.0.5",
+    "@papit/game-input-events": "0.0.7",
     "chokidar": "^3.6.0",
     "esbuild": "^0.17.18",
     "typescript": "^5.7.2"
