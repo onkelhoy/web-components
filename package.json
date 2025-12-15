@@ -22,7 +22,6 @@
     "typescript",
     "sass"
   ],
-  "packageManager": "npm@11.6.2",
   "engines": {
     "node": ">=18"
   },
@@ -30,7 +29,6 @@
   "license": "Papit-1.0",
   "licenseFile": "LICENSE",
   "workspaces": [
-    "packages-2/**/*",
     "packages/**/*"
   ]
 }
