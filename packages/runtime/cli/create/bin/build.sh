@@ -47,13 +47,13 @@ if [[ "$DEV" == true ]]; then
   tsc --emitDeclarationOnly
   
   # esbuild part
-  esbuild --format=esm "./src/index.ts" --bundle --allow-overwrite --outfile="./lib/bundle.js" --external:$DEPENDENCIES
+  esbuild --format=esm "./src/index.ts" --platform=node --bundle --allow-overwrite --outfile="./lib/bundle.js" --external:$DEPENDENCIES
 elif [[ "$PROD" == true ]]; then 
   # typescript part : making sure we have types 
   tsc --emitDeclarationOnly -p tsconfig.prod.json
 
   # esbuild part
-  esbuild --format=esm "./src/index.ts" --bundle --minify --allow-overwrite --outfile="./lib/bundle.js" --tsconfig=tsconfig.prod.json --external:$DEPENDENCIES
+  esbuild --format=esm "./src/index.ts" --platform=node --bundle --minify --allow-overwrite --outfile="./lib/bundle.js" --tsconfig=tsconfig.prod.json --external:$DEPENDENCIES
 fi
 
 if [[ -f "./react/declerations.d.ts" ]] && [[ -d "./lib/react/" ]]; then 

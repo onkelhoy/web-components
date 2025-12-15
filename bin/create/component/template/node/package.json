@@ -2,6 +2,10 @@
   "name": "PLACEHOLDER_FULL_NAME",
   "description": "",
   "version": "0.0.1",
+  "keywords": [
+    "node",
+    "typescript"
+  ],
   "scripts": {
     "build": "bash ./bin/build.sh",
     "watch": "bash ./bin/watch.sh",
@@ -42,17 +46,14 @@
     "url": "https://github.com/onkelhoy/web-components.git",
     "directory": "packages/PLACEHOLDER_LAYER_FOLDER/PLACEHOLDER_NAME"
   },
-  "sideEffects": true,
+  "sideEffects": false,
   "engines": {
     "node": ">=18"
   },
   "devDependencies": {
-    "esbuild": "^0.17.18",
-    "typescript": "^5.7.2",
-    "chokidar": "^3.6.0"
-  },
-  "keywords": [
-    "node",
-    "typescript"
-  ]
+    "esbuild": "0.17.18",
+    "typescript": "5.7.2",
+    "chokidar": "3.6.0",
+    "@types/node": "22.10.2"
+  }
 }

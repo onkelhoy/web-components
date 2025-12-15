@@ -33,9 +33,6 @@ rm -rf lib
 # then re-create it 
 mkdir lib
 
-# compile the styles 
-npm run build:sass
-
 # Extract dependencies and devDependencies using Node.js
 DEPENDENCIES=$(node -pe "
   const pkg = require('$(pwd)/package.json');
@@ -55,13 +52,6 @@ elif [[ "$PROD" == true ]]; then
   # esbuild part
   esbuild --format=esm "./src/index.ts" --platform=node --bundle --minify --allow-overwrite --outfile="./lib/bundle.js" --tsconfig=tsconfig.prod.json --external:$DEPENDENCIES
 fi
-
-if [[ -f "./react/declerations.d.ts" ]] && [[ -d "./lib/react/" ]]; then 
-  cp "./react/declerations.d.ts" "./lib/react/"
-fi 
-
-# Find all files that matches the criteria and copy them to the destination directory
-rsync -a --exclude='*.scss' --exclude='*.js' --exclude="*.ts" --exclude="*.config"  --prune-empty-dirs "./src/" "./lib"
 
 # cleanup types from "src"
 mv ./lib/types/src/* ./lib/types
