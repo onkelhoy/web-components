@@ -1,6 +1,11 @@
 {
   "name": "@papit/container",
   "description": "",
+  "keywords": [
+    "web-component",
+    "typescript",
+    "sass"
+  ],
   "version": "0.0.2",
   "scripts": {
     "build:sass": "bash ./bin/_utils/sass.sh",
@@ -39,19 +44,25 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
+  "sideEffects": true,
   "license": "Papit-1.0",
+  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/atoms/container",
+  "bugs": {
+    "url": "https://github.com/onkelhoy/web-components/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/onkelhoy/web-components.git"
+    "url": "https://github.com/onkelhoy/web-components.git",
+    "directory": "packages/atoms/container"
   },
   "dependencies": {
     "@papit/core": "1.0.2"
   },
   "devDependencies": {
-    "@papit/translator": "0.0.5",
-    "@papit/card": "0.0.4",
-    "@papit/codeblock": "0.0.5",
-    "@papit/typography": "0.0.6",
+    "@papit/translator": "workspace:*",
+    "@papit/card": "workspace:*",
+    "@papit/codeblock": "workspace:*",
+    "@papit/typography": "workspace:*",
     "@types/node": "^22.10.2",
     "esbuild": "^0.17.18",
     "sass": "^1.70.0",
@@ -59,10 +70,5 @@
     "chokidar": "^3.6.0",
     "@playwright/test": "^1.45.3",
     "playwright": "^1.45.3"
-  },
-  "keywords": [
-    "web-component",
-    "typescript",
-    "sass"
-  ]
+  }
 }

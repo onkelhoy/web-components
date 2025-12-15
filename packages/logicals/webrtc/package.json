@@ -1,6 +1,11 @@
 {
   "name": "@papit/webrtc",
   "description": "",
+  "keywords": [
+    "webrtc",
+    "transport",
+    "peer-2-peer"
+  ],
   "version": "0.0.3",
   "scripts": {
     "build": "bash ./bin/build.sh",
@@ -35,14 +40,20 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
+  "sideEffects": false,
   "license": "Papit-1.0",
+  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/logicals/webrtc",
+  "bugs": {
+    "url": "https://github.com/onkelhoy/web-components/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/onkelhoy/web-components.git"
+    "url": "https://github.com/onkelhoy/web-components.git",
+    "directory": "packages/logicals/webrtc"
   },
   "devDependencies": {
-    "@papit/translator": "0.0.5",
-    "@papit/codeblock": "0.0.5",
+    "@papit/translator": "workspace:*",
+    "@papit/codeblock": "workspace:*",
     "@types/node": "^22.10.2",
     "esbuild": "^0.17.18",
     "sass": "^1.70.0",
@@ -50,10 +61,5 @@
     "chokidar": "^3.6.0",
     "@playwright/test": "^1.45.3",
     "playwright": "^1.45.3"
-  },
-  "keywords": [
-    "web-component",
-    "typescript",
-    "sass"
-  ]
+  }
 }

@@ -1,9 +1,13 @@
 {
   "name": "@papit/server",
   "version": "0.0.28",
+  "keywords": [
+    "web-component",
+    "typescript",
+    "sass"
+  ],
+  "description": "",
   "scripts": {
-    "build:sass": "bash ./bin/_utils/sass.sh",
-    "build:react": "bash ./bin/_utils/react.sh",
     "build": "bash ./bin/build.sh",
     "watch": "bash ./bin/watch.sh",
     "start": "bash ./bin/start.sh",
@@ -30,10 +34,16 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "license": "",
+  "sideEffects": false,
+  "license": "Papit-1.0",
+  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/system/server",
+  "bugs": {
+    "url": "https://github.com/onkelhoy/web-components/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/onkelhoy/web-components.git"
+    "url": "https://github.com/onkelhoy/web-components.git",
+    "directory": "packages/system/server"
   },
   "dependencies": {
     "chokidar": "^3.6.0",
@@ -42,13 +52,6 @@
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
-    "sass": "^1.70.0",
     "typescript": "^5.7.2"
-  },
-  "keywords": [
-    "web-component",
-    "typescript",
-    "sass"
-  ],
-  "description": ""
+  }
 }

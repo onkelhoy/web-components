@@ -1,6 +1,12 @@
 {
   "name": "@papit/signaling-server",
   "description": "",
+  "keywords": [
+    "transport",
+    "socket",
+    "webrtc",
+    "peer-2-peer"
+  ],
   "version": "0.0.3",
   "scripts": {
     "build": "bash ./bin/build.sh",
@@ -38,19 +44,21 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
+  "sideEffects": false,
   "license": "Papit-1.0",
+  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/logicals/signaling-server",
+  "bugs": {
+    "url": "https://github.com/onkelhoy/web-components/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/onkelhoy/web-components.git"
+    "url": "https://github.com/onkelhoy/web-components.git",
+    "directory": "packages/logicals/signaling-server"
   },
   "dependencies": {
     "ws": "^8.18.2"
   },
   "devDependencies": {
-    "@papit/card": "0.0.4",
-    "@papit/codeblock": "0.0.5",
-    "@papit/translator": "0.0.5",
-    "@papit/typography": "0.0.6",
     "@playwright/test": "^1.45.3",
     "@types/node": "^22.10.2",
     "@types/ws": "^8.18.1",
@@ -58,10 +66,5 @@
     "esbuild": "^0.17.18",
     "playwright": "^1.45.3",
     "typescript": "^5.7.2"
-  },
-  "keywords": [
-    "web-component",
-    "typescript",
-    "sass"
-  ]
+  }
 }

@@ -1,6 +1,14 @@
 {
   "name": "@papit/game-polygon-generator",
   "description": "",
+  "keywords": [
+    "polygon-generator",
+    "math",
+    "game-dev",
+    "graphics",
+    "2d",
+    "typescript"
+  ],
   "version": "0.0.3",
   "scripts": {
     "build": "bash ./bin/build.sh",
@@ -21,8 +29,22 @@
     "lib/",
     ".config"
   ],
+  "sideEffects": false,
   "exports": {
-    ".": "./lib/bundle.js"
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/bundle.js"
+    }
+  },
+  "license": "Papit-1.0",
+  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/game/polygon-generator",
+  "bugs": {
+    "url": "https://github.com/onkelhoy/web-components/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onkelhoy/web-components.git",
+    "directory": "packages/game/polygon-generator"
   },
   "author": "Henry",
   "private": false,
@@ -30,23 +52,14 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "license": "",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/onkelhoy/web-components.git"
-  },
   "devDependencies": {
     "@playwright/test": "^1.45.3",
-    "@papit/game-engine": "0.0.5",
-    "@papit/game-input-events": "0.0.7",
+    "@papit/game-engine": "workspace:*",
+    "@papit/game-input-events": "workspace:*",
     "chokidar": "^3.6.0",
     "esbuild": "^0.17.18",
     "typescript": "^5.7.2"
   },
-  "keywords": [
-    "game",
-    "typescript"
-  ],
   "dependencies": {
     "@papit/game-intersection": "0.0.3",
     "@papit/game-polygon": "0.0.3",

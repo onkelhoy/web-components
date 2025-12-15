@@ -1,6 +1,12 @@
 {
   "name": "@papit/core",
   "version": "1.0.2",
+  "keywords": [
+    "web-component",
+    "typescript",
+    "sass"
+  ],
+  "description": "",
   "scripts": {
     "build:sass": "bash ./bin/_utils/sass.sh",
     "build:react": "bash ./bin/_utils/react.sh",
@@ -38,28 +44,28 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "license": "",
+  "sideEffects": true,
+  "license": "Papit-1.0",
+  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/system/core",
+  "bugs": {
+    "url": "https://github.com/onkelhoy/web-components/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/onkelhoy/web-components.git"
+    "url": "https://github.com/onkelhoy/web-components.git",
+    "directory": "packages/system/core"
   },
   "dependencies": {},
   "devDependencies": {
-    "@papit/card": "0.0.4",
-    "@papit/codeblock": "0.0.5",
-    "@papit/translator": "0.0.5",
-    "@papit/typography": "0.0.6",
+    "@papit/card": "workspace:*",
+    "@papit/codeblock": "workspace:*",
+    "@papit/translator": "workspace:*",
+    "@papit/typography": "workspace:*",
     "@types/node": "^22.10.2",
     "chokidar": "^3.6.0",
     "esbuild": "^0.17.18",
     "node-html-parser": "^6.1.5",
     "sass": "^1.70.0",
     "typescript": "^5.7.2"
-  },
-  "keywords": [
-    "web-component",
-    "typescript",
-    "sass"
-  ],
-  "description": ""
+  }
 }

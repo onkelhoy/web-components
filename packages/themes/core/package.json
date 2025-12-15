@@ -1,6 +1,11 @@
 {
   "name": "@papit/theme-core",
   "version": "0.0.4",
+  "keywords": [
+    "theme",
+    "css"
+  ],
+  "description": "",
   "scripts": {
     "build": "bash ./bin/build.sh",
     "start": "bash ./bin/start.sh",
@@ -24,25 +29,26 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "license": "",
+  "sideEffects": false,
+  "license": "Papit-1.0",
+  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/themes/core",
+  "bugs": {
+    "url": "https://github.com/onkelhoy/web-components/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/onkelhoy/web-components.git"
+    "url": "https://github.com/onkelhoy/web-components.git",
+    "directory": "packages/themes/core"
   },
   "devDependencies": {
-    "@papit/card": "0.0.4",
-    "@papit/codeblock": "0.0.5",
-    "@papit/translator": "0.0.5",
-    "@papit/typography": "0.0.6",
+    "@papit/card": "workspace:*",
+    "@papit/codeblock": "workspace:*",
+    "@papit/translator": "workspace:*",
+    "@papit/typography": "workspace:*",
     "@playwright/test": "^1.45.3",
     "@types/node": "^22.10.2",
     "playwright": "^1.45.3",
     "sass": "^1.70.0",
     "typescript": "^5.7.2"
-  },
-  "keywords": [
-    "theme",
-    "css"
-  ],
-  "description": ""
+  }
 }

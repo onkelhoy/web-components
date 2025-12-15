@@ -1,6 +1,14 @@
 {
   "name": "@papit/game-intersection",
   "description": "",
+  "keywords": [
+    "intersection",
+    "math",
+    "game-dev",
+    "graphics",
+    "2d",
+    "typescript"
+  ],
   "version": "0.0.3",
   "scripts": {
     "build": "bash ./bin/build.sh",
@@ -21,8 +29,22 @@
     "lib/",
     ".config"
   ],
+  "sideEffects": false,
   "exports": {
-    ".": "./lib/bundle.js"
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/bundle.js"
+    }
+  },
+  "license": "Papit-1.0",
+  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/game/intersection",
+  "bugs": {
+    "url": "https://github.com/onkelhoy/web-components/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onkelhoy/web-components.git",
+    "directory": "packages/game/intersection"
   },
   "author": "Henry",
   "private": false,
@@ -30,28 +52,19 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "license": "",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/onkelhoy/web-components.git"
-  },
   "dependencies": {
     "@papit/game-shape": "0.0.2",
     "@papit/game-vector": "1.0.0"
   },
   "devDependencies": {
-    "@papit/codeblock": "0.0.5",
-    "@papit/game-circle": "0.0.3",
-    "@papit/game-engine": "0.0.5",
-    "@papit/game-input-events": "0.0.7",
-    "@papit/game-line": "0.0.3",
-    "@papit/game-rectangle": "0.0.3",
+    "@papit/codeblock": "workspace:*",
+    "@papit/game-circle": "workspace:*",
+    "@papit/game-engine": "workspace:*",
+    "@papit/game-input-events": "workspace:*",
+    "@papit/game-line": "workspace:*",
+    "@papit/game-rectangle": "workspace:*",
     "chokidar": "^3.6.0",
     "esbuild": "^0.17.18",
     "typescript": "^5.7.2"
-  },
-  "keywords": [
-    "game",
-    "typescript"
-  ]
+  }
 }

@@ -1,6 +1,14 @@
 {
   "name": "@papit/game-input-events",
   "description": "",
+  "keywords": [
+    "input-events",
+    "math",
+    "game-dev",
+    "graphics",
+    "2d",
+    "typescript"
+  ],
   "version": "0.0.7",
   "scripts": {
     "build": "bash ./bin/build.sh",
@@ -21,8 +29,22 @@
     "lib/",
     ".config"
   ],
+  "sideEffects": false,
   "exports": {
-    ".": "./lib/bundle.js"
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/bundle.js"
+    }
+  },
+  "license": "Papit-1.0",
+  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/game/input-events",
+  "bugs": {
+    "url": "https://github.com/onkelhoy/web-components/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onkelhoy/web-components.git",
+    "directory": "packages/game/input-events"
   },
   "author": "Henry",
   "private": false,
@@ -30,13 +52,8 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "license": "",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/onkelhoy/web-components.git"
-  },
   "dependencies": {
-    "@papit/game-engine": "0.0.5",
+    "@papit/game-engine": "workspace:*",
     "@papit/game-vector": "1.0.0"
   },
   "devDependencies": {
@@ -45,9 +62,5 @@
     "chokidar": "^3.6.0",
     "esbuild": "^0.17.18",
     "typescript": "^5.7.2"
-  },
-  "keywords": [
-    "game",
-    "typescript"
-  ]
+  }
 }

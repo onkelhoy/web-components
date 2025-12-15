@@ -1,6 +1,11 @@
 {
   "name": "@papit/card",
   "description": "",
+  "keywords": [
+    "web-component",
+    "typescript",
+    "sass"
+  ],
   "version": "0.0.4",
   "scripts": {
     "build:sass": "bash ./bin/_utils/sass.sh",
@@ -39,17 +44,23 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
+  "sideEffects": true,
   "license": "Papit-1.0",
+  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/atoms/card",
+  "bugs": {
+    "url": "https://github.com/onkelhoy/web-components/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/onkelhoy/web-components.git"
+    "url": "https://github.com/onkelhoy/web-components.git",
+    "directory": "packages/atoms/card"
   },
   "dependencies": {
     "@papit/core": "1.0.2"
   },
   "devDependencies": {
-    "@papit/codeblock": "0.0.5",
-    "@papit/translator": "0.0.5",
+    "@papit/codeblock": "workspace:*",
+    "@papit/translator": "workspace:*",
     "@playwright/test": "^1.45.3",
     "@types/node": "^22.10.2",
     "chokidar": "^3.6.0",
@@ -57,10 +68,5 @@
     "playwright": "^1.45.3",
     "sass": "^1.70.0",
     "typescript": "^5.7.2"
-  },
-  "keywords": [
-    "web-component",
-    "typescript",
-    "sass"
-  ]
+  }
 }

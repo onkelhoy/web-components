@@ -1,6 +1,17 @@
 {
   "name": "@papit/game-matrix",
   "description": "High-performance column-major matrix math library for games, WebGL, and real-time graphics.",
+  "keywords": [
+    "matrix",
+    "math",
+    "linear-algebra",
+    "game-dev",
+    "graphics",
+    "webgl",
+    "opengl",
+    "3d",
+    "typescript"
+  ],
   "version": "1.0.0",
   "scripts": {
     "build": "bash ./bin/build.sh",
@@ -15,24 +26,24 @@
   },
   "main": "./lib/bundle.js",
   "types": "./lib/types/index.d.ts",
-  "sideEffects": false,
   "type": "module",
   "files": [
     "asset/",
     "lib/",
     ".config"
   ],
-  "exports": {
-    ".": {
-      "types": "./lib/types/index.d.ts",
-      "default": "./lib/bundle.js"
-    }
-  },
   "author": "Henry",
   "private": false,
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/bundle.js"
+    }
   },
   "license": "Papit-1.0",
   "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/game/matrix",
@@ -45,23 +56,12 @@
     "directory": "packages/game/matrix"
   },
   "devDependencies": {
-    "@papit/game-engine": "0.0.5",
-    "@papit/game-input-events": "0.0.7",
+    "@papit/game-engine": "workspace:*",
+    "@papit/game-input-events": "workspace:*",
     "chokidar": "^3.6.0",
     "esbuild": "^0.17.18",
     "typescript": "^5.7.2"
   },
-  "keywords": [
-    "matrix",
-    "math",
-    "linear-algebra",
-    "game-dev",
-    "graphics",
-    "webgl",
-    "opengl",
-    "3d",
-    "typescript"
-  ],
   "dependencies": {
     "@papit/game-vector": "1.0.0"
   }
