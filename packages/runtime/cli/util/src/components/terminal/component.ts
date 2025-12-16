@@ -1,9 +1,9 @@
 // import statements 
 import readline from "node:readline";
 
-export class Renderer {
+export class Terminal {
   static lines: number = 0;
-  private static session: number|null = null;
+  private static session: number | null = null;
 
   static write(...values: string[]) {
     const value = values.join(" ");
@@ -13,6 +13,38 @@ export class Renderer {
   static error(...values: string[]) {
     const value = values.join(" ");
     this.printLine(value, "error");
+  }
+
+  static print(value: string, type: "info" | "error" = "info") {
+    if (type === "error")
+    {
+      process.stderr.write(value);
+    }
+    else 
+    {
+      process.stdout.write(value);
+    }
+
+    // Count newlines in the string
+    const newlineCount = (value.match(/\n/g) || []).length;
+    this.lines += newlineCount;
+  }
+
+  static printLine(value: string = "", type: "info" | "error" = "info") {
+    this.print(value + "\n", type);
+  }
+
+  static clear(start: number = 0, end?: number) {
+    const e = end ?? this.lines;
+    this.lines = start;
+
+    for (let i = start; i < e; i++)
+    {
+      process.stdout.write('\x1b[2K');
+      process.stdout.write('\x1b[1A');
+    }
+
+    process.stdout.write('\r');
   }
 
   static createSession() {
@@ -35,22 +67,6 @@ export class Renderer {
     this.createSession();
   }
 
-  static clear(start: number = 0, end?: number) {
-    this.clearLastLines((end ?? this.lines) - start)
-  }
-
-  private static clearLastLines(n: number) {
-    if (n <= 0) return;
-
-    this.lines = Math.max(this.lines - n, 0);
-
-    for (let i = 0; i < n; i++) {
-      process.stdout.write('\x1b[2K'); // clear current line
-      if (i < n - 1) process.stdout.write('\x1b[1A'); // move up unless it’s the last line
-    }
-    process.stdout.write('\r'); // move cursor to start of line
-  }
-
   static async prompt(promptText: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       let input = "";
@@ -59,27 +75,31 @@ export class Renderer {
       if (process.stdin.isTTY) process.stdin.setRawMode(true);
 
       this.write(promptText); // -> line 1
-      this.print("\r\x1b[2K> "); 
+      this.print("\r\x1b[2K> ");
 
       const onKeypress = (str: string, key: any) => {
-        if (key.ctrl && key.name === "c" || str === "\x04" || key.ctrl && key.name === "d") {
+        if (key.ctrl && key.name === "c" || str === "\x04" || key.ctrl && key.name === "d")
+        {
           process.stdin.setRawMode(false);
           process.stdin.removeListener("keypress", onKeypress);
           this.write("\ncancelled");
           process.exit();
         }
 
-        if (key.name === "return") {
+        if (key.name === "return")
+        {
           process.stdin.setRawMode(false);
           process.stdin.removeListener("keypress", onKeypress);
-          this.write(); 
+          this.write();
           resolve(input);
           return;
         }
 
-        if (key.name === "backspace") {
+        if (key.name === "backspace")
+        {
           input = input.slice(0, -1);
-        } else if (!key.ctrl && !key.meta) {
+        } else if (!key.ctrl && !key.meta)
+        {
           input += str;
         }
 
@@ -117,50 +137,47 @@ export class Renderer {
     return answer;
   }
 
-  static async option(options: string[], promptText = "Pick your option (arrow up and arrow down + enter)") {
+  static async option(options: string[], promptText = "↑↓ select • Enter confirm") {
     return new Promise<number>((resolve, reject) => {
       let input = "";
-      
+
       readline.emitKeypressEvents(process.stdin);
       if (process.stdin.isTTY) process.stdin.setRawMode(true);
-      
-      this.write(promptText);
+
       this.write();
       this.createSession();
 
       function printoptions(clear = true) {
-        if (clear) Renderer.clearSession();
-        for (let i=0; i<options.length; i++)
+        if (clear) Terminal.clearSession();
+
+        for (let i = 0; i < options.length; i++)
         {
-          const str = `${i+1}) ${options[i]}`
-          if (i === index)
-          {
-            Renderer.write(`-> ${str}`)
-          }
-          else 
-          {
-            Renderer.write(str);
-          }
+          const prefix = i === index ? "● " : "○";
+          Terminal.write(`${prefix} ${options[i]}`);
         }
+
+        Terminal.write();
+        Terminal.write(promptText);
       }
-      
+
       let index = 0;
       printoptions(false);
 
-      const onKeypress = (str: string, key: any) => {
-        if (key.ctrl && key.name === "c" || str === "\x04" || key.ctrl && key.name === "d") {
+      function handleKeydown(str: string, key: any) {
+        if (key.ctrl && key.name === "c" || str === "\x04" || key.ctrl && key.name === "d" || key.name === "return")
+        {
           process.stdin.setRawMode(false);
-          process.stdin.removeListener("keypress", onKeypress);
-          this.write("\ncancelled");
-          process.exit();
-        }
+          process.stdin.removeListener("keypress", handleKeydown);
 
-        if (key.name === "return") {
-          process.stdin.setRawMode(false);
-          process.stdin.removeListener("keypress", onKeypress);
-          this.write(); // move to next line -> line 3
-          resolve(index);
-          return;
+          if (key.name === "return")
+          {
+            Terminal.write(); // move to next line -> line 3
+            resolve(index);
+            return;
+          }
+
+          Terminal.write("\ncancelled");
+          process.exit();
         }
 
         if (/up/i.test(key.name))
@@ -177,7 +194,7 @@ export class Renderer {
         }
       };
 
-      process.stdin.on("keypress", onKeypress);
+      process.stdin.on("keypress", handleKeydown);
     });
   }
 
@@ -202,23 +219,5 @@ export class Renderer {
     })
 
     return answer;
-  }
-
-  static print(value: string, type: "info"|"error" = "info") {
-    if (type === "error")
-    {
-      process.stderr.write(value);
-    }
-    else 
-    {
-      process.stdout.write(value);
-    }
-
-    const lineCount = value.split("\n").length; // count number of actual printed lines
-    this.lines += Math.max(lineCount - 1, 0);
-  }
-
-  static printLine(value: string = "", type: "info"|"error" = "info") {
-    this.print(value+"\n", type);
   }
 }

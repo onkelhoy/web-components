@@ -1,86 +1,69 @@
-// import path from "node:path";
-// import { exec } from "node:child_process";
-// import { promisify } from "node:util";
+#!/usr/bin/env node
 
-// import { 
-//   getArguments,
-//   getAnswer,
-//   getJSON,
-//   getScope,
-//   getPackage,
-//   getName,
-//   copyFolder
-// } from "@papit/cli-util"
+import path from "node:path";
+import { exec } from "node:child_process";
+import { promisify } from "node:util";
 
-// const TEMPLATE_PACKAGE = path.join(process.cwd(), ".scripts", "templates", "package");
-// const LOCKFILE_LOCATION = path.join(process.cwd(), "package-lock.json");
-// const execAsync = promisify(exec);
+import {
+  getArguments,
+  getJSON,
+  getScope,
+  getPackage,
+  getName,
+  copyFolder,
+  Terminal,
+  getPackageInfo,
+  type Lockfile,
+  getConfig,
+} from "@papit/cli-util"
+import { selectFolder } from "components/select-folder";
 
-// (async function() {
-//   const atomicTypes = ["atom", "molecule", "organism", "template"];
-//   const _arguments = getArguments(atomicTypes);
-//   const lockfile = getJSON(LOCKFILE_LOCATION);
-  
-//   let atomicType = _arguments.flags['atomic-type'];
-  
-//   if (!atomicTypes.includes(atomicType))
-//   {
-//     console.log('Choose Atomic Type:');
-//     console.log('1) atom');
-//     console.log('2) molecule');
-//     console.log('3) organism');
-//     console.log('4) template');
-//     console.log('')
-    
-//     const answer = await getAnswer("answer: ", ["1", "2", "3", "4"]);
-//     atomicType = atomicTypes[Number(answer) - 1];
-//   }
+const execAsync = promisify(exec);
 
-//   const scope = getScope();
+export async function runner() {
 
-//   let name = getName(_arguments.flags.name);
-//   while (!name || getPackage(`${scope}/${name.safe}`, lockfile))
-//   {
-//     if (!name)
-//     {
-//       name = getName(await getAnswer("name of the package: "));
-//       continue; // trigger validation loop 
-//     }
+  const info = getPackageInfo();
+  const scope = getScope();
+  const folder = await selectFolder({
+    ...info,
+    scope,
+  });
 
-//     console.log(`package: "${name.safe}" already exists: "${`${scope}/${name.safe}`}"`);
-//     name = getName(await getAnswer("choose another name: "));
-//   }
+  let lockfile = getJSON<Lockfile>(path.join(info.root, "package-lock.json"));
+  if (lockfile === null)
+  {
+    await execAsync('npm install');
+    lockfile = getJSON<Lockfile>(path.join(info.root, "package-lock.json"));
+  }
 
-//   const fullName = `${scope}/${name.package}`;
-//   const destination = path.join(process.cwd(), "packages", atomicType + "s", name.package);
+  Terminal.createSession();
+  let name: ReturnType<typeof getName> = undefined;
+  while (true)
+  {
+    Terminal.clearSession();
+    const input = await Terminal.prompt("package name");
+    name = getName(input);
 
-//   // Copy package template
-//   await copyFolder(TEMPLATE_PACKAGE, destination, async file => {
-//     const final = file
-//       .replace(/VARIABLE_ATOMIC_TYPE/g, atomicType)
-//       .replace(/VARIABLE_USER/g, process.env.USER)
-//       .replace(/VARIABLE_COMPONENT_NAME/g, name.component)
-//       .replace(/VARIABLE_PACKAGE_NAME/g, name.package)
-//       .replace(/VARIABLE_FULL_NAME/g, fullName);
+    if (!name) 
+    {
+      Terminal.write("name missing, try again");
+      continue;
+    }
+    if (lockfile && getPackage(`${scope}/${name.safe}`, lockfile))
+    {
 
-//     return final;
-//   });
+      Terminal.write("package already exists, try again")
+      continue;
+    }
 
-  
-//   console.log();
-//   const install = await getAnswer("do you wish to install and commit? [y/n]: ");
-//   if (/^(1|y)/.test(install.toLowerCase()))
-//   {
-//     try {
-//       await execAsync("npm install");
-//       await execAsync(`git add ${LOCKFILE_LOCATION}`);
-//       await execAsync(`git add ${destination}`);
-//       await execAsync(`git commit -m "add: ${atomicType} package created ${name.safe}"`);
-//     } catch (err) {
-//       console.error("❌ Error during install/commit:", err.stderr || err);
-//     }
-//   }
+    break;
+  }
 
-//   console.log();
-//   console.log("✅ package created", { atomicType, name: name.safe, destination });
-// }())
+  const fullName = `${scope}/${name.package}`;
+  const config = getConfig(path.join(folder, ".config"));
+  if (!config)
+  {
+    Terminal.error("could not find .config");
+    process.exit();
+  }
+}

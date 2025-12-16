@@ -5,4 +5,5 @@ export * from "./components/get-json";
 export * from "./components/get-name";
 export * from "./components/get-package";
 export * from "./components/get-scope";
-export * from "./components/renderer";
+export * from "./components/get-config";
+export * from "./components/terminal";

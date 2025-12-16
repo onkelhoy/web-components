@@ -1,4 +1,4 @@
-import { getPackageInfo, Renderer } from "@papit/cli-util";
+import { getPackageInfo, Terminal } from "@papit/cli-util";
 import { readdirSync, statSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -6,21 +6,20 @@ function getFolders(dir: string): string[] {
   return readdirSync(dir).filter(name => statSync(join(dir, name)).isDirectory());
 };
 
-export async function selectFolder(url?: string) {
-  const info = getPackageInfo();
+export async function selectFolder(info: ReturnType<typeof getPackageInfo> & {
+  scope: string;
+}) {
 
   let target = join(info.root, "packages");
   while (target)
   {
 
-    const session = Renderer.createSession();
+    const session = Terminal.createSession();
     const folders = getFolders(target);
 
-    Renderer.write("Current: ", target);
-    // folders.forEach((name, index) => Renderer.write(`[${index}]: ${name}`));
-    // Renderer.write();
-    
-    const option = await Renderer.option(["Choose Folder", "Create Folder", ...folders]);
+    Terminal.write("Current: ", target.replace(info.root, info.scope));
+
+    const option = await Terminal.option(["Choose Folder", "Create Folder", ...folders]);
 
     if (option === 0)
     {
@@ -28,7 +27,7 @@ export async function selectFolder(url?: string) {
     }
     if (option === 1)
     {
-      const name = await Renderer.prompt("Name of the folder?");
+      const name = await Terminal.prompt("Name of the folder?");
       const url = join(target, name);
       const created = await createFolder(url, name);
 
@@ -41,62 +40,30 @@ export async function selectFolder(url?: string) {
     {
       target = join(target, folders[option - 2]);
     }
-    // await Renderer.getAnswer("Select folder or create a new", async ans => {
-    //   const num = Number(ans);
-
-    //   if (!Number.isNaN(num))
-    //   {
-    //     if (num >= 0 && num < folders.length)
-    //     {
-    //       selected = folders[num];
-    //       return true;
-    //     }
-
-    //     return false;
-    //   }
-
-    //   const found = folders.find(f => f === ans);
-    //   if (found) 
-    //   {
-    //     selected = found;
-    //     return true;
-    //   }
-
-
-    //   const url = join(info.root, ...selected, ans);
-    //   const created = await createFolder(url, ans);
-    //   if (created)
-    //   {
-    //     selected = ans;
-    //     return true;
-    //   }
-
-    //   return false;
-    // });
-
-    // target = join(target, selected);
-    Renderer.clearSession(session);
+    Terminal.clearSession(session);
   }
+
+  return target;
 }
 
 
 async function createFolder(url: string, name: string) {
-  Renderer.write("create folder at location");
-  Renderer.write(`[${url}]`);
-  Renderer.write();
-  const shouldCreate = await Renderer.confirm("answer [y/n]: ");
+  Terminal.write("create folder at location");
+  Terminal.write(`[${url}]`);
+  Terminal.write();
+  const shouldCreate = await Terminal.confirm("answer [y/n]: ");
 
   if (!shouldCreate) return false;
 
-  Renderer.write();
-  const shouldIncludeName = await Renderer.confirm("include folder in package names [y/n]: ");
+  Terminal.write();
+  const shouldIncludeName = await Terminal.confirm("include folder in package names [y/n]: ");
 
   let includeMode = "false";
   if (shouldIncludeName)
   {
     includeMode = "true";
-    Renderer.write();
-    const mode = await Renderer.getAnswer("prefix or suffix?: [p/s]: ", ["prefix", "p", "s", "suffix", ""]);
+    Terminal.write();
+    const mode = await Terminal.getAnswer("prefix or suffix?: [p/s]: ", ["prefix", "p", "s", "suffix", ""]);
     if (mode.startsWith("s")) includeMode = "suffix";
     else includeMode = "prefix";
   }
@@ -104,8 +71,8 @@ async function createFolder(url: string, name: string) {
   // its create new mode 
   mkdirSync(url);
 
-  Renderer.write();
-  const overrideName = await Renderer.prompt(`override the name (${name})?: `);
+  Terminal.write();
+  const overrideName = await Terminal.prompt(`override the name (${name})?: `);
 
   await writeFileSync(join(url, ".config"), `LAYER_FOLDER=${name}\nLAYER_NAME=${overrideName || name}\nLAYER_INCLUDE=${includeMode}`, { flag: "wx" });
   return true;
