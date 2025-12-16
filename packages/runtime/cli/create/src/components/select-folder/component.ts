@@ -1,4 +1,4 @@
-import { getAnswer, getBooleanAnswer, getPackageInfo, prompt } from "@papit/util-cli";
+import { getPackageInfo, Renderer } from "@papit/cli-util";
 import { readdirSync, statSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -12,10 +12,15 @@ export async function selectFolder(url?: string) {
   let target = join(info.root, "packages");
   while (target)
   {
+
+    const session = Renderer.createSession();
     const folders = getFolders(target);
     let selected = "";
-    folders.forEach((name, index) => console.log(`[${index}]: ${name}`));
-    await getAnswer("Select folder or create a new", async ans => {
+    Renderer.write("Current: ", target);
+    folders.forEach((name, index) => Renderer.write(`[${index}]: ${name}`));
+    Renderer.write();
+    
+    await Renderer.getAnswer("Select folder or create a new", async ans => {
       const num = Number(ans);
 
       if (!Number.isNaN(num))
@@ -49,27 +54,28 @@ export async function selectFolder(url?: string) {
     });
 
     target = join(target, selected);
+    Renderer.clearSession(session);
   }
 }
 
 
 async function createFolder(url: string, name: string) {
-  console.log("create folder at location");
-  console.log(`[${url}]`);
-  console.log();
-  const shouldCreate = await getBooleanAnswer("answer [y/n]: ");
+  Renderer.write("create folder at location");
+  Renderer.write(`[${url}]`);
+  Renderer.write();
+  const shouldCreate = await Renderer.confirm("answer [y/n]: ");
 
   if (!shouldCreate) return false;
 
-  console.log();
-  const shouldIncludeName = await getBooleanAnswer("include folder in package names [y/n]: ");
+  Renderer.write();
+  const shouldIncludeName = await Renderer.confirm("include folder in package names [y/n]: ");
 
   let includeMode = "false";
   if (shouldIncludeName)
   {
     includeMode = "true";
-    console.log();
-    const mode = await getAnswer("prefix or suffix?: [p/s]: ", ["prefix", "p", "s", "suffix", ""]);
+    Renderer.write();
+    const mode = await Renderer.getAnswer("prefix or suffix?: [p/s]: ", ["prefix", "p", "s", "suffix", ""]);
     if (mode.startsWith("s")) includeMode = "suffix";
     else includeMode = "prefix";
   }
@@ -77,8 +83,8 @@ async function createFolder(url: string, name: string) {
   // its create new mode 
   mkdirSync(url);
 
-  console.log();
-  const overrideName = await prompt(`override the name (${name})?: `);
+  Renderer.write();
+  const overrideName = await Renderer.prompt(`override the name (${name})?: `);
 
   await writeFileSync(join(url, ".config"), `LAYER_FOLDER=${name}\nLAYER_NAME=${overrideName || name}\nLAYER_INCLUDE=${includeMode}`, { flag: "wx" });
   return true;

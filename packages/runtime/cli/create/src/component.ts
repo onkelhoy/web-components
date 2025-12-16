@@ -6,13 +6,12 @@ import { promisify } from "node:util";
 
 import {
   getArguments,
-  getAnswer,
   getJSON,
   getScope,
   getPackage,
   getName,
   copyFolder
-} from "@papit/util-cli"
+} from "@papit/cli-util"
 import { selectFolder } from "components/select-folder";
 
 const TEMPLATE_PACKAGE = path.join(process.cwd(), ".scripts", "templates", "package");
