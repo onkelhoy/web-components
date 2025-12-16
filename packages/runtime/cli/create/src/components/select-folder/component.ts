@@ -15,45 +15,66 @@ export async function selectFolder(url?: string) {
 
     const session = Renderer.createSession();
     const folders = getFolders(target);
-    let selected = "";
+
     Renderer.write("Current: ", target);
-    folders.forEach((name, index) => Renderer.write(`[${index}]: ${name}`));
-    Renderer.write();
+    // folders.forEach((name, index) => Renderer.write(`[${index}]: ${name}`));
+    // Renderer.write();
     
-    await Renderer.getAnswer("Select folder or create a new", async ans => {
-      const num = Number(ans);
+    const option = await Renderer.option(["Choose Folder", "Create Folder", ...folders]);
 
-      if (!Number.isNaN(num))
-      {
-        if (num >= 0 && num < folders.length)
-        {
-          selected = folders[num];
-          return true;
-        }
+    if (option === 0)
+    {
+      break;
+    }
+    if (option === 1)
+    {
+      const name = await Renderer.prompt("Name of the folder?");
+      const url = join(target, name);
+      const created = await createFolder(url, name);
 
-        return false;
-      }
-
-      const found = folders.find(f => f === ans);
-      if (found) 
-      {
-        selected = found;
-        return true;
-      }
-
-
-      const url = join(info.root, ...selected, ans);
-      const created = await createFolder(url, ans);
       if (created)
       {
-        selected = ans;
-        return true;
+        target = join(target, name);
       }
+    }
+    else 
+    {
+      target = join(target, folders[option - 2]);
+    }
+    // await Renderer.getAnswer("Select folder or create a new", async ans => {
+    //   const num = Number(ans);
 
-      return false;
-    });
+    //   if (!Number.isNaN(num))
+    //   {
+    //     if (num >= 0 && num < folders.length)
+    //     {
+    //       selected = folders[num];
+    //       return true;
+    //     }
 
-    target = join(target, selected);
+    //     return false;
+    //   }
+
+    //   const found = folders.find(f => f === ans);
+    //   if (found) 
+    //   {
+    //     selected = found;
+    //     return true;
+    //   }
+
+
+    //   const url = join(info.root, ...selected, ans);
+    //   const created = await createFolder(url, ans);
+    //   if (created)
+    //   {
+    //     selected = ans;
+    //     return true;
+    //   }
+
+    //   return false;
+    // });
+
+    // target = join(target, selected);
     Renderer.clearSession(session);
   }
 }

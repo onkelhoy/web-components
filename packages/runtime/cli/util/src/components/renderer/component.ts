@@ -7,15 +7,11 @@ export class Renderer {
 
   static write(...values: string[]) {
     const value = values.join(" ");
-    
-    this.lines++;
     this.printLine(value);
   }
 
   static error(...values: string[]) {
     const value = values.join(" ");
-
-    this.lines++;
     this.printLine(value, "error");
   }
 
@@ -46,7 +42,7 @@ export class Renderer {
   private static clearLastLines(n: number) {
     if (n <= 0) return;
 
-    this.lines = Math.max(Math.min(n, this.lines), 0);
+    this.lines = Math.max(this.lines - n, 0);
 
     for (let i = 0; i < n; i++) {
       process.stdout.write('\x1b[2K'); // clear current line
@@ -64,7 +60,6 @@ export class Renderer {
 
       this.write(promptText); // -> line 1
       this.print("\r\x1b[2K> "); 
-      this.lines++;
 
       const onKeypress = (str: string, key: any) => {
         if (key.ctrl && key.name === "c" || str === "\x04" || key.ctrl && key.name === "d") {
@@ -123,15 +118,34 @@ export class Renderer {
   }
 
   static async option(options: string[], promptText = "Pick your option (arrow up and arrow down + enter)") {
-    return new Promise<string>((resolve, reject) => {
+    return new Promise<number>((resolve, reject) => {
       let input = "";
       
       readline.emitKeypressEvents(process.stdin);
       if (process.stdin.isTTY) process.stdin.setRawMode(true);
       
       this.write(promptText);
+      this.write();
+      this.createSession();
+
+      function printoptions(clear = true) {
+        if (clear) Renderer.clearSession();
+        for (let i=0; i<options.length; i++)
+        {
+          const str = `${i+1}) ${options[i]}`
+          if (i === index)
+          {
+            Renderer.write(`-> ${str}`)
+          }
+          else 
+          {
+            Renderer.write(str);
+          }
+        }
+      }
       
-      const session = this.createSession();
+      let index = 0;
+      printoptions(false);
 
       const onKeypress = (str: string, key: any) => {
         if (key.ctrl && key.name === "c" || str === "\x04" || key.ctrl && key.name === "d") {
@@ -145,11 +159,22 @@ export class Renderer {
           process.stdin.setRawMode(false);
           process.stdin.removeListener("keypress", onKeypress);
           this.write(); // move to next line -> line 3
-          resolve(input);
+          resolve(index);
           return;
         }
 
-        
+        if (/up/i.test(key.name))
+        {
+          index--;
+          if (index < 0) index = options.length - 1;
+          printoptions();
+        }
+        else if (/down/i.test(key.name))
+        {
+          index++;
+          if (index >= options.length) index = 0;
+          printoptions();
+        }
       };
 
       process.stdin.on("keypress", onKeypress);
@@ -188,6 +213,9 @@ export class Renderer {
     {
       process.stdout.write(value);
     }
+
+    const lineCount = value.split("\n").length; // count number of actual printed lines
+    this.lines += Math.max(lineCount - 1, 0);
   }
 
   static printLine(value: string = "", type: "info"|"error" = "info") {
