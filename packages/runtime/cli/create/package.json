@@ -1,5 +1,5 @@
 {
-  "name": "@papit/cli-create",
+  "name": "@papit/create-cli",
   "description": "",
   "version": "0.0.1",
   "scripts": {
@@ -46,8 +46,11 @@
   "engines": {
     "node": ">=18"
   },
+  "bin": {
+    "create-cli": "./lib/bundle.js"
+  },
   "dependencies": {
-    "@papit/cli-util": "0.0.1"
+    "@papit/util-cli": "0.0.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

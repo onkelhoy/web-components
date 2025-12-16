@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2018",
+    "target": "ES2020",
     "module": "esnext",
     "moduleResolution": "node",
     "noEmitOnError": true,
@@ -15,7 +15,6 @@
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
-    
     "outDir": "lib",
     "sourceMap": true,
     "inlineSources": true,
@@ -27,7 +26,9 @@
     "resolveJsonModule": true,
     "baseUrl": "src",
     "paths": {
-      "@papit/cli-util": ["./index"],
+      "@papit/cli-util": [
+        "./index"
+      ],
     }
   },
   "include": [
