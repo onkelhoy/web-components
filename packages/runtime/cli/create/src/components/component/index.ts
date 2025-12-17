@@ -5,9 +5,9 @@ import {
   getPackageInfo,
   getConfig,
 } from "@papit/cli-util"
-import { getFolders } from "components/select-folder";
+import { getFolders } from "components/util";
 
-export async function runner() {
+export async function runner(scriptdir: string) {
 
   const info = getPackageInfo();
   const config = getConfig(path.join(info.local, ".config"));
@@ -18,7 +18,7 @@ export async function runner() {
     process.exit();
   }
 
-  const templates = getFolders(path.resolve(info.script, "../templates"));
+  const templates = getFolders(path.join(scriptdir, "asset/component-templates"));
   let templateIndex = templates.findIndex(f => f === config.TEMPLATE_TYPE);
 
   if (templateIndex < 0)

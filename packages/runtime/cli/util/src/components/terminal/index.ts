@@ -1,2 +1,2 @@
 // exports
-export * from "./component";
+export * from "./terminal";

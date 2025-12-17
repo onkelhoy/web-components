@@ -1,4 +1,4 @@
-import path from "node:path";
+import path, { join } from "node:path";
 import { exec } from "node:child_process";
 import { promisify } from "node:util";
 
@@ -12,12 +12,14 @@ import {
   getPackageInfo,
   type Lockfile,
   getConfig,
+  getScriptScope,
 } from "@papit/cli-util"
-import { getFolders, selectFolder } from "components/select-folder";
+import { getFolders, selectFolder } from "components/util";
 
 const execAsync = promisify(exec);
 
-export async function runner() {
+export async function runner(scriptdir: string) {
+  const session = Terminal.createSession();
 
   const info = getPackageInfo();
   const scope = getScope();
@@ -26,6 +28,13 @@ export async function runner() {
     scope,
   });
 
+  const config = getConfig(path.join(folder, ".config"));
+  if (!config)
+  {
+    Terminal.error("could not find .config");
+    process.exit();
+  }
+
   let lockfile = getJSON<Lockfile>(path.join(info.root, "package-lock.json"));
   if (lockfile === null)
   {
@@ -33,12 +42,12 @@ export async function runner() {
     lockfile = getJSON<Lockfile>(path.join(info.root, "package-lock.json"));
   }
 
-  Terminal.clearSession(); // this will also create session
+  Terminal.clearSession(session); // this will also create session
   let name: ReturnType<typeof getName> = undefined;
   while (true)
   {
     Terminal.clearSession();
-    const input = await Terminal.prompt("package name");
+    const input = await Terminal.prompt("name", true);
     name = getName(input);
 
     if (!name) 
@@ -57,27 +66,31 @@ export async function runner() {
   }
 
   Terminal.clearSession();
+
+  const destination = join(folder, name.safe);
+
   
   const fullName = `${scope}/${name.package}`;
-  Terminal.write()
-  Terminal.write("full name:", fullName);
-  Terminal.write("component:", name.component);
-  Terminal.write("package:", name.package);
-  Terminal.write("safe:", name.safe);
-  Terminal.write()
+  const description = await Terminal.prompt("Description");
+  Terminal.clearSession();
+
+  const template = await Terminal.option(getFolders(path.join(scriptdir, "asset/package-templates/")));
+  Terminal.clearSession();
+
   
-  const config = getConfig(path.join(folder, ".config"));
-  if (!config)
+
+  Terminal.write(`${fullName} created`);
+
+  const npminstall = await Terminal.confirm("install package");
+  if (npminstall)
   {
-    Terminal.error("could not find .config");
-    process.exit();
+    await execAsync('npm install');
+    Terminal.clearSession();
   }
 
-  const description = await Terminal.prompt("Description");
-
-  Terminal.write()
-  const template = await Terminal.option(getFolders(path.join(info.script, "asset/package-templates/")));
-
-
-  // Terminal.clearSession();
+  const commit = await Terminal.confirm("git commit");
+  if (commit)
+  {
+    await execAsync(`git add `);
+  }
 }

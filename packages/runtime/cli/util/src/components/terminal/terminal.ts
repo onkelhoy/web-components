@@ -1,6 +1,19 @@
 // import statements 
 import readline from "node:readline";
 
+const originalStdoutWrite = process.stdout.write.bind(process.stdout);
+const originalStderrWrite = process.stderr.write.bind(process.stderr);
+
+process.stdout.write = (chunk: any, encoding?: any, cb?: any) => {
+  Terminal.track(chunk.toString());
+  return originalStdoutWrite(chunk, encoding, cb);
+};
+
+process.stderr.write = (chunk: any, encoding?: any, cb?: any) => {
+  Terminal.track(chunk.toString());
+  return originalStderrWrite(chunk, encoding, cb);
+};
+
 export class Terminal {
   static lines: number = 0;
   private static session: number | null = null;
@@ -24,7 +37,9 @@ export class Terminal {
     {
       process.stdout.write(value);
     }
+  }
 
+  static track(value: string) {
     // Count newlines in the string
     const newlineCount = (value.match(/\n/g) || []).length;
     this.lines += newlineCount;
@@ -40,10 +55,11 @@ export class Terminal {
 
     for (let i = start; i < e; i++)
     {
-      process.stdout.write('\x1b[2K');
-      process.stdout.write('\x1b[1A');
+      process.stdout.write('\x1b[2K'); // clear entire line
+      process.stdout.write('\x1b[1A'); // move cursor up one line
     }
 
+    process.stdout.write('\x1b[2K');
     process.stdout.write('\r');
   }
 
@@ -67,15 +83,21 @@ export class Terminal {
     this.createSession();
   }
 
-  static async prompt(promptText: string): Promise<string> {
+  static async prompt(promptText: string, inline?: boolean): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       let input = "";
 
       readline.emitKeypressEvents(process.stdin);
       if (process.stdin.isTTY) process.stdin.setRawMode(true);
 
-      this.write(promptText); // -> line 1
-      this.print("\r\x1b[2K> ");
+      if (!inline) {
+        this.write(promptText); // -> line 1
+        this.print("\r\x1b[2K> ");
+      }
+      else 
+      {
+        this.print(promptText + ": ");
+      }
 
       const onKeypress = (str: string, key: any) => {
         if (key.ctrl && key.name === "c" || str === "\x04" || key.ctrl && key.name === "d")
@@ -90,7 +112,7 @@ export class Terminal {
         {
           process.stdin.setRawMode(false);
           process.stdin.removeListener("keypress", onKeypress);
-          this.write();
+          this.print("\n");
           resolve(input);
           return;
         }
@@ -104,18 +126,25 @@ export class Terminal {
         }
 
         // redraw current line in-place
-        this.print(`\r\x1b[2K> ${input}`);
+        if (!inline) 
+        {
+          this.print(`\r\x1b[2K> ${input}`);
+        }
+        else 
+        {
+          this.print(`\r\x1b[2K${promptText}: ${input}`);
+        }
       };
 
       process.stdin.on("keypress", onKeypress);
     });
   }
 
-  static async getAnswer(question: string, acceptables: string[]): Promise<string>;
-  static async getAnswer(question: string, acceptables: ((answer: string) => Promise<boolean>)): Promise<string>;
-  static async getAnswer(question: string, acceptables: string[] | ((answer: string) => Promise<boolean>)) {
+  static async getAnswer(question: string, acceptables: string[], inline?: boolean): Promise<string>;
+  static async getAnswer(question: string, acceptables: ((answer: string) => Promise<boolean>), inline?: boolean): Promise<string>;
+  static async getAnswer(question: string, acceptables: string[] | ((answer: string) => Promise<boolean>), inline?: boolean) {
     this.createSession();
-    let answer = await this.prompt(question);
+    let answer = await this.prompt(question, inline);
 
     while (
       (Array.isArray(acceptables) && !acceptables.includes(answer)) ||
@@ -130,7 +159,7 @@ export class Terminal {
       {
         this.write("answer did not pass validation, try again"); // this will increase lines by 1 
       }
-      answer = await this.prompt(question); // this will increase lines by 3
+      answer = await this.prompt(question, inline); // this will increase lines by 3
     }
 
     this.closeSession();
@@ -139,11 +168,12 @@ export class Terminal {
 
   static async option(options: string[], promptText = "↑↓ select • Enter confirm") {
     return new Promise<number>((resolve, reject) => {
-      let input = "";
-
       readline.emitKeypressEvents(process.stdin);
       if (process.stdin.isTTY) process.stdin.setRawMode(true);
+      const session = this.createSession();
 
+      this.write();
+      this.write(promptText);
       this.write();
       this.createSession();
 
@@ -155,23 +185,22 @@ export class Terminal {
           const prefix = i === index ? "● " : "○";
           Terminal.write(`${prefix} ${options[i]}`);
         }
-
-        Terminal.write();
-        Terminal.write(promptText);
       }
 
       let index = 0;
       printoptions(false);
 
       function handleKeydown(str: string, key: any) {
-        if (key.ctrl && key.name === "c" || str === "\x04" || key.ctrl && key.name === "d" || key.name === "return")
+
+        const enter = /return/i.test(key.name) || /space/i.test(key.name);
+        if (key.ctrl && key.name === "c" || str === "\x04" || key.ctrl && key.name === "d" || enter)
         {
           process.stdin.setRawMode(false);
           process.stdin.removeListener("keypress", handleKeydown);
 
-          if (key.name === "return")
+          if (enter)
           {
-            Terminal.write(); // move to next line -> line 3
+            Terminal.clearSession(session);
             resolve(index);
             return;
           }
@@ -180,13 +209,13 @@ export class Terminal {
           process.exit();
         }
 
-        if (/up/i.test(key.name))
+        if (/up/i.test(key.name) || key.shift && /tab/i.test(key.name))
         {
           index--;
           if (index < 0) index = options.length - 1;
           printoptions();
         }
-        else if (/down/i.test(key.name))
+        else if (/down/i.test(key.name) || /tab/i.test(key.name))
         {
           index++;
           if (index >= options.length) index = 0;
@@ -199,25 +228,10 @@ export class Terminal {
   }
 
   static async confirm(question: string, defaultValue = false) {
-    let answer = defaultValue;
-    await this.getAnswer(question, async ans => {
-      if (ans == "") 
-      {
-        return true;
-      }
+    const options = defaultValue ? ["yes", "no"] : ["no", "yes"];
 
-      const lower = ans.toLowerCase();
-      if (lower.startsWith("y") || lower === "1" || lower.startsWith("t")) 
-      {
-        answer = true;
-      }
-      else
-      {
-        answer = false;
-      }
-      return true;
-    })
+    const answer = await this.option(options, question);
 
-    return answer;
+    return defaultValue ? answer === 0 : answer === 1;
   }
 }

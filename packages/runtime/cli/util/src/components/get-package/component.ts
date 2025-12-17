@@ -1,7 +1,9 @@
-import path from "node:path";
+import path, { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import fs from "node:fs";
 import { Lockfile, Package } from "./types";
+
+import { getConfig } from "components/get-config";
 
 export function getPackage(fullPackageName: string, lockfile: Lockfile): Package | null {
   if (!lockfile) return null;
@@ -31,17 +33,27 @@ function findWorkspaceRoot(startDir: string): string {
 export function getPackageInfo() {
   const local = process.cwd();
 
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
-
-  // get the parent folder of 'lib' if it ends with 'lib'
-  const script = path.basename(__dirname) === 'lib'
-    ? path.dirname(__dirname)
-    : __dirname;
-
   return {
     root: findWorkspaceRoot(local),
     local,
-    script,
+    script: getScriptScope(),
   }
+}
+
+export function getScriptScope(url = import.meta.url) {
+  const __filename = fileURLToPath(url);
+  let __dirname = __filename;
+
+  // get the parent folder of 'lib' if it ends with 'lib'
+  for (let i=0; i<5; i++)
+  {
+    __dirname = dirname(__dirname);
+    const config = getConfig(join(__dirname, ".config"));
+    if (!config) continue;
+    if (!config.PACKAGE_NAME) continue;
+
+    return __dirname;
+  }
+
+  return null;
 }

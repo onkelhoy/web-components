@@ -5,7 +5,7 @@
   "scripts": {
     "build": "bash ./bin/build.sh",
     "watch": "bash ./bin/watch.sh",
-    "start": "bash ./bin/start.sh",
+    "start": "npm run build && node ./lib/bundle.js",
     "publish:manual": "bash ./bin/publish.sh",
     "preversion": "bash ./bin/_utils/preversion.sh",
     "postversion": "bash ./bin/_utils/postversion.sh",
