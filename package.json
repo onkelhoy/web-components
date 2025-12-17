@@ -30,6 +30,7 @@
   "license": "Papit-1.0",
   "licenseFile": "LICENSE",
   "workspaces": [
-    "packages/**/*"
+    "packages/**/*",
+    "!packages/**/asset/**"
   ]
 }

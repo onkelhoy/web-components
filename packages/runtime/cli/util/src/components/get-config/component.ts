@@ -7,15 +7,20 @@ import fs from "node:fs";
  * @returns {ConfigRecord|null} Parsed config content, or `null` if the file does not exist.
  */
 
-type ConfigRecord = Partial<Record<"NAME" | "CLASS_NAME" | "COMPONENT_TYPE" | "LAYER_FOLDER" | "LAYER_NAME" | "LAYER_INCLUDE" | (string & {}), string>>;
+type ConfigRecord = Partial<Record<"NAME" | "CLASS_NAME" | "COMPONENT_TYPE" | "LAYER_FOLDER" | "LAYER_NAME" | "LAYER_INCLUDE" | "IS_LAYER" | (string & {}), string>> & { TEMPLATE_TYPE?: "node"|"web-component"|"game"|(string & {})};
 export function getConfig(filepath: string): ConfigRecord | null {
-  const lines = fs.readFileSync(filepath, "utf-8").split("\n");
-
-  const record: ConfigRecord = {};
-  for (let line of lines) 
-  {
-    const [name, value] = line.split("=");
-    record[name] = value;
+  try {
+    const lines = fs.readFileSync(filepath, "utf-8").split("\n");
+  
+    const record: ConfigRecord = {};
+    for (let line of lines) 
+    {
+      const [name, value] = line.split("=");
+      record[name] = value;
+    }
+    return record;
   }
-  return record;
+  catch {
+    return null;
+  }
 }

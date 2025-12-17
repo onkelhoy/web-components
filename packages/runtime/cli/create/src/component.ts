@@ -2,6 +2,7 @@
 
 import { Terminal } from "@papit/cli-util"
 import { runner as packageRunner } from "./components/package";
+import { runner as componentRunner } from "./components/component";
 
 (async function () {
   Terminal.createSession();
@@ -10,7 +11,9 @@ import { runner as packageRunner } from "./components/package";
 
   switch (option)
   {
+    case 1:
+      return componentRunner();
     default:
-      packageRunner();
+      return packageRunner();
   }
 }())

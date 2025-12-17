@@ -1,5 +1,5 @@
 import path from "node:path";
-import url from "node:url";
+import { fileURLToPath } from "node:url";
 import fs from "node:fs";
 import { Lockfile, Package } from "./types";
 
@@ -31,9 +31,17 @@ function findWorkspaceRoot(startDir: string): string {
 export function getPackageInfo() {
   const local = process.cwd();
 
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+
+  // get the parent folder of 'lib' if it ends with 'lib'
+  const script = path.basename(__dirname) === 'lib'
+    ? path.dirname(__dirname)
+    : __dirname;
+
   return {
     root: findWorkspaceRoot(local),
     local,
-    script: url.fileURLToPath(import.meta.url)
+    script,
   }
 }

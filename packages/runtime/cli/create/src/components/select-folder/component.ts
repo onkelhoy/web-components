@@ -1,9 +1,21 @@
-import { getPackageInfo, Terminal } from "@papit/cli-util";
+import { getConfig, getPackageInfo, Terminal } from "@papit/cli-util";
 import { readdirSync, statSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-function getFolders(dir: string): string[] {
+export function getFolders(dir: string): string[] {
   return readdirSync(dir).filter(name => statSync(join(dir, name)).isDirectory());
+};
+
+function getLayerFolders(dir: string): string[] {
+  return readdirSync(dir).filter(name => {
+    const joined = join(dir, name);
+    if (!statSync(joined).isDirectory()) return false;
+
+    const config = getConfig(join(joined, ".config"));
+    if (config == null) return true; // risky but we want to have "pure" folders
+
+    return config.IS_LAYER || config.LAYER_INCLUDE;
+  });
 };
 
 export async function selectFolder(info: ReturnType<typeof getPackageInfo> & {
@@ -15,7 +27,7 @@ export async function selectFolder(info: ReturnType<typeof getPackageInfo> & {
   {
 
     const session = Terminal.createSession();
-    const folders = getFolders(target);
+    const folders = getLayerFolders(target);
 
     Terminal.write("Current: ", target.replace(info.root, info.scope));
 
@@ -74,6 +86,6 @@ async function createFolder(url: string, name: string) {
   Terminal.write();
   const overrideName = await Terminal.prompt(`override the name (${name})?: `);
 
-  await writeFileSync(join(url, ".config"), `LAYER_FOLDER=${name}\nLAYER_NAME=${overrideName || name}\nLAYER_INCLUDE=${includeMode}`, { flag: "wx" });
+  await writeFileSync(join(url, ".config"), `IS_LAYER=true\nLAYER_FOLDER=${name}\nLAYER_NAME=${overrideName || name}\nLAYER_INCLUDE=${includeMode}`, { flag: "wx" });
   return true;
 }
