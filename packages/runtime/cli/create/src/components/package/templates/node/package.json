@@ -1,21 +1,27 @@
 {
-  "name": "@papit/create",
-  "description": "",
+  "name": "PLACEHOLDER_FULL_NAME",
+  "description": "PLACEHOLDER_DESCRIPTION",
+  "keywords": [
+    "papit",
+    "node",
+    "typescript",
+    "PLACEHOLDER_NAME"
+  ],
   "version": "0.0.1",
   "scripts": {
     "build": "bash ./bin/build.sh",
     "watch": "bash ./bin/watch.sh",
     "start": "bash ./bin/start.sh",
-    "publish:manual": "bash ./bin/publish.sh",
     "preversion": "bash ./bin/_utils/preversion.sh",
     "postversion": "bash ./bin/_utils/postversion.sh",
     "component": "npm run create --include-workspace-root=true --workspace=$(npm prefix) -- --component --location=$(pwd)",
-    "test": "node --test"
+    "test": "npx playwright test -c tests/playwright.config.ts"
   },
   "main": "./lib/bundle.js",
   "types": "./lib/types/index.d.ts",
   "type": "module",
   "files": [
+    "asset/",
     "lib/",
     ".config"
   ],
@@ -25,40 +31,36 @@
       "types": "./lib/types/index.d.ts"
     }
   },
-  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/runtime/cli/create",
-  "bugs": {
-    "url": "https://github.com/onkelhoy/web-components/issues"
-  },
-  "author": "Henry",
+  "author": "PLACEHOLDER_GITNAME",
   "private": false,
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "license": "Papit-1.0",
+  "license": "PLACEHOLDER_PROJECTLICENSE",
+  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/PLACEHOLDER_LAYER_FOLDER/PLACEHOLDER_NAME",
+  "bugs": {
+    "url": "https://github.com/onkelhoy/web-components/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/onkelhoy/web-components.git",
-    "directory": "packages/runtime/cli/create"
+    "url": "PLACEHOLDER_GITHUB_REPO.git",
+    "directory": "packages/PLACEHOLDER_LAYER_FOLDER/PLACEHOLDER_NAME"
   },
   "sideEffects": true,
   "engines": {
     "node": ">=18"
   },
-  "bin": {
-    "create": "./lib/bundle.js"
-  },
-  "dependencies": {
-    "@papit/cli-util": "0.0.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "^22.10.2",
     "esbuild": "^0.17.18",
     "typescript": "^5.7.2",
     "chokidar": "^3.6.0"
   },
-  "keywords": [
-    "node",
-    "typescript"
+  "browserslist": [
+    "defaults",
+    "not IE 11",
+    "not dead"
   ]
 }
