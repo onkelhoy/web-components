@@ -1,19 +1,19 @@
-# PLACEHOLDER_FULL_NAME
+# VARIABLE_FULL_NAME
 
-PLACEHOLDER_DESCRIPTION
+VARIABLE_DESCRIPTION
 
 ---
 
-![Type](https://img.shields.io/badge/Type-PLACEHOLDER_LAYER_NAME-orange)
-[![Tests](PLACEHOLDER_GITHUB_REPO/actions/workflows/pull-request.yml/badge.svg)](PLACEHOLDER_GITHUB_REPO/actions/workflows/pull-request.yml)
-[![NPM version](https://img.shields.io/npm/v/PLACEHOLDER_FULL_NAME.svg?logo=npm)](https://www.npmjs.com/package/PLACEHOLDER_FULL_NAME)
+![Type](https://img.shields.io/badge/Type-VARIABLE_LAYER_NAME-orange)
+[![Tests](VARIABLE_GITHUB_REPO/actions/workflows/pull-request.yml/badge.svg)](VARIABLE_GITHUB_REPO/actions/workflows/pull-request.yml)
+[![NPM version](https://img.shields.io/npm/v/VARIABLE_FULL_NAME.svg?logo=npm)](https://www.npmjs.com/package/VARIABLE_FULL_NAME)
 
 ---
 
 ## installation
 
 ```bash
-npm install PLACEHOLDER_FULL_NAME
+npm install VARIABLE_FULL_NAME
 ```
 
 ## Contributing

@@ -1,11 +1,11 @@
 {
-  "name": "PLACEHOLDER_FULL_NAME",
-  "description": "PLACEHOLDER_DESCRIPTION",
+  "name": "VARIABLE_FULL_NAME",
+  "description": "VARIABLE_DESCRIPTION",
   "keywords": [
     "papit",
     "web-component",
     "typescript",
-    "PLACEHOLDER_NAME"
+    "VARIABLE_NAME"
   ],
   "version": "0.0.1",
   "scripts": {
@@ -38,21 +38,21 @@
       "types": "./lib/types/index.d.ts"
     }
   },
-  "author": "PLACEHOLDER_GITNAME",
+  "author": "VARIABLE_USER",
   "private": false,
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "license": "PLACEHOLDER_PROJECTLICENSE",
-  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/PLACEHOLDER_LAYER_FOLDER/PLACEHOLDER_NAME",
+  "license": "VARIABLE_PROJECTLICENSE",
+  "homepage": "VARIABLE_GITHUB_REPO/tree/main/VARIABLE_LOCAL_DESTINATION",
   "bugs": {
-    "url": "https://github.com/onkelhoy/web-components/issues"
+    "url": "VARIABLE_GITHUB_REPO/issues"
   },
   "repository": {
     "type": "git",
-    "url": "PLACEHOLDER_GITHUB_REPO.git",
-    "directory": "packages/PLACEHOLDER_LAYER_FOLDER/PLACEHOLDER_NAME"
+    "url": "VARIABLE_GITHUB_REPO.git",
+    "directory": "VARIABLE_LOCAL_DESTINATION"
   },
   "sideEffects": true,
   "engines": {
