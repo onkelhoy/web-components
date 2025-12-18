@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import { getArguments, getScriptScope, Terminal } from "@papit/cli-util"
-import { runner as packageRunner } from "./components/package";
-import { runner as componentRunner } from "./components/component";
+import { packageRunner } from "components/runners/package";
+import { componentRunner } from "components/runners/component";
 
 (async function () {
   const args = getArguments(["verbose", "install", "commit", "agree"]);

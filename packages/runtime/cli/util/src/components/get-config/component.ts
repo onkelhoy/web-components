@@ -7,7 +7,7 @@ import fs from "node:fs";
  * @returns {ConfigRecord|null} Parsed config content, or `null` if the file does not exist.
  */
 
-type ConfigNames = "NAME" | "CLASS_NAME" | "COMPONENT_TYPE" | "LAYER_FOLDER" | "LAYER_NAME" | "IS_LAYER" | "CAN_PUBLISH" | "FULL_NAME" | "PACKAGE_NAME";
+type ConfigNames = "NAME" | "CLASS_NAME" | "COMPONENT_TYPE" | "LAYER_FOLDER" | "LAYER_NAME" | "IS_LAYER" | "CAN_PUBLISH" | "FULL_NAME" | "PACKAGE_NAME" | "HTML_PREFIX";
 type ConfigRecord =
   Partial<Record<ConfigNames | (string & {}), string>>
   & {
@@ -22,9 +22,14 @@ export function getConfig(filepath: string): ConfigRecord | null {
     const record: ConfigRecord = {};
     for (let line of lines) 
     {
-      if (line.startsWith("#")) continue;
+      const trimmed = line.trim();
+      if (trimmed.startsWith("#")) 
+      {
+        record[`COMMENT_${trimmed.slice(1).trim()}`]
+        continue;
+      };
 
-      const [name, value] = line.split("=");
+      const [name, value] = trimmed.split("=");
       record[name] = value;
     }
     return record;

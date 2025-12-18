@@ -22,14 +22,18 @@
 
 type Arguments = { flags: Record<string, string | undefined>, values: string[] };
 export function getArguments(islands:string[] = []) {
+  return extractArguments(process.argv, islands);
+}
+
+export function extractArguments(values: string[], islands: string[]) {
   const _arguments:Arguments = {
     flags: {},
     values: [],
   };
   let prevWasFlag = null;
-  for (let i=2; i<process.argv.length; i++)
+  for (let i=2; i<values.length; i++)
   {
-    const arg = process.argv[i];
+    const arg = values[i];
     let match = arg.match(/^(?<flag>--?)(?<name>[^=]+)(=(?<value>.*))?$/);
     if (!match)
     {

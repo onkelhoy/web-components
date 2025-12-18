@@ -7,9 +7,9 @@ import path from "node:path";
  *
  * @param {string} src - Source folder path
  * @param {string} dest - Destination folder path
- * @param {(content: string) => string | Promise<string>} [parser] - Optional function to transform file content
+ * @param {(content: string, src: string, destination: string) => false | string | Promise<string|false>} [parser] - Optional function to transform file content, use false to filter out
  */
-export async function copyFolder(src:string, dest: string, parser: (content: string) => string | Promise<string>) {
+export async function copyFolder(src:string, dest: string, parser: (content: string, src: string, destination: string) => false | string | Promise<string|false>) {
   // Ensure destination exists
   await fs.mkdir(dest, { recursive: true });
 
@@ -21,14 +21,20 @@ export async function copyFolder(src:string, dest: string, parser: (content: str
 
     if (entry.isDirectory()) {
       await copyFolder(srcPath, destPath, parser); // recursive copy
-    } else if (entry.isFile()) {
+      continue;
+    } 
+    
+    // case file 
+    if (typeof parser !== "function") {
       await fs.copyFile(srcPath, destPath);
-
-      if (typeof parser === "function") {
-        const content = await fs.readFile(destPath, "utf-8");
-        const newContent = await parser(content);
-        await fs.writeFile(destPath, newContent, "utf-8");
-      }
+      continue;
     }
+
+    const content = await fs.readFile(srcPath, "utf-8");
+    const parsed = await parser(content, srcPath, destPath);
+    if (parsed === false) continue;
+    
+    await fs.copyFile(srcPath, destPath);
+    await fs.writeFile(destPath, parsed, "utf-8");
   }
 }

@@ -16,7 +16,7 @@ process.stderr.write = (chunk: any, encoding?: any, cb?: any) => {
 
 export class Terminal {
   static lines: number = 0;
-  private static session: number | null = null;
+  static session: number | null = null;
 
   static write(...values: string[]) {
     const value = values.join(" ");
@@ -50,8 +50,6 @@ export class Terminal {
   }
 
   static clear(start: number = 0, end?: number) {
-    if (process.env.verbose) return;
-
     const e = end ?? this.lines;
     this.lines = start;
 
@@ -146,6 +144,7 @@ export class Terminal {
   static async getAnswer(question: string, acceptables: string[], inline?: boolean): Promise<string>;
   static async getAnswer(question: string, acceptables: ((answer: string) => Promise<boolean>), inline?: boolean): Promise<string>;
   static async getAnswer(question: string, acceptables: string[] | ((answer: string) => Promise<boolean>), inline?: boolean) {
+    const previousSession = this.session;
     this.createSession();
     let answer = await this.prompt(question, inline);
 
@@ -165,7 +164,7 @@ export class Terminal {
       answer = await this.prompt(question, inline); // this will increase lines by 3
     }
 
-    this.closeSession();
+    this.session = previousSession;
     return answer;
   }
 
@@ -173,16 +172,14 @@ export class Terminal {
     return new Promise<number>((resolve, reject) => {
       readline.emitKeypressEvents(process.stdin);
       if (process.stdin.isTTY) process.stdin.setRawMode(true);
+      const previousSession = this.session;
       const session = this.createSession();
 
       this.write(promptText);
       this.createSession();
 
       function printoptions(clear = true) {
-        const verbose = process.env.verbose;
-        delete process.env.verbose;
         if (clear) Terminal.clearSession();
-        process.env.verbose = verbose;
 
         for (let i = 0; i < options.length; i++)
         {
@@ -205,6 +202,7 @@ export class Terminal {
           if (enter)
           {
             Terminal.clearSession(session);
+            Terminal.session = previousSession;
             resolve(index);
             return;
           }

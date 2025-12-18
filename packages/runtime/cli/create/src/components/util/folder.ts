@@ -21,11 +21,12 @@ function getLayerFolders(dir: string): string[] {
 export async function selectFolder(info: ReturnType<typeof getPackageInfo> & {
   scope: string;
 }, args: ReturnType<typeof getArguments>) {
-
+  const previousSession = Terminal.session;
+  const selectFolderSession = Terminal.createSession();
   let target = join(info.root, "packages");
+
   while (target)
   {
-
     const session = Terminal.createSession();
     const folders = getLayerFolders(target);
 
@@ -56,6 +57,10 @@ export async function selectFolder(info: ReturnType<typeof getPackageInfo> & {
     Terminal.clearSession(session);
   }
 
+  Terminal.clearSession(selectFolderSession);
+
+  Terminal.session = previousSession;
+
   return target;
 }
 
@@ -63,23 +68,25 @@ export async function selectFolder(info: ReturnType<typeof getPackageInfo> & {
 async function createFolder(url: string, name: string, args: ReturnType<typeof getArguments>) {
   Terminal.write(`[${url}]`);
   Terminal.write();
-  const shouldCreate = args.flags.agree || await Terminal.confirm("confirm folder creation");
+  Terminal.createSession();
+  const shouldCreate = args.flags.agree || await Terminal.confirm("confirm folder creation", true);
+  Terminal.clearSession();
 
   if (!shouldCreate) return false;
 
-  Terminal.write();
-
   const prefixSuffix = ["false", "prefix", "suffix"];
   const ps_index = await Terminal.option(prefixSuffix, "include folder in package names?");
+  Terminal.clearSession();
 
   const includeMode = prefixSuffix[ps_index];
 
+
+  const overrideName = await Terminal.prompt(`use "${name}" or override?`);
+  Terminal.clearSession();
+
   // its create new mode 
   mkdirSync(url);
-
-  Terminal.write();
-  const overrideName = await Terminal.prompt(`override the name (${name})?: `);
-
   await writeFileSync(join(url, ".config"), `IS_LAYER=true\nLAYER_FOLDER=${name}\nLAYER_NAME=${overrideName || name}\nLAYER_INCLUDE=${includeMode}`, { flag: "wx" });
+
   return true;
 }
