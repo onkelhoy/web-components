@@ -16,7 +16,7 @@ import {
   type Package,
   getArguments,
 } from "@papit/cli-util"
-import { getFolders, selectFolder } from "components/util";
+import { createFolderConfig, getFolders, selectFolder } from "components/util";
 import { componentRunner } from "./component";
 
 const execAsync = promisify(exec);
@@ -26,6 +26,12 @@ export async function packageRunner(scriptdir: string, args: ReturnType<typeof g
 
   const info = getPackageInfo();
   const scope = getScope();
+
+  const layer = await selectFolder({
+    ...info,
+    scope,
+  }, args);
+
 
   const templateFolders = getFolders(path.join(scriptdir, "asset/package-templates/"));
 
@@ -69,28 +75,24 @@ export async function packageRunner(scriptdir: string, args: ReturnType<typeof g
       else 
       {
         Terminal.clearSession();
-        Terminal.write("you must use a html-prefix for web-components")
+        Terminal.warn("you must use a html-prefix for web-components")
       }
     }
     Terminal.clearSession();
   }
-
-  const layer = await selectFolder({
-    ...info,
-    scope,
-  }, args);
 
   let localFolder = layer.replace(info.root, '');
   if (localFolder.startsWith("/"))
     localFolder = localFolder.slice(1);
 
   const layerBasename = path.basename(layer);
-  const layerConfig = getConfig(path.join(layer, ".config"));
+  let layerConfig = getConfig(path.join(layer, ".config"));
 
   if (!layerConfig)
   {
-    Terminal.error("could not find .config");
-    process.exit();
+    Terminal.warn(".config file is missing");
+    await createFolderConfig(layer, layerBasename);
+    layerConfig = getConfig(path.join(layer, ".config"))!;
   }
 
   const rootPackage = getJSON<Package>(path.join(info.root, "package.json"));
@@ -174,7 +176,7 @@ export async function packageRunner(scriptdir: string, args: ReturnType<typeof g
       Terminal.clearSession();
     }
     catch {
-      Terminal.error("❌ Error during install");
+      Terminal.warn("error during install");
     }
   }
   else 
@@ -192,7 +194,7 @@ export async function packageRunner(scriptdir: string, args: ReturnType<typeof g
       Terminal.clearSession();
     } 
     catch {
-      Terminal.error("❌ Error during commit");
+      Terminal.warn("error during commit");
     }
   }
   else 

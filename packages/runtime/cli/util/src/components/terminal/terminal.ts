@@ -18,14 +18,37 @@ export class Terminal {
   static lines: number = 0;
   static session: number | null = null;
 
+  static supportsColor = process.stdout.isTTY;
+
+ static RED = Terminal.supportsColor ? "\x1b[31m" : "";
+ static YELLOW = Terminal.supportsColor ? "\x1b[33m" : "";
+ static RESET = Terminal.supportsColor ? "\x1b[0m" : "";
+
   static write(...values: string[]) {
     const value = values.join(" ");
     this.printLine(value);
   }
 
+  private static semantic(prefix:string, values:string[]) {
+    let value = values.join(" ");
+    const match = value.match(/^(\n)*/);
+
+    let leading = "";
+    if (match)
+    {
+      leading = match[0];
+      value = value.slice(Math.max(0, leading.length * 2 - 1));
+    }
+
+    this.printLine(`${leading}${prefix}${value}`, "error");
+  }
+
+  static warn(...values: string[]) {
+    this.semantic(`🟡${this.supportsColor ? this.RED+" warn"+this.RESET : ""} `, values);
+  }
+  
   static error(...values: string[]) {
-    const value = values.join(" ");
-    this.printLine(value, "error");
+    this.semantic(`🔴${this.supportsColor ? this.RED+" error"+this.RESET : ""} `, values);
   }
 
   static print(value: string, type: "info" | "error" = "info") {
@@ -61,6 +84,16 @@ export class Terminal {
 
     process.stdout.write('\x1b[2K');
     process.stdout.write('\r');
+  }
+
+  static async sessionBlock<T = any>(callback: (session: number) => Promise<T>): Promise<T> {
+    const previousSession = this.session;
+    const session = this.createSession();
+    const ans = await callback(session);
+    this.clearSession();
+    this.session = previousSession;
+
+    return ans;
   }
 
   static createSession() {
@@ -105,7 +138,7 @@ export class Terminal {
         {
           process.stdin.setRawMode(false);
           process.stdin.removeListener("keypress", onKeypress);
-          this.write("\ncancelled");
+          this.error("\ncancelled");
           process.exit();
         }
 
@@ -144,36 +177,33 @@ export class Terminal {
   static async getAnswer(question: string, acceptables: string[], inline?: boolean): Promise<string>;
   static async getAnswer(question: string, acceptables: ((answer: string) => Promise<boolean>), inline?: boolean): Promise<string>;
   static async getAnswer(question: string, acceptables: string[] | ((answer: string) => Promise<boolean>), inline?: boolean) {
-    const previousSession = this.session;
-    this.createSession();
-    let answer = await this.prompt(question, inline);
-
-    while (
-      (Array.isArray(acceptables) && !acceptables.includes(answer)) ||
-      (typeof acceptables === "function" && !await acceptables(answer))
-    )
-    {
-      this.clearSession(); // this will restart session 
-      if (Array.isArray(acceptables))
+    return Terminal.sessionBlock(async () => { 
+      let answer = await this.prompt(question, inline);
+  
+      while (
+        (Array.isArray(acceptables) && !acceptables.includes(answer)) ||
+        (typeof acceptables === "function" && !await acceptables(answer))
+      )
       {
-        this.write(`acceptable answer: [${acceptables.join(", ")}]`); // this will increase lines by 1 
-      } else
-      {
-        this.write("answer did not pass validation, try again"); // this will increase lines by 1 
+        this.clearSession(); // this will restart session 
+        if (Array.isArray(acceptables))
+        {
+          this.warn(`acceptable answer: [${acceptables.join(", ")}]`); // this will increase lines by 1 
+        } else
+        {
+          this.warn("answer did not pass validation, try again"); // this will increase lines by 1 
+        }
+        answer = await this.prompt(question, inline); // this will increase lines by 3
       }
-      answer = await this.prompt(question, inline); // this will increase lines by 3
-    }
-
-    this.session = previousSession;
-    return answer;
+  
+      return answer;
+    });
   }
 
   static async option(options: string[], promptText = "↑↓ select • Enter confirm", currentMarker = "●", defaultMarker = "◯") {
-    return new Promise<number>((resolve, reject) => {
+    return Terminal.sessionBlock(async () => new Promise<number>((resolve, reject) => {
       readline.emitKeypressEvents(process.stdin);
       if (process.stdin.isTTY) process.stdin.setRawMode(true);
-      const previousSession = this.session;
-      const session = this.createSession();
 
       this.write(promptText);
       this.createSession();
@@ -201,13 +231,11 @@ export class Terminal {
 
           if (enter)
           {
-            Terminal.clearSession(session);
-            Terminal.session = previousSession;
             resolve(index);
             return;
           }
 
-          Terminal.write("\ncancelled");
+          Terminal.error("\ncancelled");
           process.exit();
         }
 
@@ -226,7 +254,7 @@ export class Terminal {
       };
 
       process.stdin.on("keypress", handleKeydown);
-    });
+    }));
   }
 
   static async confirm(question: string, defaultValue = false) {

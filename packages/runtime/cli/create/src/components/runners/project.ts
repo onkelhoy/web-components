@@ -11,7 +11,6 @@ import { getFolders } from "components/util";
 export async function runner(scriptdir: string, args: ReturnType<typeof getArguments>, packageLocation?: string) {
 
   const info = getPackageInfo(packageLocation);
-  console.log(info, packageLocation)
   const config = getConfig(path.join(info.local, ".config"));
 
   if (config == null)

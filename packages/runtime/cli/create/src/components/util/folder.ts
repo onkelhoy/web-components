@@ -21,47 +21,43 @@ function getLayerFolders(dir: string): string[] {
 export async function selectFolder(info: ReturnType<typeof getPackageInfo> & {
   scope: string;
 }, args: ReturnType<typeof getArguments>) {
-  const previousSession = Terminal.session;
-  const selectFolderSession = Terminal.createSession();
-  let target = join(info.root, "packages");
-
-  while (target)
-  {
-    const session = Terminal.createSession();
-    const folders = getLayerFolders(target);
-
-    Terminal.write("Current: ", target.replace(info.root, info.scope));
-    Terminal.write();
-
-    const option = await Terminal.option(["Choose Folder", "Create Folder", ...folders]);
-
-    if (option === 0)
+  return Terminal.sessionBlock(async () => {    
+    let target = join(info.root, "packages");
+  
+    while (target)
     {
-      break;
-    }
-    if (option === 1)
-    {
-      const name = await Terminal.prompt("Name of the folder?");
-      const url = join(target, name);
-      const created = await createFolder(url, name, args);
-
-      if (created)
+      const session = Terminal.createSession();
+      const folders = getLayerFolders(target);
+  
+      Terminal.write("Current: ", target.replace(info.root, info.scope));
+      Terminal.write();
+  
+      const option = await Terminal.option(["Choose Folder", "Create Folder", ...folders]);
+  
+      if (option === 0)
       {
-        target = join(target, name);
+        break;
       }
+      if (option === 1)
+      {
+        const name = await Terminal.prompt("Name of the folder?");
+        const url = join(target, name);
+        const created = await createFolder(url, name, args);
+  
+        if (created)
+        {
+          target = join(target, name);
+        }
+      }
+      else 
+      {
+        target = join(target, folders[option - 2]);
+      }
+      Terminal.clearSession(session);
     }
-    else 
-    {
-      target = join(target, folders[option - 2]);
-    }
-    Terminal.clearSession(session);
-  }
-
-  Terminal.clearSession(selectFolderSession);
-
-  Terminal.session = previousSession;
-
-  return target;
+  
+    return target;
+  });
 }
 
 
@@ -74,19 +70,23 @@ async function createFolder(url: string, name: string, args: ReturnType<typeof g
 
   if (!shouldCreate) return false;
 
-  const prefixSuffix = ["false", "prefix", "suffix"];
-  const ps_index = await Terminal.option(prefixSuffix, "include folder in package names?");
-  Terminal.clearSession();
-
-  const includeMode = prefixSuffix[ps_index];
-
-
-  const overrideName = await Terminal.prompt(`use "${name}" or override?`);
-  Terminal.clearSession();
-
   // its create new mode 
   mkdirSync(url);
-  await writeFileSync(join(url, ".config"), `IS_LAYER=true\nLAYER_FOLDER=${name}\nLAYER_NAME=${overrideName || name}\nLAYER_INCLUDE=${includeMode}`, { flag: "wx" });
+
+  await createFolderConfig(url, name);
 
   return true;
+}
+
+export async function createFolderConfig(url: string, name: string) {
+  return Terminal.sessionBlock(async () => {
+    const overrideName = await Terminal.prompt(`use "${name}" or override?`);
+    Terminal.clearSession();
+  
+    const prefixSuffix = ["false", "prefix", "suffix"];
+    const ps_index = await Terminal.option(prefixSuffix, `include "${overrideName}" in packages`);
+    const includeMode = prefixSuffix[ps_index];
+  
+    await writeFileSync(join(url, ".config"), `IS_LAYER=true\nLAYER_FOLDER=${name}\nLAYER_NAME=${overrideName || name}\nLAYER_INCLUDE=${includeMode}`, { flag: "wx" });
+  });
 }

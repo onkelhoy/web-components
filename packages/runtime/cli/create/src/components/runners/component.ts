@@ -73,7 +73,6 @@ export async function componentRunner(scriptdir: string, args: ReturnType<typeof
 
   let htmlPrefix:string|undefined =  args.flags['html-prefix'] ?? packageInfo?.htmlPrefix ?? config.HTML_PREFIX;
   if (htmlPrefix?.trim() === "") htmlPrefix = undefined;
-  console.log({htmlPrefix})
   if (htmlPrefix === undefined && /web-components?/i.test(template))
   {
     const rootConfig = getConfig(path.join(info.root, ".config"));
@@ -173,7 +172,7 @@ export async function componentRunner(scriptdir: string, args: ReturnType<typeof
           }
           catch 
           {
-            Terminal.error(`"git add ${packageConfigLocation}" failed`);
+            Terminal.warn(`"git add ${packageConfigLocation}" failed`);
           }
         }
 
@@ -187,7 +186,6 @@ export async function componentRunner(scriptdir: string, args: ReturnType<typeof
     }
 
     createFolderIfNotExistSync(destParent);
-    console.log("what the hell is HTML_PREFIX", htmlPrefix)
     await inlineCopy(templateFolderSrc, dest);
     if (shouldCommit)
     {
@@ -197,7 +195,7 @@ export async function componentRunner(scriptdir: string, args: ReturnType<typeof
       }
       catch 
       {
-        Terminal.error(`"git add ${destParent}" failed`);
+        Terminal.warn(`"git add ${destParent}" failed`);
       }
     }
   }
