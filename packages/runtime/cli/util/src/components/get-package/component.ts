@@ -30,8 +30,8 @@ function findWorkspaceRoot(startDir: string): string {
 }
 
 
-export function getPackageInfo() {
-  const local = process.cwd();
+export function getPackageInfo(location?: string) {
+  const local = location ?? process.cwd();
 
   return {
     root: findWorkspaceRoot(local),
@@ -45,7 +45,7 @@ export function getScriptScope(url = import.meta.url) {
   let __dirname = __filename;
 
   // get the parent folder of 'lib' if it ends with 'lib'
-  for (let i=0; i<5; i++)
+  for (let i = 0; i < 5; i++)
   {
     __dirname = dirname(__dirname);
     const config = getConfig(join(__dirname, ".config"));

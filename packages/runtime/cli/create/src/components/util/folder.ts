@@ -1,4 +1,4 @@
-import { getConfig, getPackageInfo, Terminal } from "@papit/cli-util";
+import { getArguments, getConfig, getPackageInfo, Terminal } from "@papit/cli-util";
 import { readdirSync, statSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -20,7 +20,7 @@ function getLayerFolders(dir: string): string[] {
 
 export async function selectFolder(info: ReturnType<typeof getPackageInfo> & {
   scope: string;
-}) {
+}, args: ReturnType<typeof getArguments>) {
 
   let target = join(info.root, "packages");
   while (target)
@@ -30,6 +30,7 @@ export async function selectFolder(info: ReturnType<typeof getPackageInfo> & {
     const folders = getLayerFolders(target);
 
     Terminal.write("Current: ", target.replace(info.root, info.scope));
+    Terminal.write();
 
     const option = await Terminal.option(["Choose Folder", "Create Folder", ...folders]);
 
@@ -41,7 +42,7 @@ export async function selectFolder(info: ReturnType<typeof getPackageInfo> & {
     {
       const name = await Terminal.prompt("Name of the folder?");
       const url = join(target, name);
-      const created = await createFolder(url, name);
+      const created = await createFolder(url, name, args);
 
       if (created)
       {
@@ -59,26 +60,19 @@ export async function selectFolder(info: ReturnType<typeof getPackageInfo> & {
 }
 
 
-async function createFolder(url: string, name: string) {
-  Terminal.write("create folder at location");
+async function createFolder(url: string, name: string, args: ReturnType<typeof getArguments>) {
   Terminal.write(`[${url}]`);
   Terminal.write();
-  const shouldCreate = await Terminal.confirm("answer [y/n]: ");
+  const shouldCreate = args.flags.agree || await Terminal.confirm("confirm folder creation");
 
   if (!shouldCreate) return false;
 
   Terminal.write();
-  const shouldIncludeName = await Terminal.confirm("include folder in package names [y/n]: ");
 
-  let includeMode = "false";
-  if (shouldIncludeName)
-  {
-    includeMode = "true";
-    Terminal.write();
-    const mode = await Terminal.getAnswer("prefix or suffix?: [p/s]: ", ["prefix", "p", "s", "suffix", ""]);
-    if (mode.startsWith("s")) includeMode = "suffix";
-    else includeMode = "prefix";
-  }
+  const prefixSuffix = ["false", "prefix", "suffix"];
+  const ps_index = await Terminal.option(prefixSuffix, "include folder in package names?");
+
+  const includeMode = prefixSuffix[ps_index];
 
   // its create new mode 
   mkdirSync(url);

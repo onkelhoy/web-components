@@ -5,9 +5,8 @@ export function getName(name: string) {
   const safe = split.join("-");
 
   return {
-    safe,
-    component: capitalize(split.map(capitalize).join("")),
-    package: safe.toLowerCase(),
+    className: capitalize(split.map(capitalize).join("")),
+    name: safe.toLowerCase(),
   }
 }
 

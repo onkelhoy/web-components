@@ -50,6 +50,8 @@ export class Terminal {
   }
 
   static clear(start: number = 0, end?: number) {
+    if (process.env.verbose) return;
+
     const e = end ?? this.lines;
     this.lines = start;
 
@@ -90,7 +92,8 @@ export class Terminal {
       readline.emitKeypressEvents(process.stdin);
       if (process.stdin.isTTY) process.stdin.setRawMode(true);
 
-      if (!inline) {
+      if (!inline)
+      {
         this.write(promptText); // -> line 1
         this.print("\r\x1b[2K> ");
       }
@@ -166,23 +169,24 @@ export class Terminal {
     return answer;
   }
 
-  static async option(options: string[], promptText = "↑↓ select • Enter confirm") {
+  static async option(options: string[], promptText = "↑↓ select • Enter confirm", currentMarker = "●", defaultMarker = "◯") {
     return new Promise<number>((resolve, reject) => {
       readline.emitKeypressEvents(process.stdin);
       if (process.stdin.isTTY) process.stdin.setRawMode(true);
       const session = this.createSession();
 
-      this.write();
       this.write(promptText);
-      this.write();
       this.createSession();
 
       function printoptions(clear = true) {
+        const verbose = process.env.verbose;
+        delete process.env.verbose;
         if (clear) Terminal.clearSession();
+        process.env.verbose = verbose;
 
         for (let i = 0; i < options.length; i++)
         {
-          const prefix = i === index ? "● " : "○";
+          const prefix = i === index ? currentMarker : defaultMarker;
           Terminal.write(`${prefix} ${options[i]}`);
         }
       }

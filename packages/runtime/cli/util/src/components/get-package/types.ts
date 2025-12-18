@@ -3,7 +3,11 @@ export type Package = {
   version: string;
   dependencies: Record<string, string>;
   devDependencies: Record<string, string>;
-  license: string;
+  license?: string;
+  repository: {
+    type: "git" | (string & {});
+    url: string;
+  }
 }
 
 type PackageLockEntry = {
@@ -11,5 +15,5 @@ type PackageLockEntry = {
   resolved: string;
 };
 export type Lockfile = {
-  packages: Record<string, PackageLockEntry|Package>;
+  packages: Record<string, PackageLockEntry | Package>;
 }

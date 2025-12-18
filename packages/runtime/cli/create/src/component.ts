@@ -1,10 +1,15 @@
 #!/usr/bin/env node
 
-import { getScriptScope, Terminal } from "@papit/cli-util"
+import { getArguments, getScriptScope, Terminal } from "@papit/cli-util"
 import { runner as packageRunner } from "./components/package";
 import { runner as componentRunner } from "./components/component";
 
 (async function () {
+  const args = getArguments(["verbose", "install", "commit", "agree"]);
+  if ('verbose' in args.flags)
+  {
+    process.env.verbose = "true";
+  }
   const scriptdir = getScriptScope(import.meta.url);
   if (!scriptdir)
   {
@@ -12,9 +17,17 @@ import { runner as componentRunner } from "./components/component";
     process.exit();
   }
 
-  Terminal.write()
-  Terminal.write("@papit - create");
-  
+  if (!process.env.USER)
+  {
+    Terminal.createSession();
+    process.env.USER = await Terminal.prompt("your name", true);
+    Terminal.clearSession();
+  }
+
+  Terminal.write();
+  Terminal.write("@papit/create - running");
+  Terminal.write();
+
   Terminal.createSession();
   const option = await Terminal.option(["package", "component", "project", "showcase"]);
   Terminal.clearSession();
@@ -22,10 +35,10 @@ import { runner as componentRunner } from "./components/component";
   switch (option)
   {
     case 1:
-      await componentRunner(scriptdir);
+      await componentRunner(scriptdir, args);
       break;
     default:
-      await packageRunner(scriptdir);
+      await packageRunner(scriptdir, args);
       break;
   }
 

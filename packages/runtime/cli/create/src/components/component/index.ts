@@ -4,17 +4,19 @@ import {
   Terminal,
   getPackageInfo,
   getConfig,
+  getArguments,
 } from "@papit/cli-util"
 import { getFolders } from "components/util";
 
-export async function runner(scriptdir: string) {
+export async function runner(scriptdir: string, args: ReturnType<typeof getArguments>, packageLocation?: string) {
 
-  const info = getPackageInfo();
+  const info = getPackageInfo(packageLocation);
+  console.log(info, packageLocation)
   const config = getConfig(path.join(info.local, ".config"));
 
   if (config == null)
   {
-    Terminal.error("could not find package .config file");
+    Terminal.error("could not find package's .config file");
     process.exit();
   }
 
@@ -23,8 +25,19 @@ export async function runner(scriptdir: string) {
 
   if (templateIndex < 0)
   {
-    templateIndex = await Terminal.option(templates);
+    const argType = args.flags.component ?? args.flags.type;
+    templateIndex = templates.findIndex(f => f === argType);
+
+    if (templateIndex < 0)
+    {
+      Terminal.write("type of component");
+      templateIndex = await Terminal.option(templates);
+    }
   }
 
-  console.log('congratulations you made a choice', templates[templateIndex]);
+  const folders = getFolders(path.join(scriptdir, "asset/component-templates", templates[templateIndex]))
+  for (const folder of folders)
+  {
+    console.log(folder);
+  }
 }

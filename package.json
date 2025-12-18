@@ -27,8 +27,7 @@
     "node": ">=20"
   },
   "author": "Henry Pap",
-  "license": "Papit-1.0",
-  "licenseFile": "LICENSE",
+  "license": "LicenseRef-Papit-1.0",
   "workspaces": [
     "packages/**/*",
     "!packages/**/asset/**"
