@@ -1,6 +1,5 @@
 # directories
 node_modules/
-build/
 dist/
 lib/
 isolated/
