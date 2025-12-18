@@ -1,4 +1,4 @@
-import { PLACEHOLDER_CLASS_NAME } from './component.js';
+import { VARIABLE_CLASS_NAME } from './component.js';
 
 // export 
 export * from "./component";
@@ -10,6 +10,6 @@ if (!window.customElements) {
   throw new Error('Custom Elements not supported');
 }
 
-if (!window.customElements.get('PLACEHOLDER_HTML_NAME')) {
-  window.customElements.define('PLACEHOLDER_HTML_NAME', PLACEHOLDER_CLASS_NAME);
+if (!window.customElements.get('VARIABLE_HTML_NAME')) {
+  window.customElements.define('VARIABLE_HTML_NAME', VARIABLE_CLASS_NAME);
 }

@@ -6,7 +6,7 @@ import { CustomElement, html, property } from "@papit/core";
 import { style } from "./style";
 import { ClickEvent } from "./types";
 
-export class PLACEHOLDER_CLASS_NAME extends CustomElement {
+export class VARIABLE_CLASS_NAME extends CustomElement {
   static style = style;
 
   // properties 
@@ -26,6 +26,6 @@ export class PLACEHOLDER_CLASS_NAME extends CustomElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "PLACEHOLDER_HTML_NAME": PLACEHOLDER_CLASS_NAME;
+    "VARIABLE_HTML_NAME": VARIABLE_CLASS_NAME;
   }
 }

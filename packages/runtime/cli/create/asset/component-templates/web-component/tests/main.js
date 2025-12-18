@@ -1,1 +1,1 @@
-import 'PLACEHOLDER_FULL_NAME';
+import 'VARIABLE_FULL_NAME';

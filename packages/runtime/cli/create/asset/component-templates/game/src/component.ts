@@ -1,6 +1,6 @@
 // import statements 
 
-export class PLACEHOLDER_CLASS_NAME {
+export class VARIABLE_CLASS_NAME {
   constructor() {
 
   }

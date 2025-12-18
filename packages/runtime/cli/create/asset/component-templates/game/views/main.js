@@ -3,7 +3,7 @@ import { Engine } from '@papit/game-engine';
 import { InputEvents } from "@papit/game-input-events";
 
 // component
-import 'PLACEHOLDER_FULL_NAME';
+import 'VARIABLE_FULL_NAME';
 
 let engine, events;
 
