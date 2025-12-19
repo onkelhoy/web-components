@@ -14,7 +14,4 @@ Thumbs.db
 .DS_Store
 
 # Ignore any configuration files that may contain sensitive data
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
