@@ -1,6 +1,6 @@
 {
   "name": "@papit/cli-build",
-  "description": "build tool for @papit packages ",
+  "description": "build tool for @papit packages",
   "keywords": [
     "papit",
     "node",

@@ -1,6 +1,6 @@
 # @papit/cli-build
 
-build tool for @papit packages 
+build tool for @papit packages
 
 ---
 
