@@ -46,7 +46,11 @@ export async function packageRunner(scriptdir: string, args: ReturnType<typeof g
 
   const template = templateFolders[templateIndex];
   
-  let htmlPrefix:string|undefined = args.flags['html-prefix'];
+  let htmlPrefix:string|undefined = undefined;
+  if (Array.isArray(args.flags['html-prefix'])) htmlPrefix = args.flags['html-prefix'].join("-");
+  else if (typeof args.flags['html-prefix'] === "string") htmlPrefix = args.flags['html-prefix'];
+  if (htmlPrefix?.trim() === "") htmlPrefix = undefined;
+
   if (!htmlPrefix && /web-components?/i.test(template))
   {
     const rootConfig = getConfig(path.join(info.root, ".config"));
@@ -99,12 +103,12 @@ export async function packageRunner(scriptdir: string, args: ReturnType<typeof g
   if (rootPackage === null)
   {
     Terminal.error("root package.json not found");
-    process.exit();
+    process.exit(1);
   }
   if (!rootPackage.repository?.url)
   {
     Terminal.error("root package.json does not have 'repository.url'");
-    process.exit();
+    process.exit(1);
   }
 
   const repository = rootPackage.repository.url.replace(/\.git$/, '');
@@ -122,7 +126,11 @@ export async function packageRunner(scriptdir: string, args: ReturnType<typeof g
   while (true)
   {
     Terminal.clearSession();
-    const input = args.flags.name ?? await Terminal.prompt("(package) name", true);
+    let input:string|undefined = undefined;
+    if (Array.isArray(args.flags.name)) input = args.flags.name.join(" ");
+    else if (typeof args.flags.name === "string") input = args.flags.name;
+    else input = await Terminal.prompt("(package) name", true);
+
     nameInfo = getName(input);
 
     if (!nameInfo) 
@@ -141,7 +149,8 @@ export async function packageRunner(scriptdir: string, args: ReturnType<typeof g
   }
 
   const fullName = `${scope}/${layerConfig.LAYER_INCLUDE === "prefix" ? layerConfig.LAYER_NAME + "-" : ""}${nameInfo.name}${layerConfig.LAYER_INCLUDE === "suffix" ? "-" + layerConfig.LAYER_NAME : ""}`;
-  const description = args.flags.description || await Terminal.prompt("description", true);
+  let description = Array.isArray(args.flags.description) ? args.flags.description.join(" ") : args.flags.description;
+  if (!description || description === true) description = await Terminal.prompt("description", true);
 
   Terminal.write();
   Terminal.createSession();
@@ -185,12 +194,15 @@ export async function packageRunner(scriptdir: string, args: ReturnType<typeof g
   }
 
   const shouldCommit = 'agree' in args.flags || 'commit' in args.flags || await Terminal.confirm("git commit", true);
+
+  await componentRunner(scriptdir, args, { destination, nameInfo, htmlPrefix, shouldCommit });
+
   if (shouldCommit)
   {
     try {
       await execAsync(`git add ${lockfile_location}`);
       await execAsync(`git add ${destination}`);
-      await execAsync(`git commit -m "add: ${fullName} package created"`);
+      await execAsync(`git commit -m "add: ${fullName} package"`);
       Terminal.clearSession();
     } 
     catch {
@@ -201,8 +213,6 @@ export async function packageRunner(scriptdir: string, args: ReturnType<typeof g
   {
     Terminal.clearSession();
   }
-
-  await componentRunner(scriptdir, args, { destination, nameInfo, htmlPrefix, shouldCommit });
 
   Terminal.write(`${fullName} created\n`);
 

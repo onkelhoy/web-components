@@ -11,7 +11,7 @@
   "scripts": {
     "build": "bash ./bin/build.sh",
     "watch": "bash ./bin/watch.sh",
-    "start": "bash ./bin/start.sh",
+    "start": "npm run build && node ./lib/bundle.js",
     "preversion": "bash ./bin/_utils/preversion.sh",
     "postversion": "bash ./bin/_utils/postversion.sh",
     "component": "npm run create --include-workspace-root=true --workspace=$(npm prefix) -- --component --location=$(pwd)",
@@ -51,11 +51,14 @@
   "engines": {
     "node": ">=18"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@papit/cli-util": "^0.0.1",
+    "@microsoft/api-extractor": "^7.55.2",
+    "esbuild": "^0.27.2",
+    "typescript": "^5.9.3"
+  },
   "devDependencies": {
     "@types/node": "^22.10.2",
-    "esbuild": "^0.17.18",
-    "typescript": "^5.7.2",
     "chokidar": "^3.6.0"
   },
   "browserslist": [

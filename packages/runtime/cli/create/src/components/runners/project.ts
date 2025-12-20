@@ -16,7 +16,7 @@ export async function runner(scriptdir: string, args: ReturnType<typeof getArgum
   if (config == null)
   {
     Terminal.error("could not find package's .config file");
-    process.exit();
+    process.exit(1);
   }
 
   const templates = getFolders(path.join(scriptdir, "asset/component-templates"));

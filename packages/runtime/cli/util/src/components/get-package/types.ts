@@ -3,11 +3,17 @@ export type Package = {
   version: string;
   dependencies: Record<string, string>;
   devDependencies: Record<string, string>;
+  peerDependencies: Record<string, string>;
   license?: string;
   repository: {
     type: "git" | (string & {});
     url: string;
-  }
+  };
+  main?: string;
+  types?: string;
+  type: "module" | "commonjs";
+  exports?: Record<"." | (string & {}), Record<"import" | "types" | "require" | (string & {}), string>>;
+  entryPoints?: string|Record<string,string>;
 }
 
 type PackageLockEntry = {

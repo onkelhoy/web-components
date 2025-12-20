@@ -14,15 +14,35 @@ process.stderr.write = (chunk: any, encoding?: any, cb?: any) => {
   return originalStderrWrite(chunk, encoding, cb);
 };
 
+
+const ANSII_COLORS = {
+  black:    30,
+  red:      31,
+  green:    32,
+  yellow:   33,
+  blue:     34,
+  magenta:  35,
+  cyan:     36,
+  white:    37,
+
+  "bright-black":    90,
+  "bright-red":      91,
+  "bright-green":    92,
+  "bright-yellow":   93,
+  "bright-blue":     94,
+  "bright-magenta":  95,
+  "bright-cyan":     96,
+  "bright-white":    97,
+}
+
 export class Terminal {
   static lines: number = 0;
   static session: number | null = null;
 
-  static supportsColor = process.stdout.isTTY;
-
- static RED = Terminal.supportsColor ? "\x1b[31m" : "";
- static YELLOW = Terminal.supportsColor ? "\x1b[33m" : "";
- static RESET = Terminal.supportsColor ? "\x1b[0m" : "";
+  static colorWrap(value: string, color: keyof typeof ANSII_COLORS) {
+    if (!process.stdout.isTTY) return value;
+    return `\x1b[${ANSII_COLORS[color]}m${value}\x1b[0m`
+  }
 
   static write(...values: string[]) {
     const value = values.join(" ");
@@ -44,11 +64,11 @@ export class Terminal {
   }
 
   static warn(...values: string[]) {
-    this.semantic(`🟡${this.supportsColor ? this.RED+" warn"+this.RESET : ""} `, values);
+    this.semantic(`🟡 ${process.stdout.isTTY ? this.colorWrap("warn", "yellow") : ""}`, values);
   }
   
   static error(...values: string[]) {
-    this.semantic(`🔴${this.supportsColor ? this.RED+" error"+this.RESET : ""} `, values);
+    this.semantic(`🔴 ${process.stdout.isTTY ? this.colorWrap("error", "red") : ""}`, values);
   }
 
   static print(value: string, type: "info" | "error" = "info") {
@@ -236,7 +256,7 @@ export class Terminal {
           }
 
           Terminal.error("\ncancelled");
-          process.exit();
+          process.exit(1);
         }
 
         if (/up/i.test(key.name) || key.shift && /tab/i.test(key.name))

@@ -6,7 +6,7 @@ import { componentRunner } from "components/runners/component";
 
 (async function () {
   const args = getArguments(["verbose", "install", "commit", "agree"]);
-  if ('verbose' in args.flags)
+  if (args.flags.verbose)
   {
     process.env.verbose = "true";
   }
@@ -14,7 +14,7 @@ import { componentRunner } from "components/runners/component";
   if (!scriptdir)
   {
     Terminal.error("could not find @papit/create");
-    process.exit();
+    process.exit(1);
   }
 
   if (!process.env.USER)
@@ -28,9 +28,29 @@ import { componentRunner } from "components/runners/component";
   Terminal.write("@papit/create - running");
   Terminal.write();
 
-  Terminal.createSession();
-  const option = await Terminal.option(["package", "component", "project", "showcase"]);
-  Terminal.clearSession();
+  let option = 0;
+  if (args.flags.package)
+  {
+    option = 0;
+  }
+  else if (args.flags.component)
+  {
+    option = 1;
+  }
+  else if (args.flags.project)
+  {
+    option = 2;
+  }
+  else if (args.flags.showcase)
+  {
+    option = 3;
+  }
+  else 
+  {
+    Terminal.createSession();
+    option = await Terminal.option(["package", "component", "project", "showcase"]);
+    Terminal.clearSession();
+  }
 
   switch (option)
   {

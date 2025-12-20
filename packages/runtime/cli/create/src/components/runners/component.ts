@@ -44,13 +44,13 @@ export async function componentRunner(scriptdir: string, args: ReturnType<typeof
   if (config == null)
   {
     Terminal.error("could not find package's .config file");
-    process.exit();
+    process.exit(1);
   }
 
   if (!config.FULL_NAME)
   {
     Terminal.error("package is missing FULL_NAME in .config");
-    process.exit();
+    process.exit(1);
   }
 
   const templates = getFolders(path.join(scriptdir, "asset/component-templates"));
@@ -71,12 +71,17 @@ export async function componentRunner(scriptdir: string, args: ReturnType<typeof
   }
   const template = templates[templateIndex]
 
-  let htmlPrefix:string|undefined =  args.flags['html-prefix'] ?? packageInfo?.htmlPrefix ?? config.HTML_PREFIX;
+  const rootConfig = getConfig(path.join(info.root, ".config"));
+
+  let htmlPrefix:string|undefined = undefined;
+  if (Array.isArray(args.flags['html-prefix'])) htmlPrefix = args.flags['html-prefix'].join("-");
+  else if (typeof args.flags['html-prefix'] === "string") htmlPrefix = args.flags['html-prefix'];
+  else htmlPrefix = packageInfo?.htmlPrefix ?? config.HTML_PREFIX
+
   if (htmlPrefix?.trim() === "") htmlPrefix = undefined;
+
   if (htmlPrefix === undefined && /web-components?/i.test(template))
   {
-    const rootConfig = getConfig(path.join(info.root, ".config"));
-
     if (htmlPrefix === undefined) htmlPrefix = rootConfig?.HTML_PREFIX;
 
     const sess = Terminal.createSession();
@@ -112,7 +117,12 @@ export async function componentRunner(scriptdir: string, args: ReturnType<typeof
   while (!nameInfo)
   {
     Terminal.clearSession();
-    const input = args.flags.component ?? await Terminal.prompt("name", true);
+    
+    let input:string|undefined = undefined;
+    if (Array.isArray(args.flags.name)) input = args.flags.name.join(" ");
+    else if (typeof args.flags.name === "string") input = args.flags.name;
+    else input = await Terminal.prompt("(package) name", true);
+
     nameInfo = getName(input);
 
     if (!nameInfo) 
@@ -191,12 +201,18 @@ export async function componentRunner(scriptdir: string, args: ReturnType<typeof
     {
       try 
       {
-        await execAsync(`git add ${destParent}`);
+        await execAsync(`git add ${dest}`);
       }
       catch 
       {
-        Terminal.warn(`"git add ${destParent}" failed`);
+        Terminal.warn(`"git add ${dest}" failed`);
       }
     }
+  }
+
+  // its not in package -> component mode 
+  if (!packageInfo?.shouldCommit && shouldCommit)
+  {
+    await execAsync(`git commit -m "add: ${nameInfo.name} component"`);
   }
 }

@@ -4,23 +4,23 @@
  * Supports:
  * - Long flags: `--name` or `--name=value`
  * - Short flags: `-n` or `-n value`
- * - Grouped short flags: `-abc` → `{ a, b, c }` all undefined
+ * - Grouped short flags: `-abc` → `{ a, b, c }` all true
  *
  * Flags listed in `islands` will not consume the next argument as their value.
  *
  * @param {string[]} [islands=[]] - Flag names that should not consume the next argument.
- * @returns {{ flags: Record<string, string | undefined>, values: string[] }}
+ * @returns {{ flags: Record<string, string | true | undefined>, values: string[] }}
  *
  * @example
  * // process.argv = ["node", "script.js", "--foo=bar", "-abc", "positional", "--baz", "qux"]
  * ExtractArguments(["baz"]);
  * // => {
- * //    flags: { foo: "bar", a: undefined, b: undefined, c: undefined, baz: undefined },
+ * //    flags: { foo: "bar", a: true, b: true, c: true, baz: true },
  * //    values: ["positional", "qux"]
  * // }
  */
 
-type Arguments = { flags: Record<string, string | undefined>, values: string[] };
+type Arguments = { flags: Record<string, string | string[] | true | undefined>, values: string[] };
 export function getArguments(islands:string[] = []) {
   return extractArguments(process.argv, islands);
 }
@@ -58,7 +58,7 @@ export function extractArguments(values: string[], islands: string[]) {
       for (let j=0; j<name.length; j++)
       {
         const group = name[j];
-        if (!_arguments.flags[group]) _arguments.flags[group] = undefined;
+        if (!_arguments.flags[group]) _arguments.flags[group] = true;
       }
       continue;
     }
@@ -68,7 +68,19 @@ export function extractArguments(values: string[], islands: string[]) {
       prevWasFlag = name;
     }
 
-    if (!_arguments.flags[name]) _arguments.flags[name] = value;
+    if (!_arguments.flags[name]) _arguments.flags[name] = value ?? true;
+    else 
+    {
+      if (_arguments.flags[name] === true) _arguments.flags[name] = value ?? true;
+      else 
+      {
+        if (typeof _arguments.flags[name] === "string") _arguments.flags[name] = [_arguments.flags[name], value]
+        else
+        {
+          _arguments.flags[name].push(value);
+        }
+      }
+    }
   }
 
   return _arguments;
