@@ -1,5 +1,5 @@
 {
-  "name": "@papit/cli-build",
+  "name": "@papit/build",
   "description": "build tool for @papit packages",
   "keywords": [
     "papit",
@@ -9,9 +9,8 @@
   ],
   "version": "0.0.1",
   "scripts": {
-    "build": "bash ./bin/build.sh",
-    "watch": "bash ./bin/watch.sh",
-    "start": "npm run build && node ./lib/bundle.js",
+    "build": "bash ./bin/build.sh && node ./.papit/bundle.js",
+    "watch": "tsc -w",
     "preversion": "bash ./bin/_utils/preversion.sh",
     "postversion": "bash ./bin/_utils/postversion.sh",
     "component": "npm run create --include-workspace-root=true --workspace=$(npm prefix) -- --component --location=$(pwd)",
@@ -28,8 +27,11 @@
   "exports": {
     ".": {
       "import": "./lib/bundle.js",
-      "types": "./lib/types/index.d.ts"
+      "types": "./lib/bundle.d.ts"
     }
+  },
+  "bin": {
+    "@papit/build": "./lib/bundle.js"
   },
   "author": "henry",
   "private": false,

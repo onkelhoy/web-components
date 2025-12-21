@@ -1,30 +1,29 @@
 // import statements 
 import esbuild from "esbuild";
-import { Package, Terminal, getArguments, getConfig, getPackageInfo } from "@papit/cli-util";
-import path from "node:path";
+import { Package, Terminal, getArguments } from "@papit/cli-util";
 
-export async function javascript(
+import { Meta } from "../meta/types";
+
+export async function jsBundler(
   inputFile: string, 
   outputFile: string, 
-  tsconfigFilePath: string, 
+  meta: Meta, 
   packageJSON: Package, 
-  info: ReturnType<typeof getPackageInfo>,
-  config: NonNullable<ReturnType<typeof getConfig>>, 
-  externals: string[], 
-  args: ReturnType<typeof getArguments>
+  args: ReturnType<typeof getArguments>,
 ) {
+
   const esbuildInfo = await esbuild.build({
     entryPoints: [inputFile],
     bundle: true,
-    outfile: path.join(info.local, "temp", outputFile + ".js"),
+    outfile: outputFile,
     minify: true,
-    tsconfig: tsconfigFilePath,
+    tsconfig: meta.tsconfig.path,
     format: packageJSON.type === "module" ? "esm" : "cjs",
-    platform: ["node"].includes(config.TEMPLATE_TYPE ?? "web-component") ? "node" : "browser",
-    external: externals,
+    platform: ["node"].includes(meta.config.TEMPLATE_TYPE ?? "web-component") ? "node" : "browser",
+    external: meta.externals,
   });
 
-  if (esbuildInfo.errors)
+  if (esbuildInfo.errors.length > 0)
   {
     if (args.flags.verbose)
     {
@@ -35,7 +34,7 @@ export async function javascript(
     process.exit(1);
   }
 
-  if (esbuildInfo.warnings)
+  if (esbuildInfo.warnings.length > 0)
   {
     if (args.flags.verbose)
     {

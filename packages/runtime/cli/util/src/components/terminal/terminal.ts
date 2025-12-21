@@ -64,11 +64,11 @@ export class Terminal {
   }
 
   static warn(...values: string[]) {
-    this.semantic(`🟡 ${process.stdout.isTTY ? this.colorWrap("warn", "yellow") : ""}`, values);
+    this.semantic(`🟡 ${process.stdout.isTTY ? this.colorWrap("warn ", "yellow") : ""}`, values);
   }
   
   static error(...values: string[]) {
-    this.semantic(`🔴 ${process.stdout.isTTY ? this.colorWrap("error", "red") : ""}`, values);
+    this.semantic(`🔴 ${process.stdout.isTTY ? this.colorWrap("error ", "red") : ""}`, values);
   }
 
   static print(value: string, type: "info" | "error" = "info") {

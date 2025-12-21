@@ -9,10 +9,12 @@ export type Package = {
     type: "git" | (string & {});
     url: string;
   };
+
+  bin?: Record<string, string>;
   main?: string;
   types?: string;
   type: "module" | "commonjs";
-  exports?: Record<"." | (string & {}), Record<"import" | "types" | "require" | (string & {}), string>>;
+  exports?: Record<"." | (string & {}), Partial<Record<"import" | "types" | "require" | (string & {}), string>>>;
   entryPoints?: string|Record<string,string>;
 }
 

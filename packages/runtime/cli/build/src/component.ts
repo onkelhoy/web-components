@@ -1,85 +1,122 @@
 // import statements 
 import path from "node:path";
 import fs from "node:fs";
-import { Package, Terminal, getArguments, getConfig, getJSON, getPackageInfo } from "@papit/cli-util";
+import { Package, Terminal, getArguments, getJSON, getPackageInfo } from "@papit/cli-util";
 
-import { getEntryPoints, getExportsInformation } from "components/util";
-import { javascript } from "components/javascript";
-import { typescript } from "components/typescript";
+import { getMeta } from "./components/meta";
+export { getMeta } from "./components/meta";
 
+import { jsBundler } from "./components/bundlers/js-bundle";
+import { tsBundler } from "./components/bundlers/ts-bundle";
+
+export { jsBundler } from "./components/bundlers/js-bundle";
+export { tsBundler } from "./components/bundlers/ts-bundle";
+
+function getExportsInformation(entry:string, packageJSON:Package) {
+  if (!packageJSON.exports) return null;
+  if (entry === "bundle") entry = ".";
+
+  return packageJSON.exports[entry] ?? null;
+}
 
 (async function () {
   const session = Terminal.createSession();
-  const args = getArguments(["verbose", "prod", "dev"]);
-
-  let mode = "prod";
-  if (args.flags.prod) mode = "dev";
+  const args = getArguments(["verbose", "prod", "dev", "force", "clean", "ci"]);
 
   const info = getPackageInfo();
-  const config = getConfig(path.join(info.local, ".config"));
-  if (!config)
-  {
-    Terminal.error(".config file not found");
-    process.exit(1);
-  }
-
-  const devTSconfig = path.join(info.local, "tsconfig.json");
-  const prodTSconfig = path.join(info.local, "tsconfig.prod.json");
-
-  let tsconfigFilePath = devTSconfig;
-  if (mode === "prod" && fs.existsSync(prodTSconfig) && fs.statSync(prodTSconfig).isFile())
-  {
-    tsconfigFilePath = prodTSconfig;
-  }
+  const mode = args.flags.dev ? "dev" : "prod";
 
   const packageJsonPath = path.join(info.local, "package.json");
-  const packageJSON = await getJSON<Package>(packageJsonPath);
+  const packageJSON = getJSON<Package>(packageJsonPath);
   if (!packageJSON)
   {
     Terminal.error("package.json not found");
     process.exit(1);
   }
+
+  const meta = await getMeta(mode, info, args, packageJSON);
   
+  // const tsConfigInfo = getTSConfiginfo(tsconfigFilePath);
   if (args.flags.verbose)
   {
-    console.log("build-mode:", mode)
-    console.log("package:", info.local)
+    console.log("build-mode:", mode);
+    console.log("package:", info.local);
+    console.log("tsconfig:", meta.tsconfig.path);
     console.log();
   }
 
-  const entryPoints = getEntryPoints(info, packageJSON, args);
-  const entryPointKeys = Object.keys(entryPoints);
-
-  if (entryPointKeys.length === 0)
+  for (const entryPointKey of meta.entryPoints.keys) 
   {
-    Terminal.error("could not find any build entries");
-    process.exit(1);
+    const entryPoint = meta.entryPoints.record[entryPointKey];
+  
+    const exportsInformation = getExportsInformation(entryPointKey, packageJSON);
+    let javascriptFileOutput = path.join(info.local, entryPoint.replace("src", "lib")+".js");
+    let typescriptFileOutput = path.join(info.local, entryPoint.replace("src", "lib")+".d.ts");
+  
+    if (!exportsInformation) 
+    {
+      Terminal.warn(`"${entryPointKey}" does not exists in package.exports`);
+    }
+    else 
+    {
+      if (exportsInformation.import)
+      {
+        javascriptFileOutput = path.join(info.local, exportsInformation.import);
+      }
+      if (exportsInformation.types)
+      {
+        typescriptFileOutput = path.join(info.local, exportsInformation.types);
+      }
+    }
+
+    let binEntry: string|null = null;
+    if (packageJSON.bin)
+    {
+      for (const binEntryKey in packageJSON.bin)
+      {
+        let binValue = packageJSON.bin[binEntryKey];
+        if (binValue.startsWith("./")) binValue = binValue.slice(1);
+        if (javascriptFileOutput.endsWith(binValue))
+        {
+          binEntry = binEntryKey;
+          break;
+        }
+      }
+    }
+  
+    const absoluteEntry = entryPoint.startsWith(info.local) ? entryPoint : path.join(info.local, entryPoint);
+    const absoluteTypesEntry = absoluteEntry.replace(info.local, path.join(info.local, ".papit/build")).replace(".ts", ".d.ts");
+    if (args.flags.verbose)
+    {
+      Terminal.write(`• entryPoint "${Terminal.colorWrap(entryPointKey, "blue")}"`);
+      Terminal.write(`  ↳ (${Terminal.colorWrap("bundle", "red")}) "${Terminal.colorWrap(absoluteEntry.replace(info.local, ""), "blue")}" -> "${Terminal.colorWrap(javascriptFileOutput.replace(info.local, ""), "green")}"`);
+      Terminal.write(`  ↳ (${Terminal.colorWrap("types", "red")}) "${Terminal.colorWrap(absoluteTypesEntry.replace(info.local, ""), "blue")}" -> "${Terminal.colorWrap(typescriptFileOutput.replace(info.local, ""), "green")}"\n`);
+    }
+  
+    await jsBundler(entryPoint, javascriptFileOutput, meta, packageJSON, args);
+    await tsBundler(absoluteTypesEntry, typescriptFileOutput, meta, info, args);
+
+    if (binEntry && !args.flags.ci)
+    {
+      // add shebang and remove from root/node_modeles/.bin
+      const rootNodeModuleBin = path.join(info.root, "node_modules/.bin", binEntry);
+      if (fs.existsSync(rootNodeModuleBin)) 
+      {
+        fs.rmSync(rootNodeModuleBin);
+      }
+
+      const bundle = fs.readFileSync(javascriptFileOutput, { encoding: "utf-8" });
+      const updated = bundle.startsWith("#!/usr/bin/env node") ? bundle : `#!/usr/bin/env node\n${bundle}`;
+
+      fs.writeFileSync(javascriptFileOutput, updated, { mode: 0o755 });
+    }
   }
-
-  if (args.flags.verbose)
-  {
-    console.log('entryPoints', entryPoints)
-  }
-
-  const externals = [
-    ...Object.keys(packageJSON.dependencies || {}),
-    ...Object.keys(packageJSON.peerDependencies || {}),
-  ];
-
-
-  entryPointKeys.map(async entryPointKey => {
-
-    const entryPointValue = entryPoints[entryPointKey];
-    const exportsInfo = getExportsInformation(entryPointKey, entryPointValue, packageJSON);
-
-    await javascript(entryPointKey, entryPointValue, tsconfigFilePath, packageJSON, info, config, externals, args);
-    await typescript(entryPointKey, entryPointValue, tsconfigFilePath, packageJSON, info, args);
-  });
 
   if (!args.flags.verbose)
   {
     Terminal.clearSession(session);
   }
 
-  Terminal.write("📦", packageJSON.name, Terminal.colorWrap("successfully built", "green"));
+  Terminal.write("\n📦", packageJSON.name, Terminal.colorWrap("successfully built", "green"));
 }());
+
