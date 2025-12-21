@@ -1,6 +1,6 @@
 # @papit/build
 
-Build tool for **@papit packages** — opinionated, fast, and designed to work seamlessly inside any Papit-based workspace.
+Build tool for @papit packages — opinionated, fast, and designed to work seamlessly inside any Papit-based workspace.
 
 This package is intended to be used **from within another package**, where you simply run:
 
@@ -180,31 +180,6 @@ This keeps builds fast during local development.
 - TypeScript project
 
 ---
-
-## Contributing
-
-Contributions are welcome! Please follow the development guidelines above and ensure all tests pass before submitting a pull request.
-
-## License
-
-Licensed under the @Papit License 1.0 - Copyright (c) 2024 Henry Pap (@onkelhoy)
-
-**Key points:**
-
-- ✅ Free to use in commercial projects
-- ✅ Free to modify and distribute
-- ✅ Attribution required
-- ❌ Cannot resell the component itself as a standalone product
-
-See the [LICENSE](https://github.com/onkelhoy/web-components/blob/main/LICENSE) file for full details.
-
-## Related Components
-
-- [@papit/core](https://github.com/onkelhoy/web-components/tree/main/packages/system/core): Core utilities, decorators, and base component class
-
-## Support
-
-For issues, questions, or contributions, please visit the [GitHub repository](https://github.com/onkelhoy/web-components).
 
 ## Contributing
 

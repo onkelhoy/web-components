@@ -166,6 +166,7 @@ export async function packageRunner(scriptdir: string, args: ReturnType<typeof g
       .replace(/VARIABLE_FULL_NAME/g, fullName)
       .replace(/VARIABLE_DESCRIPTION/g, description)
       .replace(/VARIABLE_LAYER_FOLDER/g, layerBasename)
+      .replace(/VARIABLE_LAYER_NAME/g, layerConfig.LAYER_NAME ?? layerBasename)
       .replace(/VARIABLE_PROJECTLICENSE/g, rootPackage.license || "MIT")
       .replace(/VARIABLE_GITHUB_REPO/g, repository)
       .replace(/VARIABLE_LOCAL_DESTINATION/g, localFolder)
