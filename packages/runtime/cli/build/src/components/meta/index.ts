@@ -18,12 +18,7 @@ export async function getMeta(
     if (json !== null) return json;
   }
 
-  const config = getConfig(path.join(info.local, ".config"));
-  if (!config)
-  {
-    Terminal.error(".config file not found");
-    process.exit(1);
-  }
+  const config = getConfig(path.join(info.local, ".config")) ?? {};
 
   const devTSconfig = path.join(info.local, "tsconfig.json");
   const prodTSconfig = path.join(info.local, "tsconfig.prod.json");

@@ -1,6 +1,14 @@
-# @papit/cli-create
+# @papit/build
 
-Whops, abstract is missing!
+Build tool for **@papit packages** — opinionated, fast, and designed to work seamlessly inside any Papit-based workspace.
+
+This package is intended to be used **from within another package**, where you simply run:
+
+```bash
+npx @papit/build
+```
+
+and get a fully bundled JavaScript output **plus rolled-up TypeScript declarations**, with zero or minimal configuration.
 
 ---
 
@@ -10,57 +18,168 @@ Whops, abstract is missing!
 
 ---
 
-## Use Case
-
-### installation
+## Installation
 
 ```bash
-npm install @papit/cli-create
+npm install @papit/cli-build
 ```
 
-### to use in **html**
+Or use it directly without installing:
 
-```html
-<script type="module" defer>
-  import "@papit/cli-create";
-</script>
-
-<></>
+```bash
+npx @papit/build
 ```
 
-### to use in **react**
+This is the **recommended usage**.
 
-```jsx
-import { CliCreate } from "@papit/cli-create/react";
+---
 
-function Component() {
-  return <CliCreate />;
+## Usage
+
+Inside any package that follows the Papit conventions, simply run:
+
+```bash
+npx @papit/build
+```
+
+The build tool will:
+
+1. Detect entry points automatically
+2. Bundle JavaScript using **esbuild**
+3. Generate and roll up TypeScript declarations using **TypeScript + API Extractor**
+4. Respect `package.json` `exports`, `bin`, and custom entry definitions
+5. Output files into `lib/`
+6. Automatically handle CLI binaries (shebang + permissions)
+
+---
+
+## What gets built?
+
+### JavaScript
+
+- Bundled via **esbuild**
+- Minified
+- Output format is determined by:
+
+  - `package.json → type` (`esm` or `cjs`)
+  - `.config → TEMPLATE_TYPE` (`node` or `browser`)
+
+- External dependencies are automatically inferred from:
+
+  - `dependencies`
+  - `peerDependencies`
+
+### TypeScript declarations
+
+- Generated with `tsc --emitDeclarationOnly`
+- Rolled up into a single `.d.ts` file per entry
+- Powered by **@microsoft/api-extractor**
+
+---
+
+## Entry points resolution
+
+Entry points are resolved **in the following order**:
+
+1. `--entry` CLI flag
+2. `package.json → entryPoints`
+3. `package.json → exports`
+4. `package.json → bin`
+5. Fallback: `src/index.ts`
+
+### Examples
+
+#### Using `exports`
+
+```json
+{
+  "exports": {
+    ".": {
+      "import": "./lib/bundle.js",
+      "types": "./lib/bundle.d.ts"
+    }
+  }
 }
 ```
 
-## Development
+This will map to:
 
-Development takes place within the `src` folder. To add a new subcomponent, use the command `npm run component:add`. This command updates the `.env` file, creates a view folder, and adds a subfolder in the `components` folder (creating it if it doesn't exist) inside `src` with all the necessary files.
+```
+src/index.ts → lib/bundle.js
+```
 
-Styling is managed in the `style.scss` file, which automatically generates a `style.ts` file for use in the component.
+#### CLI binaries
 
-## Viewing
+```json
+{
+  "bin": {
+    "@papit/build": "./lib/bundle.js"
+  }
+}
+```
 
-To view the component, run `npm start`. This command is equivalent to `npm run start demo` and launches the development server for the demo folder located within the `views` folder. This allows you to preview your component during development.
+The build tool will:
 
-## Assets
+- Add the Node shebang automatically
+- Ensure executable permissions
+- Reinstall the bin when needed (non-CI only)
 
-All assets required by the component, such as icons and images for translations, should be placed in the `assets` folder. This folder will already include an `icons` and `translations` folder with an `en.json` file for English translations. Use this structure to organize translations and make them easily accessible for other projects.
+---
 
-For assets used solely for display or demo purposes, create a `public` folder under the relevant directory inside the `views` folder. These assets are not included in the component package.
+## Configuration
 
-## Commands
+### `.config` (required)
 
-- **build**: Builds the component in development mode. Use the `--prod` flag (`npm run build -- --prod`) for a production build, which includes minification.
-- **watch**: Watches for changes to the component files and rebuilds them automatically without starting the development server.
-- **start**: Starts the development server for a specific demo. The target folder within the `views` directory must contain an `index.html` file. Usage example: `npm run start --name=<folder>`.
-- **analyse**: Generates a comprehensive analysis file, mainly useful for React scripts and potentially for generating pages. The analysis file is only generated if it does not exist, unless the `--force` flag is used. Optional flags include `--verbose` and `--force`.
-- **react**: Generates the necessary React code based on the web component code, including any subcomponents. The generated code will not overwrite existing files, allowing for manual customization. Flags: `--verbose` & `--force`.
+A `.config` file must exist in the package root.
+
+It is used to determine things like:
+
+- Target platform (`node` vs browser)
+- Template behavior
+- Build assumptions
+
+If missing, the build will fail.
+
+---
+
+## CLI Flags
+
+| Flag        | Description                                |
+| ----------- | ------------------------------------------ |
+| `--dev`     | Use development mode                       |
+| `--prod`    | Use production mode (default)              |
+| `--verbose` | Show detailed build output                 |
+| `--clean`   | Ignore cached build metadata               |
+| `--force`   | Force rebuild even if metadata exists      |
+| `--ci`      | CI mode (no bin reinstall, no cache write) |
+| `--entry`   | Override entry points                      |
+
+---
+
+## Caching & performance
+
+- Build metadata is cached in:
+
+  ```
+  .papit/build-meta/{dev|prod}.json
+  ```
+
+- Cache is skipped when using:
+
+  - `--clean`
+  - `--force`
+  - `--ci`
+
+This keeps builds fast during local development.
+
+---
+
+## Requirements
+
+- Node.js **>= 18**
+- TypeScript project
+
+---
 
 ## Contributing
 
@@ -86,3 +205,37 @@ See the [LICENSE](https://github.com/onkelhoy/web-components/blob/main/LICENSE) 
 ## Support
 
 For issues, questions, or contributions, please visit the [GitHub repository](https://github.com/onkelhoy/web-components).
+
+## Contributing
+
+Contributions are welcome!
+Please ensure:
+
+- Code follows existing patterns
+- Tests pass
+- Changes align with Papit conventions
+
+Open a pull request when ready 🚀
+
+---
+
+## License
+
+Licensed under the **@Papit License 1.0**
+Copyright (c) 2024 Henry Pap (@onkelhoy)
+
+**Key points:**
+
+- ✅ Free to use in commercial projects
+- ✅ Free to modify and distribute
+- ✅ Attribution required
+- ❌ Cannot resell the component itself as a standalone product
+
+See the [LICENSE](https://github.com/onkelhoy/web-components/blob/main/LICENSE) file for full details.
+
+---
+
+## Support
+
+For issues, questions, or contributions, please visit the
+[GitHub repository](https://github.com/onkelhoy/web-components).

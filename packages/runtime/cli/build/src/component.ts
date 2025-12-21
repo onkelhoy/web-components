@@ -12,6 +12,10 @@ import { tsBundler } from "./components/bundlers/ts-bundle";
 export { jsBundler } from "./components/bundlers/js-bundle";
 export { tsBundler } from "./components/bundlers/ts-bundle";
 
+import { exec } from "node:child_process";
+import { promisify } from "node:util";
+const execAsync = promisify(exec);
+
 function getExportsInformation(entry:string, packageJSON:Package) {
   if (!packageJSON.exports) return null;
   if (entry === "bundle") entry = ".";
@@ -99,16 +103,26 @@ function getExportsInformation(entry:string, packageJSON:Package) {
     if (binEntry && !args.flags.ci)
     {
       // add shebang and remove from root/node_modeles/.bin
+      let shouldinstall = false;
       const rootNodeModuleBin = path.join(info.root, "node_modules/.bin", binEntry);
       if (fs.existsSync(rootNodeModuleBin)) 
       {
         fs.rmSync(rootNodeModuleBin);
+      }
+      else 
+      {
+        shouldinstall = true;
       }
 
       const bundle = fs.readFileSync(javascriptFileOutput, { encoding: "utf-8" });
       const updated = bundle.startsWith("#!/usr/bin/env node") ? bundle : `#!/usr/bin/env node\n${bundle}`;
 
       fs.writeFileSync(javascriptFileOutput, updated, { mode: 0o755 });
+
+      if (shouldinstall)
+      {
+        await execAsync("npm install", { cwd: info.root });
+      }
     }
   }
 
