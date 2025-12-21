@@ -47,9 +47,8 @@
     "node": ">=18"
   },
   "devDependencies": {
-    "esbuild": "^0.17.18",
-    "typescript": "^5.7.2",
-    "chokidar": "^3.6.0"
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
   },
   "keywords": [
     "node",

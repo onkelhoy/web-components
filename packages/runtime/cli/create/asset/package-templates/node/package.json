@@ -9,8 +9,8 @@
   ],
   "version": "0.0.1",
   "scripts": {
-    "build": "",
-    "watch": "",
+    "build": "npx @papit/build",
+    "watch": "tsc -w",
     "start": "",
     "preversion": "",
     "postversion": "",
@@ -54,9 +54,7 @@
   "dependencies": {},
   "devDependencies": {
     "@types/node": "^22.10.2",
-    "esbuild": "^0.17.18",
-    "typescript": "^5.7.2",
-    "chokidar": "^3.6.0"
+    "typescript": "^5.7.2"
   },
   "browserslist": [
     "defaults",

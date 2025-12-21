@@ -10,7 +10,7 @@
   "version": "0.0.1",
   "scripts": {
     "build": "npx @papit/build",
-    "watch": "",
+    "watch": "tsc -w",
     "start": "",
     "preversion": "",
     "postversion": "",
@@ -60,9 +60,7 @@
     "@papit/game-engine": "^*",
     "@papit/game-input-events": "^*",
     "@papit/game-vector": "^*",
-    "esbuild": "^0.17.18",
     "typescript": "^5.7.2",
-    "chokidar": "^3.6.0",
     "playwright": "^1.45.3"
   },
   "browserslist": [

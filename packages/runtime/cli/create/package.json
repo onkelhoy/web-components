@@ -3,17 +3,17 @@
   "description": "",
   "version": "0.0.1",
   "scripts": {
-    "build": "bash ./bin/build.sh",
-    "watch": "bash ./bin/watch.sh",
+    "build": "npx @papit/build",
+    "watch": "tsc -w",
     "start": "npm run build && node ./lib/bundle.js",
     "publish:manual": "bash ./bin/publish.sh",
     "preversion": "bash ./bin/_utils/preversion.sh",
     "postversion": "bash ./bin/_utils/postversion.sh",
-    "component": "npm run create --include-workspace-root=true --workspace=$(npm prefix) -- --component --location=$(pwd)",
+    "component": "npm create @papit -- --component",
     "test": "node --test"
   },
   "main": "./lib/bundle.js",
-  "types": "./lib/types/index.d.ts",
+  "types": "./lib/bundle.d.ts",
   "type": "module",
   "files": [
     "lib/",
@@ -22,7 +22,7 @@
   "exports": {
     ".": {
       "import": "./lib/bundle.js",
-      "types": "./lib/types/index.d.ts"
+      "types": "./lib/bundle.d.ts"
     }
   },
   "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/runtime/cli/create",
@@ -53,9 +53,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
-    "esbuild": "^0.17.18",
-    "typescript": "^5.7.2",
-    "chokidar": "^3.6.0"
+    "typescript": "^5.7.2"
   },
   "keywords": [
     "node",
