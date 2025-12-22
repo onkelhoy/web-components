@@ -1,17 +1,11 @@
 {
-  "name": "@papit/root",
+  "name": "VARIABLE_NAME",
   "version": "0.0.0",
-  "description": "framework/ecosystem",
+  "description": "VARIABLE_DESCRIPTION",
   "private": true,
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/onkelhoy/web-components.git"
-  },
   "scripts": {
     "analyse": "bash ./bin/analyse/run.sh",
-    "create": "bash ./bin/create/run.sh",
-    "clean": "bash ./bin/_utils/clean.sh",
-    "init": "bash ./bin/_utils/init.sh",
+    "create": "npm create @papit -- --package",
     "publish": "bash ./bin/publish/run.sh",
     "build": "bash ./bin/build/run.sh",
     "test": "bash ./bin/test/run.sh",
@@ -24,8 +18,8 @@
   "engines": {
     "node": ">=20"
   },
-  "author": "Henry Pap",
-  "license": "LicenseRef-Papit-1.0",
+  "author": "VARIABLE_USER",
+  "license": "VARIABLE_PROJECTLICENSE",
   "workspaces": [
     "packages/**/*",
     "!packages/**/asset/**"

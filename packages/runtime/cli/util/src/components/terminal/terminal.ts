@@ -256,7 +256,7 @@ export class Terminal {
           }
 
           Terminal.error("\ncancelled");
-          process.exit(1);
+          process.exit();
         }
 
         if (/up/i.test(key.name) || key.shift && /tab/i.test(key.name))

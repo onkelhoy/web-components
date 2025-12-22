@@ -50,7 +50,7 @@ export function getScriptScope(url = import.meta.url) {
     __dirname = dirname(__dirname);
     const config = getConfig(join(__dirname, ".config"));
     if (!config) continue;
-    if (!config.PACKAGE_NAME) continue;
+    if (!config.FULL_NAME) continue;
 
     return __dirname;
   }

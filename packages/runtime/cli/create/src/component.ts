@@ -13,6 +13,10 @@ import { componentRunner } from "components/runners/component";
   const scriptdir = getScriptScope(import.meta.url);
   if (!scriptdir)
   {
+    if (args.flags.verbose)
+    {
+      console.log("import.meta.url", import.meta.url);
+    }
     Terminal.error("could not find @papit/create");
     process.exit(1);
   }

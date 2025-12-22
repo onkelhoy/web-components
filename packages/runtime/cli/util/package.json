@@ -3,8 +3,8 @@
   "description": "",
   "version": "0.0.1",
   "scripts": {
-    "build": "bash ./bin/build.sh",
-    "watch": "bash ./bin/watch.sh",
+    "build": "bash ./bin/build.sh && npx @papit/build",
+    "watch": "tsc -w",
     "start": "bash ./bin/start.sh",
     "publish:manual": "bash ./bin/publish.sh",
     "preversion": "bash ./bin/_utils/preversion.sh",
@@ -13,7 +13,7 @@
     "test": "node --test"
   },
   "main": "./lib/bundle.js",
-  "types": "./lib/types/index.d.ts",
+  "types": "./lib/index.d.ts",
   "type": "module",
   "files": [
     "asset/",
@@ -23,7 +23,7 @@
   "exports": {
     ".": {
       "import": "./lib/bundle.js",
-      "types": "./lib/types/index.d.ts"
+      "types": "./lib/index.d.ts"
     }
   },
   "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/runtime/cli/util",

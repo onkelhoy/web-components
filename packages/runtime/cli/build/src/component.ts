@@ -46,6 +46,8 @@ function getExportsInformation(entry:string, packageJSON:Package) {
     console.log("build-mode:", mode);
     console.log("package:", info.local);
     console.log("tsconfig:", meta.tsconfig.path);
+    console.log("format:", packageJSON.type === "module" ? "esm" : "cjs");
+    console.log("platform:", ["node"].includes(meta.config.TEMPLATE_TYPE ?? "web-component") ? "node" : "browser");
     console.log();
   }
 
@@ -100,23 +102,26 @@ function getExportsInformation(entry:string, packageJSON:Package) {
     await jsBundler(entryPoint, javascriptFileOutput, meta, packageJSON, args);
     await tsBundler(absoluteTypesEntry, typescriptFileOutput, meta, info, args);
 
-    if (binEntry && !args.flags.ci)
+    if (binEntry)
     {
+
       // add shebang and remove from root/node_modeles/.bin
       let shouldinstall = false;
-      const rootNodeModuleBin = path.join(info.root, "node_modules/.bin", binEntry);
-      if (fs.existsSync(rootNodeModuleBin)) 
+      if (!args.flags.ci)
       {
-        fs.rmSync(rootNodeModuleBin);
-      }
-      else 
-      {
-        shouldinstall = true;
+        const rootNodeModuleBin = path.join(info.root, "node_modules/.bin", binEntry);
+        if (fs.existsSync(rootNodeModuleBin)) 
+        {
+          fs.rmSync(rootNodeModuleBin);
+        }
+        else 
+        {
+          shouldinstall = true;
+        }
       }
 
       const bundle = fs.readFileSync(javascriptFileOutput, { encoding: "utf-8" });
       const updated = bundle.startsWith("#!/usr/bin/env node") ? bundle : `#!/usr/bin/env node\n${bundle}`;
-
       fs.writeFileSync(javascriptFileOutput, updated, { mode: 0o755 });
 
       if (shouldinstall)
