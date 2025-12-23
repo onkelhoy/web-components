@@ -1,59 +1,40 @@
-import path, { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-import fs from "node:fs";
+import { getScope } from "../get-scope";
 import { Lockfile, Package } from "./types";
 
-import { getConfig } from "components/get-config";
-
-export function getPackage(fullPackageName: string, lockfile: Lockfile): Package | null {
+export function getPackage<T extends Package>(fullPackageName: string, lockfile: Lockfile): T | null {
   if (!lockfile) return null;
 
   const linkedPackage = lockfile.packages[`node_modules/${fullPackageName}`];
   if (!linkedPackage) return null;
   if (!('link' in linkedPackage)) throw Error("requested package is not local");
 
-  return lockfile.packages[linkedPackage.resolved] as Package;
+  return lockfile.packages[linkedPackage.resolved] as T;
 }
 
-function findWorkspaceRoot(startDir: string): string {
-  let dir = startDir;
-  while (dir !== path.dirname(dir))
-  { // stop at filesystem root
-    if (fs.existsSync(path.join(dir, "package.json")))
-    {
-      const pkg = JSON.parse(fs.readFileSync(path.join(dir, "package.json"), "utf-8"));
-      if (pkg.workspaces) return dir; // found monorepo root
-    }
-    dir = path.dirname(dir);
+export async function getRemotePackages(scope: string = getScope(), size: number = 100): Promise<any> {
+  try {
+    const res = await fetch(`https://registry.npmjs.org/-/v1/search?text=${scope}&size=${size}`)
+    if (!res.ok) return null;
+
+    const json = await res.json();
+    console.log("json", json);
   }
-  return startDir; // fallback
-}
-
-
-export function getPackageInfo(location?: string) {
-  const local = location ?? process.cwd();
-
-  return {
-    root: findWorkspaceRoot(local),
-    local,
-    script: getScriptScope(),
-  }
-}
-
-export function getScriptScope(url = import.meta.url) {
-  const __filename = fileURLToPath(url);
-  let __dirname = __filename;
-
-  // get the parent folder of 'lib' if it ends with 'lib'
-  for (let i = 0; i < 5; i++)
+  catch 
   {
-    __dirname = dirname(__dirname);
-    const config = getConfig(join(__dirname, ".config"));
-    if (!config) continue;
-    if (!config.FULL_NAME) continue;
-
-    return __dirname;
+    return null;
   }
+}
 
-  return null;
+export async function getRemotePackage(packageName: string): Promise<any> {
+  try {
+    const res = await fetch(`https://registry.npmjs.org/${encodeURIComponent(packageName)}`)
+    if (!res.ok) return null;
+  
+    const json = await res.json();
+    console.log("json", json);
+  }
+  catch 
+  {
+    return null;
+  }
 }

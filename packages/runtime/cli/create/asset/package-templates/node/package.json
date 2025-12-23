@@ -18,17 +18,16 @@
     "test": ""
   },
   "main": "./lib/bundle.js",
-  "types": "./lib/types/index.d.ts",
+  "types": "./lib/bundle.d.ts",
   "type": "module",
   "files": [
     "asset/",
-    "lib/",
-    ".config"
+    "lib/"
   ],
   "exports": {
     ".": {
       "import": "./lib/bundle.js",
-      "types": "./lib/types/index.d.ts"
+      "types": "./lib/bundle.d.ts"
     }
   },
   "author": "VARIABLE_USER",

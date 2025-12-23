@@ -5,12 +5,14 @@ import { promisify } from "node:util";
 
 import {
   Terminal,
-  getPackageInfo,
-  getConfig,
   getArguments,
   getName,
   copyFolder,
-} from "@papit/cli-util"
+  getPathInfo,
+  getJSON,
+  RootPackage,
+  LocalPackage,
+} from "@papit/util-cli"
 import { getFolders } from "components/util";
 
 type PackageInfo = {
@@ -30,62 +32,74 @@ function folderHasFilesSync(path: string): boolean {
 function createFolderIfNotExistSync(url:string) {
   if (!(fs.existsSync(url) && fs.statSync(url).isDirectory()))
   {
-    fs.mkdirSync(url);  
+    fs.mkdirSync(url);
   }
 }
 
 const execAsync = promisify(exec);
-export async function componentRunner(scriptdir: string, args: ReturnType<typeof getArguments>, packageInfo?: PackageInfo) {
+export async function componentRunner(
+  _info: ReturnType<typeof getPathInfo>,
+  args: ReturnType<typeof getArguments>,
+  packageInfo?: PackageInfo,
+  rootPackage?: RootPackage,
+) {
 
-  const info = getPackageInfo(packageInfo?.destination);
-  const packageConfigLocation = path.join(info.local, ".config");
-  const config = getConfig(packageConfigLocation);
+  const info = getPathInfo(packageInfo?.destination);
 
-  if (config == null)
+  if (!rootPackage) rootPackage = getJSON<RootPackage>(path.join(info.root, "package.json")) ?? undefined;
+  if (!rootPackage)
   {
-    Terminal.error("could not find package's .config file");
+    Terminal.error("could not find root package.json file");
     process.exit(1);
   }
 
-  if (!config.FULL_NAME)
+  const packageJSONLocation = path.join(info.local, "package.json");
+  const localPackage = getJSON<LocalPackage>(packageJSONLocation)
+
+  if (localPackage == null)
   {
-    Terminal.error("package is missing FULL_NAME in .config");
+    Terminal.error("could not find package's package.json file");
     process.exit(1);
   }
 
-  const templates = getFolders(path.join(scriptdir, "asset/component-templates"));
-  let templateIndex = templates.findIndex(f => f === config.TEMPLATE_TYPE);
+  const templateFolders = getFolders(path.join(_info.script!, "asset/component-templates"));
+  const localRunnerSet = new Set<string>();
+  getFolders(path.join(info.root, "bin/runners/component"))
+    .forEach(f => {
+      templateFolders.push(f);
+      localRunnerSet.add(f);
+    });
+
+  let templateIndex = templateFolders.findIndex(f => f === localPackage.papit?.type);
 
   if (templateIndex < 0)
   {
     const argType = args.flags.component ?? args.flags.type;
-    templateIndex = templates.findIndex(f => f === argType);
+    templateIndex = templateFolders.findIndex(f => f === argType);
 
     if (templateIndex < 0)
     {
       Terminal.createSession();
       Terminal.write("type of component");
-      templateIndex = await Terminal.option(templates);
+      templateIndex = await Terminal.option(templateFolders);
       Terminal.clearSession();
     }
   }
-  const template = templates[templateIndex]
-
-  const rootConfig = getConfig(path.join(info.root, ".config"));
+  const template = templateFolders[templateIndex]
 
   let htmlPrefix:string|undefined = undefined;
   if (Array.isArray(args.flags['html-prefix'])) htmlPrefix = args.flags['html-prefix'].join("-");
   else if (typeof args.flags['html-prefix'] === "string") htmlPrefix = args.flags['html-prefix'];
-  else htmlPrefix = packageInfo?.htmlPrefix ?? config.HTML_PREFIX
+  else htmlPrefix = packageInfo?.htmlPrefix ?? rootPackage.papit.htmlprefix;
 
   if (htmlPrefix?.trim() === "") htmlPrefix = undefined;
 
   if (htmlPrefix === undefined && /web-components?/i.test(template))
   {
-    if (htmlPrefix === undefined) htmlPrefix = rootConfig?.HTML_PREFIX;
+    if (htmlPrefix === undefined) htmlPrefix = localPackage.papit.htmlprefix;
 
     const sess = Terminal.createSession();
-    while (true) 
+    while (true)
     {
       let answer:string;
       if (htmlPrefix !== undefined)
@@ -93,17 +107,17 @@ export async function componentRunner(scriptdir: string, args: ReturnType<typeof
         answer = await Terminal.prompt(`use default "${htmlPrefix}" or override?`);
         if (!answer) answer = htmlPrefix;
       }
-      else 
+      else
       {
         answer = await Terminal.prompt("html prefix", true);
       }
-      
-      if (answer) 
+
+      if (answer)
       {
         htmlPrefix = answer;
         break;
       }
-      else 
+      else
       {
 
         Terminal.clearSession();
@@ -117,7 +131,7 @@ export async function componentRunner(scriptdir: string, args: ReturnType<typeof
   while (!nameInfo)
   {
     Terminal.clearSession();
-    
+
     let input:string|undefined = undefined;
     if (Array.isArray(args.flags.name)) input = args.flags.name.join(" ");
     else if (typeof args.flags.name === "string") input = args.flags.name;
@@ -125,13 +139,13 @@ export async function componentRunner(scriptdir: string, args: ReturnType<typeof
 
     nameInfo = getName(input);
 
-    if (!nameInfo) 
+    if (!nameInfo)
     {
       Terminal.write("name missing, try again");
       continue;
     }
 
-    if (config["COMPONENT_"+nameInfo.name])
+    if (localPackage.papit.components[nameInfo.name])
     {
       Terminal.write("name already exist, try again");
       continue;
@@ -140,20 +154,11 @@ export async function componentRunner(scriptdir: string, args: ReturnType<typeof
     break;
   }
 
-  const inlineCopy = (src: string, dest: string) => 
-    copyFolder(src, dest, file => {
-      return file
-        .replace(/VARIABLE_NAME/g, nameInfo.name)
-        .replace(/VARIABLE_FULL_NAME/g, config.FULL_NAME!)
-        .replace(/VARIABLE_HTML_NAME/g, `${htmlPrefix}-${nameInfo.name}`)
-        .replace(/VARIABLE_CLASS_NAME/g, nameInfo.className)
-    });
-  
   Terminal.createSession();
   const shouldCommit = packageInfo?.shouldCommit === undefined ? ('agree' in args.flags || 'commit' in args.flags || await Terminal.confirm("git commit", true)) : packageInfo.shouldCommit;
   Terminal.clearSession();
 
-  const templateSrc = path.join(scriptdir, "asset/component-templates", template);
+  const templateSrc = localRunnerSet.has(template) ? path.join(info.root, "bin/runners/component", template) : path.join(_info.script!, "asset/component-templates", template);
   const folders = getFolders(templateSrc)
   for (const folder of folders)
   {
@@ -165,52 +170,49 @@ export async function componentRunner(scriptdir: string, args: ReturnType<typeof
     {
       if (folderHasFilesSync(destParent))
       {
-        // should be injected into src/index.ts & updated in .config and maybe README.md ? 
-        if (!config["COMMENT_Components"])
-        {
-          fs.appendFileSync(packageConfigLocation, "\n# Components\n");
-        }
-  
         // inject into .config
-        fs.appendFileSync(packageConfigLocation, `COMPONENT_${nameInfo.name}\n`);
+        localPackage.papit.components[nameInfo.name] = {
+          className: nameInfo.className,
+        }
 
         if (shouldCommit)
         {
-          try 
-          {
-            await execAsync(`git add ${packageConfigLocation}`);
-          }
-          catch 
-          {
-            Terminal.warn(`"git add ${packageConfigLocation}" failed`);
-          }
+          await execAsync(`git add ${packageJSONLocation}`);
         }
 
         destParent = path.join(destParent, "components");
       }
-      // else -> we keep dest as destParent 
+      // else -> we keep dest as destParent
     }
-    else 
+    else
     {
       dest = path.join(destParent, nameInfo.name);
     }
 
     createFolderIfNotExistSync(destParent);
-    await inlineCopy(templateFolderSrc, dest);
+
+    await copyFolder(templateFolderSrc, dest, file => {
+      return file
+        .replace(/VARIABLE_NAME/g, nameInfo.name)
+        .replace(/VARIABLE_FULL_NAME/g, localPackage.name)
+        .replace(/VARIABLE_HTML_NAME/g, `${htmlPrefix}-${nameInfo.name}`)
+        .replace(/VARIABLE_CLASS_NAME/g, nameInfo.className)
+    });
+
     if (shouldCommit)
     {
-      try 
+      try
       {
         await execAsync(`git add ${dest}`);
       }
-      catch 
+      catch
       {
         Terminal.warn(`"git add ${dest}" failed`);
       }
     }
   }
 
-  // its not in package -> component mode 
+  // its not in package -> component mode
   if (!packageInfo?.shouldCommit && shouldCommit)
   {
     await execAsync(`git commit -m "add: ${nameInfo.name} component"`);

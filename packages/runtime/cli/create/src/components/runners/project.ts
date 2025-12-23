@@ -1,17 +1,19 @@
 import path from "node:path";
 import fs from "node:fs";
+import { exec, execSync } from "node:child_process";
+import { promisify } from "node:util";
 
 import {
   Terminal,
-  getPackageInfo,
-  getConfig,
   getArguments,
   copyFolder,
-} from "@papit/cli-util"
-import { getFolders } from "components/util";
+  getPathInfo,
+} from "@papit/util-cli"
+const execAsync = promisify(exec);
 
-export async function runner(scriptdir: string, args: ReturnType<typeof getArguments>, packageLocation?: string) {
+export async function runner(info: ReturnType<typeof getPathInfo>, args: ReturnType<typeof getArguments>, packageLocation?: string) {
   Terminal.write("Project Creation\n")
+  Terminal.createSession();
   let linebetween = false;
   let name:string;
   if (typeof args.flags.name === "string")
@@ -87,9 +89,18 @@ export async function runner(scriptdir: string, args: ReturnType<typeof getArgum
       fs.copyFileSync(licensefilelocation, path.join(location, 'LICENSE'));
     }
   }
+
+  Terminal.clearSession();
+
+  const initgit = args.flags.git === "true" || await Terminal.confirm("init with git?");
+  if (initgit)
+  {
+    await execSync("git init", { cwd: location });
+  }
+
   
   // Copy package template
-  await copyFolder(path.join(scriptdir, "asset/project-template"), location, async (file, src) => {
+  await copyFolder(path.join(info.script!, "asset/project-template"), location, async (file, src) => {
     if (src.endsWith(".gitkeep")) return false;
     
     const final = file
@@ -100,4 +111,10 @@ export async function runner(scriptdir: string, args: ReturnType<typeof getArgum
 
     return final;
   });
+
+  if (initgit)
+  {
+    await execSync("git add .", { cwd: location });
+    await execSync(`git commit -m "init: ${name} initialized"`, { cwd: location });
+  }
 }

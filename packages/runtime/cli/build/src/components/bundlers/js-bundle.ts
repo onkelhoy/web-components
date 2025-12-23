@@ -1,6 +1,6 @@
 // import statements 
 import esbuild from "esbuild";
-import { Package, Terminal, getArguments } from "@papit/cli-util";
+import { Package, Terminal, getArguments } from "@papit/util-cli";
 
 import { Meta } from "../meta/types";
 
@@ -12,15 +12,25 @@ export async function jsBundler(
   args: ReturnType<typeof getArguments>,
 ) {
 
+  const isDev = !!args.flags.dev;
+
   const esbuildInfo = await esbuild.build({
     entryPoints: [inputFile],
     bundle: true,
     outfile: outputFile,
-    minify: true,
+
+    // 🔥 DEV vs PROD behavior
+    minify: !isDev,
+    sourcemap: isDev,
+    treeShaking: !isDev,
+    keepNames: isDev,
+
     tsconfig: meta.tsconfig.path,
     format: packageJSON.type === "module" ? "esm" : "cjs",
-    platform: ["node"].includes(meta.config.TEMPLATE_TYPE ?? "web-component") ? "node" : "browser",
+    platform: ["node"].includes(meta.config.type ?? "web-component") ? "node" : "browser",
     external: meta.externals,
+
+    logLevel: "silent",
   });
 
   if (esbuildInfo.errors.length > 0)

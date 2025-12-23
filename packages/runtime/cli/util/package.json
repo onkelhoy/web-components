@@ -1,9 +1,10 @@
 {
-  "name": "@papit/cli-util",
+  "name": "@papit/util-cli",
   "description": "",
   "version": "0.0.1",
   "scripts": {
-    "build": "bash ./bin/build.sh && npx @papit/build",
+    "prebuild": "node ./bin/build.cjs",
+    "build": "npx @papit/build",
     "watch": "tsc -w",
     "start": "bash ./bin/start.sh",
     "publish:manual": "bash ./bin/publish.sh",
@@ -16,9 +17,7 @@
   "types": "./lib/index.d.ts",
   "type": "module",
   "files": [
-    "asset/",
-    "lib/",
-    ".config"
+    "lib/"
   ],
   "exports": {
     ".": {
@@ -47,11 +46,21 @@
     "node": ">=18"
   },
   "devDependencies": {
+    "esbuild": "^0.27.2",
     "@types/node": "^22.10.2",
     "typescript": "^5.7.2"
   },
   "keywords": [
     "node",
     "typescript"
-  ]
+  ],
+  "papit": {
+    "publish": true,
+    "type": "node",
+    "main": {
+      "name": "util",
+      "className": "Util"
+    },
+    "components": {}
+  }
 }

@@ -1,33 +1,38 @@
-import { getArguments, getConfig, getPackageInfo, Terminal } from "@papit/cli-util";
-import { readdirSync, statSync, mkdirSync, writeFileSync } from "node:fs";
+import { getArguments, Terminal, RootPackage, getPathInfo } from "@papit/util-cli";
+import fs from "node:fs";
 import { join } from "node:path";
+import { stripRootPath } from "./helper";
 
 export function getFolders(dir: string): string[] {
-  return readdirSync(dir).filter(name => statSync(join(dir, name)).isDirectory());
+  return fs.readdirSync(dir).filter(name => fs.statSync(join(dir, name)).isDirectory());
 };
 
-function getLayerFolders(dir: string): string[] {
-  return readdirSync(dir).filter(name => {
+function getLayerFolders(
+  dir: string, 
+  rootPackage: RootPackage, 
+  info: ReturnType<typeof getPathInfo>
+): string[] {
+  return fs.readdirSync(dir).filter(name => {
     const joined = join(dir, name);
-    if (!statSync(joined).isDirectory()) return false;
-
-    const config = getConfig(join(joined, ".config"));
-    if (config == null) return true; // risky but we want to have "pure" folders
-
-    return config.IS_LAYER || config.LAYER_INCLUDE;
+    if (!fs.statSync(joined).isDirectory()) return false;
+    const replaced = stripRootPath(info.root, joined);
+    
+    return !!rootPackage.papit.layers[replaced]
   });
 };
 
-export async function selectFolder(info: ReturnType<typeof getPackageInfo> & {
-  scope: string;
-}, args: ReturnType<typeof getArguments>) {
+export async function selectFolder(
+  info: ReturnType<typeof getPathInfo> & { scope: string;}, 
+  args: ReturnType<typeof getArguments>,
+  rootPackage: RootPackage,
+) {
   return Terminal.sessionBlock(async () => {    
     let target = join(info.root, "packages");
   
     while (target)
     {
       const session = Terminal.createSession();
-      const folders = getLayerFolders(target);
+      const folders = getLayerFolders(target, rootPackage, info);
   
       Terminal.write("Current: ", target.replace(info.root, info.scope));
       Terminal.write();
@@ -42,7 +47,7 @@ export async function selectFolder(info: ReturnType<typeof getPackageInfo> & {
       {
         const name = await Terminal.prompt("Name of the folder?");
         const url = join(target, name);
-        const created = await createFolder(url, name, args);
+        const created = await createFolder(url, name, args, info, rootPackage);
   
         if (created)
         {
@@ -61,7 +66,13 @@ export async function selectFolder(info: ReturnType<typeof getPackageInfo> & {
 }
 
 
-async function createFolder(url: string, name: string, args: ReturnType<typeof getArguments>) {
+async function createFolder(
+  url: string, 
+  name: string, 
+  args: ReturnType<typeof getArguments>,
+  info: ReturnType<typeof getPathInfo>,
+  rootPackage: RootPackage,
+) {
   Terminal.write(`[${url}]`);
   Terminal.write();
   Terminal.createSession();
@@ -71,14 +82,19 @@ async function createFolder(url: string, name: string, args: ReturnType<typeof g
   if (!shouldCreate) return false;
 
   // its create new mode 
-  mkdirSync(url);
+  fs.mkdirSync(url);
 
-  await createFolderConfig(url, name);
+  await createFolderConfig(url, name, info, rootPackage);
 
   return true;
 }
 
-export async function createFolderConfig(url: string, name: string) {
+export async function createFolderConfig(
+  url: string, 
+  name: string,
+  info: ReturnType<typeof getPathInfo>,
+  rootPackage: RootPackage,
+) {
   return Terminal.sessionBlock(async () => {
     const overrideName = await Terminal.prompt(`use "${name}" or override?`);
     Terminal.clearSession();
@@ -87,6 +103,13 @@ export async function createFolderConfig(url: string, name: string) {
     const ps_index = await Terminal.option(prefixSuffix, `include "${overrideName}" in packages`);
     const includeMode = prefixSuffix[ps_index];
   
-    await writeFileSync(join(url, ".config"), `IS_LAYER=true\nLAYER_FOLDER=${name}\nLAYER_NAME=${overrideName || name}\nLAYER_INCLUDE=${includeMode}`, { flag: "wx" });
+    if (!rootPackage.papit) rootPackage.papit = { layers: {} };
+    const localFolder = stripRootPath(info.root, url);
+    rootPackage.papit.layers[localFolder] = {
+      include: includeMode === "false" ? false : includeMode as "prefix"|"suffix",
+      name,
+    }
+
+    fs.writeFileSync(join(info.root, "package.json"), JSON.stringify(rootPackage, null, 2), { encoding: "utf-8" });
   });
 }

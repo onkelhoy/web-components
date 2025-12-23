@@ -1,5 +1,5 @@
-import { getConfig } from "@papit/cli-util";
-import { getTSConfiginfo } from "./ts-info";
+import { LocalPackage } from "@papit/util-cli"
+import { getTSinfo } from "./get-tsinfo";
 
 export type Meta = {
   entryPoints: {
@@ -8,8 +8,8 @@ export type Meta = {
   };
   externals: string[];
   tsconfig: {
-    info: ReturnType<typeof getTSConfiginfo>;
+    info: ReturnType<typeof getTSinfo>;
     path: string;
   };
-  config: NonNullable<ReturnType<typeof getConfig>>;
+  config: LocalPackage['papit'];
 }

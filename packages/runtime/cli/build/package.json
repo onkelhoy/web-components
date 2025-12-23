@@ -9,7 +9,8 @@
   ],
   "version": "0.0.1",
   "scripts": {
-    "build": "bash ./bin/build.sh && node ./.papit/bundle.js",
+    "prebuild": "node ./bin/build.cjs",
+    "build": "node ./.papit/bundle.js",
     "watch": "tsc -w",
     "preversion": "bash ./bin/_utils/preversion.sh",
     "postversion": "bash ./bin/_utils/postversion.sh",
@@ -21,8 +22,7 @@
   "type": "module",
   "files": [
     "asset/",
-    "lib/",
-    ".config"
+    "lib/"
   ],
   "exports": {
     ".": {
@@ -54,18 +54,28 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@papit/cli-util": "^0.0.1",
-    "@microsoft/api-extractor": "^7.55.2",
+    "@papit/util-cli": "^0.0.1"
+  },
+  "peerDependencies": {
     "esbuild": "^0.27.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "@microsoft/api-extractor": "^7.55.2"
   },
   "devDependencies": {
-    "@types/node": "^22.10.2",
-    "chokidar": "^3.6.0"
+    "@types/node": "^22.10.2"
   },
   "browserslist": [
     "defaults",
     "not IE 11",
     "not dead"
-  ]
+  ],
+  "papit": {
+    "publish": true,
+    "type": "node",
+    "main": {
+      "name": "build",
+      "className": "Build"
+    },
+    "components": {}
+  }
 }

@@ -1,11 +1,12 @@
-export type Package = {
+
+type BasePackage = {
   name: string;
   version: string;
   dependencies: Record<string, string>;
   devDependencies: Record<string, string>;
-  peerDependencies: Record<string, string>;
+  peerDependencies?: Record<string, string>;
   license?: string;
-  repository: {
+  repository?: {
     type: "git" | (string & {});
     url: string;
   };
@@ -14,13 +15,33 @@ export type Package = {
   main?: string;
   types?: string;
   type: "module" | "commonjs";
-  exports?: Record<"." | (string & {}), Partial<Record<"import" | "types" | "require" | (string & {}), string>>>;
   entryPoints?: string|Record<string,string>;
+  exports?: Record<"." | (string & {}), Partial<Record<"import" | "types" | "require" | (string & {}), string>>>;
 }
+
+export type RootPackage = BasePackage & {
+  papit: {
+    layers: Record<string, { name: string; include: false|"prefix"|"suffix"; }>;
+    htmlprefix?: string;
+  };
+}
+
+export type LocalPackage = BasePackage & {
+  papit: {
+    publish: boolean;
+    type: string;
+    main: {name: string; className: string};
+    components: Record<string, {className: string}>;
+    htmlprefix?: string;
+  };
+}
+
+export type Package = RootPackage | LocalPackage;
 
 type PackageLockEntry = {
   link: boolean;
   resolved: string;
+  name?: string;
 };
 export type Lockfile = {
   packages: Record<string, PackageLockEntry | Package>;

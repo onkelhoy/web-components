@@ -1,4 +1,4 @@
-# @papit/cli-util
+# @papit/util-cli
 
 Whops, abstract is missing!
 
@@ -6,7 +6,7 @@ Whops, abstract is missing!
 
 ![Type](https://img.shields.io/badge/Type-cli-orange)
 [![Tests](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml/badge.svg)](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml)
-[![NPM version](https://img.shields.io/npm/v/@papit/cli-util.svg?logo=npm)](https://www.npmjs.com/package/@papit/cli-util)
+[![NPM version](https://img.shields.io/npm/v/@papit/util-cli.svg?logo=npm)](https://www.npmjs.com/package/@papit/util-cli)
 
 ---
 
@@ -15,14 +15,14 @@ Whops, abstract is missing!
 ### installation
 
 ```bash
-npm install @papit/cli-util
+npm install @papit/util-cli
 ```
 
 ### to use in **html**
 
 ```html
 <script type="module" defer>
-  import "@papit/cli-util";
+  import "@papit/util-cli";
 </script>
 
 <></>
@@ -31,7 +31,7 @@ npm install @papit/cli-util
 ### to use in **react**
 
 ```jsx
-import { CliUtil } from "@papit/cli-util/react";
+import { CliUtil } from "@papit/util-cli/react";
 
 function Component() {
   return <CliUtil />;

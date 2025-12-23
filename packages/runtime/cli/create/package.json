@@ -16,8 +16,7 @@
   "types": "./lib/bundle.d.ts",
   "type": "module",
   "files": [
-    "lib/",
-    ".config"
+    "lib/"
   ],
   "exports": {
     ".": {
@@ -49,7 +48,7 @@
     "create": "./lib/bundle.js"
   },
   "dependencies": {
-    "@papit/cli-util": "0.0.1"
+    "@papit/util-cli": "0.0.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
@@ -58,5 +57,14 @@
   "keywords": [
     "node",
     "typescript"
-  ]
+  ],
+  "papit": {
+    "publish": true,
+    "type": "node",
+    "main": {
+      "name": "create",
+      "className": "Create"
+    },
+    "components": {}
+  }
 }

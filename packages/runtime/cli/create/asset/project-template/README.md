@@ -1,4 +1,4 @@
-# VARIABLE_ROOT_NAME
+# VARIABLE_NAME
 
 ## Introduction
 

@@ -1,22 +1,23 @@
-#!/usr/bin/env node
 
-import { getArguments, getScriptScope, Terminal } from "@papit/cli-util"
-import { packageRunner } from "components/runners/package";
-import { componentRunner } from "components/runners/component";
+import path from "node:path";
+import fs from "node:fs";
+
+import { getArguments, getPathInfo, getScriptPackageLocation, Terminal } from "@papit/util-cli"
+import { packageRunner } from "./components/runners/package";
+import { componentRunner } from "./components/runners/component";
+import { getFolders } from "components/util";
 
 (async function () {
   const args = getArguments(["verbose", "install", "commit", "agree"]);
+  const info = getPathInfo(undefined, import.meta.url);
+
   if (args.flags.verbose)
   {
     process.env.verbose = "true";
   }
-  const scriptdir = getScriptScope(import.meta.url);
-  if (!scriptdir)
+
+  if (!info.script)
   {
-    if (args.flags.verbose)
-    {
-      console.log("import.meta.url", import.meta.url);
-    }
     Terminal.error("could not find @papit/create");
     process.exit(1);
   }
@@ -32,38 +33,66 @@ import { componentRunner } from "components/runners/component";
   Terminal.write("@papit/create - running");
   Terminal.write();
 
-  let option = 0;
-  if (args.flags.package)
+  const options = ["package", "component", "project", "showcase"];
+
+  const localRunnersLocation = path.join(info.root, "bin/runners");
+  const folders = getFolders(localRunnersLocation);
+  const localRunnerSet = new Set<string>();
+  folders.forEach(folder => {
+    if (options.includes(folder)) return;
+
+    const runnerFile = path.join(localRunnersLocation, folder, "runner.js");
+    if (!fs.existsSync(runnerFile)) return;
+
+    localRunnerSet.add(folder);
+    options.push(folder);
+  })
+  
+
+  let option: number|null = null;
+  for (let i=0; i<options.length; i++)
   {
-    option = 0;
+    if (args.flags[options[i]]) 
+    {
+      option = i;
+      break;
+    }
   }
-  else if (args.flags.component)
-  {
-    option = 1;
-  }
-  else if (args.flags.project)
-  {
-    option = 2;
-  }
-  else if (args.flags.showcase)
-  {
-    option = 3;
-  }
-  else 
+  
+  if (option === null)
   {
     Terminal.createSession();
-    option = await Terminal.option(["package", "component", "project", "showcase"]);
+    option = await Terminal.option(options);
     Terminal.clearSession();
   }
 
   switch (option)
   {
+    case 0:
+      await packageRunner(info, args);
+      break;
     case 1:
-      await componentRunner(scriptdir, args);
+      await componentRunner(info, args);
       break;
-    default:
-      await packageRunner(scriptdir, args);
+    default: {
+      const runnerName = options[option];
+      if (!localRunnerSet.has(runnerName))
+      {
+        Terminal.error("requested a runner that doesnt exist");
+        process.exit(1);
+      }
+
+      const runnerFile = path.join(localRunnersLocation, runnerName, "runner.js");
+
+      if (args.flags.verbose)
+      {
+        Terminal.write(`running local runner "${runnerName}"`);
+      }
+      
+      const { default: runner } = await import(runnerFile);
+      await runner(info, args)
       break;
+    }
   }
 
   process.exit();

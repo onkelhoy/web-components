@@ -1,10 +1,10 @@
 // import statements 
 import path from "node:path";
 import fs from "node:fs";
-import { Package, Terminal, getArguments, getJSON, getPackageInfo } from "@papit/cli-util";
+import { LocalPackage, Package, Terminal, getArguments, getJSON, getPathInfo } from "@papit/util-cli";
 
-import { getMeta } from "./components/meta";
-export { getMeta } from "./components/meta";
+import { getMeta } from "./components/meta/get-meta";
+export { getMeta } from "./components/meta/get-meta";
 
 import { jsBundler } from "./components/bundlers/js-bundle";
 import { tsBundler } from "./components/bundlers/ts-bundle";
@@ -27,11 +27,11 @@ function getExportsInformation(entry:string, packageJSON:Package) {
   const session = Terminal.createSession();
   const args = getArguments(["verbose", "prod", "dev", "force", "clean", "ci"]);
 
-  const info = getPackageInfo();
+  const info = getPathInfo();
   const mode = args.flags.dev ? "dev" : "prod";
 
   const packageJsonPath = path.join(info.local, "package.json");
-  const packageJSON = getJSON<Package>(packageJsonPath);
+  const packageJSON = getJSON<LocalPackage>(packageJsonPath);
   if (!packageJSON)
   {
     Terminal.error("package.json not found");
@@ -40,14 +40,13 @@ function getExportsInformation(entry:string, packageJSON:Package) {
 
   const meta = await getMeta(mode, info, args, packageJSON);
   
-  // const tsConfigInfo = getTSConfiginfo(tsconfigFilePath);
   if (args.flags.verbose)
   {
     console.log("build-mode:", mode);
     console.log("package:", info.local);
     console.log("tsconfig:", meta.tsconfig.path);
     console.log("format:", packageJSON.type === "module" ? "esm" : "cjs");
-    console.log("platform:", ["node"].includes(meta.config.TEMPLATE_TYPE ?? "web-component") ? "node" : "browser");
+    console.log("platform:", ["node"].includes(meta.config.type ?? "web-component") ? "node" : "browser");
     console.log();
   }
 
@@ -104,9 +103,11 @@ function getExportsInformation(entry:string, packageJSON:Package) {
 
     if (binEntry)
     {
-
+      if (args.flags.verbose)
+      {
+        console.log('bin-entry found', binEntry, args.flags.ci);
+      }
       // add shebang and remove from root/node_modeles/.bin
-      let shouldinstall = false;
       if (!args.flags.ci)
       {
         const rootNodeModuleBin = path.join(info.root, "node_modules/.bin", binEntry);
@@ -114,19 +115,20 @@ function getExportsInformation(entry:string, packageJSON:Package) {
         {
           fs.rmSync(rootNodeModuleBin);
         }
-        else 
-        {
-          shouldinstall = true;
-        }
       }
 
       const bundle = fs.readFileSync(javascriptFileOutput, { encoding: "utf-8" });
       const updated = bundle.startsWith("#!/usr/bin/env node") ? bundle : `#!/usr/bin/env node\n${bundle}`;
       fs.writeFileSync(javascriptFileOutput, updated, { mode: 0o755 });
 
-      if (shouldinstall)
+      if (!args.flags.ci)
       {
+        if (args.flags.verbose) console.log('running install');
         await execAsync("npm install", { cwd: info.root });
+      }
+      else if (args.flags.verbose)
+      {
+        console.log('no install');
       }
     }
   }

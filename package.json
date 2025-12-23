@@ -29,5 +29,26 @@
   "workspaces": [
     "packages/**/*",
     "!packages/**/asset/**"
-  ]
+  ],
+  "devDependencies": {
+    "@microsoft/api-extractor": "^7.55.2",
+    "esbuild": "^0.27.2",
+    "typescript": "^5.9.3"
+  },
+  "papit": {
+    "layers": {
+      "packages/runtime": {
+        "include": "false",
+        "name": "runtime"
+      },
+      "packages/runtime/cli": {
+        "include": "prefix",
+        "name": "cli"
+      },
+      "packages/temp": {
+        "include": false,
+        "name": "temp"
+      }
+    }
+  }
 }

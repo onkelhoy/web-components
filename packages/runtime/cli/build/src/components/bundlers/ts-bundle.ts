@@ -3,7 +3,7 @@ import path from "node:path";
 import { exec } from "node:child_process";
 import { promisify } from "node:util";
 import { Extractor, ExtractorConfig } from '@microsoft/api-extractor';
-import { Terminal, getArguments, getPackageInfo } from "@papit/cli-util";
+import { Terminal, getArguments, getPathInfo } from "@papit/util-cli";
 
 import { Meta } from "../meta/types";
 
@@ -13,7 +13,7 @@ export async function tsBundler(
   inputFile: string, 
   outputFile: string, 
   meta: Meta, 
-  info: ReturnType<typeof getPackageInfo>, 
+  info: ReturnType<typeof getPathInfo>, 
   args: ReturnType<typeof getArguments>
 ) {
   if (!meta.tsconfig.info.declaration) return;
@@ -21,10 +21,16 @@ export async function tsBundler(
   try {
     await execAsync(`tsc --emitDeclarationOnly -p ${meta.tsconfig.path} --declarationDir .papit/build`);
   }
-  catch {
+  catch (e) {
     Terminal.error("tsc failed");
+    if (args.flags.verbose)
+    {
+      console.log(e);
+    }
     process.exit(1);
   }
+
+  if (!!args.flags.dev) return;
 
   const result = await Terminal.sessionBlock(async () => {
     // create a config object programmatically
