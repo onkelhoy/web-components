@@ -44,10 +44,6 @@
       "packages/runtime/cli": {
         "include": "prefix",
         "name": "cli"
-      },
-      "packages/temp": {
-        "include": false,
-        "name": "temp"
       }
     }
   }

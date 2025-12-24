@@ -5,6 +5,6 @@ export * from "./components/get-json";
 export * from "./components/get-name";
 export * from "./components/get-package";
 export * from "./components/get-scope";
-export * from "./components/get-dependency-order";
+export * from "./components/get-dependency";
 export * from "./util";
 

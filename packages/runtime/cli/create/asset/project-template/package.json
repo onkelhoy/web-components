@@ -23,5 +23,29 @@
   "workspaces": [
     "packages/**/*",
     "!packages/**/asset/**"
-  ]
+  ],
+  "papit": {
+    "layers": {
+      "packages/atoms": {
+        "include": "false",
+        "name": "atom"
+      },
+      "packages/molecules": {
+        "include": "false",
+        "name": "molecule"
+      },
+      "packages/organisms": {
+        "include": "false",
+        "name": "organism"
+      },
+      "packages/pages": {
+        "include": "suffix",
+        "name": "page"
+      },
+      "packages/templates": {
+        "include": "suffix",
+        "name": "template"
+      }
+    }
+  }
 }

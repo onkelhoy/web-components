@@ -1,7 +1,7 @@
 // import statements 
 import path from "node:path";
 import fs from "node:fs";
-import { LocalPackage, Package, Terminal, getArguments, getJSON, getPathInfo } from "@papit/util-cli";
+import { LocalPackage, Package, Terminal, getArguments, getDependencyBloodline, getJSON, getPathInfo } from "@papit/util-cli";
 
 import { getMeta } from "./components/meta/get-meta";
 export { getMeta } from "./components/meta/get-meta";
@@ -23,20 +23,13 @@ function getExportsInformation(entry:string, packageJSON:Package) {
   return packageJSON.exports[entry] ?? null;
 }
 
-(async function () {
+async function runner(
+  mode: "prod"|"dev",
+  info: ReturnType<typeof getPathInfo>,
+  args: ReturnType<typeof getArguments>,
+  packageJSON: LocalPackage,
+) {
   const session = Terminal.createSession();
-  const args = getArguments(["verbose", "prod", "dev", "force", "clean", "ci"]);
-
-  const info = getPathInfo();
-  const mode = args.flags.dev ? "dev" : "prod";
-
-  const packageJsonPath = path.join(info.local, "package.json");
-  const packageJSON = getJSON<LocalPackage>(packageJsonPath);
-  if (!packageJSON)
-  {
-    Terminal.error("package.json not found");
-    process.exit(1);
-  }
 
   const meta = await getMeta(mode, info, args, packageJSON);
   
@@ -48,6 +41,16 @@ function getExportsInformation(entry:string, packageJSON:Package) {
     console.log("format:", packageJSON.type === "module" ? "esm" : "cjs");
     console.log("platform:", ["node"].includes(meta.config.type ?? "web-component") ? "node" : "browser");
     console.log();
+  }
+
+  if (meta.tsconfig.info.outDir)
+  {
+    if (args.flags.verbose)
+    {
+      console.log(`removing "${meta.tsconfig.info.outDir}"`)
+    }
+    fs.rmSync(meta.tsconfig.info.outDir, { recursive: true, force: true });
+    fs.mkdirSync(meta.tsconfig.info.outDir, { recursive: true });
   }
 
   for (const entryPointKey of meta.entryPoints.keys) 
@@ -105,7 +108,7 @@ function getExportsInformation(entry:string, packageJSON:Package) {
     {
       if (args.flags.verbose)
       {
-        console.log('bin-entry found', binEntry, args.flags.ci);
+        console.log('binEntry found', binEntry);
       }
       // add shebang and remove from root/node_modeles/.bin
       if (!args.flags.ci)
@@ -139,5 +142,56 @@ function getExportsInformation(entry:string, packageJSON:Package) {
   }
 
   Terminal.write("\n📦", packageJSON.name, Terminal.colorWrap("successfully built", "green"));
+}
+
+(async function () {
+  const args = getArguments(["verbose", "prod", "dev", "force", "clean", "ci", "bloodline", "ancestors", "descendants"]);
+
+  const location = args.flags.location;
+  const info = getPathInfo(typeof location === "string" ? location : undefined);
+  const mode = args.flags.dev ? "dev" : "prod";
+
+  const packageJSON = getJSON<LocalPackage>(path.join(info.local, "package.json"));
+  if (!packageJSON)
+  {
+    Terminal.error("package.json not found");
+    process.exit(1);
+  }
+
+  let bloodlineType = undefined;
+  if (args.flags.bloodline) bloodlineType = "bloodline" as const;
+  else if (args.flags.ancestors) bloodlineType = "ancestors" as const;
+  else if (args.flags.descendants) bloodlineType = "descendants" as const;
+
+  if (!bloodlineType)
+  {
+    return await runner(mode, info, args, packageJSON);
+  }
+  else 
+  {
+    if (args.flags.verbose)
+    {
+      Terminal.write(`building using ${bloodlineType} mode`);
+    }
+
+    await getDependencyBloodline(packageJSON.name, async batch => {
+      for (const b of batch) {
+        
+        const info = getPathInfo(b.location);
+        const packageJSON = getJSON<LocalPackage>(path.join(info.local, "package.json"));
+        if (!packageJSON)
+        {
+          Terminal.error(`package.json not found as `);
+          process.exit(1);
+        }
+
+        return await runner(mode, info, args, packageJSON);
+      }
+    }, {
+      args,
+      info,
+      type: bloodlineType,
+    });
+  }
 }());
 

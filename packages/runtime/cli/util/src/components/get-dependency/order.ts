@@ -4,13 +4,7 @@ import { getScope } from "../get-scope";
 import { getArguments } from "../get-arguments";
 import { LocalPackage, Lockfile, } from "../get-package";
 import { getPathInfo } from "../../util";
-
-
-// Global storage for package relationships
-// let map = {};
-// Set to keep track of remaining packages to process
-// const set = new Set();
-// Store the updated packages so we can only iterate those and their blood-line(?) : both ancestor and decendents 
+import { Batch, Config, getBasicConfig } from './util';
 
 
 type MinimalMap = { 
@@ -21,19 +15,13 @@ type MinimalMap = {
   has: string[]; 
 }
 
-type Batch = {
-  name: string;
-  location: string | undefined;
-  version: string | undefined;
-  changedversion: boolean | undefined;
-}
-
 // Function to initialize the package relationships
-export function getDependencyOrder(
+export async function init(
   info: ReturnType<typeof getPathInfo>,
   lockfile: Lockfile,
   args: ReturnType<typeof getArguments>,
-  scope = getScope()
+  scope = getScope(),
+  acceptance?: Set<string>
 ) {
   const map: Record<string, MinimalMap> = {};
   const set = new Set<string>();
@@ -41,20 +29,17 @@ export function getDependencyOrder(
 
   for (const key in lockfile.packages) {
     if (!key.startsWith("packages") || !lockfile.packages[key].name?.startsWith(scope)) continue;
-
+    
     const pkg = lockfile.packages[key] as LocalPackage;
     const name = pkg.name;
+
+    if (acceptance && !acceptance.has(name)) continue;
+
     const location = path.join(info.root, key);
 
     if (!map[name]) map[name] = { dep: [], has: [] };
 
     set.add(name);
-
-    // const pkg = lockfile.packages[lockfile.packages[name].resolved];
-    // if (!pkg) {
-    //   console.log('failed', name, pkg, lockfile.packages[name].resolved)
-    //   continue;
-    // }
 
     const dependencies = [];
 
@@ -80,6 +65,14 @@ export function getDependencyOrder(
     }
 
     for (const dep in pkg.dependencies) {
+      if (!dep.startsWith(scope) || dep === name) continue;
+
+      if (!map[dep]) map[dep] = { dep: [], has: [] };
+      map[dep].has.push(name);
+      dependencies.push(dep);
+    }
+
+    for (const dep in pkg.peerDependencies) {
       if (!dep.startsWith(scope) || dep === name) continue;
 
       if (!map[dep]) map[dep] = { dep: [], has: [] };
@@ -125,7 +118,10 @@ export function getDependencyOrder(
 }
 
 // Asynchronous generator function to yield batches of package names
-function* batchIterator({ set, map }: ReturnType<typeof getDependencyOrder>, print = false): Generator<Batch[], void, unknown> {
+export function* generator(
+  {set, map}: Awaited<ReturnType<typeof init>>, 
+  args: ReturnType<typeof getArguments>
+): Generator<Batch[], void, unknown> {
   while (set.size > 0) {
     const list = [];
     const arr = Array.from(set);
@@ -138,7 +134,7 @@ function* batchIterator({ set, map }: ReturnType<typeof getDependencyOrder>, pri
     }
 
     if (list.length > 0) {
-      if (print) console.log(`package-batch, size=${list.length}`);
+      if (args.flags.verbose) console.log(`package-batch, size=${list.length}`);
       yield list;
     }
 
@@ -154,13 +150,18 @@ function* batchIterator({ set, map }: ReturnType<typeof getDependencyOrder>, pri
   }
 }
 
-// Function to iterate over batches and execute a given function
-export async function iterate(
-  info: ReturnType<typeof getDependencyOrder>, 
-  execute:(batch: Batch[]) => Promise<void>, 
-  print = true
+
+export async function getDependencyOrder(
+  executor:(batch: Batch[]) => Promise<void>, 
+  config: Partial<Config> = {}
 ) {
-  for (const batch of batchIterator(info, print)) {
-    await execute(batch);
+
+  const { info, args, scope, lockfile } = getBasicConfig(config);
+  const data = await init(info, lockfile, args, scope);
+
+  for (const batch of generator(data, args)) {
+    await executor(batch);
   }
+
+  return data;
 }
