@@ -2,9 +2,10 @@ import path from 'node:path';
 
 import { getScope } from "../get-scope";
 import { Arguments } from "../arguments";
-import { LocalPackage, Lockfile, } from "../get-package";
+import { getRemotePackage, getRemotePackages, LocalPackage, Lockfile, RemotePackages, } from "../get-package";
 import { getPathInfo } from "../../util";
 import { Batch, Config, getBasicConfig } from './util';
+import { Terminal } from 'components/terminal';
 
 
 type MinimalMap = { 
@@ -20,7 +21,8 @@ export async function init(
   info: ReturnType<typeof getPathInfo>,
   lockfile: Lockfile,
   scope = getScope(),
-  acceptance?: Set<string>
+  acceptance?: Set<string>,
+  remotePackages?: RemotePackages|null
 ) {
   const map: Record<string, MinimalMap> = {};
   const set = new Set<string>();
@@ -49,21 +51,35 @@ export async function init(
     map[name].version = pkg.version;
 
     if (Arguments.args.flags['check-version']) {
-      // const args = [
-      //   "-c",
-      //   `source ${versionExtractLocation} && check_version "${map[name].location}" "1"`
-      // ];
-      // const { status } = spawnSync("bash", args, {
-      //   stdio: "inherit",
-      // });
 
-      // if (status != 0) {
-      //   updatedpackages.add(name);
-      //   map[name].changedversion = true;
-      // }
-      // else {
-      //   map[name].changedversion = false;
-      // }
+      let versionchanged = false;
+      if (remotePackages)
+      {
+        const find = remotePackages.objects.find(p => p.package.name === pkg.name);
+        if (find) 
+        {
+          versionchanged = find.package.version === pkg.version;
+        }
+        else 
+        {
+          versionchanged = true;
+        }
+      }
+
+      if (!versionchanged && pkg.remoteVersion)
+      {
+        versionchanged = pkg.remoteVersion === pkg.version;
+      }
+      
+      if (Arguments.info)
+      {
+        Terminal.write(Terminal.colorWrap(`"${pkg.name}" version ${versionchanged ? "changed" : "same"}`, "blue"));
+      }
+
+      if (versionchanged && !Arguments.args.flags['version-change']) 
+      {
+        continue;
+      }
     }
 
     for (const dep in pkg.dependencies) {
@@ -85,38 +101,41 @@ export async function init(
     map[name].dep = dependencies;
   }
 
-  // version clensing step 
-  if (!Arguments.args.flags['check-version']) return { map, set };
+  // perhaps we need a flag to make sure certain things exists at build time 
 
-  const newmap: Record<string, MinimalMap> = {};
-  set.clear();
+  return { map, set };
+  // version clensing step s
+  // if (!Arguments.args.flags['check-version']) return { map, set };
 
-  // ADD packages here you need to make sure exists 
-  //  in case of papit repo server is called via npx but I suspect since it exists in package-lock 
-  //  it wants to call it locally.. 
-  // if (process.env.CI == "true") {
-  //   if (map["@papit/server"]) {
-  //     newmap["@papit/server"] = map["@papit/server"];
-  //     set.add("@papit/server")
-  //   }
+  // const newmap: Record<string, MinimalMap> = {};
+  // set.clear();
+
+  // // ADD packages here you need to make sure exists 
+  // //  in case of papit repo server is called via npx but I suspect since it exists in package-lock 
+  // //  it wants to call it locally.. 
+  // // if (process.env.CI == "true") {
+  // //   if (map["@papit/server"]) {
+  // //     newmap["@papit/server"] = map["@papit/server"];
+  // //     set.add("@papit/server")
+  // //   }
+  // // }
+
+  // function reqursive(name: string) {
+  //   if (newmap[name]) return; // already fixed;
+  //   const info = map[name];
+  //   if (!info) return;
+
+  //   set.add(name);
+  //   newmap[name] = info;
+  //   info.dep.forEach(reqursive);
+  // }
+  // // lets clean the bloodlines
+  // const packages = Array.from(updatedpackages);
+  // for (let name of packages) {
+  //   reqursive(name);
   // }
 
-  function reqursive(name: string) {
-    if (newmap[name]) return; // already fixed;
-    const info = map[name];
-    if (!info) return;
-
-    set.add(name);
-    newmap[name] = info;
-    info.dep.forEach(reqursive);
-  }
-  // lets clean the bloodlines
-  const packages = Array.from(updatedpackages);
-  for (let name of packages) {
-    reqursive(name);
-  }
-
-  return {map:newmap, set}; // finally we simply replace
+  // return {map:newmap, set}; // finally we simply replace
 }
 
 // Asynchronous generator function to yield batches of package names
@@ -157,8 +176,11 @@ export async function getDependencyOrder(
   config: Partial<Config> = {}
 ) {
 
+  
   const { info, scope, lockfile, acceptance } = getBasicConfig(config);
-  const data = await init(info, lockfile, scope, acceptance);
+  const remotePackages = await getRemotePackages(scope);
+
+  const data = await init(info, lockfile, scope, acceptance, remotePackages);
 
   for (const batch of generator(data)) {
     await executor(batch);

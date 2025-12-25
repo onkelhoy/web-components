@@ -243,7 +243,7 @@ async function runner(
     }
   }
 
-  if (!Arguments.verbose && !Arguments.debug && !Arguments.args.flags.all && !Arguments.args.flags.bloodline && !Arguments.args.flags.ancestors && !Arguments.args.flags.descendants)
+  if (!Arguments.info && !Arguments.args.flags.all && !Arguments.args.flags.bloodline && !Arguments.args.flags.ancestors && !Arguments.args.flags.descendants)
   {
     Terminal.clearSession(session);
   }

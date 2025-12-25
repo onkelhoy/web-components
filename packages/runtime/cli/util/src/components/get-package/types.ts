@@ -2,6 +2,7 @@
 type BasePackage = {
   name: string;
   version: string;
+  remoteVersion?: string;
   dependencies: Record<string, string>;
   devDependencies: Record<string, string>;
   peerDependencies?: Record<string, string>;
@@ -19,7 +20,7 @@ type BasePackage = {
   types?: string;
   type: "module" | "commonjs";
   entryPoints?: string|Record<string,string>;
-  exports?: Record<"." | (string & {}), Partial<Record<"import" | "types" | "require" | (string & {}), string>>>;
+  exports?: Partial<Record<"." | (string & {}), Partial<Record<"import" | "types" | "require" | (string & {}), string>>>>;
 }
 
 export type RootPackage = BasePackage & {
@@ -48,4 +49,25 @@ type PackageLockEntry = {
 };
 export type Lockfile = {
   packages: Record<string, PackageLockEntry | Package>;
+}
+
+export type RemotePackage = {
+  name: string;
+  "dist-tags": {
+    latest: string;
+  };
+  versions: Record<string, {
+    name: string, 
+    version: string 
+  }>;
+}
+
+export type RemotePackages = {
+  objects: Array<{
+    package: {
+      name: string;
+      version: string;
+    },
+  }>;
+  total: number;
 }

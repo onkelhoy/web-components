@@ -104,23 +104,23 @@ export class Arguments {
     return this._args;
   }
 
-  private static _verbose: boolean|undefined;
   private static _debug: boolean|undefined;
+  private static _verbose: boolean|undefined;
   private static _warning: boolean|undefined;
   private static _error: boolean|undefined;
   private static _info: boolean|undefined;
 
-  static get verbose() {
-    return this.getLoglevel("verbose", ["error", "info", "warning"]);
-  }
   static get debug() {
     return this.getLoglevel("debug", ["verbose", "error", "info", "warning"]);
   }
+  static get verbose() {
+    return this.getLoglevel("verbose", ["error", "info", "warning"]);
+  }
   static get info() {
-    return this.getLoglevel("info");
+    return this.getLoglevel("info", ["warning", "error"]);
   }
   static get warning() {
-    return this.getLoglevel("warning");
+    return this.getLoglevel("warning", ["error"]);
   }
   static get error() {
     return this.getLoglevel("error");
