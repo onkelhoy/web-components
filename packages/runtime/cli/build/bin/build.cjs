@@ -20,6 +20,4 @@ const externals = [...Object.keys(packageJSON.dependencies || {}), ...Object.key
     console.log("ERRORS", esbuildInfo.errors);
     process.exit(1);
   }
-
-  console.log("📦", packageJSON.name, 'successfully built');
 }());

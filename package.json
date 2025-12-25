@@ -13,7 +13,7 @@
     "clean": "bash ./bin/_utils/clean.sh",
     "init": "bash ./bin/_utils/init.sh",
     "publish": "bash ./bin/publish/run.sh",
-    "build": "bash ./bin/build/run.sh",
+    "build": "npx @papit/build -- --all",
     "test": "bash ./bin/test/run.sh",
     "server": "npx @papit/server"
   },

@@ -14,6 +14,11 @@ export async function jsBundler(
 
   const isDev = !!args.flags.dev;
 
+  if (args.flags.debug)
+  {
+    console.log(packageJSON.name, 'RUUNONG BUNDLE', inputFile, outputFile);
+  }
+
   const esbuildInfo = await esbuild.build({
     entryPoints: [inputFile],
     bundle: true,

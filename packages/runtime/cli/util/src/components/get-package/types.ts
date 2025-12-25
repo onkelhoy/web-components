@@ -11,6 +11,7 @@ type BasePackage = {
     url: string;
   };
 
+  scripts?: Record<string, string>;
   bin?: Record<string, string>;
   main?: string;
   types?: string;

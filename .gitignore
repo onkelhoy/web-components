@@ -6,6 +6,7 @@ isolated/
 .temp/
 .npm/
 temp/
+.papit/
 
 bin/version/.config
 

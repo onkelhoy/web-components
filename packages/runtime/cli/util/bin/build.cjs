@@ -28,6 +28,4 @@ const externals = [...Object.keys(packageJSON.dependencies || {}), ...Object.key
   {
     process.exit(1);
   }
-
-  console.log("📦", packageJSON.name, 'successfully built');
 }());

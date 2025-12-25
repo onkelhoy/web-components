@@ -1,20 +1,99 @@
 // import statements 
+import { spawn } from "node:child_process";
 import path from "node:path";
 import fs from "node:fs";
-import { LocalPackage, Package, Terminal, getArguments, getDependencyBloodline, getJSON, getPathInfo } from "@papit/util-cli";
+import { LocalPackage, Package, Terminal, getArguments, getDependencyBloodline, getDependencyOrder, getJSON, getPathInfo } from "@papit/util-cli";
 
 import { getMeta } from "./components/meta/get-meta";
-export { getMeta } from "./components/meta/get-meta";
-
 import { jsBundler } from "./components/bundlers/js-bundle";
 import { tsBundler } from "./components/bundlers/ts-bundle";
-
-export { jsBundler } from "./components/bundlers/js-bundle";
-export { tsBundler } from "./components/bundlers/ts-bundle";
 
 import { exec } from "node:child_process";
 import { promisify } from "node:util";
 const execAsync = promisify(exec);
+
+
+(async function () {
+  const args = getArguments([
+    "verbose", 
+    "debug",
+    "prod", 
+    "dev", 
+    "force", 
+    "clean", 
+    "ci", 
+    "bloodline", 
+    "ancestors", 
+    "descendants", 
+    "all"
+  ]);
+  const mode = args.flags.dev ? "dev" : "prod";
+  const location = args.flags.location;
+  const originalinfo = getPathInfo(typeof location === "string" ? location : undefined);
+
+  if (args.flags.all) 
+  {
+    await getDependencyOrder(async batch => {
+      for (const b of batch) {
+        
+        const info = getPathInfo(b.location);
+        console.log(info.local, info.root)
+        const packageJSON = getJSON<LocalPackage>(path.join(info.local, "package.json"));
+        if (!packageJSON)
+        {
+          Terminal.error(`${b.name}'s package.json not found`);
+          process.exit(1);
+        }
+
+        return await runner(mode, info, args, packageJSON, originalinfo);
+      }
+    }, { args, info: originalinfo });
+  }
+
+
+  const packageJSON = getJSON<LocalPackage>(path.join(originalinfo.local, "package.json"));
+  if (!packageJSON)
+  {
+    Terminal.error("package.json not found");
+    process.exit(1);
+  }
+
+  let bloodlineType = undefined;
+  if (args.flags.bloodline) bloodlineType = "bloodline" as const;
+  else if (args.flags.ancestors) bloodlineType = "ancestors" as const;
+  else if (args.flags.descendants) bloodlineType = "descendants" as const;
+
+  if (!bloodlineType)
+  {
+    return await runner(mode, originalinfo, args, packageJSON, originalinfo);
+  }
+  else 
+  {
+    if (args.flags.verbose)
+    {
+      Terminal.write(`building using ${bloodlineType} mode`);
+    }
+
+    await getDependencyBloodline(packageJSON.name, async batch => {
+      for (const b of batch) {
+        
+        const info = getPathInfo(b.location);
+        const packageJSON = getJSON<LocalPackage>(path.join(info.local, "package.json"));
+        if (!packageJSON)
+        {
+          Terminal.error(`${b.name}'s package.json not found`);
+          process.exit(1);
+        }
+
+        return await runner(mode, info, args, packageJSON, originalinfo);
+      }
+    }, {
+      args,
+      info: originalinfo,
+      type: bloodlineType,
+    });
+  }
+}());
 
 function getExportsInformation(entry:string, packageJSON:Package) {
   if (!packageJSON.exports) return null;
@@ -23,13 +102,48 @@ function getExportsInformation(entry:string, packageJSON:Package) {
   return packageJSON.exports[entry] ?? null;
 }
 
+
+function runPrebuildCommand(command: string, cwd: string) {
+  return new Promise<void>((resolve, reject) => {
+    const child = spawn(command, {
+      cwd,
+      stdio: "inherit",
+      shell: true,
+      env: {
+        ...process.env,
+        PAPIT_PREBUILD: "1",
+      },
+    });
+
+    child.on("exit", code => {
+      if (code === 0) resolve();
+      else reject(new Error(`prebuild failed (${code})`));
+    });
+  });
+}
+
 async function runner(
   mode: "prod"|"dev",
   info: ReturnType<typeof getPathInfo>,
   args: ReturnType<typeof getArguments>,
   packageJSON: LocalPackage,
+  originalinfo: ReturnType<typeof getPathInfo>,
 ) {
   const session = Terminal.createSession();
+  if (!packageJSON.scripts?.build)
+  {
+    Terminal.warn(`${packageJSON.name} does not have build script defined - skipped`);
+    return;
+  }
+
+  if (packageJSON.scripts.prebuild && info.local !== originalinfo.local)
+  {
+    if (args.flags.verbose)
+    {
+      console.log(`${packageJSON.name} - running prebuild script`);
+    }
+    await Terminal.sessionBlock(async () => runPrebuildCommand(packageJSON.scripts!.prebuild, info.local));
+  }
 
   const meta = await getMeta(mode, info, args, packageJSON);
   
@@ -101,14 +215,14 @@ async function runner(
       Terminal.write(`  ↳ (${Terminal.colorWrap("types", "red")}) "${Terminal.colorWrap(absoluteTypesEntry.replace(info.local, ""), "blue")}" -> "${Terminal.colorWrap(typescriptFileOutput.replace(info.local, ""), "green")}"\n`);
     }
   
-    await jsBundler(entryPoint, javascriptFileOutput, meta, packageJSON, args);
+    await jsBundler(absoluteEntry, javascriptFileOutput, meta, packageJSON, args);
     await tsBundler(absoluteTypesEntry, typescriptFileOutput, meta, info, args);
 
     if (binEntry)
     {
       if (args.flags.verbose)
       {
-        console.log('binEntry found', binEntry);
+        Terminal.write(Terminal.colorWrap('bin found', "green"), binEntry, "\n");
       }
       // add shebang and remove from root/node_modeles/.bin
       if (!args.flags.ci)
@@ -136,62 +250,10 @@ async function runner(
     }
   }
 
-  if (!args.flags.verbose)
+  if (!args.flags.verbose && !args.flags.debug)
   {
     Terminal.clearSession(session);
   }
 
   Terminal.write("\n📦", packageJSON.name, Terminal.colorWrap("successfully built", "green"));
 }
-
-(async function () {
-  const args = getArguments(["verbose", "prod", "dev", "force", "clean", "ci", "bloodline", "ancestors", "descendants"]);
-
-  const location = args.flags.location;
-  const info = getPathInfo(typeof location === "string" ? location : undefined);
-  const mode = args.flags.dev ? "dev" : "prod";
-
-  const packageJSON = getJSON<LocalPackage>(path.join(info.local, "package.json"));
-  if (!packageJSON)
-  {
-    Terminal.error("package.json not found");
-    process.exit(1);
-  }
-
-  let bloodlineType = undefined;
-  if (args.flags.bloodline) bloodlineType = "bloodline" as const;
-  else if (args.flags.ancestors) bloodlineType = "ancestors" as const;
-  else if (args.flags.descendants) bloodlineType = "descendants" as const;
-
-  if (!bloodlineType)
-  {
-    return await runner(mode, info, args, packageJSON);
-  }
-  else 
-  {
-    if (args.flags.verbose)
-    {
-      Terminal.write(`building using ${bloodlineType} mode`);
-    }
-
-    await getDependencyBloodline(packageJSON.name, async batch => {
-      for (const b of batch) {
-        
-        const info = getPathInfo(b.location);
-        const packageJSON = getJSON<LocalPackage>(path.join(info.local, "package.json"));
-        if (!packageJSON)
-        {
-          Terminal.error(`package.json not found as `);
-          process.exit(1);
-        }
-
-        return await runner(mode, info, args, packageJSON);
-      }
-    }, {
-      args,
-      info,
-      type: bloodlineType,
-    });
-  }
-}());
-

@@ -18,7 +18,7 @@ function extractEntryPoint(value:string|string[]|Record<string,string>, outDir: 
   }
   else 
   {
-    entryPoints = value;
+    entryPoints = {...value};
   }
   
   for (const entry in entryPoints)
