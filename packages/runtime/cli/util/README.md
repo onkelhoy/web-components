@@ -1,6 +1,11 @@
 # @papit/util-cli
 
-Whops, abstract is missing!
+Low-level CLI utilities for building consistent, interactive Papit command-line tools.
+
+Shared CLI utilities for Papit tooling — focused on **argument parsing**, **terminal interaction**, **workspace introspection**, and **dependency graph execution** inside monorepos.
+
+This package is **not a CLI by itself**, but a foundational library used by Papit CLIs such as `@papit/build`.
+It provides opinionated primitives so all Papit tools behave consistently in terms of flags, output, prompts, and dependency handling.
 
 ---
 
@@ -10,57 +15,225 @@ Whops, abstract is missing!
 
 ---
 
-## Use Case
-
-### installation
+## Installation
 
 ```bash
 npm install @papit/util-cli
 ```
 
-### to use in **html**
+This package is typically consumed **programmatically** by other Papit tools rather than executed directly.
 
-```html
-<script type="module" defer>
-  import "@papit/util-cli";
-</script>
+---
 
-<></>
+## What does this package provide?
+
+### 1. Argument parsing (`Arguments`, `getArguments`)
+
+A lightweight but flexible argument parser with support for:
+
+- Long flags: `--flag`, `--flag=value`
+- Short flags: `-f`, `-f value`
+- Grouped short flags: `-abc`
+- Positional values
+- “Island” flags that **do not consume the next argument**
+
+```ts
+import { getArguments } from "@papit/util-cli";
+
+const args = getArguments(["verbose", "debug"]);
+
+args.flags; // { verbose: true }
+args.values; // ["positional", "values"]
 ```
 
-### to use in **react**
+#### Built-in log-level handling
 
-```jsx
-import { CliUtil } from "@papit/util-cli/react";
+The `Arguments` class exposes computed log-level flags with cascading behavior:
 
-function Component() {
-  return <CliUtil />;
+```ts
+import { Arguments } from "@papit/util-cli";
+
+if (Arguments.verbose) {
+  // enabled via --verbose or --debug
 }
 ```
 
-## Development
+Supported flags:
 
-Development takes place within the `src` folder. To add a new subcomponent, use the command `npm run component:add`. This command updates the `.env` file, creates a view folder, and adds a subfolder in the `components` folder (creating it if it doesn't exist) inside `src` with all the necessary files.
+- `--debug`
+- `--verbose`
+- `--info`
+- `--warning`
+- `--error`
 
-Styling is managed in the `style.scss` file, which automatically generates a `style.ts` file for use in the component.
+---
 
-## Viewing
+### 2. Terminal utilities (`Terminal`)
 
-To view the component, run `npm start`. This command is equivalent to `npm run start demo` and launches the development server for the demo folder located within the `views` folder. This allows you to preview your component during development.
+A fully state-aware terminal abstraction for building interactive CLIs.
 
-## Assets
+#### Features
 
-All assets required by the component, such as icons and images for translations, should be placed in the `assets` folder. This folder will already include an `icons` and `translations` folder with an `en.json` file for English translations. Use this structure to organize translations and make them easily accessible for other projects.
+- Colored output (TTY-aware)
+- Line tracking and clearing
+- Session-based output blocks
+- Interactive prompts and selections
+- Confirmations and validated input
+- Output suppression for noisy operations
 
-For assets used solely for display or demo purposes, create a `public` folder under the relevant directory inside the `views` folder. These assets are not included in the component package.
+#### Examples
 
-## Commands
+##### Writing output
 
-- **build**: Builds the component in development mode. Use the `--prod` flag (`npm run build -- --prod`) for a production build, which includes minification.
-- **watch**: Watches for changes to the component files and rebuilds them automatically without starting the development server.
-- **start**: Starts the development server for a specific demo. The target folder within the `views` directory must contain an `index.html` file. Usage example: `npm run start --name=<folder>`.
-- **analyse**: Generates a comprehensive analysis file, mainly useful for React scripts and potentially for generating pages. The analysis file is only generated if it does not exist, unless the `--force` flag is used. Optional flags include `--verbose` and `--force`.
-- **react**: Generates the necessary React code based on the web component code, including any subcomponents. The generated code will not overwrite existing files, allowing for manual customization. Flags: `--verbose` & `--force`.
+```ts
+Terminal.write("Hello world");
+Terminal.warn("Something looks off");
+Terminal.error("Something went wrong");
+```
+
+##### Prompting for input
+
+```ts
+const name = await Terminal.prompt("Package name");
+```
+
+##### Validated answers
+
+```ts
+const answer = await Terminal.getAnswer("Continue?", ["yes", "no"]);
+```
+
+##### Interactive selection
+
+```ts
+const index = await Terminal.option(
+  ["small", "medium", "large"],
+  "Select size"
+);
+```
+
+##### Scoped terminal sessions
+
+```ts
+await Terminal.sessionBlock(async () => {
+  Terminal.write("Working...");
+  // output here can be cleared safely
+});
+```
+
+---
+
+### 3. Dependency graph execution
+
+Utilities for **monorepo-aware dependency traversal** based on `package-lock.json`.
+
+#### Ordered dependency execution
+
+```ts
+import { getDependencyOrder } from "@papit/util-cli";
+
+await getDependencyOrder(async (batch) => {
+  for (const pkg of batch) {
+    console.log(pkg.name);
+  }
+});
+```
+
+- Executes packages in **topological order**
+- Groups independent packages into batches
+- Respects workspace scope
+- Supports filtering via acceptance sets
+
+#### Dependency bloodlines
+
+```ts
+import { getDependencyBloodline } from "@papit/util-cli";
+
+await getDependencyBloodline(
+  "@scope/pkg-a",
+  async (batch) => {
+    // ancestors / descendants / both
+  },
+  { type: "bloodline" }
+);
+```
+
+Supported modes:
+
+- `ancestors`
+- `descendants`
+- `bloodline` (default)
+
+---
+
+### 4. Workspace & package helpers
+
+#### Path & scope utilities
+
+```ts
+import { getPathInfo, getScope } from "@papit/util-cli";
+
+const info = getPathInfo();
+const scope = getScope();
+```
+
+- Detects workspace root
+- Resolves local execution context
+- Locates calling package automatically
+
+#### Package helpers
+
+```ts
+import { getPackage } from "@papit/util-cli";
+
+const pkg = getPackage("@scope/pkg", lockfile);
+```
+
+- Resolves local workspace packages
+- Works directly against `package-lock.json`
+
+---
+
+### 5. Filesystem utilities
+
+#### Recursive folder copying
+
+```ts
+import { copyFolder } from "@papit/util-cli";
+
+await copyFolder(src, dest, (content) => {
+  return content.replace("__VERSION__", "1.0.0");
+});
+```
+
+- Recursively copies directories
+- Optional transform/filter function
+- Async-safe
+
+---
+
+## Intended usage
+
+This package is designed to be used by:
+
+- Papit CLI tools
+- Internal monorepo tooling
+- Scripts that need:
+
+  - predictable CLI flags
+  - clean terminal UX
+  - dependency-aware execution
+
+It intentionally avoids external dependencies and heavy abstractions.
+
+---
+
+## Requirements
+
+- Node.js **>= 18**
+- Monorepo with `package-lock.json` for dependency features
+
+---
 
 ## Contributing
 
@@ -78,10 +251,6 @@ Licensed under the @Papit License 1.0 - Copyright (c) 2024 Henry Pap (@onkelhoy)
 - ❌ Cannot resell the component itself as a standalone product
 
 See the [LICENSE](https://github.com/onkelhoy/web-components/blob/main/LICENSE) file for full details.
-
-## Related Components
-
-- [@papit/core](https://github.com/onkelhoy/web-components/tree/main/packages/system/core): Core utilities, decorators, and base component class
 
 ## Support
 
