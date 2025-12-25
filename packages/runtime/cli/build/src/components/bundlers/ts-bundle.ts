@@ -1,14 +1,11 @@
 // import statements 
 import path from "node:path";
 import fs from "node:fs";
-import { exec } from "node:child_process";
-import { promisify } from "node:util";
 import { Extractor, ExtractorConfig } from '@microsoft/api-extractor';
 import { Arguments, Terminal, copyFolder, getPathInfo } from "@papit/util-cli";
 
 import { Meta } from "../meta/types";
-
-const execAsync = promisify(exec);
+import { spawnCommand } from "helper";
 
 export async function tsBundler(
   inputFile: string, 
@@ -25,7 +22,11 @@ export async function tsBundler(
       const outDir = path.dirname(outputFile);
       const srcDir = path.join(outDir, srcName);
 
-      await execAsync(`tsc --emitDeclarationOnly -p ${meta.tsconfig.path} --declarationDir ${outDir}`);
+      await spawnCommand(
+        "tsc", 
+        info.local,
+        ["--emitDeclarationOnly", "-p", meta.tsconfig.path, "--declarationDir", outDir], 
+      );
       await copyFolder(srcDir, outDir, content => content);
       fs.rmSync(srcDir, { recursive: true, force: true })
       return;
@@ -33,12 +34,16 @@ export async function tsBundler(
     else 
     {
       const outDir = path.join(info.local, ".papit/build");
-      await execAsync(`tsc --emitDeclarationOnly -p ${meta.tsconfig.path} --declarationDir ${outDir}`);
+      await spawnCommand(
+        "tsc", 
+        info.local,
+        ["--emitDeclarationOnly", "-p", meta.tsconfig.path, "--declarationDir",  outDir], 
+      );
     }
   }
   catch (e) {
     Terminal.error("tsc failed");
-    if (Arguments.verbose)
+    if (Arguments.debug)
     {
       console.log(e);
     }

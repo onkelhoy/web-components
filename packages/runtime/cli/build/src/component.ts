@@ -1,5 +1,4 @@
 // import statements 
-import { spawn } from "node:child_process";
 import path from "node:path";
 import fs from "node:fs";
 import { Arguments, LocalPackage, Package, Terminal, getDependencyBloodline, getDependencyOrder, getJSON, getPathInfo } from "@papit/util-cli";
@@ -7,45 +6,44 @@ import { Arguments, LocalPackage, Package, Terminal, getDependencyBloodline, get
 import { getMeta } from "./components/meta/get-meta";
 import { jsBundler } from "./components/bundlers/js-bundle";
 import { tsBundler } from "./components/bundlers/ts-bundle";
+import { spawnCommand } from "helper";
 
-import { exec } from "node:child_process";
-import { promisify } from "node:util";
-const execAsync = promisify(exec);
+async function runBatch(name: string, location: string|undefined, mode: "dev" | "prod", originalinfo: ReturnType<typeof getPathInfo>) {
+  const info = getPathInfo(location);
+  const packageJSON = getJSON<LocalPackage>(path.join(info.local, "package.json"));
+  if (!packageJSON)
+  {
+    Terminal.error(`${name}'s package.json not found`);
+    process.exit(1);
+  }
 
+  return runner(mode, info, packageJSON, originalinfo);
+}
+
+async function npmInstall(originalinfo: ReturnType<typeof getPathInfo>) {
+
+  if (!Arguments.args.flags.ci)
+  {
+    if (Arguments.verbose) console.log('running install');
+    await spawnCommand("npm install", originalinfo.root);
+  }
+  else if (Arguments.verbose)
+  {
+    console.log('no install');
+  }
+}
 
 (async function () {
-  Arguments.islands = [
-    "prod", 
-    "dev", 
-    "force", 
-    "clean", 
-    "ci", 
-    "bloodline", 
-    "ancestors", 
-    "descendants", 
-    "all"
-  ];
   const mode = Arguments.args.flags.dev ? "dev" : "prod";
   const location = Arguments.args.flags.location;
   const originalinfo = getPathInfo(typeof location === "string" ? location : undefined);
 
   if (Arguments.args.flags.all) 
   {
-    await getDependencyOrder(async batch => {
-      await Promise.all(batch.map(async b => {
-        const info = getPathInfo(b.location);
-        const packageJSON = getJSON<LocalPackage>(path.join(info.local, "package.json"));
-        if (!packageJSON)
-        {
-          Terminal.error(`${b.name}'s package.json not found`);
-          process.exit(1);
-        }
-
-        await runner(mode, info, packageJSON, originalinfo);
-      }));
+    return await getDependencyOrder(async batch => {
+      const shouldinstall = await Promise.all(batch.map(async b => runBatch(b.name, b.location, mode, originalinfo)));
+      if (shouldinstall.some(Boolean)) await npmInstall(originalinfo);
     }, { info: originalinfo });
-
-    return;
   }
 
   const packageJSON = getJSON<LocalPackage>(path.join(originalinfo.local, "package.json"));
@@ -62,32 +60,23 @@ const execAsync = promisify(exec);
 
   if (!bloodlineType)
   {
-    return await runner(mode, originalinfo, packageJSON, originalinfo);
-  }
-  else 
-  {
-    if (Arguments.verbose)
-    {
-      Terminal.write(`building using ${bloodlineType} mode`);
-    }
+    const shouldinstall = await runner(mode, originalinfo, packageJSON, originalinfo);
+    if (shouldinstall) await npmInstall(originalinfo);
 
-    await getDependencyBloodline(packageJSON.name, async batch => {
-      await Promise.all(batch.map(async b => {
-        const info = getPathInfo(b.location);
-        const packageJSON = getJSON<LocalPackage>(path.join(info.local, "package.json"));
-        if (!packageJSON)
-        {
-          Terminal.error(`${b.name}'s package.json not found`);
-          process.exit(1);
-        }
-  
-        return await runner(mode, info, packageJSON, originalinfo);
-      }));
-    }, {
-      info: originalinfo,
-      type: bloodlineType,
-    });
+    return;
   }
+
+  if (Arguments.verbose)
+  {
+    Terminal.write(`building using ${bloodlineType} mode`);
+  }
+  await getDependencyBloodline(packageJSON.name, async batch => {
+    const shouldinstall = await Promise.all(batch.map(async b => runBatch(b.name, b.location, mode, originalinfo)));
+    if (shouldinstall.some(Boolean)) await npmInstall(originalinfo);
+  }, {
+    info: originalinfo,
+    type: bloodlineType,
+  });
 }());
 
 function getExportsInformation(entry:string, packageJSON:Package) {
@@ -95,25 +84,6 @@ function getExportsInformation(entry:string, packageJSON:Package) {
   if (entry === "bundle") entry = ".";
 
   return packageJSON.exports[entry] ?? null;
-}
-
-function runPrebuildCommand(command: string, cwd: string) {
-  return new Promise<void>((resolve, reject) => {
-    const child = spawn(command, {
-      cwd,
-      stdio: "inherit",
-      shell: true,
-      env: {
-        ...process.env,
-        PAPIT_PREBUILD: "1",
-      },
-    });
-
-    child.on("exit", code => {
-      if (code === 0) resolve();
-      else reject(new Error(`prebuild failed (${code})`));
-    });
-  });
 }
 
 async function runner(
@@ -135,7 +105,12 @@ async function runner(
     {
       console.log(`${packageJSON.name} - running prebuild script`);
     }
-    await Terminal.sessionBlock(async () => runPrebuildCommand(packageJSON.scripts!.prebuild, info.local));
+    await spawnCommand(packageJSON.scripts.prebuild, info.local);
+
+    if (Arguments.verbose)
+    {
+      console.log(`${packageJSON.name} - running prebuild script`);
+    }
   }
 
   const meta = await getMeta(mode, info, packageJSON);
@@ -160,6 +135,7 @@ async function runner(
     fs.mkdirSync(meta.tsconfig.info.outDir, { recursive: true });
   }
 
+  let shouldinstall = false;
   for (const entryPointKey of meta.entryPoints.keys) 
   {
     const entryPoint = meta.entryPoints.record[entryPointKey];
@@ -229,17 +205,8 @@ async function runner(
 
       const bundle = fs.readFileSync(javascriptFileOutput, { encoding: "utf-8" });
       const updated = bundle.startsWith("#!/usr/bin/env node") ? bundle : `#!/usr/bin/env node\n${bundle}`;
-      fs.writeFileSync(javascriptFileOutput, updated, { mode: 0o755 });
-
-      if (!Arguments.args.flags.ci)
-      {
-        if (Arguments.verbose) console.log('running install');
-        await execAsync("npm install", { cwd: info.root });
-      }
-      else if (Arguments.verbose)
-      {
-        console.log('no install');
-      }
+      fs.writeFileSync(javascriptFileOutput, updated, { mode: 0o755 }); 
+      shouldinstall = true;
     }
   }
 
@@ -249,4 +216,5 @@ async function runner(
   }
 
   Terminal.write("📦", packageJSON.name, Terminal.colorWrap("successfully built", "green"));
+  return shouldinstall;
 }

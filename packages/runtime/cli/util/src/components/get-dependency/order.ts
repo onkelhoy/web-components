@@ -25,22 +25,53 @@ export async function init(
 ) {
   const map: Record<string, MinimalMap> = {};
   const set = new Set<string>();
-  const updatedpackages = new Set<string>();
 
   for (const key in lockfile.packages) {
     if (!key.startsWith("packages")) continue;
     
     const pkg = lockfile.packages[key] as LocalPackage;
     const name = pkg.name;
+    let changedversion = false;
 
     if (!name.startsWith(scope)) continue;
     if (pkg.workspaces) continue;
     if (name === `${scope}/root`) continue;
     if (acceptance && !acceptance.has(name)) continue;
 
+    if (Arguments.args.flags['check-version']) {
+
+      if (remotePackages)
+      {
+        const find = remotePackages.objects.find(p => p.package.name === pkg.name);
+        if (find) 
+        {
+          changedversion = find.package.version === pkg.version;
+        }
+        else 
+        {
+          changedversion = true;
+        }
+      }
+
+      if (!changedversion && pkg.remoteVersion)
+      {
+        changedversion = pkg.remoteVersion === pkg.version;
+      }
+      
+      if (Arguments.info)
+      {
+        Terminal.write(Terminal.colorWrap(`"${pkg.name}" version ${changedversion ? "changed" : "same"}`, "blue"));
+      }
+
+      if (changedversion && !Arguments.args.flags['version-change']) 
+      {
+        continue;
+      }
+    }
+
     const location = path.join(info.root, key);
 
-    if (!map[name]) map[name] = { dep: [], has: [] };
+    if (!map[name]) map[name] = { dep: [], has: [], changedversion };
 
     set.add(name);
 
@@ -48,38 +79,6 @@ export async function init(
 
     map[name].location = location;
     map[name].version = pkg.version;
-
-    if (Arguments.args.flags['check-version']) {
-
-      let versionchanged = false;
-      if (remotePackages)
-      {
-        const find = remotePackages.objects.find(p => p.package.name === pkg.name);
-        if (find) 
-        {
-          versionchanged = find.package.version === pkg.version;
-        }
-        else 
-        {
-          versionchanged = true;
-        }
-      }
-
-      if (!versionchanged && pkg.remoteVersion)
-      {
-        versionchanged = pkg.remoteVersion === pkg.version;
-      }
-      
-      if (Arguments.info)
-      {
-        Terminal.write(Terminal.colorWrap(`"${pkg.name}" version ${versionchanged ? "changed" : "same"}`, "blue"));
-      }
-
-      if (versionchanged && !Arguments.args.flags['version-change']) 
-      {
-        continue;
-      }
-    }
 
     for (const dep in pkg.dependencies) {
       if (!dep.startsWith(scope) || dep === name) continue;
