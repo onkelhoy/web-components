@@ -34,10 +34,9 @@ const execAsync = promisify(exec);
   if (args.flags.all) 
   {
     await getDependencyOrder(async batch => {
-      for (const b of batch) {
-        
+      await Promise.all(batch.map(async b => {
+        console.log("RUNNING", b.name);
         const info = getPathInfo(b.location);
-        console.log(info.local, info.root)
         const packageJSON = getJSON<LocalPackage>(path.join(info.local, "package.json"));
         if (!packageJSON)
         {
@@ -45,11 +44,13 @@ const execAsync = promisify(exec);
           process.exit(1);
         }
 
-        return await runner(mode, info, args, packageJSON, originalinfo);
-      }
+        Terminal.createSession();
+        await runner(mode, info, args, packageJSON, originalinfo);
+      }));
     }, { args, info: originalinfo });
-  }
 
+    return;
+  }
 
   const packageJSON = getJSON<LocalPackage>(path.join(originalinfo.local, "package.json"));
   if (!packageJSON)
@@ -75,8 +76,7 @@ const execAsync = promisify(exec);
     }
 
     await getDependencyBloodline(packageJSON.name, async batch => {
-      for (const b of batch) {
-        
+      await Promise.all(batch.map(async b => {
         const info = getPathInfo(b.location);
         const packageJSON = getJSON<LocalPackage>(path.join(info.local, "package.json"));
         if (!packageJSON)
@@ -84,9 +84,10 @@ const execAsync = promisify(exec);
           Terminal.error(`${b.name}'s package.json not found`);
           process.exit(1);
         }
-
+  
+        Terminal.createSession();
         return await runner(mode, info, args, packageJSON, originalinfo);
-      }
+      }));
     }, {
       args,
       info: originalinfo,

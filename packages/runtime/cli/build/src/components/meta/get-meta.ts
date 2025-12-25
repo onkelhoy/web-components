@@ -22,7 +22,7 @@ export async function getMeta(
 
   const devTSconfig = path.join(info.local, "tsconfig.json");
   const prodTSconfig = path.join(info.local, "tsconfig.prod.json");
-  
+
   let tsconfigFilePath = devTSconfig;
   if (mode === "prod" && fs.existsSync(prodTSconfig) && fs.statSync(prodTSconfig).isFile())
   {
@@ -35,6 +35,11 @@ export async function getMeta(
 
   if (entryPointKeys.length === 0)
   {
+    console.log({
+      entryPoints,
+      name: packageJSON.name,
+      local: info.local
+    })
     Terminal.error("could not find any build entries");
     process.exit(1);
   }

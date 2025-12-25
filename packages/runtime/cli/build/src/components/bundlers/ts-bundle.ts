@@ -1,9 +1,10 @@
 // import statements 
 import path from "node:path";
+import fs from "node:fs";
 import { exec } from "node:child_process";
 import { promisify } from "node:util";
 import { Extractor, ExtractorConfig } from '@microsoft/api-extractor';
-import { Terminal, getArguments, getPathInfo } from "@papit/util-cli";
+import { Terminal, copyFolder, getArguments, getPathInfo } from "@papit/util-cli";
 
 import { Meta } from "../meta/types";
 
@@ -19,7 +20,22 @@ export async function tsBundler(
   if (!meta.tsconfig.info.declaration) return;
 
   try {
-    await execAsync(`tsc --emitDeclarationOnly -p ${meta.tsconfig.path} --declarationDir .papit/build`);
+    if (args.flags.dev)
+    {
+      console.log('DEV MODE');
+      const srcName = path.basename(path.dirname(inputFile));
+      const outDir = path.dirname(outputFile);
+      const srcDir = path.join(outDir, srcName);
+
+      await execAsync(`tsc --emitDeclarationOnly -p ${meta.tsconfig.path} --declarationDir ${outDir}`);
+      await copyFolder(srcDir, outDir, content => content);
+      fs.rmSync(srcDir, { recursive: true, force: true })
+      return;
+    }
+    else 
+    {
+      await execAsync(`tsc --emitDeclarationOnly -p ${meta.tsconfig.path} --declarationDir .papit/build`);
+    }
   }
   catch (e) {
     Terminal.error("tsc failed");
@@ -30,7 +46,7 @@ export async function tsBundler(
     process.exit(1);
   }
 
-  if (!!args.flags.dev) return;
+  if (args.flags.dev) return;
 
   const result = await Terminal.sessionBlock(async () => {
     // create a config object programmatically

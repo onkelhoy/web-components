@@ -28,11 +28,14 @@ export async function init(
   const updatedpackages = new Set<string>();
 
   for (const key in lockfile.packages) {
-    if (!key.startsWith("packages") || !lockfile.packages[key].name?.startsWith(scope)) continue;
+    if (!key.startsWith("packages")) continue;
     
     const pkg = lockfile.packages[key] as LocalPackage;
     const name = pkg.name;
 
+    if (!name.startsWith(scope)) continue;
+    if (pkg.workspaces) continue;
+    if (name === `${scope}/root`) continue;
     if (acceptance && !acceptance.has(name)) continue;
 
     const location = path.join(info.root, key);

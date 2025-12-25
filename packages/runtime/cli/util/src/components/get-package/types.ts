@@ -11,6 +11,8 @@ type BasePackage = {
     url: string;
   };
 
+  private?: boolean;
+  workspaces?: string[];
   scripts?: Record<string, string>;
   bin?: Record<string, string>;
   main?: string;

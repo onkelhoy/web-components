@@ -2,7 +2,7 @@
 import path from "node:path";
 import fs from "node:fs";
 
-import { getArguments, getPathInfo, getScriptPackageLocation, Terminal } from "@papit/util-cli"
+import { getArguments, getPathInfo, Terminal } from "@papit/util-cli"
 import { packageRunner } from "./components/runners/package";
 import { componentRunner } from "./components/runners/component";
 import { getFolders } from "components/util";

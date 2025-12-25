@@ -11,7 +11,7 @@ const externals = [...Object.keys(packageJSON.dependencies || {}), ...Object.key
 (async function () {
 
   fs.rmSync("lib", { recursive: true, force: true });
-  await execAsync(`tsc --emitDeclarationOnly --declarationDir lib`);
+  await execAsync(`tsc --emitDeclarationOnly --declarationDir lib`, { cwd: process.cwd() });
   fs.writeFileSync("lib/index.d.ts", "export * from './src';", { encoding: "utf-8" });
 
   const esbuildInfo = await esbuild.build({
@@ -20,7 +20,7 @@ const externals = [...Object.keys(packageJSON.dependencies || {}), ...Object.key
     outfile: "lib/bundle.js",
     minify: true,
     format: packageJSON.type === "module" ? "esm" : "cjs",
-    platform: ["node"].includes(packageJSON.papit?.mode ?? "node") ? "node" : "browser",
+    platform: ["node"].includes(packageJSON.papit?.type ?? "node") ? "node" : "browser",
     external: externals,
   });
 

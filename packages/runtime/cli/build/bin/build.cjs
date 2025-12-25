@@ -11,7 +11,7 @@ const externals = [...Object.keys(packageJSON.dependencies || {}), ...Object.key
     outfile: ".papit/bundle.js",
     minify: true,
     format: packageJSON.type === "module" ? "esm" : "cjs",
-    platform: ["node"].includes(packageJSON.papit?.mode ?? "node") ? "node" : "browser",
+    platform: ["node"].includes(packageJSON.papit?.type ?? "node") ? "node" : "browser",
     external: externals,
   });
 
