@@ -2,11 +2,10 @@ import path from 'node:path';
 
 import { getScope } from "../get-scope";
 import { Arguments } from "../arguments";
-import { getRemotePackage, getRemotePackages, LocalPackage, Lockfile, RemotePackages, } from "../get-package";
+import { getRemotePackages, LocalPackage, Lockfile, RemotePackages, } from "../get-package";
 import { getPathInfo } from "../../util";
 import { Batch, Config, getBasicConfig } from './util';
-import { Terminal } from 'components/terminal';
-
+import { Terminal } from '../terminal';
 
 type MinimalMap = { 
   changedversion?: boolean; 
@@ -101,15 +100,6 @@ export async function init(
     map[name].dep = dependencies;
   }
 
-  // perhaps we need a flag to make sure certain things exists at build time 
-
-  return { map, set };
-  // version clensing step s
-  // if (!Arguments.args.flags['check-version']) return { map, set };
-
-  // const newmap: Record<string, MinimalMap> = {};
-  // set.clear();
-
   // // ADD packages here you need to make sure exists 
   // //  in case of papit repo server is called via npx but I suspect since it exists in package-lock 
   // //  it wants to call it locally.. 
@@ -119,23 +109,9 @@ export async function init(
   // //     set.add("@papit/server")
   // //   }
   // // }
+  // perhaps we need a flag to make sure certain things exists at build time 
 
-  // function reqursive(name: string) {
-  //   if (newmap[name]) return; // already fixed;
-  //   const info = map[name];
-  //   if (!info) return;
-
-  //   set.add(name);
-  //   newmap[name] = info;
-  //   info.dep.forEach(reqursive);
-  // }
-  // // lets clean the bloodlines
-  // const packages = Array.from(updatedpackages);
-  // for (let name of packages) {
-  //   reqursive(name);
-  // }
-
-  // return {map:newmap, set}; // finally we simply replace
+  return { map, set };
 }
 
 // Asynchronous generator function to yield batches of package names
