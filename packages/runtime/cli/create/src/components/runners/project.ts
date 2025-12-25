@@ -5,19 +5,19 @@ import { promisify } from "node:util";
 
 import {
   Terminal,
-  getArguments,
   copyFolder,
   getPathInfo,
+  Arguments,
 } from "@papit/util-cli"
 const execAsync = promisify(exec);
 
-export async function runner(info: ReturnType<typeof getPathInfo>, args: ReturnType<typeof getArguments>, packageLocation?: string) {
+export async function runner(info: ReturnType<typeof getPathInfo>, packageLocation?: string) {
   Terminal.write("Project Creation\n")
   Terminal.createSession();
   let linebetween = false;
   let name:string;
-  if (typeof args.flags.name === "string")
-    name = args.flags.name; 
+  if (typeof Arguments.args.flags.name === "string")
+    name = Arguments.args.flags.name; 
   else 
   {
     name = await Terminal.prompt("name", true);
@@ -25,8 +25,8 @@ export async function runner(info: ReturnType<typeof getPathInfo>, args: ReturnT
   }
 
   let location:string;
-  if (typeof args.flags.location === "string")
-    location = args.flags.location; 
+  if (typeof Arguments.args.flags.location === "string")
+    location = Arguments.args.flags.location; 
   else 
   {
     if (linebetween) Terminal.write();
@@ -53,8 +53,8 @@ export async function runner(info: ReturnType<typeof getPathInfo>, args: ReturnT
   fs.mkdirSync(location, { recursive: true });
 
   let description:string;
-  if (typeof args.flags.description === "string")
-    description = args.flags.description;
+  if (typeof Arguments.args.flags.description === "string")
+    description = Arguments.args.flags.description;
   else 
   {
     if (linebetween) Terminal.write();
@@ -63,8 +63,8 @@ export async function runner(info: ReturnType<typeof getPathInfo>, args: ReturnT
   }
 
   let license:string;
-  if (typeof args.flags.license === "string")
-    license = args.flags.license;
+  if (typeof Arguments.args.flags.license === "string")
+    license = Arguments.args.flags.license;
   else 
   {
     if (linebetween) Terminal.write();
@@ -75,8 +75,8 @@ export async function runner(info: ReturnType<typeof getPathInfo>, args: ReturnT
   let licensefilelocation:string;
   if (license)
   {
-    if (typeof args.flags.licensefilelocation === "string")
-      licensefilelocation = args.flags.licensefilelocation;
+    if (typeof Arguments.args.flags.licensefilelocation === "string")
+      licensefilelocation = Arguments.args.flags.licensefilelocation;
     else 
     {
       if (linebetween) Terminal.write();
@@ -92,7 +92,7 @@ export async function runner(info: ReturnType<typeof getPathInfo>, args: ReturnT
 
   Terminal.clearSession();
 
-  const initgit = args.flags.git === "true" || await Terminal.confirm("init with git?");
+  const initgit = Arguments.args.flags.git === "true" || await Terminal.confirm("init with git?");
   if (initgit)
   {
     await execSync("git init", { cwd: location });

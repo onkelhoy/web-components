@@ -1,7 +1,7 @@
 import path from 'node:path';
 
 import { getScope } from "../get-scope";
-import { getArguments } from "../get-arguments";
+import { Arguments } from "../arguments";
 import { LocalPackage, Lockfile, } from "../get-package";
 import { getPathInfo } from "../../util";
 import { Batch, Config, getBasicConfig } from './util';
@@ -19,7 +19,6 @@ type MinimalMap = {
 export async function init(
   info: ReturnType<typeof getPathInfo>,
   lockfile: Lockfile,
-  args: ReturnType<typeof getArguments>,
   scope = getScope(),
   acceptance?: Set<string>
 ) {
@@ -49,7 +48,7 @@ export async function init(
     map[name].location = location;
     map[name].version = pkg.version;
 
-    if (args.flags['check-version']) {
+    if (Arguments.args.flags['check-version']) {
       // const args = [
       //   "-c",
       //   `source ${versionExtractLocation} && check_version "${map[name].location}" "1"`
@@ -87,7 +86,7 @@ export async function init(
   }
 
   // version clensing step 
-  if (!args.flags['check-version']) return { map, set };
+  if (!Arguments.args.flags['check-version']) return { map, set };
 
   const newmap: Record<string, MinimalMap> = {};
   set.clear();
@@ -123,7 +122,6 @@ export async function init(
 // Asynchronous generator function to yield batches of package names
 export function* generator(
   {set, map}: Awaited<ReturnType<typeof init>>, 
-  args: ReturnType<typeof getArguments>
 ): Generator<Batch[], void, unknown> {
   while (set.size > 0) {
     const list = [];
@@ -137,7 +135,7 @@ export function* generator(
     }
 
     if (list.length > 0) {
-      if (args.flags.verbose) console.log(`package-batch, size=${list.length}`);
+      if (Arguments.verbose) console.log(`package-batch, size=${list.length}`);
       yield list;
     }
 
@@ -159,10 +157,10 @@ export async function getDependencyOrder(
   config: Partial<Config> = {}
 ) {
 
-  const { info, args, scope, lockfile } = getBasicConfig(config);
-  const data = await init(info, lockfile, args, scope);
+  const { info, scope, lockfile, acceptance } = getBasicConfig(config);
+  const data = await init(info, lockfile, scope, acceptance);
 
-  for (const batch of generator(data, args)) {
+  for (const batch of generator(data)) {
     await executor(batch);
   }
 

@@ -15,7 +15,7 @@ export async function getDependencyBloodline(
   if (["bloodline", "ancestors"].includes(type)) ancestorsRecursive(packageName, meta, bloodline);
   if (["bloodline", "descendants"].includes(type)) 
   {
-    const data = await init(meta.info, meta.lockfile, meta.args, meta.scope);
+    const data = await init(meta.info, meta.lockfile, meta.scope);
     descendantsRecursive(packageName, data, bloodline);
   }
 

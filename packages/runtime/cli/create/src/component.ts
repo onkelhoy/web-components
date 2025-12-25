@@ -2,16 +2,16 @@
 import path from "node:path";
 import fs from "node:fs";
 
-import { getArguments, getPathInfo, Terminal } from "@papit/util-cli"
+import { Arguments, getPathInfo, Terminal } from "@papit/util-cli"
 import { packageRunner } from "./components/runners/package";
 import { componentRunner } from "./components/runners/component";
 import { getFolders } from "components/util";
 
 (async function () {
-  const args = getArguments(["verbose", "install", "commit", "agree"]);
+  Arguments.islands = ["install", "commit", "agree"]
   const info = getPathInfo(undefined, import.meta.url);
 
-  if (args.flags.verbose)
+  if (Arguments.verbose)
   {
     process.env.verbose = "true";
   }
@@ -52,7 +52,7 @@ import { getFolders } from "components/util";
   let option: number|null = null;
   for (let i=0; i<options.length; i++)
   {
-    if (args.flags[options[i]]) 
+    if (Arguments.args.flags[options[i]]) 
     {
       option = i;
       break;
@@ -69,10 +69,10 @@ import { getFolders } from "components/util";
   switch (option)
   {
     case 0:
-      await packageRunner(info, args);
+      await packageRunner(info);
       break;
     case 1:
-      await componentRunner(info, args);
+      await componentRunner(info);
       break;
     default: {
       const runnerName = options[option];
@@ -84,13 +84,13 @@ import { getFolders } from "components/util";
 
       const runnerFile = path.join(localRunnersLocation, runnerName, "runner.js");
 
-      if (args.flags.verbose)
+      if (Arguments.verbose)
       {
         Terminal.write(`running local runner "${runnerName}"`);
       }
       
       const { default: runner } = await import(runnerFile);
-      await runner(info, args)
+      await runner(info, Arguments.args)
       break;
     }
   }

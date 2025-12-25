@@ -1,6 +1,6 @@
 // import statements 
 import esbuild from "esbuild";
-import { Package, Terminal, getArguments } from "@papit/util-cli";
+import { Arguments, Package, Terminal } from "@papit/util-cli";
 
 import { Meta } from "../meta/types";
 
@@ -9,15 +9,9 @@ export async function jsBundler(
   outputFile: string, 
   meta: Meta, 
   packageJSON: Package, 
-  args: ReturnType<typeof getArguments>,
 ) {
 
-  const isDev = !!args.flags.dev;
-
-  if (args.flags.debug)
-  {
-    console.log(packageJSON.name, 'RUUNONG BUNDLE', inputFile, outputFile);
-  }
+  const isDev = !!Arguments.args.flags.dev;
 
   const esbuildInfo = await esbuild.build({
     entryPoints: [inputFile],
@@ -40,23 +34,23 @@ export async function jsBundler(
 
   if (esbuildInfo.errors.length > 0)
   {
-    if (args.flags.verbose)
+    if (Arguments.verbose)
     {
       Terminal.error(JSON.stringify(esbuildInfo.errors, null, 2));
     }
 
-    Terminal.error("esbuild had errors", args.flags.verbose ? "" : "run with --verbose flag for details");
+    Terminal.error("esbuild had errors", Arguments.verbose ? "" : "run with --verbose flag for details");
     process.exit(1);
   }
 
   if (esbuildInfo.warnings.length > 0)
   {
-    if (args.flags.verbose)
+    if (Arguments.verbose)
     {
       Terminal.warn(JSON.stringify(esbuildInfo.warnings, null, 2));
     }
 
-    Terminal.warn("esbuild had warnings", args.flags.verbose ? "" : "run with --verbose flag for details");
+    Terminal.warn("esbuild had warnings", Arguments.verbose ? "" : "run with --verbose flag for details");
   }
 
   return esbuildInfo;

@@ -4,7 +4,7 @@ import fs from "node:fs";
 import { exec } from "node:child_process";
 import { promisify } from "node:util";
 import { Extractor, ExtractorConfig } from '@microsoft/api-extractor';
-import { Terminal, copyFolder, getArguments, getPathInfo } from "@papit/util-cli";
+import { Arguments, Terminal, copyFolder, getPathInfo } from "@papit/util-cli";
 
 import { Meta } from "../meta/types";
 
@@ -15,14 +15,12 @@ export async function tsBundler(
   outputFile: string, 
   meta: Meta, 
   info: ReturnType<typeof getPathInfo>, 
-  args: ReturnType<typeof getArguments>
 ) {
   if (!meta.tsconfig.info.declaration) return;
 
   try {
-    if (args.flags.dev)
+    if (Arguments.args.flags.dev)
     {
-      console.log('DEV MODE');
       const srcName = path.basename(path.dirname(inputFile));
       const outDir = path.dirname(outputFile);
       const srcDir = path.join(outDir, srcName);
@@ -34,21 +32,22 @@ export async function tsBundler(
     }
     else 
     {
-      await execAsync(`tsc --emitDeclarationOnly -p ${meta.tsconfig.path} --declarationDir .papit/build`);
+      const outDir = path.join(info.local, ".papit/build");
+      await execAsync(`tsc --emitDeclarationOnly -p ${meta.tsconfig.path} --declarationDir ${outDir}`);
     }
   }
   catch (e) {
     Terminal.error("tsc failed");
-    if (args.flags.verbose)
+    if (Arguments.verbose)
     {
       console.log(e);
     }
     process.exit(1);
   }
 
-  if (args.flags.dev) return;
+  if (Arguments.args.flags.dev) return;
 
-  const result = await Terminal.sessionBlock(async () => {
+  const result = await Terminal.surpress(async () => {
     // create a config object programmatically
     const extractorConfig = ExtractorConfig.prepare({
       configObject: {
@@ -70,9 +69,9 @@ export async function tsBundler(
     // run API Extractor
     return Extractor.invoke(extractorConfig, {
       localBuild: true,
-      showVerboseMessages: !!args.flags.verbose,
+      showVerboseMessages: !!Arguments.verbose,
     });
-  })
+  });
 
   if (!result.succeeded) {
     Terminal.error(`API Extractor failed with ${result.errorCount} errors`);

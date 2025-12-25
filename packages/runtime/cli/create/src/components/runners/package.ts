@@ -15,10 +15,10 @@ import {
   // getScriptScope,
   type Lockfile,
   type Package,
-  getArguments,
   getPathInfo,
   RootPackage,
   LocalPackage,
+  Arguments,
 } from "@papit/util-cli"
 import { componentRunner } from "./component";
 
@@ -27,7 +27,9 @@ import { stripRootPath } from "../util";
 
 const execAsync = promisify(exec);
 
-export async function packageRunner(info: ReturnType<typeof getPathInfo>, args: ReturnType<typeof getArguments>) {
+export async function packageRunner(
+  info: ReturnType<typeof getPathInfo>, 
+) {
   const session = Terminal.createSession();
 
   const scope = getScope();
@@ -44,7 +46,6 @@ export async function packageRunner(info: ReturnType<typeof getPathInfo>, args: 
       ...info,
       scope,
     }, 
-    args,
     rootPackage,
   );
 
@@ -57,7 +58,7 @@ export async function packageRunner(info: ReturnType<typeof getPathInfo>, args: 
       localRunnerSet.add(f);
     });
 
-  const argType = args.flags.package ?? args.flags.type;
+  const argType = Arguments.args.flags.package ?? Arguments.args.flags.type;
   let templateIndex = templateFolders.findIndex(t => t === argType);
   if (templateIndex < 0)
   {
@@ -69,8 +70,8 @@ export async function packageRunner(info: ReturnType<typeof getPathInfo>, args: 
   const template = templateFolders[templateIndex];
   
   let htmlPrefix:string|undefined = undefined;
-  if (Array.isArray(args.flags['html-prefix'])) htmlPrefix = args.flags['html-prefix'].join("-");
-  else if (typeof args.flags['html-prefix'] === "string") htmlPrefix = args.flags['html-prefix'];
+  if (Array.isArray(Arguments.args.flags['html-prefix'])) htmlPrefix = Arguments.args.flags['html-prefix'].join("-");
+  else if (typeof Arguments.args.flags['html-prefix'] === "string") htmlPrefix = Arguments.args.flags['html-prefix'];
   if (htmlPrefix?.trim() === "") htmlPrefix = undefined;
 
   if (!htmlPrefix && /web-components?/i.test(template))
@@ -151,8 +152,8 @@ export async function packageRunner(info: ReturnType<typeof getPathInfo>, args: 
   {
     Terminal.clearSession();
     let input:string|undefined = undefined;
-    if (Array.isArray(args.flags.name)) input = args.flags.name.join(" ");
-    else if (typeof args.flags.name === "string") input = args.flags.name;
+    if (Array.isArray(Arguments.args.flags.name)) input = Arguments.args.flags.name.join(" ");
+    else if (typeof Arguments.args.flags.name === "string") input = Arguments.args.flags.name;
     else input = await Terminal.prompt("(package) name", true);
 
     nameInfo = getName(input);
@@ -173,7 +174,7 @@ export async function packageRunner(info: ReturnType<typeof getPathInfo>, args: 
   }
 
   const fullName = `${scope}/${layerConfig.include === "prefix" ? layerConfig.name + "-" : ""}${nameInfo.name}${layerConfig.include === "suffix" ? "-" + layerConfig.name : ""}`;
-  let description = Array.isArray(args.flags.description) ? args.flags.description.join(" ") : args.flags.description;
+  let description = Array.isArray(Arguments.args.flags.description) ? Arguments.args.flags.description.join(" ") : Arguments.args.flags.description;
   if (!description || description === true) description = await Terminal.prompt("description", true);
 
   Terminal.write();
@@ -222,7 +223,7 @@ export async function packageRunner(info: ReturnType<typeof getPathInfo>, args: 
   }
 
   Terminal.createSession();
-  const shouldInstall = 'agree' in args.flags || 'install' in args.flags || await Terminal.confirm("install package", true);
+  const shouldInstall = 'agree' in Arguments.args.flags || 'install' in Arguments.args.flags || await Terminal.confirm("install package", true);
   if (shouldInstall)
   {
     try {
@@ -238,9 +239,9 @@ export async function packageRunner(info: ReturnType<typeof getPathInfo>, args: 
     Terminal.clearSession();
   }
 
-  const shouldCommit = 'agree' in args.flags || 'commit' in args.flags || await Terminal.confirm("git commit", true);
+  const shouldCommit = 'agree' in Arguments.args.flags || 'commit' in Arguments.args.flags || await Terminal.confirm("git commit", true);
 
-  await componentRunner(info, args, { destination, nameInfo, htmlPrefix, shouldCommit });
+  await componentRunner(info, { destination, nameInfo, htmlPrefix, shouldCommit });
 
   if (shouldCommit)
   {

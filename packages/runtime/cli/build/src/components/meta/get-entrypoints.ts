@@ -1,7 +1,7 @@
 // import statements 
 import path from "node:path";
 import fs from "node:fs";
-import { Package, Terminal, getArguments, getPathInfo } from "@papit/util-cli";
+import { Arguments, Package, Terminal, getPathInfo } from "@papit/util-cli";
 
 function extractEntryPoint(value:string|string[]|Record<string,string>, outDir: string) {
   let entryPoints:Record<string,string> = {}
@@ -31,7 +31,6 @@ function extractEntryPoint(value:string|string[]|Record<string,string>, outDir: 
 function mergeEntryPoints(
   currentEntryPoints: Record<string,string>, 
   newEntryPoints: Record<string,string>,
-  args: ReturnType<typeof getArguments>,
   set: Set<string>,
 ) {
   for (let key in newEntryPoints)
@@ -40,7 +39,7 @@ function mergeEntryPoints(
     const value = newEntryPoints[key];
     if (set.has(value)) 
     {
-      if (args.flags.verbose) Terminal.warn(`entry "${key}" with its value was already defined`);
+      if (Arguments.verbose) Terminal.warn(`entry "${key}" with its value was already defined`);
       continue;
     }
 
@@ -58,20 +57,19 @@ function mergeEntryPoints(
 export function getEntryPoints(
   info: ReturnType<typeof getPathInfo>, 
   packageJSON: Package, 
-  args: ReturnType<typeof getArguments>,
   outDir: string = "lib",
 ) {
   const entryPoints:Record<string,string> = {}
   const set = new Set<string>();
 
-  if (args.flags.entry && args.flags.entry !== true)
+  if (Arguments.args.flags.entry && Arguments.args.flags.entry !== true)
   {
-    mergeEntryPoints(entryPoints, extractEntryPoint(args.flags.entry, outDir), args, set);
+    mergeEntryPoints(entryPoints, extractEntryPoint(Arguments.args.flags.entry, outDir), set);
   }
   
   if (packageJSON.entryPoints)
   {
-    mergeEntryPoints(entryPoints, extractEntryPoint(packageJSON.entryPoints, outDir), args, set);
+    mergeEntryPoints(entryPoints, extractEntryPoint(packageJSON.entryPoints, outDir), set);
   }
 
   if (packageJSON.exports)
@@ -86,12 +84,12 @@ export function getEntryPoints(
       }
     }
 
-    mergeEntryPoints(entryPoints, extractEntryPoint(entryPointsValues, outDir), args, set);
+    mergeEntryPoints(entryPoints, extractEntryPoint(entryPointsValues, outDir), set);
   }
 
   if (packageJSON.bin)
   {
-    mergeEntryPoints(entryPoints, extractEntryPoint(packageJSON.bin, outDir), args, set);
+    mergeEntryPoints(entryPoints, extractEntryPoint(packageJSON.bin, outDir), set);
   }
 
   if (Object.keys(entryPoints).length === 0) 
@@ -118,8 +116,6 @@ export function getEntryPoints(
     }
     else 
     {
-      console.log('REMOVING ENTRYTKEy', joined, key, entryPoints[key]);
-
       delete entryPoints[key];
     }
   }

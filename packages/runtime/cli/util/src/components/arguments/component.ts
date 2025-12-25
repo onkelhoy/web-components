@@ -20,13 +20,13 @@
  * // }
  */
 
-type Arguments = { flags: Record<string, string | string[] | true | undefined>, values: string[] };
+type ArgumentsType = { flags: Record<string, string | string[] | true | undefined>, values: string[] };
 export function getArguments(islands:string[] = []) {
   return extractArguments(process.argv, islands);
 }
 
 export function extractArguments(values: string[], islands: string[]) {
-  const _arguments:Arguments = {
+  const _arguments:ArgumentsType = {
     flags: {},
     values: [],
   };
@@ -84,4 +84,56 @@ export function extractArguments(values: string[], islands: string[]) {
   }
 
   return _arguments;
+}
+
+type Loglevel = "verbose"|"debug"|"info"|"error"|"warning";
+export class Arguments {
+  private static _islands: string[] = ["verbose", "debug", "warning", "error", "info"];
+  static get islands() {
+    return this._islands;
+  }
+  static set islands(value:string[]) {
+    this._islands = value.concat("verbose", "debug", "warning", "error", "info");
+    this._args = undefined;
+  }
+
+  private static _args: ReturnType<typeof getArguments>|undefined;
+  static get args():ReturnType<typeof getArguments> {
+    if (this._args) return this._args;
+    this._args = getArguments(this.islands);
+    return this._args;
+  }
+
+  private static _verbose: boolean|undefined;
+  private static _debug: boolean|undefined;
+  private static _warning: boolean|undefined;
+  private static _error: boolean|undefined;
+  private static _info: boolean|undefined;
+
+  static get verbose() {
+    return this.getLoglevel("verbose", ["error", "info", "warning"]);
+  }
+  static get debug() {
+    return this.getLoglevel("debug", ["verbose", "error", "info", "warning"]);
+  }
+  static get info() {
+    return this.getLoglevel("info");
+  }
+  static get warning() {
+    return this.getLoglevel("warning");
+  }
+  static get error() {
+    return this.getLoglevel("error");
+  }
+
+  private static getLoglevel(name: Loglevel, others: Loglevel[] = []) {
+    const privateName = `_${name}` as const;
+    if (typeof this[privateName] === "boolean") return this[privateName];
+    this[privateName] = !!this.args.flags[name];
+    if (!this[privateName])
+    {
+      this[privateName] = others.some(level => this[level]);
+    }
+    return this[privateName];
+  }
 }

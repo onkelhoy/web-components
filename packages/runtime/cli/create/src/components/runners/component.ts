@@ -5,13 +5,13 @@ import { promisify } from "node:util";
 
 import {
   Terminal,
-  getArguments,
   getName,
   copyFolder,
   getPathInfo,
   getJSON,
   RootPackage,
   LocalPackage,
+  Arguments,
 } from "@papit/util-cli"
 import { getFolders } from "components/util";
 
@@ -39,7 +39,6 @@ function createFolderIfNotExistSync(url:string) {
 const execAsync = promisify(exec);
 export async function componentRunner(
   _info: ReturnType<typeof getPathInfo>,
-  args: ReturnType<typeof getArguments>,
   packageInfo?: PackageInfo,
   rootPackage?: RootPackage,
 ) {
@@ -74,7 +73,7 @@ export async function componentRunner(
 
   if (templateIndex < 0)
   {
-    const argType = args.flags.component ?? args.flags.type;
+    const argType = Arguments.args.flags.component ?? Arguments.args.flags.type;
     templateIndex = templateFolders.findIndex(f => f === argType);
 
     if (templateIndex < 0)
@@ -88,8 +87,8 @@ export async function componentRunner(
   const template = templateFolders[templateIndex]
 
   let htmlPrefix:string|undefined = undefined;
-  if (Array.isArray(args.flags['html-prefix'])) htmlPrefix = args.flags['html-prefix'].join("-");
-  else if (typeof args.flags['html-prefix'] === "string") htmlPrefix = args.flags['html-prefix'];
+  if (Array.isArray(Arguments.args.flags['html-prefix'])) htmlPrefix = Arguments.args.flags['html-prefix'].join("-");
+  else if (typeof Arguments.args.flags['html-prefix'] === "string") htmlPrefix = Arguments.args.flags['html-prefix'];
   else htmlPrefix = packageInfo?.htmlPrefix ?? rootPackage.papit.htmlprefix;
 
   if (htmlPrefix?.trim() === "") htmlPrefix = undefined;
@@ -133,8 +132,8 @@ export async function componentRunner(
     Terminal.clearSession();
 
     let input:string|undefined = undefined;
-    if (Array.isArray(args.flags.name)) input = args.flags.name.join(" ");
-    else if (typeof args.flags.name === "string") input = args.flags.name;
+    if (Array.isArray(Arguments.args.flags.name)) input = Arguments.args.flags.name.join(" ");
+    else if (typeof Arguments.args.flags.name === "string") input = Arguments.args.flags.name;
     else input = await Terminal.prompt("(package) name", true);
 
     nameInfo = getName(input);
@@ -155,7 +154,7 @@ export async function componentRunner(
   }
 
   Terminal.createSession();
-  const shouldCommit = packageInfo?.shouldCommit === undefined ? ('agree' in args.flags || 'commit' in args.flags || await Terminal.confirm("git commit", true)) : packageInfo.shouldCommit;
+  const shouldCommit = packageInfo?.shouldCommit === undefined ? ('agree' in Arguments.args.flags || 'commit' in Arguments.args.flags || await Terminal.confirm("git commit", true)) : packageInfo.shouldCommit;
   Terminal.clearSession();
 
   const templateSrc = localRunnerSet.has(template) ? path.join(info.root, "bin/runners/component", template) : path.join(_info.script!, "asset/component-templates", template);

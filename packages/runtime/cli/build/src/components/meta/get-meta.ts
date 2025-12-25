@@ -1,6 +1,6 @@
 import path from "node:path";
 import fs from "node:fs";
-import { LocalPackage, Terminal, getArguments, getJSON, getPathInfo } from "@papit/util-cli";
+import { Arguments, LocalPackage, Terminal, getJSON, getPathInfo } from "@papit/util-cli";
 import { getTSinfo } from "./get-tsinfo";
 import { getEntryPoints } from "./get-entrypoints";
 import { Meta } from "./types";
@@ -8,11 +8,10 @@ import { Meta } from "./types";
 export async function getMeta(
   mode: "prod"|"dev", 
   info: ReturnType<typeof getPathInfo>, 
-  args: ReturnType<typeof getArguments>,
   packageJSON: LocalPackage,
 ) {
   const storedFile = path.join(info.local, `.papit/build-meta/${mode}.json`);
-  if (fs.existsSync(storedFile) && !args.flags.clean && !args.flags.force) 
+  if (fs.existsSync(storedFile) && !Arguments.args.flags.clean && !Arguments.args.flags.force) 
   {
     const json = getJSON<Meta>(storedFile);
     if (json !== null) return json;
@@ -30,7 +29,7 @@ export async function getMeta(
   }
 
   const tsConfigInfo = getTSinfo(tsconfigFilePath);
-  const entryPoints = getEntryPoints(info, packageJSON, args);
+  const entryPoints = getEntryPoints(info, packageJSON);
   const entryPointKeys = Object.keys(entryPoints);
 
   if (entryPointKeys.length === 0)
@@ -60,7 +59,7 @@ export async function getMeta(
     config,
   }
 
-  if (!args.flags.ci)
+  if (!Arguments.args.flags.ci)
   {
     fs.mkdirSync(path.dirname(storedFile), { recursive: true });
     fs.writeFileSync(storedFile, JSON.stringify(meta));    

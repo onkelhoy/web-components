@@ -106,6 +106,20 @@ export class Terminal {
     process.stdout.write('\r');
   }
 
+  static async surpress<T = any>(callback: () => Promise<T>): Promise<T> {
+    const originalWrite = process.stdout.write;
+    process.stdout.write = () => true; // swallow all stdout
+
+    let ans: T;
+    try {
+      ans = await callback();
+    }
+    finally {
+      process.stdout.write = originalWrite;
+      return ans!;
+    }
+  }
+
   static async sessionBlock<T = any>(callback: (session: number) => Promise<T>): Promise<T> {
     const previousSession = this.session;
     const session = this.createSession();

@@ -1,4 +1,4 @@
-import { getArguments, Terminal, RootPackage, getPathInfo } from "@papit/util-cli";
+import { getArguments, Terminal, RootPackage, getPathInfo, Arguments } from "@papit/util-cli";
 import fs from "node:fs";
 import { join } from "node:path";
 import { stripRootPath } from "./helper";
@@ -23,7 +23,6 @@ function getLayerFolders(
 
 export async function selectFolder(
   info: ReturnType<typeof getPathInfo> & { scope: string;}, 
-  args: ReturnType<typeof getArguments>,
   rootPackage: RootPackage,
 ) {
   return Terminal.sessionBlock(async () => {    
@@ -47,7 +46,7 @@ export async function selectFolder(
       {
         const name = await Terminal.prompt("Name of the folder?");
         const url = join(target, name);
-        const created = await createFolder(url, name, args, info, rootPackage);
+        const created = await createFolder(url, name, info, rootPackage);
   
         if (created)
         {
@@ -69,14 +68,13 @@ export async function selectFolder(
 async function createFolder(
   url: string, 
   name: string, 
-  args: ReturnType<typeof getArguments>,
   info: ReturnType<typeof getPathInfo>,
   rootPackage: RootPackage,
 ) {
   Terminal.write(`[${url}]`);
   Terminal.write();
   Terminal.createSession();
-  const shouldCreate = args.flags.agree || await Terminal.confirm("confirm folder creation", true);
+  const shouldCreate = Arguments.args.flags.agree || await Terminal.confirm("confirm folder creation", true);
   Terminal.clearSession();
 
   if (!shouldCreate) return false;

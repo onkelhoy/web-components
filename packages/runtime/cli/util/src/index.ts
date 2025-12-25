@@ -1,6 +1,6 @@
 export * from "./components/terminal";
 export * from "./components/copy-folder";
-export * from "./components/get-arguments";
+export * from "./components/arguments";
 export * from "./components/get-json";
 export * from "./components/get-name";
 export * from "./components/get-package";
