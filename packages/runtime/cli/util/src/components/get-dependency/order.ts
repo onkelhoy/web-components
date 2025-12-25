@@ -31,7 +31,7 @@ export async function init(
     
     const pkg = lockfile.packages[key] as LocalPackage;
     const name = pkg.name;
-    let changedversion = false;
+    let changedversion:boolean|undefined = undefined;
 
     if (!name.startsWith(scope)) continue;
     if (pkg.workspaces) continue;
@@ -63,7 +63,7 @@ export async function init(
         Terminal.write(Terminal.colorWrap(`"${pkg.name}" version ${changedversion ? "changed" : "same"}`, "blue"));
       }
 
-      if (changedversion && !Arguments.args.flags['version-change']) 
+      if (!changedversion && !Arguments.args.flags['version-change']) 
       {
         continue;
       }
