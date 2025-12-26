@@ -234,10 +234,24 @@ export class Terminal {
     });
   }
 
-  static async option(options: string[], promptText = "↑↓ select • Enter confirm", currentMarker = "●", defaultMarker = "◯") {
+  static async option(options: string[]|string[][], promptText = "↑↓ select • Enter confirm", currentMarker = "●", defaultMarker = "◯") {
     return Terminal.sessionBlock(async () => new Promise<number>((resolve, reject) => {
       readline.emitKeypressEvents(process.stdin);
       if (process.stdin.isTTY) process.stdin.setRawMode(true);
+
+      let _options: string[] = [];
+      if (Array.isArray(options[0]))
+      {
+        for (let i=0; i<options.length; i++)
+        {
+          _options = _options.concat(options[i]);
+          if (i < options.length - 1) _options.push("");
+        }
+      }
+      else 
+      {
+        _options = options as string[];
+      }
 
       this.write(promptText);
       this.createSession();
@@ -245,10 +259,15 @@ export class Terminal {
       function printoptions(clear = true) {
         if (clear) Terminal.clearSession();
 
-        for (let i = 0; i < options.length; i++)
+        for (let i = 0; i < _options.length; i++)
         {
+          if (_options[i] === "") 
+          {
+            Terminal.write();
+            continue;
+          }
           const prefix = i === index ? currentMarker : defaultMarker;
-          Terminal.write(`${prefix} ${options[i]}`);
+          Terminal.write(`${prefix} ${_options[i]}`);
         }
       }
 
@@ -276,13 +295,36 @@ export class Terminal {
         if (/up/i.test(key.name) || key.shift && /tab/i.test(key.name))
         {
           index--;
-          if (index < 0) index = options.length - 1;
+          let start = index;
+          while (_options[index] === "")
+          {
+            index--;
+            if (index < 0) index = _options.length - 1;
+            if (index === start) 
+            {
+              Terminal.error("CLI got stuck in the options");
+              process.exit();
+            }
+          }
+
+          if (index < 0) index = _options.length - 1;
           printoptions();
         }
         else if (/down/i.test(key.name) || /tab/i.test(key.name))
         {
           index++;
-          if (index >= options.length) index = 0;
+          let start = index;
+          while (_options[index] === "")
+          {
+            index++;
+            if (index >= _options.length) index = 0;
+            if (index === start) 
+            {
+              Terminal.error("CLI got stuck in the options");
+              process.exit();
+            }
+          }
+          if (index >= _options.length) index = 0;
           printoptions();
         }
       };

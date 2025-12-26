@@ -36,7 +36,7 @@ export async function selectFolder(
       Terminal.write("Current: ", target.replace(info.root, info.scope));
       Terminal.write();
   
-      const option = await Terminal.option(["Choose Folder", "Create Folder", ...folders]);
+      const option = await Terminal.option([["Choose Folder", "Create Folder"], folders]);
   
       if (option === 0)
       {

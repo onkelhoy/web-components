@@ -44,6 +44,62 @@
       "packages/runtime/cli": {
         "include": "prefix",
         "name": "cli"
+      },
+      "packages/design-system": {
+        "include": false,
+        "name": "design-system"
+      },
+      "packages/design-system/atomic-design": {
+        "include": false,
+        "name": "atomic-design"
+      },
+      "packages/design-system/atomic-design/atoms": {
+        "include": false,
+        "name": "atoms"
+      },
+      "packages/design-system/atomic-design/molecules": {
+        "include": false,
+        "name": "molecules"
+      },
+      "packages/design-system/atomic-design/organisms": {
+        "include": false,
+        "name": "organisms"
+      },
+      "packages/design-system/atomic-design/pages": {
+        "include": "suffix",
+        "name": "pages"
+      },
+      "packages/design-system/atomic-design/templates": {
+        "include": "suffix",
+        "name": "templates"
+      },
+      "packages/design-system/themes": {
+        "include": "suffix",
+        "name": "themes"
+      },
+      "packages/network": {
+        "include": false,
+        "name": "network"
+      },
+      "packages/game": {
+        "include": "prefix",
+        "name": "game"
+      },
+      "packages/math": {
+        "include": "prefix",
+        "name": "math"
+      },
+      "packages/math/algebra": {
+        "include": "prefix",
+        "name": "algebra"
+      },
+      "packages/math/geometry": {
+        "include": "prefix",
+        "name": "geometry"
+      },
+      "packages/math/algorithms": {
+        "include": "prefix",
+        "name": "algorithms"
       }
     }
   }
