@@ -15,7 +15,7 @@ export async function tsBundler(
 ) {
   if (!meta.tsconfig.info.declaration) return;
 
-  try {
+  // try {
     if (Arguments.args.flags.dev)
     {
       const srcName = path.basename(path.dirname(inputFile));
@@ -40,15 +40,18 @@ export async function tsBundler(
         ["--emitDeclarationOnly", "-p", meta.tsconfig.path, "--declarationDir",  outDir], 
       );
     }
-  }
-  catch (e) {
-    Terminal.error("tsc failed");
-    if (Arguments.debug)
-    {
-      console.log(e);
-    }
-    process.exit(1);
-  }
+  // }
+  // catch (e) {
+  //   Terminal.error("tsc failed");
+  //   if (Arguments.debug)
+  //   {
+  //     console.log(e);
+  //   }
+
+  //   // NOTE we should determine if we are in NON individual mode and then we dont exit but we throw error 
+  //   // this allows us to caputre the error and print a nice message 
+  //   throw new Error(e);
+  // }
 
   if (Arguments.args.flags.dev) return;
 

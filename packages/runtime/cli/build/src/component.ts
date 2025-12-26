@@ -41,8 +41,27 @@ async function npmInstall(originalinfo: ReturnType<typeof getPathInfo>) {
   if (Arguments.args.flags.all) 
   {
     return await getDependencyOrder(async batch => {
-      const shouldinstall = await Promise.all(batch.map(async b => runBatch(b.name, b.location, mode, originalinfo)));
-      if (shouldinstall.some(Boolean)) await npmInstall(originalinfo);
+      let shouldinstall = false;
+
+      try 
+      {
+        for (const b of batch) 
+        {
+          Terminal.createSession();
+          const localinstall = await runBatch(b.name, b.location, mode, originalinfo);
+          if (localinstall)
+          {
+            shouldinstall = true;
+          } 
+        }
+  
+        if (shouldinstall) await npmInstall(originalinfo);
+      }
+      catch (e)
+      {
+        Terminal.error("WTF");
+        process.exit(1);
+      }
     }, { info: originalinfo });
   }
 
@@ -71,8 +90,17 @@ async function npmInstall(originalinfo: ReturnType<typeof getPathInfo>) {
     Terminal.write(`building using ${bloodlineType} mode`);
   }
   await getDependencyBloodline(packageJSON.name, async batch => {
-    const shouldinstall = await Promise.all(batch.map(async b => runBatch(b.name, b.location, mode, originalinfo)));
-    if (shouldinstall.some(Boolean)) await npmInstall(originalinfo);
+    let shouldinstall = false;
+    for (const b of batch) 
+    {
+      const localinstall = await runBatch(b.name, b.location, mode, originalinfo);
+      if (localinstall)
+      {
+        shouldinstall = true;
+      } 
+    }
+
+    if (shouldinstall) await npmInstall(originalinfo);
   }, {
     info: originalinfo,
     type: bloodlineType,
@@ -183,10 +211,17 @@ async function runner(
       Terminal.write(`  ↳ (${Terminal.colorWrap("bundle", "red")}) "${Terminal.colorWrap(absoluteEntry.replace(info.local, ""), "blue")}" -> "${Terminal.colorWrap(javascriptFileOutput.replace(info.local, ""), "green")}"`);
       Terminal.write(`  ↳ (${Terminal.colorWrap("types", "red")}) "${Terminal.colorWrap(absoluteTypesEntry.replace(info.local, ""), "blue")}" -> "${Terminal.colorWrap(typescriptFileOutput.replace(info.local, ""), "green")}"\n`);
     }
-  
-    await jsBundler(absoluteEntry, javascriptFileOutput, meta, packageJSON);
-    await tsBundler(absoluteTypesEntry, typescriptFileOutput, meta, info);
 
+    try {
+      await jsBundler(absoluteEntry, javascriptFileOutput, meta, packageJSON);
+      await tsBundler(absoluteTypesEntry, typescriptFileOutput, meta, info);  
+    }
+    catch 
+    {
+      Terminal.error('build failed', Terminal.red(packageJSON.name));
+      process.exit(1);
+    }
+  
     if (binEntry)
     {
       if (Arguments.verbose)

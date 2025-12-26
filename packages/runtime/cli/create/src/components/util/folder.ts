@@ -1,10 +1,10 @@
-import { getArguments, Terminal, RootPackage, getPathInfo, Arguments } from "@papit/util-cli";
+import { Terminal, RootPackage, getPathInfo, Arguments } from "@papit/util-cli";
 import fs from "node:fs";
-import { join } from "node:path";
+import path from "node:path";
 import { stripRootPath } from "./helper";
 
 export function getFolders(dir: string): string[] {
-  return fs.readdirSync(dir).filter(name => fs.statSync(join(dir, name)).isDirectory());
+  return fs.readdirSync(dir).filter(name => fs.statSync(pa.th.join(dir, name)).isDirectory());
 };
 
 function getLayerFolders(
@@ -13,7 +13,7 @@ function getLayerFolders(
   info: ReturnType<typeof getPathInfo>
 ): string[] {
   return fs.readdirSync(dir).filter(name => {
-    const joined = join(dir, name);
+    const joined = path.join(dir, name);
     if (!fs.statSync(joined).isDirectory()) return false;
     const replaced = stripRootPath(info.root, joined);
     
@@ -26,7 +26,8 @@ export async function selectFolder(
   rootPackage: RootPackage,
 ) {
   return Terminal.sessionBlock(async () => {    
-    let target = join(info.root, "packages");
+    let target = path.join(info.root, "packages");
+    const original = target;
   
     while (target)
     {
@@ -36,7 +37,7 @@ export async function selectFolder(
       Terminal.write("Current: ", target.replace(info.root, info.scope));
       Terminal.write();
   
-      const option = await Terminal.option([["Choose Folder", "Create Folder"], folders]);
+      const option = await Terminal.option([["Choose Folder", "Create Folder"], target === original ? folders : [ "..", ...folders]]);
   
       if (option === 0)
       {
@@ -45,17 +46,21 @@ export async function selectFolder(
       if (option === 1)
       {
         const name = await Terminal.prompt("Name of the folder?");
-        const url = join(target, name);
+        const url = path.join(target, name);
         const created = await createFolder(url, name, info, rootPackage);
   
         if (created)
         {
-          target = join(target, name);
+          target = path.join(target, name);
         }
+      }
+      else if (option === 2)
+      {
+        target = path.resolve(target, "..");
       }
       else 
       {
-        target = join(target, folders[option - 2]);
+        target = path.join(target, folders[option - 2]);
       }
       Terminal.clearSession(session);
     }
@@ -108,6 +113,6 @@ export async function createFolderConfig(
       name,
     }
 
-    fs.writeFileSync(join(info.root, "package.json"), JSON.stringify(rootPackage, null, 2), { encoding: "utf-8" });
+    fs.writeFileSync(path.join(info.root, "package.json"), JSON.stringify(rootPackage, null, 2), { encoding: "utf-8" });
   });
 }

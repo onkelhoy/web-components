@@ -44,6 +44,55 @@ export class Terminal {
     return `\x1b[${ANSII_COLORS[color]}m${value}\x1b[0m`
   }
 
+  static black(value:string) {
+    return Terminal.colorWrap(value, "black");
+  }
+  static red(value:string) {
+    return Terminal.colorWrap(value, "red");
+  }
+  static green(value:string) {
+    return Terminal.colorWrap(value, "green");
+  }
+  static yellow(value:string) {
+    return Terminal.colorWrap(value, "yellow");
+  }
+  static blue(value:string) {
+    return Terminal.colorWrap(value, "blue");
+  }
+  static magenta(value:string) {
+    return Terminal.colorWrap(value, "magenta");
+  }
+  static cyan(value:string) {
+    return Terminal.colorWrap(value, "cyan");
+  }
+  static white(value:string) {
+    return Terminal.colorWrap(value, "white");
+  }
+  static brightBlack(value:string) {
+    return Terminal.colorWrap(value, "bright-black");
+  }
+  static brightRed(value:string) {
+    return Terminal.colorWrap(value, "bright-red");
+  }
+  static brightGreen(value:string) {
+    return Terminal.colorWrap(value, "bright-green");
+  }
+  static brightYellow(value:string) {
+    return Terminal.colorWrap(value, "bright-yellow");
+  }
+  static brightBlue(value:string) {
+    return Terminal.colorWrap(value, "bright-blue");
+  }
+  static brightMagenta(value:string) {
+    return Terminal.colorWrap(value, "bright-magenta");
+  }
+  static brightCyan(value:string) {
+    return Terminal.colorWrap(value, "bright-cyan");
+  }
+  static brightWhite(value:string) {
+    return Terminal.colorWrap(value, "bright-white");
+  }
+
   static write(...values: string[]) {
     const value = values.join(" ");
     this.printLine(value);
@@ -239,18 +288,14 @@ export class Terminal {
       readline.emitKeypressEvents(process.stdin);
       if (process.stdin.isTTY) process.stdin.setRawMode(true);
 
-      let _options: string[] = [];
+      const _options = options.flat();
+      const spaces = new Set<number>();
       if (Array.isArray(options[0]))
       {
-        for (let i=0; i<options.length; i++)
+        for (let i=0; i<options.length - 1; i++)
         {
-          _options = _options.concat(options[i]);
-          if (i < options.length - 1) _options.push("");
+          spaces.add(options[i].length);
         }
-      }
-      else 
-      {
-        _options = options as string[];
       }
 
       this.write(promptText);
@@ -261,11 +306,11 @@ export class Terminal {
 
         for (let i = 0; i < _options.length; i++)
         {
-          if (_options[i] === "") 
+          if (spaces.has(i)) 
           {
             Terminal.write();
-            continue;
           }
+
           const prefix = i === index ? currentMarker : defaultMarker;
           Terminal.write(`${prefix} ${_options[i]}`);
         }
@@ -295,35 +340,12 @@ export class Terminal {
         if (/up/i.test(key.name) || key.shift && /tab/i.test(key.name))
         {
           index--;
-          let start = index;
-          while (_options[index] === "")
-          {
-            index--;
-            if (index < 0) index = _options.length - 1;
-            if (index === start) 
-            {
-              Terminal.error("CLI got stuck in the options");
-              process.exit();
-            }
-          }
-
           if (index < 0) index = _options.length - 1;
           printoptions();
         }
         else if (/down/i.test(key.name) || /tab/i.test(key.name))
         {
           index++;
-          let start = index;
-          while (_options[index] === "")
-          {
-            index++;
-            if (index >= _options.length) index = 0;
-            if (index === start) 
-            {
-              Terminal.error("CLI got stuck in the options");
-              process.exit();
-            }
-          }
           if (index >= _options.length) index = 0;
           printoptions();
         }
