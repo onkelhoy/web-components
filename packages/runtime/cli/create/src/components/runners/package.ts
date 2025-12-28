@@ -51,12 +51,15 @@ export async function packageRunner(
 
   const templateFolders = getFolders(path.join(info.script!, "asset/package-templates/"));
   const localRunnerSet = new Set<string>();
-  getFolders(path.join(info.root, "bin/runners/package"))
-    .forEach(f => {
-      if (!fs.existsSync(path.join(info.root, "bin/runners/package", f, "package.json"))) return;
-      templateFolders.push(f);
-      localRunnerSet.add(f);
-    });
+  try {
+    getFolders(path.join(info.root, "bin/runners/package"))
+      .forEach(f => {
+        if (!fs.existsSync(path.join(info.root, "bin/runners/package", f, "package.json"))) return;
+        templateFolders.push(f);
+        localRunnerSet.add(f);
+      });
+  }
+  catch {}
 
   const argType = Arguments.args.flags.package ?? Arguments.args.flags.type;
   let templateIndex = templateFolders.findIndex(t => t === argType);

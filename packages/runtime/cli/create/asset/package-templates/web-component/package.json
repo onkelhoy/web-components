@@ -9,16 +9,16 @@
   ],
   "version": "0.0.1",
   "scripts": {
-    "build:react": "bash ./bin/_utils/react.sh",
     "build": "npx @papit/build",
     "watch": "tsc -w",
     "start": "",
-    "preversion": "",
-    "postversion": "",
-    "component": "npm create @papit -- --component",
     "test": "npx playwright test -c tests/playwright.config.ts",
+    "postversion": "npx @papit/version-cli",
+    "component": "npm create @papit -- --component",
+
     "test:update-snapshots": "npx playwright test --update-snapshots -c tests/playwright.config.ts",
-    "test:chrome": "npm test -- --project=chromium"
+    "test:chrome": "npm test -- --project=chromium",
+    "build:react": "bash ./bin/_utils/react.sh"
   },
   "main": "./lib/bundle.js",
   "types": "./lib/bundle.d.ts",
@@ -69,5 +69,14 @@
     "defaults",
     "not IE 11",
     "not dead"
-  ]
+  ],
+  "papit": {
+    "publish": true,
+    "type": "web-component",
+    "main": {
+      "name": "VARIABLE_NAME",
+      "className": "VARIABLE_CLASS_NAME"
+    },
+    "components": {}
+  }
 }

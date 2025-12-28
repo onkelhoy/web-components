@@ -6,11 +6,9 @@
     "build": "npx @papit/build",
     "watch": "tsc -w",
     "start": "npm run build && node ./lib/bundle.js",
-    "publish:manual": "bash ./bin/publish.sh",
-    "preversion": "bash ./bin/_utils/preversion.sh",
-    "postversion": "bash ./bin/_utils/postversion.sh",
-    "component": "npm create @papit -- --component",
-    "test": "node --test"
+    "test": "node --test",
+    "postversion": "npx @papit/version-cli",
+    "component": "npm create @papit -- --component"
   },
   "main": "./lib/bundle.js",
   "types": "./lib/bundle.d.ts",

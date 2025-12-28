@@ -5,7 +5,6 @@ import { Extractor, ExtractorConfig } from '@microsoft/api-extractor';
 import { Arguments, Terminal, copyFolder, getPathInfo } from "@papit/util-cli";
 
 import { Meta } from "../meta/types";
-import { spawnCommand } from "helper";
 
 export async function tsBundler(
   inputFile: string, 
@@ -15,43 +14,30 @@ export async function tsBundler(
 ) {
   if (!meta.tsconfig.info.declaration) return;
 
-  // try {
-    if (Arguments.args.flags.dev)
-    {
-      const srcName = path.basename(path.dirname(inputFile));
-      const outDir = path.dirname(outputFile);
-      const srcDir = path.join(outDir, srcName);
+  if (Arguments.args.flags.dev)
+  {
+    const srcName = path.basename(path.dirname(inputFile));
+    const outDir = path.dirname(outputFile);
+    const srcDir = path.join(outDir, srcName);
 
-      await spawnCommand(
-        "tsc", 
-        info.local,
-        ["--emitDeclarationOnly", "-p", meta.tsconfig.path, "--declarationDir", outDir], 
-      );
-      await copyFolder(srcDir, outDir, content => content);
-      fs.rmSync(srcDir, { recursive: true, force: true })
-      return;
-    }
-    else 
-    {
-      const outDir = path.join(info.local, ".papit/build");
-      await spawnCommand(
-        "tsc", 
-        info.local,
-        ["--emitDeclarationOnly", "-p", meta.tsconfig.path, "--declarationDir",  outDir], 
-      );
-    }
-  // }
-  // catch (e) {
-  //   Terminal.error("tsc failed");
-  //   if (Arguments.debug)
-  //   {
-  //     console.log(e);
-  //   }
-
-  //   // NOTE we should determine if we are in NON individual mode and then we dont exit but we throw error 
-  //   // this allows us to caputre the error and print a nice message 
-  //   throw new Error(e);
-  // }
+    await Terminal.spawnCommand(
+      "tsc", 
+      info.local,
+      ["--emitDeclarationOnly", "-p", meta.tsconfig.path, "--declarationDir", outDir], 
+    );
+    await copyFolder(srcDir, outDir, content => content);
+    fs.rmSync(srcDir, { recursive: true, force: true })
+    return;
+  }
+  else 
+  {
+    const outDir = path.join(info.local, ".papit/build");
+    await Terminal.spawnCommand(
+      "tsc", 
+      info.local,
+      ["--emitDeclarationOnly", "-p", meta.tsconfig.path, "--declarationDir",  outDir], 
+    );
+  }
 
   if (Arguments.args.flags.dev) return;
 

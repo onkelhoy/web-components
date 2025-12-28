@@ -27,7 +27,7 @@ export async function init(
 
     if (!name.startsWith(scope)) continue;
     if (pkg.workspaces) continue;
-    if (name === `${scope}/root`) continue;
+    if (!Arguments.args.flags.includeRoot && name === `${scope}/root`) continue;
     if (acceptance && !acceptance.has(name)) continue;
 
     if (Arguments.args.flags.remote) {
@@ -38,6 +38,7 @@ export async function init(
         if (find) 
         {
           changedversion = find.package.version !== pkg.version;
+          map[name].remoteversion = find.package.version;
         }
         else 
         {
@@ -95,17 +96,6 @@ export async function init(
     map[name].dep = dependencies;
   }
 
-  // // ADD packages here you need to make sure exists 
-  // //  in case of papit repo server is called via npx but I suspect since it exists in package-lock 
-  // //  it wants to call it locally.. 
-  // // if (process.env.CI == "true") {
-  // //   if (map["@papit/server"]) {
-  // //     newmap["@papit/server"] = map["@papit/server"];
-  // //     set.add("@papit/server")
-  // //   }
-  // // }
-  // perhaps we need a flag to make sure certain things exists at build time 
-
   return { map, set };
 }
 
@@ -120,7 +110,13 @@ export function* generator(
     for (const name of arr) {
       if (map[name].dep.length === 0) {
         set.delete(name);
-        list.push({ name, location: map[name].location, version: map[name].version, changedversion: map[name].changedversion });
+        list.push({ 
+          name, 
+          location: map[name].location, 
+          version: map[name].version, 
+          changedversion: map[name].changedversion,
+          remoteversion: map[name].remoteversion,
+        });
       }
     }
 

@@ -33,20 +33,22 @@ import { getFolders } from "components/util";
   Terminal.write("@papit/create - running");
   Terminal.write();
 
-  const options = ["package", "component", "project", "showcase"];
-
-  const localRunnersLocation = path.join(info.root, "bin/runners");
-  const folders = getFolders(localRunnersLocation);
   const localRunnerSet = new Set<string>();
-  folders.forEach(folder => {
-    if (options.includes(folder)) return;
+  const localRunnersLocation = path.join(info.root, "bin/runners");
+  const options = ["package", "component", "project", "showcase"];
+  try {
+    const folders = getFolders(localRunnersLocation);
+    folders.forEach(folder => {
+      if (options.includes(folder)) return;
 
-    const runnerFile = path.join(localRunnersLocation, folder, "runner.js");
-    if (!fs.existsSync(runnerFile)) return;
+      const runnerFile = path.join(localRunnersLocation, folder, "runner.js");
+      if (!fs.existsSync(runnerFile)) return;
 
-    localRunnerSet.add(folder);
-    options.push(folder);
-  })
+      localRunnerSet.add(folder);
+      options.push(folder);
+    });
+  }
+  catch {}
   
 
   let option: number|null = null;

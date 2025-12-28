@@ -54,13 +54,13 @@ export async function selectFolder(
           target = path.join(target, name);
         }
       }
-      else if (option === 2)
+      else if (option === 2 && target !== original)
       {
         target = path.resolve(target, "..");
       }
       else 
       {
-        target = path.join(target, folders[option - 2]);
+        target = path.join(target, folders[option - (target === original ? 2 : 3)]);
       }
       Terminal.clearSession(session);
     }

@@ -100,7 +100,6 @@ export function getEntryPoints(
   // now we should "fix" the entires to actual locations. we only check inside "src" flattly
   for (let key in entryPoints)
   {
-    console.log('checking key in entrypoint', key);
     let entry = entryPoints[key].replace(/^(\.?\/)?(src\/)?/, '');
     if (fs.existsSync(entry)) 
     {

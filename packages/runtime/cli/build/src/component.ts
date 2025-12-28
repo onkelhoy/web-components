@@ -6,7 +6,6 @@ import { Arguments, DependencyBatch, LocalPackage, Package, Terminal, getDepende
 import { getMeta } from "./components/meta/get-meta";
 import { jsBundler } from "./components/bundlers/js-bundle";
 import { tsBundler } from "./components/bundlers/ts-bundle";
-import { spawnCommand } from "./helper";
 
 const CACHED_PACKAGE_JSON: Record<string, LocalPackage> = {};
 const PREBUILD_RUNS = new Set<string>();
@@ -35,6 +34,14 @@ async function runBatch(batch: DependencyBatch[], mode: "dev" | "prod", original
       const info = getPathInfo(b.location);
       const packageJSON = getPackage(info.local);
       const localinstall = await runner(mode, info, packageJSON, originalinfo);
+
+      if (packageJSON.remoteVersion !== b.remoteversion && b.remoteversion !== undefined)
+      {
+        packageJSON.remoteVersion = b.remoteversion;
+        fs.writeFileSync(path.join(info.local, "package.json"), JSON.stringify(packageJSON, null, 2), { encoding: "utf-8" });
+        shouldinstall = true;
+      }
+
       if (localinstall)
       {
         shouldinstall = true;
@@ -57,7 +64,7 @@ async function npmInstall(originalinfo: ReturnType<typeof getPathInfo>) {
   if (!Arguments.args.flags.ci)
   {
     if (Arguments.verbose) console.log('running install');
-    await spawnCommand("npm install", originalinfo.root);
+    await Terminal.spawnCommand("npm install", originalinfo.root);
   }
   else if (Arguments.verbose)
   {
@@ -163,7 +170,7 @@ async function runPrebuild(batch: DependencyBatch[], originalinfo: ReturnType<ty
       {
         console.log(`${packageJSON.name} - running prebuild script`);
       }
-      await spawnCommand(packageJSON.scripts.prebuild, info.local);
+      await Terminal.spawnCommand(packageJSON.scripts.prebuild, info.local);
 
       if (Arguments.verbose)
       {
@@ -197,7 +204,7 @@ async function runner(
     {
       console.log(`${packageJSON.name} - running prebuild script`);
     }
-    await spawnCommand(packageJSON.scripts.prebuild, info.local);
+    await Terminal.spawnCommand(packageJSON.scripts.prebuild, info.local);
 
     if (Arguments.verbose)
     {
@@ -217,15 +224,15 @@ async function runner(
     console.log();
   }
 
-  // if (meta.tsconfig.info.outDir)
-  // {
-  //   if (Arguments.verbose)
-  //   {
-  //     console.log(`removing "${meta.tsconfig.info.outDir}"`)
-  //   }
-  //   fs.rmSync(meta.tsconfig.info.outDir, { recursive: true, force: true });
-  //   fs.mkdirSync(meta.tsconfig.info.outDir, { recursive: true });
-  // }
+  if (meta.tsconfig.info.outDir && Arguments.args.flags.clean)
+  {
+    if (Arguments.verbose)
+    {
+      console.log(`removing "${meta.tsconfig.info.outDir}"`)
+    }
+    fs.rmSync(meta.tsconfig.info.outDir, { recursive: true, force: true });
+    fs.mkdirSync(meta.tsconfig.info.outDir, { recursive: true });
+  }
 
   let shouldinstall = false;
   for (const entryPointKey of meta.entryPoints.keys) 

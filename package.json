@@ -31,6 +31,12 @@
     "packages/**/*",
     "!packages/**/asset/**"
   ],
+  "dependencies": {
+    "@papit/version-cli": "0.0.1",
+    "@papit/util-cli": "0.0.1",
+    "@papit/build": "0.0.1",
+    "@papit/create": "0.0.1"
+  },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.55.2",
     "esbuild": "^0.27.2",
@@ -43,7 +49,7 @@
         "name": "runtime"
       },
       "packages/runtime/cli": {
-        "include": "prefix",
+        "include": "suffix",
         "name": "cli"
       },
       "packages/design-system": {

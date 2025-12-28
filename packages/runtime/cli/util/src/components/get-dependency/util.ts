@@ -11,6 +11,7 @@ export type MinimalMap = {
   changedversion?: boolean; 
   location?: string; 
   version?: string; 
+  remoteversion?: string;
   dep: string[]; 
   has: string[]; 
 }
@@ -26,8 +27,9 @@ export type Config = {
 export type Batch = {
   name: string;
   location: string | undefined;
-  version: string | undefined;
   changedversion: boolean | undefined;
+  version: string | undefined;
+  remoteversion: string | undefined;
 }
 
 export function getBasicConfig(

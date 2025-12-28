@@ -63,12 +63,14 @@ export async function componentRunner(
 
   const templateFolders = getFolders(path.join(_info.script!, "asset/component-templates"));
   const localRunnerSet = new Set<string>();
-  getFolders(path.join(info.root, "bin/runners/component"))
-    .forEach(f => {
-      templateFolders.push(f);
-      localRunnerSet.add(f);
-    });
-
+  try {
+    getFolders(path.join(info.root, "bin/runners/component"))
+      .forEach(f => {
+        templateFolders.push(f);
+        localRunnerSet.add(f);
+      });
+  }
+  catch {}
   let templateIndex = templateFolders.findIndex(f => f === localPackage.papit?.type);
 
   if (templateIndex < 0)
