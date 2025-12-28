@@ -4,16 +4,8 @@ import { getScope } from "../get-scope";
 import { Arguments } from "../arguments";
 import { getRemotePackages, LocalPackage, Lockfile, RemotePackages, } from "../get-package";
 import { getPathInfo } from "../../util";
-import { Batch, Config, getBasicConfig } from './util';
+import { Batch, Config, getBasicConfig, MinimalMap } from './util';
 import { Terminal } from '../terminal';
-
-type MinimalMap = { 
-  changedversion?: boolean; 
-  location?: string; 
-  version?: string; 
-  dep: string[]; 
-  has: string[]; 
-}
 
 // Function to initialize the package relationships
 export async function init(
@@ -38,18 +30,18 @@ export async function init(
     if (name === `${scope}/root`) continue;
     if (acceptance && !acceptance.has(name)) continue;
 
-    if (Arguments.args.flags['check-version']) {
+    if (Arguments.args.flags.remote) {
 
       if (remotePackages)
       {
         const find = remotePackages.objects.find(p => p.package.name === pkg.name);
         if (find) 
         {
-          changedversion = find.package.version === pkg.version;
+          changedversion = find.package.version !== pkg.version;
         }
         else 
         {
-          changedversion = true;
+          changedversion = true; 
         }
       }
 
@@ -57,8 +49,12 @@ export async function init(
       {
         changedversion = pkg.remoteVersion === pkg.version;
       }
-      
-      if (Arguments.info)
+      else if (!remotePackages)
+      {
+        changedversion = true; 
+      }
+
+      if (Arguments.verbose)
       {
         Terminal.write(Terminal.colorWrap(`"${pkg.name}" version ${changedversion ? "changed" : "same"}`, "blue"));
       }
@@ -146,20 +142,36 @@ export function* generator(
 }
 
 
+
 export async function getDependencyOrder(
   executor:(batch: Batch[]) => Promise<void>, 
-  config: Partial<Config> = {}
+  config: Partial<Config> = {},
 ) {
+  const _config = getBasicConfig(config);
+  const { info, scope, lockfile, acceptance } = _config;
+  let remotePackages: RemotePackages|null|undefined = config.remotePackages;
+  if (Arguments.args.flags.remote && remotePackages === undefined)
+  {
+    if (Arguments.info)
+    {
+      Terminal.write("fetching remote-packages");
+    }
 
-  
-  const { info, scope, lockfile, acceptance } = getBasicConfig(config);
-  const remotePackages = await getRemotePackages(scope);
+    remotePackages = await getRemotePackages(scope);
+    _config.remotePackages = remotePackages;
+  }
 
-  const data = await init(info, lockfile, scope, acceptance, remotePackages);
+  const data = config.data ? config.data : await init(info, lockfile, scope, acceptance, remotePackages);
+  const copyset = new Set(data.set);
+  const copymap = JSON.parse(JSON.stringify(data.map));
 
   for (const batch of generator(data)) {
     await executor(batch);
   }
 
-  return data;
+  return { 
+    map: copymap, 
+    set: copyset, 
+    config: _config,
+  };
 }

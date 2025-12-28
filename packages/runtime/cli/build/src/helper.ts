@@ -5,6 +5,7 @@ export function spawnCommand(command: string, cwd: string, args: string[] = []) 
 
   return new Promise<void>((resolve, reject) => {
 
+    const errorbuffer: string[] = [];
     const child = spawn(cmd, _args.concat(args), {
       cwd,
       // stdio: "inherit",
@@ -15,9 +16,14 @@ export function spawnCommand(command: string, cwd: string, args: string[] = []) 
     });
     
     child.stdout.on("data", () => {}); // ignore
-    child.stderr.on("data", () => process.exit(1)); // ignore + exit 
+    child.stderr.on("data", error => errorbuffer.push(error)); // ignore + exit 
 
     child.on("close", code => {
+      if (errorbuffer.length > 0)
+      {
+        reject(errorbuffer.join(""));
+      }
+      
       if (code === 0) resolve();
       else 
       {

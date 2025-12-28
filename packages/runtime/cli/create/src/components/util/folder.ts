@@ -4,7 +4,7 @@ import path from "node:path";
 import { stripRootPath } from "./helper";
 
 export function getFolders(dir: string): string[] {
-  return fs.readdirSync(dir).filter(name => fs.statSync(pa.th.join(dir, name)).isDirectory());
+  return fs.readdirSync(dir).filter(name => fs.statSync(path.join(dir, name)).isDirectory());
 };
 
 function getLayerFolders(

@@ -1,16 +1,26 @@
 import path from 'node:path';
 
 import { getScope } from "../get-scope";
-import { Lockfile, } from "../get-package";
+import { Lockfile, RemotePackages, } from "../get-package";
 import { getJSON } from '../get-json';
 import { Terminal } from '../terminal';
 import { getPathInfo } from "../../util";
 
+
+export type MinimalMap = { 
+  changedversion?: boolean; 
+  location?: string; 
+  version?: string; 
+  dep: string[]; 
+  has: string[]; 
+}
 export type Config = {
   info: ReturnType<typeof getPathInfo>;
   scope: ReturnType<typeof getScope>;
   lockfile: Lockfile;
   acceptance?: Set<string>;
+  data?: { map: Record<string, MinimalMap>, set: Set<string> }
+  remotePackages?: RemotePackages|null;
 };
 
 export type Batch = {
@@ -33,5 +43,5 @@ export function getBasicConfig(
     process.exit(1);
   }
 
-  return { info, scope, lockfile, acceptance: config.acceptance };
+  return { ...config, info, scope, lockfile };
 }

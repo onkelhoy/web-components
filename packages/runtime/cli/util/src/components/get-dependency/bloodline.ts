@@ -8,9 +8,14 @@ export async function getDependencyBloodline(
   executor:(batch: Batch[]) => Promise<void>, 
   config: Partial<Config & { type: "ancestors"|"descendants"|"bloodline" }> = {}
 ) {
-  const meta = getBasicConfig(config);
   const type = config.type ?? "bloodline";
-
+  
+  if (config.data && config.acceptance)
+  {
+    return getDependencyOrder(executor, config);
+  }
+    
+  const meta = getBasicConfig(config);
   const bloodline = new Set<string>();
   if (["bloodline", "ancestors"].includes(type)) ancestorsRecursive(packageName, meta, bloodline);
   if (["bloodline", "descendants"].includes(type)) 

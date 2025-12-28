@@ -111,19 +111,19 @@ export class Arguments {
   private static _info: boolean|undefined;
 
   static get debug() {
-    return this.getLoglevel("debug", ["verbose", "error", "info", "warning"]);
+    return this.getLoglevel("debug");
   }
   static get verbose() {
-    return this.getLoglevel("verbose", ["error", "info", "warning"]);
+    return this.getLoglevel("verbose", ["debug"]);
   }
   static get info() {
-    return this.getLoglevel("info", ["warning", "error"]);
+    return this.getLoglevel("info", ["debug", "verbose"]);
   }
   static get warning() {
-    return this.getLoglevel("warning", ["error"]);
+    return this.getLoglevel("warning", ["debug", "verbose", "info"]);
   }
   static get error() {
-    return this.getLoglevel("error");
+    return this.getLoglevel("error", ["debug", "verbose", "info", "warning"]);
   }
 
   private static getLoglevel(name: Loglevel, others: Loglevel[] = []) {
