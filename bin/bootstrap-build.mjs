@@ -4,7 +4,7 @@ import { spawn } from "node:child_process";
 
 const root = process.cwd();
 
-if (fs.existsSync(path.join(root, "node_modules/.bin/build")))
+if (fs.existsSync(path.join(root, "node_modules/.bin/papit-build")))
   process.exit(0);
 
 function spawnCommand(command, cwd, args = []) {

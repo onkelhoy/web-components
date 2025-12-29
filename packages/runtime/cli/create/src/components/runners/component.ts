@@ -161,6 +161,17 @@ export async function componentRunner(
 
   const templateSrc = localRunnerSet.has(template) ? path.join(info.root, "bin/runners/component", template) : path.join(_info.script!, "asset/component-templates", template);
   const folders = getFolders(templateSrc)
+
+  localPackage.papit.components[nameInfo.name] = {
+    className: nameInfo.className,
+    htmlprefix: htmlPrefix,
+  }
+  fs.writeFileSync(packageJSONLocation, JSON.stringify(localPackage, null, 2), { encoding: "utf-8" });
+  if (shouldCommit)
+  {
+    await execAsync(`git add ${packageJSONLocation}`);
+  }
+  
   for (const folder of folders)
   {
     let destParent = path.join(info.local, folder);
@@ -171,17 +182,8 @@ export async function componentRunner(
     {
       if (folderHasFilesSync(destParent))
       {
-        // inject into .config
-        localPackage.papit.components[nameInfo.name] = {
-          className: nameInfo.className,
-        }
-
-        if (shouldCommit)
-        {
-          await execAsync(`git add ${packageJSONLocation}`);
-        }
-
         destParent = path.join(destParent, "components");
+        dest = path.join(destParent, nameInfo.name);
       }
       // else -> we keep dest as destParent
     }
@@ -189,7 +191,6 @@ export async function componentRunner(
     {
       dest = path.join(destParent, nameInfo.name);
     }
-
     createFolderIfNotExistSync(destParent);
 
     await copyFolder(templateFolderSrc, dest, file => {

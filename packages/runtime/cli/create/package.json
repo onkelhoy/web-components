@@ -44,7 +44,7 @@
     "node": ">=18"
   },
   "bin": {
-    "create": "./lib/bundle.js"
+    "papit-create": "./lib/bundle.js"
   },
   "dependencies": {
     "@papit/util-cli": "0.0.1"

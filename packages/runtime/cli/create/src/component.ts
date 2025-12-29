@@ -2,7 +2,7 @@
 import path from "node:path";
 import fs from "node:fs";
 
-import { Arguments, getPathInfo, Terminal } from "@papit/util-cli"
+import { Arguments, getJSON, getPathInfo, LocalPackage, Terminal } from "@papit/util-cli"
 import { packageRunner } from "./components/runners/package";
 import { componentRunner } from "./components/runners/component";
 import { getFolders } from "components/util";
@@ -22,6 +22,13 @@ import { getFolders } from "components/util";
     process.exit(1);
   }
 
+  const CREATE_PACKAGE = getJSON<LocalPackage>(path.join(info.script, "package.json"));
+  if (!CREATE_PACKAGE)
+  {
+    Terminal.error("could not find @papit/create package.json");
+    process.exit(1);
+  }
+
   if (!process.env.USER)
   {
     Terminal.createSession();
@@ -30,7 +37,7 @@ import { getFolders } from "components/util";
   }
 
   Terminal.write();
-  Terminal.write("@papit/create - running");
+  Terminal.write("@papit/create", Terminal.yellow(CREATE_PACKAGE.version), "- running");
   Terminal.write();
 
   const localRunnerSet = new Set<string>();

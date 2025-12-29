@@ -74,10 +74,8 @@
   "papit": {
     "publish": true,
     "type": "web-component",
-    "main": {
-      "name": "VARIABLE_NAME",
-      "className": "VARIABLE_CLASS_NAME"
-    },
+    "main": "VARIABLE_NAME",
+    "htmlprefix": "VARIABLE_HTML_PREFIX",
     "components": {}
   }
 }

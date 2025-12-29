@@ -34,8 +34,8 @@ export type LocalPackage = BasePackage & {
   papit: {
     publish: boolean;
     type: string;
-    main: {name: string; className: string};
-    components: Record<string, {className: string}>;
+    main: string;
+    components: Record<string, {className: string, htmlprefix?: string}>;
     htmlprefix?: string;
   };
 }

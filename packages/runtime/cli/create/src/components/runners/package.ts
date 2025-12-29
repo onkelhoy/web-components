@@ -200,6 +200,7 @@ export async function packageRunner(
       .replace(/VARIABLE_LOCAL_DESTINATION/g, localFolder)
       .replace(/VARIABLE_CLASS_NAME/g, nameInfo.className)
       .replace(/VARIABLE_HTML_PREFIX/g, htmlPrefix ?? "")
+      .replace(/VARIABLE_HTML_NAME/g, `${htmlPrefix}-${nameInfo.name}`)
       .replace(/VARIABLE_USER/g, process.env.USER ?? "anonymous");
 
     return final;
@@ -215,10 +216,7 @@ export async function packageRunner(
   if (!localPackage.papit)
   {
     localPackage.papit = {
-      main: {
-        className: nameInfo.className,
-        name: nameInfo.name,
-      },
+      main: nameInfo.name,
       components: {},
       publish: true,
       type: template,

@@ -10,7 +10,7 @@
   "version": "0.0.1",
   "scripts": {
     "prebuild": "node ./bin/build.cjs",
-    "build": "npx @papit/build",
+    "build": "node .papit/bundle.js",
     "watch": "tsc -w",
     "start": "npm run build && node ./lib/bundle.js",
     "test": "node --test",
@@ -32,7 +32,7 @@
     }
   },
   "bin": {
-    "build": "./lib/bundle.js"
+    "papit-build": "./lib/bundle.js"
   },
   "author": "henry",
   "private": false,

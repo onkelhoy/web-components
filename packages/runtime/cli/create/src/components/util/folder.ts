@@ -84,9 +84,6 @@ async function createFolder(
 
   if (!shouldCreate) return false;
 
-  // its create new mode 
-  fs.mkdirSync(url);
-
   await createFolderConfig(url, name, info, rootPackage);
 
   return true;
@@ -99,9 +96,9 @@ export async function createFolderConfig(
   rootPackage: RootPackage,
 ) {
   return Terminal.sessionBlock(async () => {
-    const overrideName = await Terminal.prompt(`use "${name}" or override?`);
+    const overrideName = await Terminal.prompt(`use "${name}" or override?`) || name;
     Terminal.clearSession();
-  
+
     const prefixSuffix = ["false", "prefix", "suffix"];
     const ps_index = await Terminal.option(prefixSuffix, `include "${overrideName}" in packages`);
     const includeMode = prefixSuffix[ps_index];
@@ -113,6 +110,8 @@ export async function createFolderConfig(
       name,
     }
 
+    // its create new mode 
+    fs.mkdirSync(url);
     fs.writeFileSync(path.join(info.root, "package.json"), JSON.stringify(rootPackage, null, 2), { encoding: "utf-8" });
   });
 }
