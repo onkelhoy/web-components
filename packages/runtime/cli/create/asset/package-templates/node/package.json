@@ -13,7 +13,8 @@
     "watch": "tsc -w",
     "start": "npm run build && node ./lib/bundle.js",
     "test": "node --test",
-    "postversion": "npx @papit/version-cli",
+    "preversion": "papit-version",
+    "postversion": "papit-version",
     "component": "npm create @papit -- --component"
   },
   "main": "./lib/bundle.js",

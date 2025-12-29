@@ -2,6 +2,7 @@ import { getPackage, LocalPackage } from "../get-package";
 import { Batch, Config, getBasicConfig } from "./util";
 import { Terminal } from "../terminal";
 import { getDependencyOrder, init } from "./order";
+import { Arguments } from "components/arguments";
 
 export async function getDependencyBloodline(
   packageName: string, 
@@ -48,6 +49,14 @@ function ancestorsRecursive(packageName: string, config: Config, set: Set<string
   for (const dep in pkg.peerDependencies) {
     if (!dep.startsWith(config.scope) || dep === packageName) continue;
     ancestorsRecursive(dep, config, set);
+  }
+
+  if (Arguments.args.flags['include-dev'])
+  {
+    for (const dep in pkg.devDependencies) {
+      if (!dep.startsWith(config.scope) || dep === packageName) continue;
+      ancestorsRecursive(dep, config, set);
+    }
   }
 }
 

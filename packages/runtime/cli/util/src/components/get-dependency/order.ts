@@ -27,7 +27,7 @@ export async function init(
 
     if (!name.startsWith(scope)) continue;
     if (pkg.workspaces) continue;
-    if (!Arguments.args.flags.includeRoot && name === `${scope}/root`) continue;
+    if (!Arguments.args.flags['include-root'] && name === `${scope}/root`) continue;
     if (acceptance && !acceptance.has(name)) continue;
 
     if (Arguments.args.flags.remote) {
@@ -91,6 +91,17 @@ export async function init(
       if (!map[dep]) map[dep] = { dep: [], has: [] };
       map[dep].has.push(name);
       dependencies.push(dep);
+    }
+
+    if (Arguments.args.flags['include-dev'])
+    {
+      for (const dep in pkg.devDependencies) {
+        if (!dep.startsWith(scope) || dep === name) continue;
+
+        if (!map[dep]) map[dep] = { dep: [], has: [] };
+        map[dep].has.push(name);
+        dependencies.push(dep);
+      }
     }
 
     map[name].dep = dependencies;

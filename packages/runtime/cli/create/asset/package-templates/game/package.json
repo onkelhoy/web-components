@@ -13,7 +13,8 @@
     "watch": "tsc -w",
     "start": "",
     "test": "npx playwright test -c tests/playwright.config.ts",
-    "postversion": "npx @papit/version-cli",
+    "preversion": "papit-version",
+    "postversion": "papit-version",
     "component": "npm create @papit -- --component",
 
     "test:update-snapshots": "npx playwright test --update-snapshots -c tests/playwright.config.ts",
