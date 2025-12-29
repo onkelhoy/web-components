@@ -9,9 +9,7 @@
   },
   "scripts": {
     "analyse": "bash ./bin/analyse/run.sh",
-    "create": "bash ./bin/create/run.sh",
     "clean": "bash ./bin/_utils/clean.sh",
-    "init": "bash ./bin/_utils/init.sh",
     "publish": "bash ./bin/publish/run.sh",
     "prebuild": "node ./bin/bootstrap-build.mjs",
     "build": "npx @papit/build -- --all",
