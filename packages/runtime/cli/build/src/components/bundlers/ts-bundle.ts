@@ -31,7 +31,7 @@ export async function tsBundler(
   }
   else 
   {
-    const outDir = path.join(info.local, ".papit/build");
+    const outDir = path.join(info.local, ".temp/build");
     await Terminal.spawnCommand(
       "tsc", 
       info.local,

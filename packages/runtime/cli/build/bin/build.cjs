@@ -8,7 +8,7 @@ const externals = [...Object.keys(packageJSON.dependencies || {}), ...Object.key
   const esbuildInfo = await esbuild.build({
     entryPoints: ["src/index.ts"],
     bundle: true,
-    outfile: ".papit/bundle.js",
+    outfile: ".temp/bundle.js",
     minify: true,
     format: packageJSON.type === "module" ? "esm" : "cjs",
     platform: ["node"].includes(packageJSON.papit?.type ?? "node") ? "node" : "browser",

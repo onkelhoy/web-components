@@ -10,7 +10,7 @@ export async function getMeta(
   info: ReturnType<typeof getPathInfo>, 
   packageJSON: LocalPackage,
 ) {
-  const storedFile = path.join(info.local, `.papit/build-meta/${mode}.json`);
+  const storedFile = path.join(info.local, `.temp/build-meta/${mode}.json`);
   if (fs.existsSync(storedFile) && !Arguments.args.flags.clean && !Arguments.args.flags.force) 
   {
     const json = getJSON<Meta>(storedFile);

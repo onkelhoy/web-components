@@ -10,7 +10,7 @@
   "version": "0.0.1",
   "scripts": {
     "prebuild": "node ./bin/build.cjs",
-    "build": "node .papit/bundle.js",
+    "build": "node .temp/bundle.js",
     "watch": "tsc -w",
     "start": "npm run build && node ./lib/bundle.js",
     "test": "node --test",

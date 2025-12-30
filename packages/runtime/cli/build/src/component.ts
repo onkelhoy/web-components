@@ -275,7 +275,7 @@ async function runner(
     }
   
     const absoluteEntry = entryPoint.startsWith(info.local) ? entryPoint : path.join(info.local, entryPoint);
-    const absoluteTypesEntry = absoluteEntry.replace(info.local, path.join(info.local, ".papit/build")).replace(".ts", ".d.ts");
+    const absoluteTypesEntry = absoluteEntry.replace(info.local, path.join(info.local, ".temp/build")).replace(".ts", ".d.ts");
     if (Arguments.verbose)
     {
       Terminal.write(`• entryPoint "${Terminal.colorWrap(entryPointKey, "blue")}"`);
@@ -289,7 +289,7 @@ async function runner(
     }
     catch (e)
     {
-      Terminal.error('build failed', Terminal.red(packageJSON.name));
+      Terminal.error(Terminal.red(packageJSON.name), 'build failed');
       throw e;
     }
   

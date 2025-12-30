@@ -8,7 +8,6 @@ web/
 types/
 .temp/
 .npm/
-.papit/
 
 # test
 test-results/
