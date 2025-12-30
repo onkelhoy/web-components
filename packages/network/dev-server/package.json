@@ -17,6 +17,9 @@
     "postversion": "papit-version",
     "component": "npm create @papit -- --component"
   },
+  "bin": {
+    "papit-server": "./lib/bundle.js"
+  },
   "main": "./lib/bundle.js",
   "types": "./lib/bundle.d.ts",
   "type": "module",
@@ -50,7 +53,9 @@
   "engines": {
     "node": ">=18"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@papit/util-cli": "^0.0.1"
+  },
   "devDependencies": {
     "@types/node": "^22.10.2",
     "typescript": "^5.7.2"
@@ -70,6 +75,21 @@
     "components": {
       "dev-server": {
         "className": "Dev-server"
+      },
+      "socket": {
+        "className": "Socket"
+      },
+      "request": {
+        "className": "Request"
+      },
+      "server": {
+        "className": "Server"
+      },
+      "translation": {
+        "className": "Translation"
+      },
+      "util": {
+        "className": "Util"
       }
     }
   }

@@ -1,6 +1,6 @@
 // import statements 
 
-export class Dev-server {
+export class Request {
   constructor() {
 
   }
