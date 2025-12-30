@@ -1,27 +1,36 @@
 import path from 'node:path';
 
-import { getScope } from "../get-scope";
 import { Arguments } from "../arguments";
-import { getRemotePackages, LocalPackage, Lockfile, RemotePackages, } from "../get-package";
-import { getPathInfo } from "../../util";
-import { Batch, Config, getBasicConfig, MinimalMap } from './util';
+import { getRemotePackages, LocalPackage, RemotePackages, } from "../get-package";
+import { Batch, Config, getBasicConfig, getEffectivePriority, MinimalMap } from './util';
 import { Terminal } from '../terminal';
+import { getJSON } from '../get-json';
 
 // Function to initialize the package relationships
-export async function init(
-  info: ReturnType<typeof getPathInfo>,
-  lockfile: Lockfile,
-  scope = getScope(),
-  acceptance?: Set<string>,
-  remotePackages?: RemotePackages|null
-) {
+
+  // info: ReturnType<typeof getPathInfo>,
+  // lockfile: Lockfile,
+  // scope = getScope(),
+  // acceptance?: Set<string>,
+  // remotePackages?: RemotePackages|null
+export async function init({
+  info,
+  lockfile,
+  scope,
+  acceptance,
+  remotePackages,
+  rootPackage,
+}: ReturnType<typeof getBasicConfig>) {
+  
   const map: Record<string, MinimalMap> = {};
   const set = new Set<string>();
 
   for (const key in lockfile.packages) {
     if (!key.startsWith("packages")) continue;
     
-    const pkg = lockfile.packages[key] as LocalPackage;
+    const pkg = getJSON<LocalPackage>(path.join(info.root, key, "package.json"));
+    if (!pkg) continue;
+
     const name = pkg.name;
     let changedversion:boolean|undefined = undefined;
 
@@ -76,6 +85,7 @@ export async function init(
 
     map[name].location = location;
     map[name].version = pkg.version;
+    map[name].priority = getEffectivePriority(pkg, rootPackage); // layer or package
 
     for (const dep in pkg.dependencies) {
       if (!dep.startsWith(scope) || dep === name) continue;
@@ -119,6 +129,8 @@ export function* generator(
     const arr = Array.from(set);
 
     for (const name of arr) {
+      const hasPriority = map[name].priority !== undefined;
+
       if (map[name].dep.length === 0) {
         set.delete(name);
         list.push({ 
@@ -148,14 +160,12 @@ export function* generator(
   }
 }
 
-
-
 export async function getDependencyOrder(
   executor:(batch: Batch[]) => Promise<void>, 
   config: Partial<Config> = {},
 ) {
   const _config = getBasicConfig(config);
-  const { info, scope, lockfile, acceptance } = _config;
+  // const { info, scope, lockfile, acceptance } = _config;
   let remotePackages: RemotePackages|null|undefined = config.remotePackages;
   if (Arguments.args.flags.remote && remotePackages === undefined)
   {
@@ -164,13 +174,13 @@ export async function getDependencyOrder(
       Terminal.write("fetching remote-packages");
     }
 
-    remotePackages = await getRemotePackages(scope);
+    remotePackages = await getRemotePackages(_config.scope);
     _config.remotePackages = remotePackages;
   }
 
-  const data = config.data ? config.data : await init(info, lockfile, scope, acceptance, remotePackages);
+  const data = config.data ? config.data : await init(_config);
   const copyset = new Set(data.set);
-  const copymap = JSON.parse(JSON.stringify(data.map));
+  const copymap = JSON.parse(JSON.stringify(data.map)) as Record<string, MinimalMap>;
 
   for (const batch of generator(data)) {
     await executor(batch);

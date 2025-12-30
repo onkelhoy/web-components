@@ -46,7 +46,8 @@
       },
       "packages/runtime/cli": {
         "include": "suffix",
-        "name": "cli"
+        "name": "cli",
+        "priority": 1
       },
       "packages/design-system": {
         "include": false,

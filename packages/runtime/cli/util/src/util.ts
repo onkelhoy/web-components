@@ -3,17 +3,23 @@ import { fileURLToPath } from "node:url";
 import fs from "node:fs";
 
 function findWorkspaceRoot(startDir: string): string {
+  if (process.env.npm_config_local_prefix && isRoot(process.env.npm_config_local_prefix)) return process.env.npm_config_local_prefix;
+
   let dir = startDir;
   while (dir !== path.dirname(dir))
   { // stop at filesystem root
-    if (fs.existsSync(path.join(dir, "package.json")))
-    {
-      const pkg = JSON.parse(fs.readFileSync(path.join(dir, "package.json"), "utf-8"));
-      if (pkg.workspaces) return dir; // found monorepo root
-    }
+    if (isRoot(dir)) return dir; // found monorepo root
+
     dir = path.dirname(dir);
   }
   return startDir; // fallback
+}
+
+function isRoot(dir: string) {
+  if (!fs.existsSync(path.join(dir, "package.json"))) return false;
+
+  const pkg = JSON.parse(fs.readFileSync(path.join(dir, "package.json"), "utf-8"));
+  return !!pkg.workspaces;
 }
 
 
@@ -22,6 +28,7 @@ export function getPathInfo(location?: string, importurl?: string) {
 
   return {
     root: findWorkspaceRoot(local),
+    package: location ?? (process.env.npm_package_json ? path.dirname(process.env.npm_package_json) : local),
     local,
     script: getScriptPackageLocation(importurl),
   }
@@ -42,3 +49,4 @@ export function getScriptPackageLocation(url = import.meta.url) {
 
   return null;
 }
+
