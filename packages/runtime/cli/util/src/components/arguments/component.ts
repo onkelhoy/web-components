@@ -86,7 +86,7 @@ export function extractArguments(values: string[], islands: string[]) {
   return _arguments;
 }
 
-type Loglevel = "verbose"|"debug"|"info"|"error"|"warning";
+type Loglevel = "verbose"|"debug"|"info"|"error"|"warning"|"silent";
 export class Arguments {
   private static _islands: string[] = ["verbose", "debug", "warning", "error", "info"];
   static get islands() {
@@ -109,21 +109,25 @@ export class Arguments {
   private static _warning: boolean|undefined;
   private static _error: boolean|undefined;
   private static _info: boolean|undefined;
+  private static _silent: boolean|undefined;
 
+  static get silent() {
+    return this.getLoglevel("silent");
+  }
   static get debug() {
-    return this.getLoglevel("debug");
+    return this._silent ? false : this.getLoglevel("debug");
   }
   static get verbose() {
-    return this.getLoglevel("verbose", ["debug"]);
+    return this._silent ? false : this.getLoglevel("verbose", ["debug"]);
   }
   static get info() {
-    return this.getLoglevel("info", ["debug", "verbose"]);
+    return this._silent ? false : this.getLoglevel("info", ["debug", "verbose"]);
   }
   static get warning() {
-    return this.getLoglevel("warning", ["debug", "verbose", "info"]);
+    return this._silent ? false : this.getLoglevel("warning", ["debug", "verbose", "info"]);
   }
   static get error() {
-    return this.getLoglevel("error", ["debug", "verbose", "info", "warning"]);
+    return this._silent ? false : this.getLoglevel("error", ["debug", "verbose", "info", "warning"]);
   }
 
   private static getLoglevel(name: Loglevel, others: Loglevel[] = []) {

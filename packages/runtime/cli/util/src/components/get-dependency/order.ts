@@ -88,6 +88,7 @@ export async function init({
     const priority = getPriority(pkg, lockfile, rootPackage); // layer or package
     map[name].packagePriority = priority?.packagePriority;
     map[name].layerPriority = priority?.layerPriority;
+    map[name].papit = pkg.papit;
 
     for (const dep in pkg.dependencies) {
       if (!dep.startsWith(scope) || dep === name) continue;

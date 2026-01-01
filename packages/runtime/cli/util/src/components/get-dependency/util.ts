@@ -16,6 +16,7 @@ export type MinimalMap = {
   has: string[]; 
   packagePriority?: number;
   layerPriority?: number;
+  papit?: LocalPackage["papit"];
 }
 export type Config = {
   info: ReturnType<typeof getPathInfo>;

@@ -1,7 +1,9 @@
 import path from "node:path";
 import fs from "node:fs";
 import { Arguments, getDependencyBloodline, getJSON, getPathInfo, LocalPackage, Terminal } from "@papit/util-cli"
+
 import { getAssetFolders, handleAsset, Translation } from "./components/asset";
+import { close as serverExit, start as serverStart } from "./components/server";
 
 (async function () {
   const info = getPathInfo(typeof Arguments.args.flags.location === "string" ? Arguments.args.flags.location : undefined);
@@ -24,6 +26,8 @@ import { getAssetFolders, handleAsset, Translation } from "./components/asset";
       for (const b of batch) 
       {
         if (!b.location) continue;
+        const _pkgJSON = getJSON<LocalPackage>(path.join(b.location, "package.json"));
+        if (!Arguments.args.flags["include-node"] && _pkgJSON?.papit.type === "node") continue;
 
         for (const asset of assetFolders)
         {
@@ -32,6 +36,15 @@ import { getAssetFolders, handleAsset, Translation } from "./components/asset";
         }
       }
     }, 
-    { info, type: "ancestors" }
+    { info, type: "ancestors", silent: true }
   );
-})
+
+
+  process.on("SIGINT", () => {
+    console.log(); // extra for ctrl + C 
+    serverExit();
+    process.exit(0);
+  });
+
+  await serverStart(info, translations, assets);
+})();

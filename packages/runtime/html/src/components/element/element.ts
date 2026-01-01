@@ -259,9 +259,16 @@ export class TextNode extends Node {
 export class Document extends Element {
   nodeType = Node.DOCUMENT_NODE;
   tagName = "#document";
+  name: string|undefined;
+  private static instances = 0;
   
   constructor() {
     super("#document");
+    if (Document.instances === 0)
+    {
+      this.name = "root";
+    }
+    Document.instances++;
   }
 
   override get innerHTML() {
@@ -279,7 +286,7 @@ export class Document extends Element {
   get outerHTML() {
     if (!this._outerHTML)
     {
-      this._outerHTML = `#document\n${this.innerHTML}`;
+      this._outerHTML = `<!-- #document${this.name ? " -" + this.name : ""}-->\n${this.innerHTML}`;
     }
 
     return this._outerHTML;

@@ -100,7 +100,7 @@ console.log(doc.outerHTML);
 Output:
 
 ```
-#document
+<!-- #document -->
 <div class="container">
   <h1>Hello World</h1>
   <p class="intro">Welcome to @papit/html!</p>

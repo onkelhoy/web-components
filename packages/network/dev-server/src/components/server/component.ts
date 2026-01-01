@@ -2,32 +2,38 @@
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
+
 import { Arguments, getPathInfo, Terminal } from "@papit/util-cli";
+import { Document } from "@papit/html";
 
 // local imports 
 import { upgrade } from "../socket";
 // import { request as handlerequest } from "../request";
 import { Translation } from "../asset";
+import { getPort } from "./port";
 
 let PORT = Number(Arguments.args.flags.port || 3000);
-let attempts = 0;
 
 export let server: null | http.Server = null;
 
-export function start(
+export async function start(
   info: ReturnType<typeof getPathInfo>,
   translations: Record<string, Translation>, 
   assets: Record<string, string[]>,
 ) {
+  PORT = await getPort(PORT);
   server = http.createServer();
 
-  server.listen(PORT + attempts, () => {
-    Arguments.args.flags.port = (PORT + attempts) + "";
-    if (process.env.LOGLEVEL !== "none") {
-      Terminal.write("server:", Terminal.blue(String(PORT + attempts)), Terminal.yellow("- running"));
-
-      fs.appendFileSync(path.join(process.env.LOCATION as string, ".temp/.info"), `PORT=${PORT + attempts}`)
+  server.listen(PORT, () => {
+    Arguments.args.flags.port = String(PORT);
+    if (Arguments.info)
+    {
+      Terminal.write(Terminal.yellow("root") + ":", info.root);
+      Terminal.write(Terminal.yellow("package") + ":", info.package);
+      Terminal.write(Terminal.yellow("location") + ":", info.local);
+      Terminal.write();
     }
+    if (!Arguments.silent) Terminal.write("server:", Terminal.blue(String(PORT)), Terminal.yellow("- running"));
   });
 
   // events 
@@ -58,27 +64,23 @@ export function start(
     //   return;
     // }
 
-    res.end(html`
-        
-    `)
+    const doc = new Document();
+    doc.innerHTML = `
+      <html>
+        <body>
+          <h1>HELLO FUCKING WORLD</h1>
+        </body>
+      </html>
+    `;
+
+    res.end(doc.outerHTML);
 
   });
 
   server.on('error', (error: Error) => {
-    if (!('code' in error)) return;
-    if (error.code !== "EADDRINUSE") return;
-
-    attempts++;
-
-    if (attempts < 10) 
+    if (Arguments.error)
     {
-      if (server) server.close();
-      start(info, translations, assets);
-    }
-    else 
-    {
-      Terminal.error(`port spaces between [${PORT}, ${PORT + attempts}] are all taken, please free up some ports`);
-      process.exit(1);
+      Terminal.error(error.name, error.message, error.stack ?? "");
     }
   });
 
@@ -88,7 +90,5 @@ export function start(
 
 export function close() {
   server?.close();
-  if (Arguments.args.flags.info) {
-    Terminal.write("server:", Terminal.blue(String(PORT + attempts)), Terminal.yellow("- shutdown"));
-  }
+  if (!Arguments.silent) Terminal.write("server:", Terminal.blue(String(PORT)), Terminal.yellow("- shutdown"));
 }
