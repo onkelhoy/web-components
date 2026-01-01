@@ -1,6 +1,8 @@
 # @papit/html
 
-A minimal HTML parser for Node.js that exposes a **core subset of the browser’s DOM API**, designed to be small, fast, and fully under your control.
+a minimal, zero-dependency HTML parser and DOM-like runtime for Node.js, exposing a deliberate subset of the browser DOM API.
+
+The goal of `@papit/html` is **correct structure, traversal, and manipulation** of HTML documents — without rendering, layout, or browser-specific complexity.
 
 ---
 
@@ -12,19 +14,33 @@ A minimal HTML parser for Node.js that exposes a **core subset of the browser’
 
 ## Features
 
-- Minimal, zero-dependency HTML parser.
-- Browser-like `Document`, `Element`, and `TextNode` classes.
-- Supports:
+- ✅ Zero dependencies
+- ✅ Small footprint (~6–7 KB bundled)
+- ✅ DOM-inspired API (Document, Element, TextNode)
+- ✅ Tree construction from HTML strings
+- ✅ `querySelector`, `querySelectorAll`, and `closest`
+- ✅ Attribute and class handling
+- ✅ `innerHTML` / `outerHTML` serialization
+- ✅ Deterministic, explicit behavior (no hidden magic)
 
-  - `innerHTML` / `outerHTML`
-  - `querySelector` / `querySelectorAll`
-  - `closest()`
-  - `className` and `classList`
-  - Attributes on elements
+---
 
-- Fully extendable — add more DOM-like features as needed.
+## Non-goals
 
-> ⚠️ Not a full browser DOM yet — optional tags, events, and advanced HTML quirks are intentionally omitted for minimal footprint.
+`@papit/html` intentionally does **not** aim to fully replicate the browser DOM.
+
+The following are explicitly out of scope:
+
+- ❌ Rendering, layout, or visual output
+- ❌ CSS evaluation or computed styles
+- ❌ Events and event propagation
+- ❌ Mutation observers
+- ❌ Shadow DOM
+- ❌ Custom elements
+- ❌ Full CSS selector grammar (`:nth-child`, `:not`, etc.)
+- ❌ Browser HTML error-correction edge cases
+
+The library is ongoing and Custom-elements would be cool ngl.
 
 ---
 
@@ -36,75 +52,183 @@ npm install @papit/html
 
 ---
 
-## Usage
+## Basic usage
 
 ```ts
 import { Document } from "@papit/html";
 
-const dom = new Document();
-dom.innerHTML = `
+const doc = new Document();
+doc.innerHTML = `
   <div class="container">
     <h1>Hello World</h1>
     <p class="intro">Welcome to @papit/html!</p>
   </div>
 `;
 
-const header = dom.querySelector("h1");
-console.log(header?.textContent); // "Hello World"
-
-const paragraphs = dom.querySelectorAll("p.intro");
-console.log(paragraphs.length); // 1
-
-console.log(dom.outerHTML);
-/*
-  <#document>
-    <div class="container">
-      <h1>Hello World</h1>
-      <p class="intro">Welcome to @papit/html!</p>
-    </div>
-  </#document>
-*/
+const title = doc.querySelector("h1");
+console.log(title?.textContent); // "Hello World"
 ```
 
 ---
 
-## Quick Reference
+## Document
 
-`@papit/html` exposes a minimal set of DOM-like APIs for working with HTML programmatically:
+The `Document` represents the root of the DOM tree and is responsible for **creating nodes**.
 
-### Document
+### Creation
 
-- `new Document()` – create a new document node.
-- `createElement(tagName: string, options?: ElementOption)` – create an element with optional class, attributes, children, and text.
-- `createTextNode(text: string)` – create a text node.
-- `innerHTML` / `outerHTML` – get or set HTML content of the document.
+```ts
+const doc = new Document();
+```
 
-### Element
+### Methods
 
-- `appendChild(element: Element)` – add a child element or text node.
-- `removeChild(index: number)` – remove a child element by index.
-- `querySelector(selector: string | QueryPart[])` – find the first matching element.
-- `querySelectorAll(selector: string | QueryPart[])` – find all matching elements.
-- `closest(selector: string)` – find the nearest ancestor matching the selector.
-- `className` / `classList` – read or modify classes.
-- `attributes` – read or modify element attributes.
-- `innerHTML` / `outerHTML` – get or set HTML content of an element.
+- `createElement(tagName: string, options?)`
+- `createTextNode(text: string)`
+- `querySelector(selector)`
+- `querySelectorAll(selector)`
 
-### TextNode
+> ⚠️ Elements should be created via `Document.createElement()` to ensure
+> correct ownership and parent relationships.
 
-- `textContent` – the textual content of the node.
+### Serialization
+
+```ts
+console.log(doc.outerHTML);
+```
+
+Output:
+
+```
+#document
+<div class="container">
+  <h1>Hello World</h1>
+  <p class="intro">Welcome to @papit/html!</p>
+</div>
+```
+
+> Note: `Document.outerHTML` is **not HTML-valid by design**.
+> It is intended for debugging and serialization, not browser rendering.
+
+---
+
+## Element
+
+Represents an HTML element node.
+
+### Properties
+
+- `tagName: string`
+- `attributes: Record<string, string>`
+- `className: string`
+- `classList`
+- `children: Node[]`
+- `parentElement: Element | null` (read-only)
+- `textContent: string | null`
+
+### Tree manipulation
+
+```ts
+const div = doc.createElement("div");
+const span = doc.createElement("span");
+
+div.appendChild(span);
+div.removeChild(span);
+```
+
+Supported methods:
+
+- `appendChild(node: Node)`
+- `removeChild(node: Node)`
+
+---
+
+## HTML content
+
+### innerHTML
+
+```ts
+element.innerHTML = "<span>Text</span>";
+```
+
+- Clears existing children
+- Rebuilds the subtree from the provided HTML
+
+### outerHTML
+
+```ts
+console.log(element.outerHTML);
+```
+
+Returns the serialized representation of the element and its children.
+
+---
+
+## Querying
+
+### querySelector / querySelectorAll
+
+```ts
+const el = doc.querySelector("div.container");
+const items = doc.querySelectorAll("p");
+```
+
+Supported selector features:
+
+- Tag selectors: `div`
+- Class selectors: `.container`
+- Attribute selectors: `[id=main]`
+- Text selectors: `{Hello}`
+- Descendant (` `), child (`>`), and sibling (`+`) combinators
+
+---
+
+## closest
+
+```ts
+const el = doc.querySelector("span");
+const parent = el?.closest("#parent");
+```
+
+Traverses ancestors until a matching element is found.
+
+Behavior matches the browser DOM:
+
+- The element itself is checked first
+- Traversal continues via `parentElement`
+- Returns `null` if no match is found
+
+---
+
+## Query utility
+
+The internal `Query` helper parses selector strings into structured query parts.
+
+```ts
+import { Query } from "@papit/html";
+
+const parts = Query("div.container[role=main]");
+```
+
+This is primarily intended for internal use, but is exposed for advanced consumers.
 
 ---
 
 ## Contributing
 
-Contributions are welcome! Please follow the development guidelines above and ensure all tests pass before submitting a pull request.
+Contributions are welcome!
+
+- Keep the library dependency-free
+- Maintain deterministic behavior
+- Prefer explicit APIs over magic
+- Ensure all tests pass before submitting a PR
 
 ---
 
 ## License
 
-Licensed under the @Papit License 1.0 – Copyright (c) 2024 Henry Pap (@onkelhoy)
+Licensed under the **@Papit License 1.0**
+Copyright (c) 2024 Henry Pap (@onkelhoy)
 
 **Key points:**
 
@@ -119,4 +243,5 @@ See the [LICENSE](https://github.com/onkelhoy/web-components/blob/main/LICENSE) 
 
 ## Support
 
-For issues, questions, or contributions, please visit the [GitHub repository](https://github.com/onkelhoy/web-components).
+For issues, questions, or contributions, please visit the
+[GitHub repository](https://github.com/onkelhoy/web-components).
