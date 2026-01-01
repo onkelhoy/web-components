@@ -41,14 +41,14 @@
     "registry": "https://registry.npmjs.org/"
   },
   "license": "LicenseRef-Papit-1.0",
-  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/runtime/cli",
+  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/runtime/cli/build",
   "bugs": {
     "url": "https://github.com/onkelhoy/web-components/issues"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/onkelhoy/web-components.git",
-    "directory": "packages/runtime/cli"
+    "directory": "packages/runtime/cli/build"
   },
   "sideEffects": true,
   "engines": {

@@ -37,14 +37,14 @@
     "registry": "https://registry.npmjs.org/"
   },
   "license": "LicenseRef-Papit-1.0",
-  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/runtime",
+  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/runtime/node-html",
   "bugs": {
     "url": "https://github.com/onkelhoy/web-components/issues"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/onkelhoy/web-components.git",
-    "directory": "packages/runtime"
+    "directory": "packages/runtime/node-html"
   },
   "sideEffects": true,
   "engines": {

@@ -40,14 +40,14 @@
     "registry": "https://registry.npmjs.org/"
   },
   "license": "LicenseRef-Papit-1.0",
-  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/network",
+  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/network/dev-server",
   "bugs": {
     "url": "https://github.com/onkelhoy/web-components/issues"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/onkelhoy/web-components.git",
-    "directory": "packages/network"
+    "directory": "packages/network/dev-server"
   },
   "sideEffects": true,
   "engines": {

@@ -197,7 +197,7 @@ export async function packageRunner(
       .replace(/VARIABLE_LAYER_NAME/g, layerConfig.name ?? layerBasename)
       .replace(/VARIABLE_PROJECTLICENSE/g, rootPackage.license || "MIT")
       .replace(/VARIABLE_GITHUB_REPO/g, repository)
-      .replace(/VARIABLE_LOCAL_DESTINATION/g, localFolder)
+      .replace(/VARIABLE_LOCAL_DESTINATION/g, path.join(localFolder, nameInfo.name))
       .replace(/VARIABLE_CLASS_NAME/g, nameInfo.className)
       .replace(/VARIABLE_HTML_PREFIX/g, htmlPrefix ?? "")
       .replace(/VARIABLE_HTML_NAME/g, `${htmlPrefix}-${nameInfo.name}`)
