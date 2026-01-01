@@ -200,13 +200,13 @@ async function runner(
   if (packageJSON.scripts.prebuild && info.local !== originalinfo.local && !PREBUILD_RUNS.has(info.local))
   {
     PREBUILD_RUNS.add(info.local);
-    if (Arguments.verbose)
+    if (Arguments.debug)
     {
       console.log(`${packageJSON.name} - running prebuild script`);
     }
     await Terminal.spawnCommand(packageJSON.scripts.prebuild, info.local);
 
-    if (Arguments.verbose)
+    if (Arguments.debug)
     {
       console.log(`${packageJSON.name} - running prebuild script`);
     }
@@ -214,7 +214,7 @@ async function runner(
 
   const meta = await getMeta(mode, info, packageJSON);
   
-  if (Arguments.verbose)
+  if (Arguments.debug)
   {
     console.log("build-mode:", mode);
     console.log("package:", info.local);
@@ -226,7 +226,7 @@ async function runner(
 
   if (meta.tsconfig.info.outDir && Arguments.args.flags.clean)
   {
-    if (Arguments.verbose)
+    if (Arguments.debug)
     {
       console.log(`removing "${meta.tsconfig.info.outDir}"`)
     }
@@ -290,12 +290,16 @@ async function runner(
     catch (e)
     {
       Terminal.error(Terminal.red(packageJSON.name), 'build failed');
+      if (Arguments.verbose)
+      {
+        console.log(e);
+      }
       throw e;
     }
   
     if (binEntry)
     {
-      if (Arguments.verbose)
+      if (Arguments.debug)
       {
         Terminal.write(Terminal.colorWrap('bin found', "green"), binEntry, "\n");
       }

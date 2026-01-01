@@ -1,6 +1,7 @@
 // import statements 
 import readline from "node:readline";
 import { spawn } from "node:child_process";
+import { Arguments } from "../arguments";
 
 const originalStdoutWrite = process.stdout.write.bind(process.stdout);
 const originalStderrWrite = process.stderr.write.bind(process.stderr);
@@ -371,7 +372,9 @@ export class Terminal {
 
     return new Promise<void>((resolve, reject) => {
 
-      const errorbuffer: string[] = [];
+      let stdout = "";
+      let stderr = "";
+
       const child = spawn(cmd, _args.concat(args), {
         cwd,
         stdio: "pipe",
@@ -379,23 +382,28 @@ export class Terminal {
         env: { ...process.env },
       });
       
-      child.stdout.on("data", Terminal.onSpawnedData); 
+      child.stdout.on("data", chunk => {
+        const text = chunk.toString("utf8");
+        stdout += text;
+        Terminal.onSpawnedData(text);
+      });
+
       child.stderr.on("data", chunk => {
-        errorbuffer.push(chunk);
-        Terminal.onSpawnedError(chunk);
-      }); 
+        const text = chunk.toString("utf8");
+        stderr += text;
+        Terminal.onSpawnedError(text);
+      });
 
       child.on("close", code => {
-        if (errorbuffer.length > 0)
-        {
-          reject(errorbuffer.join(""));
-        }
+        if (code === 0) {
+          return resolve();
+        } 
         
-        if (code === 0) resolve();
-        else 
-        {
-          reject(new Error("code: " + code));
-        }
+        reject(
+          new Error(
+            stderr || stdout || `Process exited with code ${code}`
+          )
+        );
       });
     });
   }

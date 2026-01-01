@@ -1,6 +1,6 @@
 {
-  "name": "@papit/node-html",
-  "description": "a minimal html parser for node that exposes the core set of functionalities regular document DOM exposes",
+  "name": "@papit/html",
+  "description": "a minimal html parser intended for node that exposes the core set of functionalities regular document DOM exposes",
   "keywords": [
     "papit",
     "node",
@@ -11,7 +11,7 @@
   "scripts": {
     "build": "npx @papit/build",
     "watch": "tsc -w",
-    "start": "npm run build && node ./lib/bundle.js",
+    "start": "npm run build -- --dev && node ./lib/bundle.js",
     "test": "node --test",
     "preversion": "papit-version",
     "postversion": "papit-version",
@@ -64,12 +64,15 @@
     "publish": true,
     "type": "node",
     "main": {
-      "name": "node-html",
-      "className": "NodeHtml"
+      "name": "element",
+      "className": "Element"
     },
     "components": {
-      "node-html": {
-        "className": "NodeHtml"
+      "tokenise": {
+        "className": "Tokenise"
+      },
+      "element": {
+        "className": "Element"
       }
     }
   }

@@ -6,7 +6,7 @@
     "prebuild": "node ./bin/build.cjs",
     "build": "npx @papit/build",
     "watch": "tsc -w",
-    "start": "npm run build && node ./lib/bundle.js",
+    "start": "npm run build -- --dev && node ./lib/bundle.js",
     "test": "node --test",
     "preversion": "papit-version",
     "postversion": "papit-version",
