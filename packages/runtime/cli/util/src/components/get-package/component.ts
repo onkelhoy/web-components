@@ -1,16 +1,21 @@
 import { getScope } from "../get-scope";
-import { LocalPackage, Lockfile, Package, RemotePackage, RemotePackages } from "./types";
+import { Lockfile, Package, RemotePackage, RemotePackages } from "./types";
 
-export function getPackage<T extends Package>(fullPackageName: string, lockfile: Lockfile): T | null {
+export function getLockfilePackagePath(fullPackageName: string, lockfile: Lockfile): string | null {
   if (!lockfile) return null;
 
   const linkedPackage = lockfile.packages[`node_modules/${fullPackageName}`];
   if (!linkedPackage) return null;
   if (!('link' in linkedPackage)) throw Error("requested package is not local");
 
-  return lockfile.packages[linkedPackage.resolved] as T;
+  return linkedPackage.resolved;
 }
+export function getPackage<T extends Package>(fullPackageName: string, lockfile: Lockfile): T | null {
+  const path = getLockfilePackagePath(fullPackageName, lockfile);
+  if (!path) return null;
 
+  return lockfile.packages[path] as T;
+}
 
 export async function getRemotePackages(scope: string = getScope(), size: number = 100, from = 0): Promise<RemotePackages|null> {
   try {

@@ -1,8 +1,9 @@
 import { getPackage, LocalPackage } from "../get-package";
-import { Batch, Config, getBasicConfig } from "./util";
 import { Terminal } from "../terminal";
+import { Arguments } from "../arguments";
+
 import { getDependencyOrder, init } from "./order";
-import { Arguments } from "components/arguments";
+import { Batch, Config, getBasicConfig } from "./util";
 
 export async function getDependencyBloodline(
   packageName: string, 

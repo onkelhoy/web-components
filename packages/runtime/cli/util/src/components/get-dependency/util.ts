@@ -1,7 +1,7 @@
 import path from 'node:path';
 
 import { getScope } from "../get-scope";
-import { LocalPackage, Lockfile, RemotePackages, RootPackage, } from "../get-package";
+import { getLockfilePackagePath, LocalPackage, Lockfile, RemotePackages, RootPackage, } from "../get-package";
 import { getJSON } from '../get-json';
 import { Terminal } from '../terminal';
 import { getPathInfo } from "../../util";
@@ -14,7 +14,8 @@ export type MinimalMap = {
   remoteversion?: string;
   dep: string[]; 
   has: string[]; 
-  priority?: number;
+  packagePriority?: number;
+  layerPriority?: number;
 }
 export type Config = {
   info: ReturnType<typeof getPathInfo>;
@@ -24,6 +25,7 @@ export type Config = {
   acceptance?: Set<string>;
   data?: { map: Record<string, MinimalMap>, set: Set<string> }
   remotePackages?: RemotePackages|null;
+  silent?: boolean;
 };
 
 export type Batch = {
@@ -57,23 +59,17 @@ export function getBasicConfig(
   return { ...config, info, scope, lockfile, rootPackage };
 }
 
-const MAX = Number.MAX_SAFE_INTEGER;
-
-export function getEffectivePriority(
+export function getPriority(
   pkg: LocalPackage,
+  lockfile: Lockfile,
   root: RootPackage
-): number {
-  let layerPriority = MAX;
-
-  for (const layer of Object.values(root.papit.layers)) {
-    // however you decide membership — name, prefix, etc
-    if (pkg.name.includes(layer.name)) {
-      layerPriority = Math.min(layerPriority, layer.priority ?? MAX);
-    }
+) {
+  const packagePath = getLockfilePackagePath(pkg.name, lockfile);
+  if (!packagePath) return null;
+  
+  const layer = root.papit.layers[path.dirname(packagePath)];
+  return {
+    packagePriority: pkg.papit.priority,
+    layerPriority: layer?.priority,
   }
-
-  const packagePriority = pkg.papit.priority ?? MAX;
-
-  // layer always dominates
-  return layerPriority * 1_000_000 + packagePriority;
 }

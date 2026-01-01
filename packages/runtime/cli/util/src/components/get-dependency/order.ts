@@ -2,7 +2,7 @@ import path from 'node:path';
 
 import { Arguments } from "../arguments";
 import { getRemotePackages, LocalPackage, RemotePackages, } from "../get-package";
-import { Batch, Config, getBasicConfig, getEffectivePriority, MinimalMap } from './util';
+import { Batch, Config, getBasicConfig, getPriority, MinimalMap } from './util';
 import { Terminal } from '../terminal';
 import { getJSON } from '../get-json';
 
@@ -85,7 +85,9 @@ export async function init({
 
     map[name].location = location;
     map[name].version = pkg.version;
-    map[name].priority = getEffectivePriority(pkg, rootPackage); // layer or package
+    const priority = getPriority(pkg, lockfile, rootPackage); // layer or package
+    map[name].packagePriority = priority?.packagePriority;
+    map[name].layerPriority = priority?.layerPriority;
 
     for (const dep in pkg.dependencies) {
       if (!dep.startsWith(scope) || dep === name) continue;
@@ -123,16 +125,16 @@ export async function init({
 // Asynchronous generator function to yield batches of package names
 export function* generator(
   {set, map}: Awaited<ReturnType<typeof init>>, 
+  silent?: boolean,
 ): Generator<Batch[], void, unknown> {
-  while (set.size > 0) {
+
+  function run(arr: string[], _set: Set<string>) {
     const list = [];
-    const arr = Array.from(set);
-
     for (const name of arr) {
-      const hasPriority = map[name].priority !== undefined;
-
       if (map[name].dep.length === 0) {
+        _set.delete(name);
         set.delete(name);
+
         list.push({ 
           name, 
           location: map[name].location, 
@@ -143,10 +145,7 @@ export function* generator(
       }
     }
 
-    if (list.length > 0) {
-      if (Arguments.verbose) console.log(`package-batch, size=${list.length}`);
-      yield list;
-    }
+    if (list.length === 0) return null;
 
     for (const info of list) {
       // Remove this package as a dependency for the rest
@@ -157,6 +156,63 @@ export function* generator(
         }
       }
     }
+
+    return list;
+  }
+
+  const prioritySet = new Set<string>();
+  for (const key of set)
+  {
+    if (map[key].layerPriority !== undefined || map[key].packagePriority !== undefined)
+    {
+      prioritySet.add(key);
+    }
+  }
+
+  while (prioritySet.size > 0)
+  {
+    const arr = Array
+      .from(prioritySet)
+      .sort((a, b) => {
+        const aLayer = map[a].layerPriority ?? Number.MAX_SAFE_INTEGER;
+        const bLayer = map[b].layerPriority ?? Number.MAX_SAFE_INTEGER;
+
+        const layerDiff = bLayer - aLayer; // low first 
+
+        if (layerDiff != 0) return layerDiff;
+
+        const aPackage = map[a].packagePriority ?? Number.MAX_SAFE_INTEGER;
+        const bPackage = map[b].packagePriority ?? Number.MAX_SAFE_INTEGER;
+
+        return bPackage - aPackage; // low first
+      });
+
+    const batch = run(arr, prioritySet);
+
+    if (!batch) break;
+
+    if (Arguments.info && !silent)
+    {
+      Terminal.write(); 
+      Terminal.write(Terminal.yellow("priority batch"), `size=${batch.length}`);
+    }
+    yield batch;
+  }
+
+  if (Arguments.info) Terminal.write();
+
+  while (set.size > 0) {
+    const arr = Array.from(set);
+    const batch = run(arr, set);
+
+    if (!batch) break;
+
+    if (Arguments.info && !silent) 
+    {
+      Terminal.write();
+      Terminal.write(Terminal.yellow("package batch"), `size=${batch.length}`);
+    }
+    yield batch;
   }
 }
 
@@ -182,7 +238,7 @@ export async function getDependencyOrder(
   const copyset = new Set(data.set);
   const copymap = JSON.parse(JSON.stringify(data.map)) as Record<string, MinimalMap>;
 
-  for (const batch of generator(data)) {
+  for (const batch of generator(data, config.silent)) {
     await executor(batch);
   }
 

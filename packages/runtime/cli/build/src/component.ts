@@ -93,7 +93,7 @@ async function npmInstall(originalinfo: ReturnType<typeof getPathInfo>) {
     case "all":
       const { config, ...data } = await getDependencyOrder(
         async batch => await runPrebuild(batch, originalinfo), 
-        { info: originalinfo }
+        { info: originalinfo, silent: true }
       );
 
       if (PREBUILD_RUNS.size > 0)
@@ -103,7 +103,7 @@ async function npmInstall(originalinfo: ReturnType<typeof getPathInfo>) {
 
       await getDependencyOrder(
         async batch => await runBatch(batch, mode, originalinfo), 
-        { ...config, data }
+        { ...config, data, silent: false }
       );
       break;
 
@@ -128,7 +128,7 @@ async function npmInstall(originalinfo: ReturnType<typeof getPathInfo>) {
       const { config, ...data } = await getDependencyBloodline(
         packageJSON.name, 
         async batch => await runPrebuild(batch, originalinfo), 
-        { info: originalinfo, type: buildMode }
+        { info: originalinfo, type: buildMode, silent: true }
       );
 
       if (PREBUILD_RUNS.size > 0)
@@ -139,7 +139,7 @@ async function npmInstall(originalinfo: ReturnType<typeof getPathInfo>) {
       await getDependencyBloodline(
         packageJSON.name, 
         async batch => await runBatch(batch, mode, originalinfo), 
-        { ...config, data }
+        { ...config, data, silent: false }
       );
       break;
     }
