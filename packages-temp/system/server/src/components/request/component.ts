@@ -32,7 +32,7 @@ export function request(req: http.IncomingMessage, res: http.ServerResponse) {
   }
 
   // serve the html
-  // this regex will look for hello/ or hello or hello.index
+  // this regex will look for "hello/" or "hello" or "hello.html"
   if (/^(\/([^\/]+\/)*([^\/\.]+|[^\/]+\.html)?)?$/.test(req.url)) {
     handleHTML(req, res);
     return;
