@@ -1,77 +1,141 @@
 import { describe, it, beforeEach } from "node:test";
 import assert from "node:assert";
 
-import { CSS, Query, Element, Document, TextNode, Node } from "@papit/html";
-
+import { Query, Document, Node } from "@papit/html";
 
 describe("Node / Element", () => {
 
   describe("Node", () => {
-    it("should have default properties", () => {
-      const node = new (class extends Node { })();
-      assert.strictEqual(node.parent, null);
-      assert.strictEqual(node.textContent, null);
-      assert.strictEqual(node.nodeType, undefined);
+    it("should have default node relationships", () => {
+      const doc = new Document();
+      const node = doc.createElement("div");
+
+      assert.strictEqual(node.parentNode, null);
+      assert.strictEqual(node.parentElement, null);
+      assert.strictEqual(node.childNodes.length, 0);
+      assert.strictEqual(node.ownerDocument, doc);
     });
   });
 
-  describe("TextNode", () => {
+  describe("Text", () => {
     it("should store text content", () => {
-      const text = new TextNode("hello");
+      const doc = new Document();
+      const text = doc.createTextNode("hello");
+
       assert.strictEqual(text.textContent, "hello");
       assert.strictEqual(text.nodeType, Node.TEXT_NODE);
     });
   });
 
+  describe("Comment", () => {
+    it("should parse comment", () => {
+      const doc = new Document();
+      doc.innerHTML = `
+        <!-- comment1 -->
+        <!-- comment2 -->
+        <div>Hello World</div>
+      `;
+
+      assert.strictEqual(doc.childNodes.length, 3);
+      assert.strictEqual(doc.childNodes.item(0).nodeName, "COMMENT_NODE", "comment.nodeName != COMMENT_NODE");
+      assert.strictEqual(doc.childNodes.item(0).textContent, "comment1", `"${doc.childNodes.item(0).textContent}" != "comment1"`);
+      assert.strictEqual(doc.childNodes.item(1).textContent, "comment2");
+      assert.strictEqual(doc.documentElement.tagName, "div");
+    });
+
+    it("should parse comment with doctype", () => {
+      const doc = new Document();
+      doc.innerHTML = `
+        <!doctype html>
+        <!-- comment1 -->
+        <!-- comment2 -->
+        <div>Hello World</div>
+      `;
+
+      console.log(doc.childNodes.item(0).nodeName);
+      assert.strictEqual(doc.childNodes.length, 4);
+      assert.strictEqual(doc.childNodes.item(0).nodeName, "DOCUMENT_TYPE_NODE", doc.childNodes.item(0).nodeName);
+      assert.strictEqual(doc.childNodes.item(0).name, "html");
+      assert.strictEqual(doc.childNodes.item(1).textContent, "comment1", `"${doc.childNodes.item(0).textContent}" != "comment1"`);
+      assert.strictEqual(doc.childNodes.item(2).textContent, "comment2");
+      assert.strictEqual(doc.documentElement.tagName, "div");
+      assert.strictEqual(doc.outerHTML, "<!DOCTYPE html><!-- comment1 --><!-- comment2 --><div>Hello World</div>");
+
+    });
+  })
+
   describe("Element", () => {
-    let doc, el;
+    let doc;
+    let el;
 
     beforeEach(() => {
       doc = new Document();
-      el = doc.createElement("div", { attributes: { id: "main" }, className: "foo bar" });
+      el = doc.createElement("div");
+
+      el.id = "main";
+      el.classList.add("foo", "bar");
     });
 
     it("should store tagName, attributes, and className", () => {
       assert.strictEqual(el.tagName, "div");
-      assert.deepStrictEqual(el.attributes, { id: "main" });
+      assert.strictEqual(el.getAttribute("id"), "main");
+      assert.strictEqual(el.classList.length, 2);
       assert.strictEqual(el.className, "foo bar");
-      assert.ok(el.classList.contains("foo"));
-      assert.ok(el.classList.contains("bar"));
+
+      assert(el.classList.contains("foo"));
+      assert(el.classList.contains("bar"));
     });
 
     it("should append and remove children", () => {
-      const child = doc.createElement("span", { attributes: {} });
+      const child = doc.createElement("span");
+
       el.appendChild(child);
       assert.strictEqual(el.children.length, 1);
       assert.strictEqual(el.children[0], child);
 
-      el.removeChild(0);
+      el.removeChild(child);
       assert.strictEqual(el.children.length, 0);
+      assert.strictEqual(child.parentNode, null);
     });
 
     it("should compute innerHTML and outerHTML", () => {
-      const child = doc.createElement("span", { attributes: { title: "hi" } });
-      const text = new TextNode("Hello");
-      child.appendChild(text);
-      el.appendChild(child);
+      const span = doc.createElement("span");
+      span.setAttribute("title", "hi");
+
+      const text = doc.createTextNode("Hello");
+      span.appendChild(text);
+      el.appendChild(span);
+
+      assert.strictEqual(span.getAttribute("title"), "hi", "span does not have title=hi");
 
       const expectedInner = '<span title="hi">Hello</span>';
-      const expectedOuter = '<div class="foo bar" id="main">' + expectedInner + '</div>';
+      const expectedOuter =
+        '<div class="foo bar" id="main">' + expectedInner + '</div>';
 
-      assert.strictEqual(el.innerHTML, expectedInner);
-      assert.strictEqual(el.outerHTML, expectedOuter);
+      assert.strictEqual(el.innerHTML, expectedInner, "expected inner failed");
+      assert.strictEqual(el.outerHTML, expectedOuter, "expected outer failed");
     });
 
     it("should update innerHTML and rebuild children", () => {
-      el.innerHTML = '<span>Test</span>';
+      el.innerHTML = "<span>Test</span>";
+
       assert.strictEqual(el.children.length, 1);
-      assert.strictEqual((el.children[0]).tagName, "span");
-      assert.strictEqual((el.children[0].children[0]).textContent, "Test");
+      assert.strictEqual(el.children[0].tagName, "span");
+      assert.strictEqual(
+        el.children[0].childNodes.item(0).textContent,
+        "Test"
+      );
     });
 
     it("should querySelector and querySelectorAll", () => {
-      const child1 = doc.createElement("span", { attributes: { id: "a" }, className: "foo" });
-      const child2 = doc.createElement("span", { attributes: { id: "b" }, className: "bar" });
+      const child1 = doc.createElement("span");
+      child1.id = "a";
+      child1.classList.add("foo");
+
+      const child2 = doc.createElement("span");
+      child2.id = "b";
+      child2.classList.add("bar");
+
       el.appendChild(child1);
       el.appendChild(child2);
 
@@ -83,9 +147,11 @@ describe("Node / Element", () => {
     });
 
     it("should find closest matching ancestor", () => {
-      const parent = doc.createElement("div", { attributes: { id: "parent" } });
-      const child = doc.createElement("span", { attributes: {} });
-      const grandChild = doc.createElement("em", {});
+      const parent = doc.createElement("div");
+      parent.id = "parent";
+
+      const child = doc.createElement("span");
+      const grandChild = doc.createElement("em");
 
       parent.appendChild(child);
       child.appendChild(grandChild);
@@ -103,25 +169,25 @@ describe("Node / Element", () => {
 
     it("should create text nodes and elements", () => {
       const text = doc.createTextNode("hello");
-      assert.strictEqual(text.textContent, "hello");
+      assert.strictEqual(text.textContent, "hello", "text content is not hello");
 
-      const el = doc.createElement("div", { attributes: {} });
-      assert.strictEqual(el.tagName, "div");
-      assert.strictEqual(el.ownerDocument, doc);
+      const el = doc.createElement("div");
+      assert.strictEqual(el.tagName, "div", "tag name is not div");
+      assert.strictEqual(el.ownerDocument, doc, "ownerDocument is not doc");
     });
 
     it("should build tree from innerHTML", () => {
       doc.innerHTML = "<div><span>Hi</span></div>";
+
       const div = doc.children[0];
       const span = div.children[0];
-      const text = span.children[0];
+      const text = span.childNodes.item(0);
 
       assert.strictEqual(div.tagName, "div");
       assert.strictEqual(span.tagName, "span");
       assert.strictEqual(text.textContent, "Hi");
     });
   });
-
 });
 
 describe("Query", () => {
@@ -164,6 +230,7 @@ describe("Query", () => {
   it("should handle combined selectors", () => {
     const result = Query("div.bar[baz=qux]{Hello}");
     const part = result[0];
+
     assert.strictEqual(part.tag, "div");
     assert.strictEqual(part.class, ".bar");
     assert.strictEqual(part.attribute?.name, "[baz");
@@ -173,6 +240,7 @@ describe("Query", () => {
 
   it("should split multiple selectors separated by space, >, or +", () => {
     const result = Query("div > span + .foo");
+
     assert.strictEqual(result.length, 3);
     assert.strictEqual(result[0].tag, "div");
     assert.strictEqual(result[1].tag, "span");
@@ -181,69 +249,8 @@ describe("Query", () => {
 
   it("should ignore empty parts", () => {
     const result = Query("   div   ");
+
     assert.strictEqual(result.length, 1);
     assert.strictEqual(result[0].tag, "div");
-  });
-});
-
-
-describe("CSS", () => {
-  let cls;
-
-  beforeEach(() => {
-    cls = new CSS("foo bar");
-  });
-
-  it("should initialize className correctly", () => {
-    assert.strictEqual(cls.className, "foo bar");
-  });
-
-  it("should expose classList as a proxy", () => {
-    const list = cls.classList;
-    assert(list instanceof Set);
-    assert(list.contains("foo"));
-    assert(list.contains("bar"));
-    assert(!list.contains("baz"));
-  });
-
-  it("should add classes via classList.add", () => {
-    cls.classList.add("baz", "qux");
-    assert(cls.classList.contains("baz"));
-    assert(cls.classList.contains("qux"));
-    assert.strictEqual(cls.className, "foo bar baz qux");
-  });
-
-  it("should remove classes via classList.remove", () => {
-    cls.classList.remove("foo");
-    assert(!cls.classList.contains("foo"));
-    assert.strictEqual(cls.className, "bar");
-  });
-
-  it("should toggle classes via classList.toggle", () => {
-    const added = cls.classList.toggle("foo"); // already exists, should remove
-    assert.strictEqual(added, false);
-    assert(!cls.classList.contains("foo"));
-
-    const toggled = cls.classList.toggle("baz"); // doesn't exist, should add
-    assert.strictEqual(toggled, true);
-    assert(cls.classList.contains("baz"));
-  });
-
-  it("should support force toggle", () => {
-    cls.classList.toggle("baz", true); // force add
-    assert(cls.classList.contains("baz"));
-    cls.classList.toggle("baz", false); // force remove
-    assert(!cls.classList.contains("baz"));
-  });
-
-  it("should reflect changes in className when classList is modified", () => {
-    cls.classList.add("new");
-    cls.classList.remove("foo");
-    cls.classList.toggle("bar");
-    assert.strictEqual(cls.className, "new");
-  });
-
-  it("should return correct value via classList.value", () => {
-    assert.strictEqual(cls.classList.value, cls.className);
   });
 });

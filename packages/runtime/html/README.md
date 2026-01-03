@@ -1,227 +1,226 @@
 # @papit/html
 
-a minimal, zero-dependency HTML parser and DOM-like runtime for Node.js, exposing a deliberate subset of the browser DOM API.
+A lightweight, deterministic HTML and DOM-like implementation for Node.js.
 
-The goal of `@papit/html` is **correct structure, traversal, and manipulation** of HTML documents — without rendering, layout, or browser-specific complexity.
+This library provides a minimal, predictable subset of the DOM focused on:
 
----
+- Server-side HTML generation
+- Tree-based manipulation
+- Deterministic querying
+- Zero browser globals
+- No polyfills or environment magic
+
+It is **not** a browser DOM and does not aim to be one.
 
 ![Type](https://img.shields.io/badge/Type-runtime-orange)
 [![Tests](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml/badge.svg)](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml)
 [![NPM version](https://img.shields.io/npm/v/@papit/html.svg?logo=npm)](https://www.npmjs.com/package/@papit/html)
 
----
-
 ## Features
 
 - ✅ Zero dependencies
-- ✅ Small footprint (~6–7 KB bundled)
-- ✅ DOM-inspired API (Document, Element, TextNode)
+- ✅ Small footprint
+- ✅ DOM-inspired class hierarchy (`Node`, `Element`, `Text`, `Document`, `Comment`)
 - ✅ Tree construction from HTML strings
 - ✅ `querySelector`, `querySelectorAll`, and `closest`
-- ✅ Attribute and class handling
+- ✅ Attribute handling via `Map`
+- ✅ `classList` via a simplified `DOMTokenList`
+- ✅ `NodeList` / read-only array-like traversal helpers
 - ✅ `innerHTML` / `outerHTML` serialization
-- ✅ Deterministic, explicit behavior (no hidden magic)
+- ✅ Deterministic, explicit behavior (no hidden browser magic)
+- ✅ Explicit ownership via `ownerDocument`
 
 ---
 
-## Non-goals
+## Core Concepts
 
-`@papit/html` intentionally does **not** aim to fully replicate the browser DOM.
+### Document as the Node Factory
 
-The following are explicitly out of scope:
-
-- ❌ Rendering, layout, or visual output
-- ❌ CSS evaluation or computed styles
-- ❌ Events and event propagation
-- ❌ Mutation observers
-- ❌ Shadow DOM
-- ❌ Custom elements
-- ❌ Full CSS selector grammar (`:nth-child`, `:not`, etc.)
-- ❌ Browser HTML error-correction edge cases
-
-The library is ongoing and Custom-elements would be cool ngl.
-
----
-
-## Installation
-
-```bash
-npm install @papit/html
-```
-
----
-
-## Basic usage
-
-```ts
-import { Document } from "@papit/html";
-
-const doc = new Document();
-doc.innerHTML = `
-  <div class="container">
-    <h1>Hello World</h1>
-    <p class="intro">Welcome to @papit/html!</p>
-  </div>
-`;
-
-const title = doc.querySelector("h1");
-console.log(title?.textContent); // "Hello World"
-```
-
----
-
-## Document
-
-The `Document` represents the root of the DOM tree and is responsible for **creating nodes**.
-
-### Creation
+All nodes should be created via `Document`.
 
 ```ts
 const doc = new Document();
+
+const el = doc.createElement("div");
+const text = doc.createTextNode("Hello");
+el.appendChild(text);
 ```
 
-### Methods
-
-- `createElement(tagName: string, options?)`
-- `createTextNode(text: string)`
-- `querySelector(selector)`
-- `querySelectorAll(selector)`
-
-> ⚠️ Elements should be created via `Document.createElement()` to ensure
-> correct ownership and parent relationships.
-
-### Serialization
-
-```ts
-console.log(doc.outerHTML);
-```
-
-Output:
-
-```
-<!-- #document -->
-<div class="container">
-  <h1>Hello World</h1>
-  <p class="intro">Welcome to @papit/html!</p>
-</div>
-```
-
-> Note: `Document.outerHTML` is **not HTML-valid by design**.
-> It is intended for debugging and serialization, not browser rendering.
+> ⚠️ Nodes are expected to have an owning `Document`.
+> Constructing nodes manually may lead to missing ownership
+> and broken tree relationships.
 
 ---
 
-## Element
+## Nodes
 
-Represents an HTML element node.
+### Node
 
-### Properties
+Base class for all nodes.
 
-- `tagName: string`
-- `attributes: Record<string, string>`
-- `className: string`
+Properties:
+
+- `parentNode`
+- `childNodes`
+- `textContent`
+- `nodeType`
+- `ownerDocument`
+
+`Node` extends `EventTarget`.
+
+---
+
+### Text
+
+Represents text nodes.
+
+```ts
+const text = doc.createTextNode("Hello");
+```
+
+- `nodeType === Node.TEXT_NODE`
+- `textContent` always returns a string
+
+---
+
+### Element
+
+Represents HTML elements.
+
+```ts
+const el = doc.createElement("div", {
+  attributes: { id: "main" },
+  className: "foo bar",
+});
+```
+
+Properties:
+
+- `tagName`
+- `attributes: Map<string, string | true>`
+- `className`
 - `classList`
-- `children: Node[]`
-- `parentElement: Element | null` (read-only)
-- `textContent: string | null`
+- `children`
 
-### Tree manipulation
+Methods:
+
+- `appendChild`
+- `removeChild`
+- `closest`
+- `querySelector`
+- `querySelectorAll`
+
+---
+
+### HTMLElement
 
 ```ts
-const div = doc.createElement("div");
-const span = doc.createElement("span");
-
-div.appendChild(span);
-div.removeChild(span);
+class HTMLElement<T = string> extends Element {}
 ```
+
+`HTMLElement<T>` currently behaves the same as `Element` and exists
+to enable future specialization and typing improvements.
+
+---
+
+## NodeList
+
+`childNodes` and `children` return a **read-only, array-like NodeList**.
 
 Supported methods:
 
-- `appendChild(node: Node)`
-- `removeChild(node: Node)`
+- `forEach`
+- `entries`
+- `keys`
+- `values`
+- `item(index)`
+
+The list itself cannot be mutated, but the nodes inside it can.
 
 ---
 
-## HTML content
+## classList
+
+`classList` behaves like a **simplified DOMTokenList**.
+
+Supported methods:
+
+- `add`
+- `remove`
+- `toggle`
+- `contains`
+
+Changes are reflected in `className`.
+
+---
+
+## HTML Serialization
 
 ### innerHTML
 
+- Serializes child nodes
+- Setting it rebuilds the subtree
+
 ```ts
-element.innerHTML = "<span>Text</span>";
+el.innerHTML = "<span>Hello</span>";
 ```
 
-- Clears existing children
-- Rebuilds the subtree from the provided HTML
+---
 
 ### outerHTML
 
-```ts
-console.log(element.outerHTML);
-```
+- Serializes the node including its own tag
+- Produces valid HTML strings
 
-Returns the serialized representation of the element and its children.
+`Document.outerHTML` serializes the document’s child nodes.
 
 ---
 
 ## Querying
 
-### querySelector / querySelectorAll
-
-```ts
-const el = doc.querySelector("div.container");
-const items = doc.querySelectorAll("p");
-```
-
-Supported selector features:
+Limited, deterministic selector support:
 
 - Tag selectors: `div`
-- Class selectors: `.container`
+- Class selectors: `.foo`
 - Attribute selectors: `[id=main]`
 - Text selectors: `{Hello}`
-- Descendant (` `), child (`>`), and sibling (`+`) combinators
+- Combined selectors: `div.foo[id=bar]{Hello}`
+- Descendant and child combinators: ` `, `>`
+
+> The sibling (`+`) combinator is parsed but currently treated as a descendant.
+> Proper sibling matching may be implemented in a future release.
+
+This is **not CSS-complete by design**.
 
 ---
 
-## closest
+## Why not jsdom?
 
-```ts
-const el = doc.querySelector("span");
-const parent = el?.closest("#parent");
-```
+`@papit/html` intentionally solves a different problem.
 
-Traverses ancestors until a matching element is found.
+### jsdom
 
-Behavior matches the browser DOM:
+- Full browser DOM emulation
+- Heavy
+- Environment-dependent
+- Complex edge cases
+- Slow for simple HTML tasks
 
-- The element itself is checked first
-- Traversal continues via `parentElement`
-- Returns `null` if no match is found
+### @papit/html
 
----
+- Deterministic
+- Lightweight
+- Explicit tree ownership
+- No browser assumptions
+- Ideal for:
 
-## Query utility
+  - Build tools
+  - Static HTML generation
+  - Controlled DOM manipulation
+  - Testing
 
-The internal `Query` helper parses selector strings into structured query parts.
-
-```ts
-import { Query } from "@papit/html";
-
-const parts = Query("div.container[role=main]");
-```
-
-This is primarily intended for internal use, but is exposed for advanced consumers.
-
----
-
-## Contributing
-
-Contributions are welcome!
-
-- Keep the library dependency-free
-- Maintain deterministic behavior
-- Prefer explicit APIs over magic
-- Ensure all tests pass before submitting a PR
+If you need browser fidelity — use jsdom.
+If you need control and predictability — use `@papit/html`.
 
 ---
 
@@ -230,18 +229,11 @@ Contributions are welcome!
 Licensed under the **@Papit License 1.0**
 Copyright (c) 2024 Henry Pap (@onkelhoy)
 
-**Key points:**
+**Summary:**
 
-- ✅ Free to use in commercial projects
+- ✅ Free for commercial use
 - ✅ Free to modify and distribute
 - ✅ Attribution required
-- ❌ Cannot resell the component itself as a standalone product
+- ❌ Cannot resell as a standalone product
 
 See the [LICENSE](https://github.com/onkelhoy/web-components/blob/main/LICENSE) file for full details.
-
----
-
-## Support
-
-For issues, questions, or contributions, please visit the
-[GitHub repository](https://github.com/onkelhoy/web-components).

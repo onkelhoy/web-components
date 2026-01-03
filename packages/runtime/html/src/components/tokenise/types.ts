@@ -3,7 +3,10 @@ export enum State {
   TagOpen,
   TagName,
   EndTagOpen,
-  EndTagName,          // 👈 ADD THIS
+  EndTagName,
+  CommentStart,
+  Comment,
+  Doctype,
   BeforeAttributeName,
   AttributeName,
   BeforeAttributeValue,
@@ -15,5 +18,7 @@ export enum State {
 
 export type Token =
   | { type: "text"; value: string }
+  | { type: "doctype"; value: string }
+  | { type: "comment"; value: string }
   | { type: "startTag"; name: string; attributes: Record<string, string | true>; selfClosing: boolean }
   | { type: "endTag"; name: string };

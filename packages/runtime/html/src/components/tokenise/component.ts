@@ -34,6 +34,17 @@ export function Tokenise(text: string): Token[] {
     selfClosing = false;
   };
 
+  const emitCommentTag = () => {
+    tokens.push({ type: "comment", value: currentTagName.replace(/^\<?!?-?-?/, '').replace(/-?-?\>?$/, '').trim() });
+    currentTagName = "";
+  }
+
+  const emitDoctype = () => {
+    console.log('emit doctype', currentTagName.replace(/doctype\s?/i, '').trim())
+    tokens.push({ type: "doctype", value: currentTagName.replace(/doctype\s?/i, '').trim() });
+    currentTagName = "";
+  }
+
   const emitEndTag = () => {
     tokens.push({ type: "endTag", name: currentTagName });
     currentTagName = "";
@@ -62,7 +73,11 @@ export function Tokenise(text: string): Token[] {
       case State.TagOpen:
         if (char === "/") {
           state = State.EndTagOpen;
-        } else {
+        } 
+        else if (char === "!") {
+          state = State.CommentStart;
+        }
+        else {
           currentTagName = char;
           state = State.TagName;
         }
@@ -78,6 +93,48 @@ export function Tokenise(text: string): Token[] {
         if (isWhitespace(char)) break;
         if (char === ">") {
           emitEndTag();
+          state = State.Data;
+        } else {
+          currentTagName += char;
+        }
+        break;
+      
+      case State.CommentStart:
+        if (char === "-")
+          state = State.Comment;
+        else 
+        {
+          currentTagName += char;
+          if ("doctype".startsWith(currentTagName.toLowerCase()))
+          {
+            state = State.Doctype;
+          }
+          else 
+          {
+            state = State.Comment;
+          }
+        }
+        break;
+
+      case State.Doctype:
+        if (char === ">") {
+          emitDoctype();
+          state = State.Data;
+        } else {
+          currentTagName += char;
+          if (!"doctype".startsWith(currentTagName.toLowerCase()))
+          {
+            if (!/^doctype(\s+)?(\w?)+/i.test(currentTagName))
+            {
+              state = State.Comment;
+            }
+          }
+        }
+        break;
+
+      case State.Comment:
+        if (char === ">") {
+          emitCommentTag();
           state = State.Data;
         } else {
           currentTagName += char;
