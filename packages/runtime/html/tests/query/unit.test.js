@@ -92,6 +92,11 @@ describe("Query", () => {
     assert.deepStrictEqual(result, [{ tag: "input", attribute: { name: "type", value: "text" } }]);
   });
 
+  it("should parse bare attribute", () => {
+    const result = Query('[type]');
+    assert.deepStrictEqual(result, [{ attribute: { name: "type", value: true } }]);
+  });
+
   it("should parse tag with text", () => {
     const result = Query("div{hello}");
     assert.deepStrictEqual(result, [{ tag: "div", text: "hello" }]);

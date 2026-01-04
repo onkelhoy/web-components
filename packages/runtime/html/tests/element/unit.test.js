@@ -253,6 +253,33 @@ describe("Node / Element", () => {
     });
   });
 
+  describe.only("className", () => {
+    let doc;
+
+    beforeEach(() => {
+      doc = new Document();
+    });
+
+    it("should have classNames", () => {
+      const bob = doc.createElement("bob");
+      bob.className = "hello world";
+      assert.strictEqual(bob.classList.length, 2);
+      assert.strictEqual(bob.classList.contains("hello"), true);
+      assert.strictEqual(bob.classList.contains("world"), true);
+    });
+
+    it("should have classNames from innerHTML", () => {
+      doc.innerHTML = `
+        <bob class="hello world"></bo>
+      `
+      const bob = doc.querySelector("bob");
+      assert.strictEqual(bob.className, "hello world");
+      assert.strictEqual(bob.classList.length, 2);
+      assert.strictEqual(bob.classList.contains("hello"), true);
+      assert.strictEqual(bob.classList.contains("world"), true);
+    });
+  })
+
   describe.only("querySelector", () => {
     let doc;
     let el;
@@ -265,13 +292,35 @@ describe("Node / Element", () => {
           <p>text 2 <span class="hello world">span 1</span><span id="wow">span 2</span></p>
           <p>text 3 <br class="hello" /></p>
           <p>text 4 <br /></p>
+          <a foo="bar">anchor 1</a>
+          <a foo="baz">anchor 2</a>
         </body>
       `;
     });
 
-    it.only("should perform simple querySelector", () => {
+    it("should perform simple querySelector", () => {
       const p = doc.querySelector("p");
       assert.strictEqual(p.innerHTML, "text 1");
+    });
+
+    it("should perform querySelector with attribute", () => {
+      const a0 = doc.querySelector("a");
+      assert.strictEqual(a0.innerHTML, "anchor 1");
+
+      const a1 = doc.querySelector("[foo]");
+      assert.strictEqual(a1.innerHTML, "anchor 1");
+
+      const a2 = doc.querySelector('[foo="baz"]');
+      assert.strictEqual(a2.innerHTML, "anchor 2");
+    });
+
+    it("should perform querySelector with class", () => {
+      const span = doc.querySelector("span");
+      assert.strictEqual(span.className, "hello world");
+      assert.strictEqual(span.classList.contains("hello"), true);
+
+      const p = doc.querySelector(".hello");
+      assert.strictEqual(p.innerHTML, "span 1");
     });
 
     it("should perform querySelectorAll", () => {
@@ -285,9 +334,8 @@ describe("Node / Element", () => {
 
     it("should perform querySelector by class", () => {
       const p = doc.querySelectorAll(".hello");
-      console.log(p);
       assert.strictEqual(p.length, 2);
-      assert.strictEqual(p[0].tagName, "p");
+      assert.strictEqual(p[0].tagName, "span");
       assert.strictEqual(p[1].tagName, "br");
     });
   });

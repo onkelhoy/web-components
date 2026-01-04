@@ -102,6 +102,19 @@ describe("Tokenise", () => {
     ]);
   });
 
+  it("should tokenize a tag with attribute that has spaces", () => {
+    const html = `<div id="foo" hidden class='foo bar'>`;
+    const tokens = Tokenise(html);
+    assert.deepStrictEqual(tokens, [
+      {
+        type: "startTag",
+        name: "div",
+        attributes: { id: "foo", hidden: true, class: "foo bar" },
+        selfClosing: false
+      }
+    ]);
+  });
+
   it("should tokenize self-closing tags", () => {
     const html = `<img src="pic.jpg" />`;
     const tokens = Tokenise(html);

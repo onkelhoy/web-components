@@ -1,6 +1,5 @@
-import { Token, Tokenise } from "../tokenise";
+import { Tokenise } from "../tokenise";
 import type Element from "../element/element";
-import type DocumentType from "../element/document-type";
 
 export function Builder(root: Element, html:string) {
   const tokens = Tokenise(html);
