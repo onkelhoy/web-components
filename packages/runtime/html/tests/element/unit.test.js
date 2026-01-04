@@ -176,6 +176,40 @@ describe("Node / Element", () => {
       assert.strictEqual(el.ownerDocument, doc, "ownerDocument is not doc");
     });
 
+    it("should build deep tree manually", () => {
+
+      // NOTE this example is comming from live-server - it had problems
+      doc.appendChild(doc.createElement("body"));
+
+      const folders = doc.createElement("ul");
+      doc.body.appendChild(folders);
+      const files = doc.createElement("ul");
+      doc.body.appendChild(files);
+
+      new Array(10).fill(0).forEach((_v, index) => {
+        const li = doc.createElement("li");
+
+        const iconspan = doc.createElement("span");
+        li.appendChild(iconspan);
+
+        const namespan = doc.createElement("span");
+        li.appendChild(namespan);
+
+        namespan.textContent = index;
+
+        assert.strictEqual(namespan.textContent, String(index));
+
+
+        if (index < 5) folders.appendChild(li);
+        else files.appendChild(li);
+      });
+
+      assert.strictEqual(folders.children.length, 5);
+      assert.strictEqual(files.children.length, 5);
+
+      assert.strictEqual(doc.innerHTML, "<body><ul><li><span /><span>0</span></li><li><span /><span>1</span></li><li><span /><span>2</span></li><li><span /><span>3</span></li><li><span /><span>4</span></li></ul><ul><li><span /><span>5</span></li><li><span /><span>6</span></li><li><span /><span>7</span></li><li><span /><span>8</span></li><li><span /><span>9</span></li></ul></body>")
+    })
+
     it("should build tree from innerHTML", () => {
       doc.innerHTML = "<div><span>Hi</span></div>";
 
@@ -188,69 +222,73 @@ describe("Node / Element", () => {
       assert.strictEqual(text.textContent, "Hi");
     });
   });
-});
 
-describe("Query", () => {
-  it("should parse simple tag selectors", () => {
-    const result = Query("div");
-    assert.strictEqual(result.length, 1);
-    assert.strictEqual(result[0].tag, "div");
-    assert.strictEqual(result[0].class, undefined);
-    assert.strictEqual(result[0].attribute, undefined);
-    assert.strictEqual(result[0].text, undefined);
+  describe("Mutable", () => {
+    it("should mutate textContent", () => {
+      const node = new Node();
+      const child = new Node();
+      child.textContent = "hello";
+      node.appendChild(child);
+
+      assert.strictEqual(node.textContent, "hello");
+      child.textContent = "world";
+      assert.strictEqual(node.textContent, "world");
+    });
+
+    it("should mutate innerHTML", () => {
+      const document = new Document();
+      const div = document.createElement("div");
+      document.appendChild(div);
+
+      const span = document.createElement("span");
+      div.appendChild(span);
+
+      assert.strictEqual(document.outerHTML, "<div><span /></div>");
+
+      span.innerHTML = "<p>bajskorvar</p>";
+      assert.strictEqual(document.outerHTML, "<div><span><p>bajskorvar</p></span></div>");
+
+      span.setAttribute("bajs", "korv");
+      assert.strictEqual(document.outerHTML, "<div><span bajs=\"korv\"><p>bajskorvar</p></span></div>");
+    });
   });
 
-  it("should parse class selectors", () => {
-    const result = Query(".foo");
-    assert.strictEqual(result.length, 1);
-    assert.strictEqual(result[0].tag, undefined);
-    assert.strictEqual(result[0].class, ".foo");
-  });
+  describe.only("querySelector", () => {
+    let doc;
+    let el;
 
-  it("should parse tag with class", () => {
-    const result = Query("div.bar");
-    assert.strictEqual(result.length, 1);
-    assert.strictEqual(result[0].tag, "div");
-    assert.strictEqual(result[0].class, ".bar");
-  });
+    beforeEach(() => {
+      doc = new Document();
+      doc.innerHTML = `
+        <body>
+          <p>text 1</p>
+          <p>text 2 <span class="hello world">span 1</span><span id="wow">span 2</span></p>
+          <p>text 3 <br class="hello" /></p>
+          <p>text 4 <br /></p>
+        </body>
+      `;
+    });
 
-  it("should parse attributes", () => {
-    const result = Query("[id=main]");
-    assert.strictEqual(result.length, 1);
-    assert.strictEqual(result[0].attribute?.name, "[id");
-    assert.strictEqual(result[0].attribute?.value, "main]");
-  });
+    it.only("should perform simple querySelector", () => {
+      const p = doc.querySelector("p");
+      assert.strictEqual(p.innerHTML, "text 1");
+    });
 
-  it("should parse text selectors", () => {
-    const result = Query("{Hello}");
-    assert.strictEqual(result.length, 1);
-    assert.strictEqual(result[0].text, "{Hello}");
-  });
+    it("should perform querySelectorAll", () => {
+      const p = doc.querySelectorAll("p");
+      assert.strictEqual(p.length, 4);
+      assert.strictEqual(p[0].innerHTML, "text 1");
+      assert.strictEqual(p[1].innerHTML, "text 2<span class=\"hello world\">span 1</span><span id=\"wow\">span 2</span>");
+      assert.strictEqual(p[2].innerHTML, "text 3<br class=\"hello\" />");
+      assert.strictEqual(p[3].innerHTML, "text 4<br />");
+    });
 
-  it("should handle combined selectors", () => {
-    const result = Query("div.bar[baz=qux]{Hello}");
-    const part = result[0];
-
-    assert.strictEqual(part.tag, "div");
-    assert.strictEqual(part.class, ".bar");
-    assert.strictEqual(part.attribute?.name, "[baz");
-    assert.strictEqual(part.attribute?.value, "qux]");
-    assert.strictEqual(part.text, "{Hello}");
-  });
-
-  it("should split multiple selectors separated by space, >, or +", () => {
-    const result = Query("div > span + .foo");
-
-    assert.strictEqual(result.length, 3);
-    assert.strictEqual(result[0].tag, "div");
-    assert.strictEqual(result[1].tag, "span");
-    assert.strictEqual(result[2].class, ".foo");
-  });
-
-  it("should ignore empty parts", () => {
-    const result = Query("   div   ");
-
-    assert.strictEqual(result.length, 1);
-    assert.strictEqual(result[0].tag, "div");
+    it("should perform querySelector by class", () => {
+      const p = doc.querySelectorAll(".hello");
+      console.log(p);
+      assert.strictEqual(p.length, 2);
+      assert.strictEqual(p[0].tagName, "p");
+      assert.strictEqual(p[1].tagName, "br");
+    });
   });
 });

@@ -6,10 +6,100 @@ import { Arguments, DependencyBatch, LocalPackage, Package, Terminal, getDepende
 import { getMeta } from "./components/meta/get-meta";
 import { jsBundler } from "./components/bundlers/js-bundle";
 import { tsBundler } from "./components/bundlers/ts-bundle";
+import { BuildContext } from "esbuild";
 
 const CACHED_PACKAGE_JSON: Record<string, LocalPackage> = {};
 const PREBUILD_RUNS = new Set<string>();
+const CONTEXTS: BuildContext[] = [];
 
+(async function () {
+  if (Arguments.args.flags.live) Arguments.args.flags.dev = true;
+  
+  const mode = Arguments.args.flags.dev ? "dev" : "prod";
+  const location = Arguments.args.flags.location;
+  const originalinfo = getPathInfo(typeof location === "string" ? location : undefined);
+
+  let buildMode = "individual";
+  if (Arguments.args.flags.all) buildMode = "all";
+  else if (Arguments.args.flags.bloodline) buildMode = "bloodline";
+  else if (Arguments.args.flags.ancestors) buildMode = "ancestors";
+  else if (Arguments.args.flags.descendants) buildMode = "descendants";
+
+  if (Arguments.info)
+  {
+    Terminal.write("building mode:", Terminal.green(buildMode));
+  }
+
+  if (Arguments.args.flags.live)
+  {
+    process.on("SIGINT", () => {
+      if (!Arguments.silent) Terminal.blue("live ended");
+      
+      CONTEXTS.forEach(ctx => {
+        ctx.dispose()
+      });
+    });
+  }
+
+  switch (buildMode)
+  {
+    case "all":
+      const { config, ...data } = await getDependencyOrder(
+        async batch => await runPrebuild(batch, originalinfo), 
+        { info: originalinfo, silent: true }
+      );
+
+      if (PREBUILD_RUNS.size > 0)
+      {
+        await npmInstall(originalinfo);
+      }
+
+      await getDependencyOrder(
+        async batch => await runBatch(batch, mode, originalinfo), 
+        { ...config, data, silent: false }
+      );
+      break;
+
+    case "individual": {
+      const packageJSON = getPackage(originalinfo.local); 
+      try 
+      {
+        const shouldinstall = await runner(mode, originalinfo, packageJSON, originalinfo);
+        if (shouldinstall && !Arguments.args.flags['no-install']) await npmInstall(originalinfo);
+      }
+      catch (e)
+      {
+        console.log(e);
+      }
+      break;
+    }
+    case "bloodline":
+    case "ancestors":
+    case "descendants": {
+      const packageJSON = getPackage(originalinfo.local); 
+
+      const { config, ...data } = await getDependencyBloodline(
+        packageJSON.name, 
+        async batch => await runPrebuild(batch, originalinfo), 
+        { info: originalinfo, type: buildMode, silent: true }
+      );
+
+      if (PREBUILD_RUNS.size > 0)
+      {
+        await npmInstall(originalinfo);
+      }
+
+      await getDependencyBloodline(
+        packageJSON.name, 
+        async batch => await runBatch(batch, mode, originalinfo), 
+        { ...config, data, silent: false }
+      );
+      break;
+    }
+  }
+}());
+
+//#region functions 
 function getPackage(local: string, name?: string) {
   if (CACHED_PACKAGE_JSON[local]) return CACHED_PACKAGE_JSON[local];
 
@@ -64,87 +154,13 @@ async function npmInstall(originalinfo: ReturnType<typeof getPathInfo>) {
   if (!Arguments.args.flags.ci)
   {
     if (Arguments.verbose) console.log('running install');
-    await Terminal.spawnCommand("npm install", originalinfo.root);
+    await Terminal.execute("npm install", originalinfo.root);
   }
   else if (Arguments.verbose)
   {
     console.log('no install');
   }
 }
-
-(async function () {
-  const mode = Arguments.args.flags.dev ? "dev" : "prod";
-  const location = Arguments.args.flags.location;
-  const originalinfo = getPathInfo(typeof location === "string" ? location : undefined);
-
-  let buildMode = "individual";
-  if (Arguments.args.flags.all) buildMode = "all";
-  else if (Arguments.args.flags.bloodline) buildMode = "bloodline";
-  else if (Arguments.args.flags.ancestors) buildMode = "ancestors";
-  else if (Arguments.args.flags.descendants) buildMode = "descendants";
-
-  if (Arguments.info)
-  {
-    Terminal.write("building mode:", Terminal.green(buildMode));
-  }
-
-  switch (buildMode)
-  {
-    case "all":
-      const { config, ...data } = await getDependencyOrder(
-        async batch => await runPrebuild(batch, originalinfo), 
-        { info: originalinfo, silent: true }
-      );
-
-      if (PREBUILD_RUNS.size > 0)
-      {
-        await npmInstall(originalinfo);
-      }
-
-      await getDependencyOrder(
-        async batch => await runBatch(batch, mode, originalinfo), 
-        { ...config, data, silent: false }
-      );
-      break;
-
-    case "individual": {
-      const packageJSON = getPackage(originalinfo.local); 
-      try 
-      {
-        const shouldinstall = await runner(mode, originalinfo, packageJSON, originalinfo);
-        if (shouldinstall) await npmInstall(originalinfo);
-      }
-      catch (e)
-      {
-        console.log(e);
-      }
-      break;
-    }
-    case "bloodline":
-    case "ancestors":
-    case "descendants": {
-      const packageJSON = getPackage(originalinfo.local); 
-
-      const { config, ...data } = await getDependencyBloodline(
-        packageJSON.name, 
-        async batch => await runPrebuild(batch, originalinfo), 
-        { info: originalinfo, type: buildMode, silent: true }
-      );
-
-      if (PREBUILD_RUNS.size > 0)
-      {
-        await npmInstall(originalinfo);
-      }
-
-      await getDependencyBloodline(
-        packageJSON.name, 
-        async batch => await runBatch(batch, mode, originalinfo), 
-        { ...config, data, silent: false }
-      );
-      break;
-    }
-  }
-}());
 
 function getExportsInformation(entry:string, packageJSON:Package) {
   if (!packageJSON.exports) return null;
@@ -170,7 +186,7 @@ async function runPrebuild(batch: DependencyBatch[], originalinfo: ReturnType<ty
       {
         console.log(`${packageJSON.name} - running prebuild script`);
       }
-      await Terminal.spawnCommand(packageJSON.scripts.prebuild, info.local);
+      await Terminal.execute(packageJSON.scripts.prebuild, info.local);
 
       if (Arguments.verbose)
       {
@@ -204,7 +220,7 @@ async function runner(
     {
       console.log(`${packageJSON.name} - running prebuild script`);
     }
-    await Terminal.spawnCommand(packageJSON.scripts.prebuild, info.local);
+    await Terminal.execute(packageJSON.scripts.prebuild, info.local);
 
     if (Arguments.debug)
     {
@@ -232,6 +248,12 @@ async function runner(
     }
     fs.rmSync(meta.tsconfig.info.outDir, { recursive: true, force: true });
     fs.mkdirSync(meta.tsconfig.info.outDir, { recursive: true });
+  }
+
+  if (Arguments.args.flags.live && meta.entryPoints.keys.length > 1 && !Arguments.args.flags.force)
+  {
+    Terminal.error("you have multiple entry points in watch mode, consider using --force if its intentianal");
+    process.exit(1);
   }
 
   let shouldinstall = false;
@@ -284,7 +306,12 @@ async function runner(
     }
 
     try {
-      await jsBundler(absoluteEntry, javascriptFileOutput, meta, packageJSON);
+      const result = await jsBundler(absoluteEntry, javascriptFileOutput, meta, info, packageJSON);
+      if (result)
+      {
+        CONTEXTS.push(result as BuildContext);
+      }
+
       await tsBundler(absoluteTypesEntry, typescriptFileOutput, meta, info);  
     }
     catch (e)
@@ -320,11 +347,12 @@ async function runner(
     }
   }
 
-  if (!Arguments.verbose && !Arguments.debug && !Arguments.args.flags.all && !Arguments.args.flags.bloodline && !Arguments.args.flags.ancestors && !Arguments.args.flags.descendants)
+  if (!Arguments.args.flags.live && !Arguments.verbose && !Arguments.debug && !Arguments.args.flags.all && !Arguments.args.flags.bloodline && !Arguments.args.flags.ancestors && !Arguments.args.flags.descendants)
   {
     Terminal.clearSession(session);
   }
 
-  Terminal.write("📦", packageJSON.name, Terminal.colorWrap("successfully built", "green"));
+  Terminal.write("📦", packageJSON.name, Terminal.green("successfully built"), Arguments.args.flags.live ? Terminal.cyan("- watching") : "");
   return shouldinstall;
 }
+//#endregion

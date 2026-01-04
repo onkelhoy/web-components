@@ -1,7 +1,8 @@
 // import statements 
 import readline from "node:readline";
-import { spawn } from "node:child_process";
+import { ChildProcessWithoutNullStreams, spawn } from "node:child_process";
 import { Arguments } from "../arguments";
+import { SpawnOptions } from "./types";
 
 const originalStdoutWrite = process.stdout.write.bind(process.stdout);
 const originalStderrWrite = process.stderr.write.bind(process.stderr);
@@ -365,46 +366,64 @@ export class Terminal {
     return defaultValue ? answer === 0 : answer === 1;
   }
 
-  static onSpawnedData(chunk: any) {}
-  static onSpawnedError(chunk: any) {}
-  static async spawnCommand(command: string, cwd: string, args: string[] = []) {
-    const [cmd, ..._args] = command.split(" ");
+  static execute(command: string, cwd: string): Promise<void>;
+  static execute(command: string, cwd: string, args:string[]): Promise<void>;
+  static execute(command: string, options: Partial<SpawnOptions>): Promise<void>;
+  static execute(command: string, something: Partial<SpawnOptions>|string, args?: string[]) {
 
-    return new Promise<void>((resolve, reject) => {
+    let options: Partial<SpawnOptions> = {};
+    if (typeof something === "string")
+    {
+      options.cwd = something;
+      if (args) options.args = args;
+    }
+    else 
+    {
+      options = something;
+    }
 
-      let stdout = "";
-      let stderr = "";
-
-      const child = spawn(cmd, _args.concat(args), {
-        cwd,
-        stdio: "pipe",
-        shell: false,
-        env: { ...process.env },
-      });
-      
-      child.stdout.on("data", chunk => {
-        const text = chunk.toString("utf8");
-        stdout += text;
-        Terminal.onSpawnedData(text);
-      });
-
-      child.stderr.on("data", chunk => {
-        const text = chunk.toString("utf8");
-        stderr += text;
-        Terminal.onSpawnedError(text);
-      });
-
-      child.on("close", code => {
-        if (code === 0) {
-          return resolve();
-        } 
-        
-        reject(
-          new Error(
-            stderr || stdout || `Process exited with code ${code}`
-          )
-        );
+    return new Promise<void>((res, rej) => {
+      this.spawn(command, {
+        ...options,
+        onClose(code, stdout, stderr) {
+          if (code === 0) {
+            options.onClose?.(0, stdout, stderr);
+            return res();
+          } 
+          
+          rej(new Error(stderr || stdout || `Process exited with code ${code}`));
+        }
       });
     });
+  }
+
+  static spawn(command: string, options: Partial<SpawnOptions>) {
+    const [cmd, ..._args] = command.split(" ");
+
+    let stdout = "";
+    let stderr = "";
+
+    const child = spawn(cmd, _args.concat(options.args ?? []), {
+      cwd: options.cwd,
+      stdio: "pipe",
+      shell: false,
+      env: { ...process.env },
+    });
+    
+    child.stdout.on("data", chunk => {
+      const text = chunk.toString("utf8");
+      stdout += text;
+      options.onData?.(text);
+    });
+
+    child.stderr.on("data", chunk => {
+      const text = chunk.toString("utf8");
+      stderr += text;
+      options.onError?.(text);
+    });
+
+    child.on("close", code => options.onClose?.(code, stdout, stderr));
+    
+    return child;
   }
 }

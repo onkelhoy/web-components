@@ -1,9 +1,10 @@
 import path from "node:path";
 import fs from "node:fs";
-import { Arguments, getJSON, Terminal } from "@papit/util-cli";
+import { Arguments, getJSON, getPathInfo, Terminal } from "@papit/util-cli";
 
 import { Translation, Translations } from "./types";
-import { deepMerge } from "../util";
+import { deepMerge } from "./util";
+import { NotFoundError } from "../errors";
 
 async function extractTranslation(folder: string, translations: Translations) {
   const files = fs.readdirSync(folder).filter(name => fs.statSync(path.join(folder, name)).isFile() && name.endsWith(".json"));
@@ -76,4 +77,46 @@ export async function handleAsset(
       }
     }
   }
+}
+
+
+const cachedFiles:Record<string,string> = {}
+function getAsset(
+  translations: Record<string, Translation>, 
+  assets: Record<string, string[]>,
+  url: string,
+) {
+  if (cachedFiles[url]) return cachedFiles[url];
+
+  if (Arguments.debug) console.log('requesting', url)
+    
+  if (assets[url])
+  {
+    const files = [...assets[url]];
+    while (files.length > 0)
+    {
+      const filelocation = files.pop()!;
+      try {
+        const data = fs.readFileSync(filelocation, {encoding: "utf-8"});
+        if (!Arguments.args.flags['no-cache']) cachedFiles[url] = data;
+        return data;
+      }
+      catch (e)
+      {
+        if (Arguments.warning)
+        {
+          Terminal.warn(`"${filelocation}" not found`);
+        }
+        if (Arguments.debug)
+        {
+          console.trace(e);
+        }
+      }
+    }
+  }
+
+  // we need to check translations 
+  // if (translations[url])
+
+  throw new NotFoundError(`asset "${url}" not found`);
 }

@@ -1,6 +1,8 @@
-export class List<T> extends EventTarget {
+import { EventTargetPublic } from "./event";
+
+export class List<T> extends EventTargetPublic {
   constructor(protected arr: T[]) {
-    super();
+    super()
   }
 
   get length() { return this.arr.length }
@@ -48,5 +50,26 @@ export class ExtendedList<T> extends List<T> {
 
   [Symbol.iterator]() {
     return this.arr[Symbol.iterator]();
+  }
+}
+
+export class Queue<T> {
+  private arr: T[];
+  constructor(arr: T[]) {
+    this.arr = arr;
+  }
+
+  get length() {
+    return this.arr.length;  
+  }
+  peek() {
+    return this.arr[this.arr.length - 1] ?? null;
+  }
+  pop() {
+    return this.arr.pop();
+  }
+
+  copy() {
+    return new Queue<T>([...this.arr]);
   }
 }

@@ -20,7 +20,7 @@ export async function tsBundler(
     const outDir = path.dirname(outputFile);
     const srcDir = path.join(outDir, srcName);
 
-    await Terminal.spawnCommand(
+    await Terminal.execute(
       "tsc", 
       info.local,
       ["--emitDeclarationOnly", "-p", meta.tsconfig.path, "--declarationDir", outDir], 
@@ -32,7 +32,7 @@ export async function tsBundler(
   else 
   {
     const outDir = path.join(info.local, ".temp/build");
-    await Terminal.spawnCommand(
+    await Terminal.execute(
       "tsc", 
       info.local,
       ["--emitDeclarationOnly", "-p", meta.tsconfig.path, "--declarationDir",  outDir], 

@@ -3,10 +3,15 @@ import fs from "node:fs";
 import { Arguments, getDependencyBloodline, getJSON, getPathInfo, LocalPackage, Terminal } from "@papit/util-cli"
 
 import { getAssetFolders, handleAsset, Translation } from "./components/asset";
-import { close as serverExit, start as serverStart } from "./components/server";
+import { close as httpExit, start as httpStart } from "./components/http";
 
 (async function () {
-  const info = getPathInfo(typeof Arguments.args.flags.location === "string" ? Arguments.args.flags.location : undefined);
+  const info = getPathInfo(typeof Arguments.args.flags.location === "string" ? Arguments.args.flags.location : undefined, import.meta.url);
+  if (info.script == null)
+  {
+    Terminal.error("script location of @papit/dev-server is missing");
+    process.exit(1);
+  }
 
   const packageJSON = getJSON<LocalPackage>(path.join(info.package, "package.json"));
   if (!packageJSON)
@@ -39,12 +44,22 @@ import { close as serverExit, start as serverStart } from "./components/server";
     { info, type: "ancestors", silent: true }
   );
 
+  // lets also load in asset of the dev-server
+  for (const asset of assetFolders)
+  {
+    const assetLocation = path.join(info.script, asset);
+    await handleAsset(info.script, assetLocation, translations, assets, assetRegexp);
+  }
 
-  process.on("SIGINT", () => {
-    console.log(); // extra for ctrl + C 
-    serverExit();
+  const shutdown = () => {
+    console.log(); // spacing for Ctrl+C
+    httpExit();
     process.exit(0);
-  });
+  };
 
-  await serverStart(info, translations, assets);
+  process.on("SIGINT", shutdown);   // Ctrl+C
+  process.on("SIGTERM", shutdown);  // kill <pid>, Docker stop
+  process.on("SIGHUP", shutdown);   // terminal closed
+
+  await httpStart(info, translations, assets, packageJSON);
 })();

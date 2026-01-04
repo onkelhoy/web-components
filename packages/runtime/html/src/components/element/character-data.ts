@@ -9,7 +9,10 @@ export default abstract class CharacterData extends Node {
   }
 
   override get textContent() { return this._textContent ?? "" }
-  override set textContent(value: string) { this._textContent = value.trim() }
+  override set textContent(value: string) { 
+    this._textContent = value.trim();
+    this.dirty("textContent");
+  }
 
   get data() { return this.textContent }
   set data(value: string) { this.textContent = value }
@@ -20,6 +23,6 @@ export default abstract class CharacterData extends Node {
   deleteData(offset:number, count:number) { 
     const start = this.textContent.slice(0, offset);
     const end = this.textContent.slice(offset + count, this.textContent.length);
-    this._textContent = start + end;
+    this.textContent = start + end;
   }
 }

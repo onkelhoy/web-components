@@ -4,8 +4,10 @@ import type Document from "./document";
 import type DocumentType from "./document-type";
 
 import type { Token } from "../tokenise";
-import { Builder, Query } from "../util";
+import { Builder, Queue } from "../util";
+import { Query } from "../query";
 
+type QueryQueue = Queue<ReturnType<typeof Query>[number]>;
 export default class Element extends Node {
   public constructor(ownerDocument?: Document, tagName = "") {
     super(ownerDocument);
@@ -21,7 +23,17 @@ export default class Element extends Node {
     this._innerHTML = null;
     return super.removeChild(child);
   }
-  get children() { return Array.from(this._childNodes).filter(node => node instanceof Element) }
+
+  private _children: Element[]|null = null;
+  get children() { 
+    if (this._children === null || this._dirty.has("children"))
+    {
+      this._dirty.delete("children");
+      this._children = Array.from(this._childNodes).filter(node => node instanceof Element) 
+    }
+
+    return this._children;
+  }
 
   get previousElementSibling():Element|null {
     if (!this.parentElement) return null;
@@ -53,7 +65,8 @@ export default class Element extends Node {
       this._classList = new DOMTokenList(this.className.split(" "));
       this._classList.addEventListener("change", () => {
         this._outerHTML = null;
-        this._className = Array.from(this._classList ?? []).join(" ")
+        this.dirty("innerHTML");
+        this._className = Array.from(this._classList ?? []).join(" ");
       });
     }
     return this._classList;
@@ -64,26 +77,30 @@ export default class Element extends Node {
   set tagName(value:string) { this._tagName = value }
 
   get innerHTML() {
-    if (!this._innerHTML)
+    if (!this._innerHTML || this._dirty.has("innerHTML"))
     {
-      this._innerHTML = this._childNodes.map(child => {
+      this._innerHTML = (!this._dirty.has("textContent") && this._textContent ? this._textContent : "") + this._childNodes.map(child => {
         if (child instanceof Element) return child.outerHTML;
         if (child.nodeType === Node.COMMENT_NODE) return `<!-- ${child.textContent} -->`
         if (child.nodeType === Node.DOCUMENT_TYPE_NODE) return `<!DOCTYPE ${(child as DocumentType).name}>`
 
         return child.textContent
       }).join("");
+
+      this._dirty.delete("innerHTML");
     }
     return this._innerHTML;
   }
   private _innerHTML: string|null = null;
   set innerHTML(value:string) {
     this._innerHTML = value;
+    this._dirty.delete("innerHTML");
+    this.dirty("innerHTML");
     this.setHTML(value);
   }
 
   get outerHTML():string {
-    if (!this._outerHTML)
+    if (!this._outerHTML || this._dirty.has("outerHTML"))
     {
       const attributes = Array.from(this.attributes.keys()).map(key => this.attributes.get(key) === true ? key : `${key}="${this.attributes.get(key)}"`);
       
@@ -91,6 +108,7 @@ export default class Element extends Node {
       const className = trimmedClassName ? ` class="${trimmedClassName}"` : "";
       
       this._outerHTML = `<${this.tagName}${className}${attributes.length ? " " + attributes.join(" ") : ""}`;
+      this._dirty.delete("outerHTML");
     }
 
     return `${this._outerHTML}${this.innerHTML ? `>${this.innerHTML}</${this.tagName}>` : " />"}`;
@@ -102,7 +120,11 @@ export default class Element extends Node {
     if (typeof value === "string") return value;
     return "";
   }
-  set id(value: string) { this._attributes.set("id", value) }
+  set id(value: string) { 
+    this._attributes.set("id", value);
+    this._outerHTML = null;
+    this.dirty("innerHTML");
+  }
 
   get attributes():Map<string, string|true> { return new Map(this._attributes) };
   private _attributes = new Map<string, string|true>();
@@ -112,31 +134,39 @@ export default class Element extends Node {
     {
       this._attributes.set(key, attributes[key]);
     }
+    this.dirty("innerHTML");
   } 
 
   // expose tokens for whatever reason
   private _tokens: Token[] = [];
   get tokens() { return this._tokens }
 
-  setHTML(value:string) { this._tokens = Builder(this, value) }
+  setHTML(value:string) { 
+    this._tokens = Builder(this, value);
+    this._outerHTML = null;
+  }
   getAttribute(name: string) {
     return this._attributes.get(name);
+  }
+  hasAttribute(name: string) {
+    return this._attributes.has(name);
   }
   setAttribute(name: string, value?: string) {
     this._attributes.set(name, value ? value : true);
     this._outerHTML = null;
-  }
-  hasAttribute(name: string) {
-    return this._attributes.has(name);
+    this._outerHTML = null;
+    this.dirty("innerHTML");
   }
   toggleAttribute(name: string) {
     if (this._attributes.has(name)) return this._attributes.delete(name);
     this._attributes.set(name, true);
     this._outerHTML = null;
+    this.dirty("innerHTML");
     return true;
   }
   removeAttribute(name: string) {
     this._outerHTML = null;
+    this.dirty("innerHTML");
     return this._attributes.delete(name);
   }
   matches(selector: string) {
@@ -147,22 +177,24 @@ export default class Element extends Node {
       return Element.matches(this, last);
     }
   }
-  querySelector<T extends Element>(selector: string|ReturnType<typeof Query>): T | null {
-    const query = Element.getQuery("querySelector", selector);
-    return Element.queryInternal<T>(this, query, false);
+  querySelector(selector: string|QueryQueue) {
+    const queue = Element.getQuery("querySelector", selector);
+    // return Element.queryInternal(this, query, false);
+    return Element.matchesDeep(this, queue);
   }
-  querySelectorAll<T extends Element>(selector: string|ReturnType<typeof Query>): T[] {
+  querySelectorAll(selector: string|QueryQueue) {
     const query = Element.getQuery("querySelectorAll", selector);
-    return Element.queryInternal<T>(this, query, true);
+    // return Element.queryInternal(this, query, true);
   }
-  closest<T extends Element>(selector: string|ReturnType<typeof Query>): T | null {
-    const query = Element.getQuery("closest", selector);
-
+  closest(selector: string|QueryQueue) {
+    const query = Element.getQuery("closest", selector).pop();
+    if (!query) return null;
+    
     let current: Element | null = this;
 
     while (current) {
-      if (Element.matches(current, query[0])) {
-        return current as T;
+      if (Element.matches(current, query)) {
+        return current;
       }
       current = current.parentElement;
     }
@@ -170,11 +202,11 @@ export default class Element extends Node {
     return null;
   }
 
-  private static getQuery(name: string, selector:string|ReturnType<typeof Query>) {
+  private static getQuery(name: string, selector:string|QueryQueue) {
     if (selector === "") throw new SyntaxError(`Failed to execute '${name}' on 'Element': The provided selector is empty.`);
     if (typeof selector === "string")
     {
-      return Query(selector).reverse();
+      return new Queue<ReturnType<typeof Query>[number]>(Query(selector));
     }
 
     return selector;
@@ -184,7 +216,7 @@ export default class Element extends Node {
     
     if (query.id && elm.id !== query.id) return false; 
 
-    if (query.class && !elm.classList.contains(query.class)) return false;
+    if (query.class && !query.class.every(className => elm.classList.contains(className))) return false;
 
     if (query.attribute) {
       const value = elm.attributes.get(query.attribute.name);
@@ -199,55 +231,81 @@ export default class Element extends Node {
 
     return true;
   }
-  private static queryInternal<T extends Element>(target: Element, selector: ReturnType<typeof Query>, all: false): T | null;
-  private static queryInternal<T extends Element>(target: Element, selector: ReturnType<typeof Query>, all: true): T[];
-  private static queryInternal<T extends Element>(
-    target: T,
-    selector: ReturnType<typeof Query>,
-    all: boolean
-  ): T | T[] | null {
-    const results: T[] = [];
-    const parts = [...selector]; // don’t mutate caller
-    const last = parts.pop();
-    if (!last) return all ? [] : null;
+  // private static queryInternal<T extends Element>(target: T, selector: ReturnType<typeof Query>, all: false): T | null;
+  // private static queryInternal<T extends Element>(target: T, selector: ReturnType<typeof Query>, all: true): T[];
+  // private static queryInternal<T extends Element>(
+  //   target: T,
+  //   selector: ReturnType<typeof Query>,
+  //   all: boolean
+  // ): T | T[] | null {
 
-    const walk = (node: T) => {
-      for (const child of node.children) {
-        if (child.nodeType !== Node.ELEMENT_NODE) continue;
+  //   while (selector.length > 0)
+  // }
 
-        const el = child as T;
+  // private static matchesDeep(element: Element, queue: QueryQueue, firstmatch = true, isdescendant = false): Element|null {
+  //   const query = queue.pop();
+  //   if (!query) return element;
 
-        if (Element.matches(el, last)) {
-          if (parts.length === 0) {
-            results.push(el);
-            if (!all) return;
-          } else {
-            // match ancestors backwards
-            let current: Element | null = el.parentElement;
-            let ok = true;
+  //   if (!isdescendant && !Element.matches(element, query)) return null;
 
-            for (let i = parts.length - 1; i >= 0; i--) {
-              if (!current || !Element.matches(current, parts[i])) {
-                ok = false;
-                break;
-              }
-              current = current.parentElement;
-            }
+  //   if (query.relation === "sibling")
+  //   {
+  //     if (!element.nextElementSibling) return null;
+  //     return this.matchesDeep(element.nextElementSibling, queue.copy());
+  //   }
 
-            if (ok) {
-              results.push(el);
-              if (!all) return;
-            }
-          }
-        }
+  //   for (const child of element.children)
+  //   {
+  //     const copy = queue.copy();
+  //     const matched = this.matchesDeep(child, copy, false, query.relation === "descendant");
+  //     if (matched) return matched;
+  //   }
 
-        walk(el);
-        if (!all && results.length) return;
-      }
-    };
+  //   return null;
+  // }
 
-    walk(target);
+  // private static childMatches(
+  //   element: Element,
+  //   queue: QueryQueue,
+  // ) {
+  //   const queries = queue.copy(); 
+  //   let target = element;
 
-    return all ? results : results[0] ?? null;
-  }
+  //   while (queries.length > 0) 
+  //   {
+  //     let passed = false;
+  //     let query = queries.pop()!;
+
+  //     if (!Element.matches(target, query)) return false;
+
+  //     if (query.relation === "sibling")
+  //     {
+  //       target = 
+  //     }
+
+  //     // const next = queries.peek();
+      
+  //     // for (const child of target.children)
+  //     // {
+  //     //   if (!Element.matches(child, query)) continue;
+  //     //   if (!next) return child;
+
+  //     //   if (next.relation === "sibling")
+  //     //   {
+  //     //     // we must check the next sibling 
+  //     //     passed = false;
+  //     //     query = queries.pop()!;
+  //     //     continue;
+  //     //   }
+        
+  //     //   passed = true;
+  //     //   target = child;
+  //     //   break;
+  //     // }
+      
+  //     // if (!passed && query.relation !== "descendant") return false;
+  //   }
+
+  //   return target;
+  // }
 }

@@ -28,6 +28,8 @@ export default class Document extends Element {
   override set outerHTML(value:string) { this.setHTML(value) }
 
   get documentElement(): Element|null { return this.children[0] ?? null }
+  get body(): Element|null { return this.querySelector("body") }
+  get head(): Element|null { return this.querySelector("head") }
   get title(): string|null { return this.querySelector("head > title")?.textContent ?? null }
   set title(value: string) { 
     const title = this.querySelector("head > title");

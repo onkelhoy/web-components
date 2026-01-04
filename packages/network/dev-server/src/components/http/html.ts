@@ -1,0 +1,228 @@
+import fs from "node:fs";
+import path from "node:path";
+import { Document } from "@papit/html";
+import { Arguments, getPathInfo, LocalPackage, Terminal } from "@papit/util-cli";
+
+export async function getHTML(
+  info: ReturnType<typeof getPathInfo>,
+  packageJSON: LocalPackage,
+  FFs: string[],
+  currentURL: string,
+) {
+  const baseDOM = new Document();
+  let baseTemplateSource = path.join(info.script!, "asset/templates/base.html");
+  if (typeof Arguments.args.flags['base-template'] === "string" && fs.existsSync(Arguments.args.flags['base-template']))
+  {
+    baseTemplateSource = Arguments.args.flags['base-template'];
+  }
+
+  if (!fs.existsSync(baseTemplateSource))
+  {
+    console.log(info.script);
+    Terminal.error("could not find base template html file");
+    process.exit(1);
+  }
+
+  baseDOM.innerHTML = fs.readFileSync(baseTemplateSource, { encoding: "utf-8" });
+
+  // const htmlFiles = FFs
+  //   .filter(name => name.endsWith(".html"))
+  //   .sort((a, b) => {
+  //     if (a.startsWith("index")) return 1;
+  //     return a.localeCompare(b);
+  //   });
+    
+  // if (htmlFiles.length > 0)
+  // {
+  //   const dom = new Document();
+  //   const content = fs.readFileSync(path.join(currentURL, htmlFiles[0]), { encoding: "utf-8" });
+  //   dom.innerHTML = content;
+
+  //   if (dom.body) 
+  //   {
+  //     baseDOM.body!.innerHTML = dom.body.innerHTML;
+  //   }
+
+  //   // if (dom.querySelector())
+  //   // if 
+
+  //   // let html!: Element;
+  //   // let head!: Element;
+
+  //   // if (!dom.querySelector("html"))
+  //   // { 
+  //   //   html = dom.createElement("html");
+  //   //   html.innerHTML = content;
+  //   //   dom.innerHTML = html.outerHTML;
+  //   // }
+
+  //   // if (!dom.querySelector("head"))
+  //   // {
+  //   //   head = dom.createElement("head");
+  //   //   head.innerHTML = `
+  //   //     <meta />
+  //   //     <meta /> 
+  //   //     <link data-theme rel="stylesheet" href="" />
+  //   //     <title>${packageJSON.name}</title>
+  //   //   `
+  //   //   html.appendChild(head);
+  //   // }
+  //   // if (!head.querySelector("style[data-theme]"))
+  //   // {
+  //   //   const theme = dom.createElement("link");
+  //   //   // theme.attributes['data-theme'] = true;
+  //   //   // theme.attributes[]
+  //   // }
+  //   // if (head.querySelector)
+  // }
+  // else 
+  constructExplorer(baseDOM, info, packageJSON, FFs, currentURL);
+
+  return baseDOM;
+}
+
+function mergeDocuments(base: Document, html: Document) {
+
+}
+function constructExplorer(
+  document: Document,
+  info: ReturnType<typeof getPathInfo>,
+  packageJSON: LocalPackage,
+  FFs: string[],
+  currentURL: string,
+) {
+  document.title = packageJSON.name
+
+  if (info.local !== info.package)
+  {
+    document.title += ` ${path.dirname(info.local)}`
+  }
+
+  const styles = document.createElement("style");
+  document.head?.appendChild(styles);
+
+  styles.textContent = `
+    ul {
+      list-style: none;
+      padding-left: 0;
+
+      li {
+        margin-bottom: 0.25rem;
+        &:last-child {
+          margin-bottom: 0;
+        }
+        font-size: 12pt;
+        font-family: monospace;
+        color: #000;
+
+        &.hidden {
+          color: #444;
+        }
+
+        a {
+          color: inherit;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          text-underline-offset: 2px;
+          text-decoration: none;
+
+          &:hover {
+            text-decoration: underline;
+          }
+
+          span.icon {
+            color: #222;
+            border-radius: 0.25rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            background-color: #ccc;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 8pt;
+          }
+        }
+      }
+    }
+  ` 
+
+  const folders = document.createElement("ul");
+  
+  const files = document.createElement("ul");
+  
+  FFs.sort((a, b) => a.localeCompare(b)).forEach(name => {
+    const url = path.join(currentURL, name);
+    const stat = fs.statSync(url);
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <a href="${name}">
+        <span class="icon"></span>
+        <span class="name">${name}</span>
+      </a>
+    `
+
+    const anchor = li.querySelector("a")!;
+    const iconspan = anchor.querySelector("span.icon")!;
+    const namespan = anchor.querySelector("span.name")!;
+
+    if (!name.startsWith(".env") && !name.startsWith(".git") && name.startsWith(".")) 
+    {
+      li.classList.add("hidden");
+    }
+    
+    if (stat.isFile())
+    {
+      iconspan.innerHTML = getFileIcon(name);
+
+      anchor.insertBefore(iconspan, namespan);
+      files.appendChild(li);
+      return;
+    }
+    if (stat.isDirectory())
+    {
+      console.log('iconsapn wht the ghello?', iconspan, li.outerHTML)
+      iconspan.innerHTML = "FOL"
+
+      anchor.setAttribute("href", name + "/");
+      folders.appendChild(li);
+    }
+  });
+
+
+  document.body?.appendChild(folders)
+  document.body?.appendChild(files)
+}
+
+function getFileIcon(name: string) {
+  if (name.endsWith(".html"))
+  {
+    return "</>"
+  }
+  if (name.endsWith(".js")) 
+  {
+    return "JS"
+  }
+  if (name.endsWith(".ts")) 
+  {
+    return "TS"
+  }
+  if (name.endsWith(".json")) 
+  {
+    return "{}"
+  }
+  if (name.endsWith(".css"))
+  {
+    return "css"
+  }
+  if (name.endsWith(".md"))
+  {
+    return "MD"
+  }
+  if (name.startsWith(".git"))
+  {
+    return "GIT"
+  }
+
+  return "FIL";
+}

@@ -11,7 +11,7 @@
   "scripts": {
     "build": "npx @papit/build",
     "watch": "tsc -w",
-    "start": "npm run build && node ./lib/bundle.js",
+    "start": "npx @papit/build -- --info --live --execute ./lib/bundle.js",
     "test": "node --test",
     "preversion": "papit-version",
     "postversion": "papit-version",

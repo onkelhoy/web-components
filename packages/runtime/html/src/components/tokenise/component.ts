@@ -40,7 +40,6 @@ export function Tokenise(text: string): Token[] {
   }
 
   const emitDoctype = () => {
-    console.log('emit doctype', currentTagName.replace(/doctype\s?/i, '').trim())
     tokens.push({ type: "doctype", value: currentTagName.replace(/doctype\s?/i, '').trim() });
     currentTagName = "";
   }
