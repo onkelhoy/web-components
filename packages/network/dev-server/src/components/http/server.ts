@@ -4,16 +4,16 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { Arguments, getPathInfo, LocalPackage, Terminal } from "@papit/util-cli";
-import { Document, Element } from "@papit/html";
+
+// components
+import { HttpError } from "../errors";
+import { streamFile } from "../asset/stream-file";
+import { sendAsset, Translation } from "../asset";
+import { getHTML } from "../html";
 
 // local imports 
 import { upgrade } from "./socket";
-// import { request as handlerequest } from "../request";
-import { sendAsset, Translation } from "../asset";
 import { getPort } from "./port";
-import { getHTML } from "./html";
-import { HttpError } from "../errors";
-import { streamFile } from "../asset/stream-file";
 
 let PORT = Number(Arguments.args.flags.port || 3000);
 
