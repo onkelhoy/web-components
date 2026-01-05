@@ -5,6 +5,7 @@ import { Arguments, getJSON, getPathInfo, Terminal } from "@papit/util-cli";
 import { Translation, Translations } from "./types";
 import { deepMerge } from "./util";
 import { NotFoundError } from "../errors";
+import { IncomingMessage } from "node:http";
 
 async function extractTranslation(folder: string, translations: Translations) {
   const files = fs.readdirSync(folder).filter(name => fs.statSync(path.join(folder, name)).isFile() && name.endsWith(".json"));
@@ -26,12 +27,7 @@ export function getAssetFolders() {
     if (typeof Arguments.args.flags.asset === "string") folders.push(Arguments.args.flags.asset);
     else if (Array.isArray(Arguments.args.flags.asset)) folders.push(...Arguments.args.flags.asset);
   }
-  const regexp = new RegExp(`[${folders.join("|")}]`);
-
-  return {
-    folders,
-    regexp,
-  }
+  return folders;
 }
 
 export async function handleAsset(
@@ -39,7 +35,7 @@ export async function handleAsset(
   location: string, 
   translations: Record<string, Translation>, 
   assets: Record<string, string[]>,
-  assetRegexp: RegExp, // /[assets?|public|files?]/
+  folders: string[], // [assets|public|files]
   deep = 0,
 ) {
   if (!fs.existsSync(location)) return;
@@ -49,18 +45,31 @@ export async function handleAsset(
 
   for (const name of FFs) 
   {
-    const lowerName = name.toLowerCase();
-    const url = path.join(location, lowerName);
-    const relativeUrl = url.replace(root, "").replace(assetRegexp, "");
+    const url = path.join(location, name);
     const stat = fs.statSync(url);
     const isDirectory = stat.isDirectory();
     if (!(stat.isFile() || isDirectory)) return;
 
-    if (!assets[relativeUrl]) assets[relativeUrl] = [];
-    assets[relativeUrl].push(url);
+
+    const relativeURL = path.relative(root, url);
+    
+    const absoluteURL = '/' + relativeURL;
+    if (!assets[absoluteURL]) assets[absoluteURL] = [];
+    assets[absoluteURL].push(url);
+
+    const segments = relativeURL.split(path.sep);
+    // Remove first segment if it's an asset folder
+    if (folders.includes(segments[0])) {
+      segments.shift();
+      const relativeURL = '/' + segments.join('/');
+
+      if (!assets[relativeURL]) assets[relativeURL] = [];
+      assets[relativeURL].push(url);
+    }
     
     if (isDirectory)
     {
+      const lowerName = name.toLowerCase();
       if (lowerName.startsWith("translation"))
       {
         await extractTranslation(url, translations);
@@ -69,7 +78,7 @@ export async function handleAsset(
 
       if (deep < 10)
       {
-        await handleAsset(root, url, translations, assets, assetRegexp, deep + 1);
+        await handleAsset(root, url, translations, assets, folders, deep + 1);
       }
       else if (Arguments.warning)
       {
@@ -81,16 +90,19 @@ export async function handleAsset(
 
 
 const cachedFiles:Record<string,string> = {}
-function getAsset(
+export function getAsset(
   translations: Record<string, Translation>, 
   assets: Record<string, string[]>,
-  url: string,
+  req: IncomingMessage,
 ) {
-  if (cachedFiles[url]) return cachedFiles[url];
+  const url = req.url;
+  if (!url) return null;
+  if (path.extname(url) === "") return null;
 
+  if (cachedFiles[url]) return cachedFiles[url];
   if (Arguments.debug) console.log('requesting', url)
-    
-  if (assets[url])
+
+  if (assets[url]) 
   {
     const files = [...assets[url]];
     while (files.length > 0)

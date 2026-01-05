@@ -23,7 +23,8 @@ export async function getHTML(
     process.exit(1);
   }
 
-  baseDOM.innerHTML = fs.readFileSync(baseTemplateSource, { encoding: "utf-8" });
+  const content = fs.readFileSync(baseTemplateSource, { encoding: "utf-8" });
+  baseDOM.innerHTML = content;
 
   // const htmlFiles = FFs
   //   .filter(name => name.endsWith(".html"))
@@ -91,64 +92,19 @@ function constructExplorer(
   FFs: string[],
   currentURL: string,
 ) {
-  document.title = packageJSON.name
+  // document.title = packageJSON.name
 
-  if (info.local !== info.package)
-  {
-    document.title += ` ${path.dirname(info.local)}`
-  }
+  // if (info.local !== info.package)
+  // {
+  //   document.title = `${document.title} ${path.dirname(info.local)}`
+  // }
 
-  const styles = document.createElement("style");
-  document.head?.appendChild(styles);
-
-  styles.textContent = `
-    ul {
-      list-style: none;
-      padding-left: 0;
-
-      li {
-        margin-bottom: 0.25rem;
-        &:last-child {
-          margin-bottom: 0;
-        }
-        font-size: 12pt;
-        font-family: monospace;
-        color: #000;
-
-        &.hidden {
-          color: #444;
-        }
-
-        a {
-          color: inherit;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          text-underline-offset: 2px;
-          text-decoration: none;
-
-          &:hover {
-            text-decoration: underline;
-          }
-
-          span.icon {
-            color: #222;
-            border-radius: 0.25rem;
-            width: 1.5rem;
-            height: 1.5rem;
-            background-color: #ccc;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 8pt;
-          }
-        }
-      }
-    }
-  ` 
+  const link = document.createElement("link");
+  link.setAttribute("rel", "stylesheet");
+  link.setAttribute("href", "templates/ff.css");
+  document.head?.appendChild(link);
 
   const folders = document.createElement("ul");
-  
   const files = document.createElement("ul");
   
   FFs.sort((a, b) => a.localeCompare(b)).forEach(name => {
@@ -164,7 +120,6 @@ function constructExplorer(
 
     const anchor = li.querySelector("a")!;
     const iconspan = anchor.querySelector("span.icon")!;
-    const namespan = anchor.querySelector("span.name")!;
 
     if (!name.startsWith(".env") && !name.startsWith(".git") && name.startsWith(".")) 
     {
@@ -175,13 +130,11 @@ function constructExplorer(
     {
       iconspan.innerHTML = getFileIcon(name);
 
-      anchor.insertBefore(iconspan, namespan);
       files.appendChild(li);
       return;
     }
     if (stat.isDirectory())
     {
-      console.log('iconsapn wht the ghello?', iconspan, li.outerHTML)
       iconspan.innerHTML = "FOL"
 
       anchor.setAttribute("href", name + "/");

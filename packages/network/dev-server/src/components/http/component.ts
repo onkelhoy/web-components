@@ -9,9 +9,10 @@ import { Document, Element } from "@papit/html";
 // local imports 
 import { upgrade } from "./socket";
 // import { request as handlerequest } from "../request";
-import { Translation } from "../asset";
+import { getAsset, Translation } from "../asset";
 import { getPort } from "./port";
 import { getHTML } from "./html";
+import { HttpError } from "../errors";
 
 let PORT = Number(Arguments.args.flags.port || 3000);
 
@@ -84,26 +85,48 @@ export async function start(
       stream.on("close", () => res.end());
     }
 
-    if (assets[req.url]) 
-    {
-      const copy = [...assets[req.url]];
-      while (copy.length > 0)
+    try {
+      const data = getAsset(translations, assets, req);
+      if (data !== null) 
       {
-        const url = copy.pop()!;
-        if (!fs.existsSync(url)) continue;
-        return void sendFile(url);
+        res.end(data);
+        return;
       }
-
-      Terminal.error("could not find asset");
-      console.log({
-        url: req.url, 
-        assets: assets[req.url],
-      });
-
-      res.statusCode = 404;
-      res.end("could not find asset");
-      return;
     }
+    catch (e) 
+    {
+      if (e instanceof HttpError)
+      {
+        res.statusCode = e.status;
+        res.write(e.message);
+        res.end();
+        return;
+      }
+    }
+    // if (assets[req.url]) 
+    // {
+    //   const copy = [...assets[req.url]];
+    //   while (copy.length > 0)
+    //   {
+    //     const url = copy.pop()!;
+    //     if (!fs.existsSync(url)) continue;
+    //     return void sendFile(url);
+    //   }
+
+    //   Terminal.error("could not find asset");
+    //   console.log({
+    //     url: req.url, 
+    //     assets: assets[req.url],
+    //   });
+
+    //   res.statusCode = 404;
+    //   res.end("could not find asset");
+    //   return;
+    // }
+    // else 
+    // {
+    //   // console.log('not found', req.url, assets)
+    // }
 
     let currentURL = path.join(info.local, req.url);
     if (!fs.existsSync(currentURL))

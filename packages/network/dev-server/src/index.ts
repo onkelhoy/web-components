@@ -22,7 +22,7 @@ import { close as httpExit, start as httpStart } from "./components/http";
 
   const translations: Record<string, Translation> = {};
   const assets: Record<string, string[]> = {};
-  const { folders: assetFolders, regexp: assetRegexp } = getAssetFolders();
+  const assetFolders = getAssetFolders();
 
   // NOTE: order is reversed -> last is current package, so looking for asset should always start at the end of array of "assets"
   const { map:ancestors } = await getDependencyBloodline(
@@ -37,7 +37,7 @@ import { close as httpExit, start as httpStart } from "./components/http";
         for (const asset of assetFolders)
         {
           const assetLocation = path.join(b.location, asset);
-          await handleAsset(b.location, assetLocation, translations, assets, assetRegexp);
+          await handleAsset(b.location, assetLocation, translations, assets, assetFolders);
         }
       }
     }, 
@@ -48,7 +48,7 @@ import { close as httpExit, start as httpStart } from "./components/http";
   for (const asset of assetFolders)
   {
     const assetLocation = path.join(info.script, asset);
-    await handleAsset(info.script, assetLocation, translations, assets, assetRegexp);
+    await handleAsset(info.script, assetLocation, translations, assets, assetFolders);
   }
 
   const shutdown = () => {

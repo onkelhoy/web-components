@@ -110,7 +110,7 @@ describe("Node / Element", () => {
 
       const expectedInner = '<span title="hi">Hello</span>';
       const expectedOuter =
-        '<div class="foo bar" id="main">' + expectedInner + '</div>';
+        '<div id="main" class="foo bar">' + expectedInner + '</div>';
 
       assert.strictEqual(el.innerHTML, expectedInner, "expected inner failed");
       assert.strictEqual(el.outerHTML, expectedOuter, "expected outer failed");
@@ -253,7 +253,7 @@ describe("Node / Element", () => {
     });
   });
 
-  describe.only("className", () => {
+  describe("className", () => {
     let doc;
 
     beforeEach(() => {
@@ -280,9 +280,8 @@ describe("Node / Element", () => {
     });
   })
 
-  describe.only("querySelector", () => {
+  describe("querySelector", () => {
     let doc;
-    let el;
 
     beforeEach(() => {
       doc = new Document();

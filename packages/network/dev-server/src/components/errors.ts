@@ -1,4 +1,4 @@
-abstract class HttpError extends Error {
+export abstract class HttpError extends Error {
   status!: number;
 
   constructor(message?: string, options?: ErrorOptions) {
