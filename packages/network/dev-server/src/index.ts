@@ -24,6 +24,13 @@ import { close as httpExit, start as httpStart } from "./components/http";
   const assets: Record<string, string[]> = {};
   const assetFolders = getAssetFolders();
 
+  // we start by loading assets from dev-server (so we allow for overrides)
+  for (const asset of assetFolders)
+  {
+    const assetLocation = path.join(info.script, asset);
+    await handleAsset(info.script, assetLocation, translations, assets, assetFolders);
+  }
+
   // NOTE: order is reversed -> last is current package, so looking for asset should always start at the end of array of "assets"
   const { map:ancestors } = await getDependencyBloodline(
     packageJSON.name, 
@@ -43,13 +50,6 @@ import { close as httpExit, start as httpStart } from "./components/http";
     }, 
     { info, type: "ancestors", silent: true }
   );
-
-  // lets also load in asset of the dev-server
-  for (const asset of assetFolders)
-  {
-    const assetLocation = path.join(info.script, asset);
-    await handleAsset(info.script, assetLocation, translations, assets, assetFolders);
-  }
 
   const shutdown = () => {
     console.log(); // spacing for Ctrl+C

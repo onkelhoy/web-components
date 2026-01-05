@@ -221,6 +221,51 @@ describe("Node / Element", () => {
       assert.strictEqual(span.tagName, "span");
       assert.strictEqual(text.textContent, "Hi");
     });
+
+    it("should get documentElement, doctype, title, body, head", () => {
+      doc.innerHTML = `
+        <!doctype html>
+        <html>
+          <head>
+            <title>Hello World</title>
+          </head>
+          <body>
+            alright 
+          </body>
+        <html>
+      `;
+
+      assert.ok(!!doc.documentElement, "documentElement is missing");
+      assert.strictEqual(doc.documentElement.tagName, "html");
+      assert.ok(!!doc.doctype, "doctype is missing");
+      assert.strictEqual(doc.doctype.name, "html");
+      assert.ok(!!doc.head, "head is missing");
+      assert.ok(!!doc.title, "title is missing");
+      assert.strictEqual(doc.title, "Hello World");
+      assert.ok(!!doc.body, "body is missing");
+      assert.ok(doc.body.textContent, "alright");
+    });
+
+
+    it.only("should assign title", () => {
+      doc.innerHTML = `
+        <!doctype html>
+        <html>
+          <head>
+            <title>Hello World</title>
+          </head>
+          <body>
+            alright 
+          </body>
+        <html>
+      `;
+
+      assert.ok(!!doc.title, "title is missing");
+      assert.strictEqual(doc.title, "Hello World");
+
+      doc.title = "hejsan banan";
+      assert.strictEqual(doc.title, "hejsan banan");
+    });
   });
 
   describe("Mutable", () => {
@@ -336,6 +381,13 @@ describe("Node / Element", () => {
       assert.strictEqual(p.length, 2);
       assert.strictEqual(p[0].tagName, "span");
       assert.strictEqual(p[1].tagName, "br");
+    });
+
+    it.only("should access same element multiple times", () => {
+      assert.strictEqual(doc.querySelector("body > p").innerHTML, "text 1")
+      assert.strictEqual(doc.querySelector("body > p").innerHTML, "text 1")
+      assert.strictEqual(doc.querySelector("body > p").innerHTML, "text 1")
+      assert.strictEqual(doc.querySelector("body > p").innerHTML, "text 1")
     });
   });
 });

@@ -5,7 +5,8 @@ import { Arguments, getJSON, getPathInfo, Terminal } from "@papit/util-cli";
 import { Translation, Translations } from "./types";
 import { deepMerge } from "./util";
 import { NotFoundError } from "../errors";
-import { IncomingMessage } from "node:http";
+import { IncomingMessage, ServerResponse } from "node:http";
+import { streamFile } from "./stream-file";
 
 async function extractTranslation(folder: string, translations: Translations) {
   const files = fs.readdirSync(folder).filter(name => fs.statSync(path.join(folder, name)).isFile() && name.endsWith(".json"));
@@ -89,17 +90,18 @@ export async function handleAsset(
 }
 
 
-const cachedFiles:Record<string,string> = {}
-export function getAsset(
+export async function sendAsset(
   translations: Record<string, Translation>, 
   assets: Record<string, string[]>,
   req: IncomingMessage,
+  res: ServerResponse<IncomingMessage> & { req: IncomingMessage },
+  signal?: AbortSignal,
 ) {
   const url = req.url;
+
   if (!url) return null;
   if (path.extname(url) === "") return null;
 
-  if (cachedFiles[url]) return cachedFiles[url];
   if (Arguments.debug) console.log('requesting', url)
 
   if (assets[url]) 
@@ -108,21 +110,11 @@ export function getAsset(
     while (files.length > 0)
     {
       const filelocation = files.pop()!;
-      try {
-        const data = fs.readFileSync(filelocation, {encoding: "utf-8"});
-        if (!Arguments.args.flags['no-cache']) cachedFiles[url] = data;
-        return data;
-      }
-      catch (e)
+      const status = await streamFile(filelocation, req.url ?? url, res, signal);
+
+      if (status === 200)
       {
-        if (Arguments.warning)
-        {
-          Terminal.warn(`"${filelocation}" not found`);
-        }
-        if (Arguments.debug)
-        {
-          console.trace(e);
-        }
+        return true;
       }
     }
   }

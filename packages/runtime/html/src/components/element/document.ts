@@ -31,9 +31,9 @@ export default class Document extends Element {
   get body(): Element|null { return this.querySelector("body") }
   get head(): Element|null { return this.querySelector("head") }
   get title(): string|null { return this.querySelector("head > title")?.textContent ?? null }
-  set title(value: string) { 
+  set title(value: unknown) { 
     const title = this.querySelector("head > title");
-    if (title) title.textContent = value;
+    if (title) title.textContent = String(value);
   }
 
   override appendChild(child: Node): void {

@@ -221,7 +221,7 @@ export default class Element extends Node {
     if (selector === "") throw new SyntaxError(`Failed to execute '${name}' on 'Element': The provided selector is empty.`);
     if (typeof selector === "string")
     {
-      return new Queue<ReturnType<typeof Query>[number]>(Query(selector).reverse());
+      return new Queue<ReturnType<typeof Query>[number]>([...Query(selector)].reverse());
     }
 
     return selector;
@@ -245,16 +245,6 @@ export default class Element extends Node {
 
     return true;
   }
-  // private static queryInternal<T extends Element>(target: T, selector: ReturnType<typeof Query>, all: false): T | null;
-  // private static queryInternal<T extends Element>(target: T, selector: ReturnType<typeof Query>, all: true): T[];
-  // private static queryInternal<T extends Element>(
-  //   target: T,
-  //   selector: ReturnType<typeof Query>,
-  //   all: boolean
-  // ): T | T[] | null {
-
-  //   while (selector.length > 0)
-  // }
 
   private static findChain(element: Element, queue: QueryQueue, all = false, allmatches: Element[] = []) {
     const matched = this.checkChain(element, queue.copy());
@@ -293,70 +283,4 @@ export default class Element extends Node {
 
     return null;
   }
-  // private static checkChain(element: Element, queue: QueryQueue, isdescendant = false): Element|null {
-  //   const query = queue.pop();
-  //   if (!query) return element;
-
-  //   if (!isdescendant && !Element.matches(element, query)) return null;
-
-  //   if (query.relation === "sibling")
-  //   {
-  //     if (!element.nextElementSibling) return null;
-  //     return this.checkChain(element.nextElementSibling, queue.copy());
-  //   }
-
-  //   for (const child of element.children)
-  //   {
-  //     const copy = queue.copy();
-  //     const matched = this.checkChain(child, copy, query.relation === "descendant");
-  //     if (matched) return matched;
-  //   }
-
-  //   return null;
-  // }
-
-  // private static childMatches(
-  //   element: Element,
-  //   queue: QueryQueue,
-  // ) {
-  //   const queries = queue.copy(); 
-  //   let target = element;
-
-  //   while (queries.length > 0) 
-  //   {
-  //     let passed = false;
-  //     let query = queries.pop()!;
-
-  //     if (!Element.matches(target, query)) return false;
-
-  //     if (query.relation === "sibling")
-  //     {
-  //       target = 
-  //     }
-
-  //     // const next = queries.peek();
-      
-  //     // for (const child of target.children)
-  //     // {
-  //     //   if (!Element.matches(child, query)) continue;
-  //     //   if (!next) return child;
-
-  //     //   if (next.relation === "sibling")
-  //     //   {
-  //     //     // we must check the next sibling 
-  //     //     passed = false;
-  //     //     query = queries.pop()!;
-  //     //     continue;
-  //     //   }
-        
-  //     //   passed = true;
-  //     //   target = child;
-  //     //   break;
-  //     // }
-      
-  //     // if (!passed && query.relation !== "descendant") return false;
-  //   }
-
-  //   return target;
-  // }
 }

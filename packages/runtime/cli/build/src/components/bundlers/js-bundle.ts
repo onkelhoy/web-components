@@ -78,7 +78,6 @@ async function build(options: BuildOptions) {
 }
 
 async function watch(options: BuildOptions, info: ReturnType<typeof getPathInfo>) {
-
   let counter = 0;
   const ctx = await esbuild.context({
     ...options,
@@ -128,9 +127,9 @@ async function watch(options: BuildOptions, info: ReturnType<typeof getPathInfo>
               session: Terminal.createSession(),
               process: Terminal.spawn("node", {
                 cwd: info.package, 
-                args: [executable],
-                onData: console.log,
-                onError: console.error,
+                args: [executable, ...process.argv.slice(2)],
+                onData: text => Terminal.write(text),
+                onError: text => Terminal.write(text),
                 onClose: console.log.bind("close")
               }),
             });

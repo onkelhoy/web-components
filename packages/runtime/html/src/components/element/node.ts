@@ -96,7 +96,7 @@ export default abstract class Node extends EventTargetPublic {
   }
   protected _textContent: string|null = null;
   set textContent(value: unknown) { 
-    this._childNodes.forEach(this.removeChild);
+    this._childNodes.forEach(child => this.removeChild(child));
     this._textContent = String(value).trim();
     this._dirty.delete("textContent")
     this.dirty("textContent"); 

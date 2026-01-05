@@ -2,9 +2,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { Document } from "@papit/html";
 import { Arguments, getPathInfo, LocalPackage, Terminal } from "@papit/util-cli";
+import { getFile } from "../asset/stream-file";
 
 export async function getHTML(
   info: ReturnType<typeof getPathInfo>,
+  assets: Record<string, string[]>,
   packageJSON: LocalPackage,
   FFs: string[],
   currentURL: string,
@@ -77,7 +79,7 @@ export async function getHTML(
   //   // if (head.querySelector)
   // }
   // else 
-  constructExplorer(baseDOM, info, packageJSON, FFs, currentURL);
+  constructExplorer(baseDOM, assets, info, packageJSON, FFs, currentURL);
 
   return baseDOM;
 }
@@ -87,25 +89,41 @@ function mergeDocuments(base: Document, html: Document) {
 }
 function constructExplorer(
   document: Document,
+  assets: Record<string, string[]>,
   info: ReturnType<typeof getPathInfo>,
   packageJSON: LocalPackage,
   FFs: string[],
   currentURL: string,
 ) {
-  // document.title = packageJSON.name
+  if (typeof packageJSON.name === "string")
+  {
+    document.title = packageJSON.name
+  }
 
-  // if (info.local !== info.package)
-  // {
-  //   document.title = `${document.title} ${path.dirname(info.local)}`
-  // }
+  if (info.local !== info.package)
+  {
+    document.title = `${document.title} ${path.dirname(info.local)}`
+  }
 
   const link = document.createElement("link");
   link.setAttribute("rel", "stylesheet");
-  link.setAttribute("href", "templates/ff.css");
+  link.setAttribute("href", "/templates/explorer.css");
   document.head?.appendChild(link);
 
   const folders = document.createElement("ul");
   const files = document.createElement("ul");
+
+  if (path.relative(info.package, currentURL) !== "")
+  {
+    folders.innerHTML = `
+      <li class="hidden">
+        <a href="..">
+          <span class="icon-wrapper">${getIcon("folder", "..", assets)}</span>
+          <span class="name">..</span>
+        </a>
+      </li>
+    `;
+  }
   
   FFs.sort((a, b) => a.localeCompare(b)).forEach(name => {
     const url = path.join(currentURL, name);
@@ -113,13 +131,13 @@ function constructExplorer(
     const li = document.createElement("li");
     li.innerHTML = `
       <a href="${name}">
-        <span class="icon"></span>
+        <span class="icon-wrapper" />
         <span class="name">${name}</span>
       </a>
     `
 
     const anchor = li.querySelector("a")!;
-    const iconspan = anchor.querySelector("span.icon")!;
+    const iconspan = anchor.querySelector("span.icon-wrapper")!;
 
     if (!name.startsWith(".env") && !name.startsWith(".git") && name.startsWith(".")) 
     {
@@ -128,14 +146,16 @@ function constructExplorer(
     
     if (stat.isFile())
     {
-      iconspan.innerHTML = getFileIcon(name);
-
+      iconspan.innerHTML = getIcon(name, name, assets);
+      li.toggleAttribute("data-file")
+      
       files.appendChild(li);
       return;
     }
     if (stat.isDirectory())
     {
-      iconspan.innerHTML = "FOL"
+      iconspan.innerHTML = getIcon("folder", name, assets);
+      li.toggleAttribute("data-folder")
 
       anchor.setAttribute("href", name + "/");
       folders.appendChild(li);
@@ -147,35 +167,45 @@ function constructExplorer(
   document.body?.appendChild(files)
 }
 
-function getFileIcon(name: string) {
-  if (name.endsWith(".html"))
-  {
-    return "</>"
-  }
-  if (name.endsWith(".js")) 
-  {
-    return "JS"
-  }
-  if (name.endsWith(".ts")) 
-  {
-    return "TS"
-  }
-  if (name.endsWith(".json")) 
-  {
-    return "{}"
-  }
-  if (name.endsWith(".css"))
-  {
-    return "css"
-  }
-  if (name.endsWith(".md"))
-  {
-    return "MD"
-  }
-  if (name.startsWith(".git"))
-  {
-    return "GIT"
-  }
+// , assets: Record<string, string
+// const extname = path.extname(name);
 
-  return "FIL";
+const fallbackIcons:Record<string, string> = {
+  folder: "FOL",
+  temp: "TMP",
+  gitignore: "GIT",
+  gitkeep: "GIT",
+  "d.ts": "dTS",
+  json: "{}",
+  md: "MD",
+  html: "</>", // dont think this will even be shown as it should render it
+}
+
+function getIcon(name: string, original: string, assets: Record<string, string[]>) {
+  const split = original.split(".");
+  split.shift();
+  const shift1 = split.join(".");
+  split.shift();
+  const shift2 = split.join(".");
+
+  const arr = [original, shift1, shift2, name];
+  for (const item of arr)
+  {
+    if (!item) continue;
+
+    const url = `/icons/${item}.svg`;
+    if (assets[url])
+    {
+      const copy = [...assets[url]];
+      while (copy.length > 0)
+      {
+        const icon = getFile(copy.pop()!, url);
+        if (icon.data) return icon.data.content.toString("utf-8");
+      }
+    }
+
+    if (fallbackIcons[item]) return `<span class="icon">${fallbackIcons[item]}</span>`;
+  }
+  
+  return `<span class="icon">${name.slice(0, 3).toUpperCase()}</span>`;
 }

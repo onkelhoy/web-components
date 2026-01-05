@@ -1,3 +1,4 @@
+import { Arguments } from "../arguments";
 import fs from "node:fs";
 
 /**
@@ -20,7 +21,7 @@ export function getJSON<T extends object>(filepath: string): T | null {
     )
     {
       // File does not exist
-      console.warn(`File not found: ${filepath}`);
+      if (Arguments.debug) console.warn(`File not found: ${filepath}`);
       return null;
     }
     // Other errors (e.g., invalid JSON) should still be thrown

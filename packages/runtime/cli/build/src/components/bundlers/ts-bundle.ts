@@ -18,28 +18,32 @@ export async function tsBundler(
   {
     const srcName = path.basename(path.dirname(inputFile));
     const outDir = path.dirname(outputFile);
-    const srcDir = path.join(outDir, srcName);
-
+  
     await Terminal.execute(
       "tsc", 
       info.local,
       ["--emitDeclarationOnly", "-p", meta.tsconfig.path, "--declarationDir", outDir], 
     );
-    await copyFolder(srcDir, outDir, content => content);
-    fs.rmSync(srcDir, { recursive: true, force: true })
+
+    // The srcName folder that gets created INSIDE outDir (not in package root)
+    const tempDtsDir = path.join(outDir, srcName);
+    
+    if (fs.existsSync(tempDtsDir)) {
+      // Copy the generated .d.ts files from the nested folder to outDir
+      await copyFolder(tempDtsDir, outDir, content => content);
+      // Delete the temporary nested folder
+      fs.rmSync(tempDtsDir, { recursive: true, force: true });
+    }
+    
     return;
   }
-  else 
-  {
-    const outDir = path.join(info.local, ".temp/build");
-    await Terminal.execute(
-      "tsc", 
-      info.local,
-      ["--emitDeclarationOnly", "-p", meta.tsconfig.path, "--declarationDir",  outDir], 
-    );
-  }
 
-  if (Arguments.args.flags.dev) return;
+  const outDir = path.join(info.local, ".temp/build");
+  await Terminal.execute(
+    "tsc", 
+    info.local,
+    ["--emitDeclarationOnly", "-p", meta.tsconfig.path, "--declarationDir",  outDir], 
+  );
 
   const result = await Terminal.surpress(async () => {
     // create a config object programmatically

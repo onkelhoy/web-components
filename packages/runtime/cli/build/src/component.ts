@@ -151,7 +151,7 @@ async function runBatch(batch: DependencyBatch[], mode: "dev" | "prod", original
 
 async function npmInstall(originalinfo: ReturnType<typeof getPathInfo>) {
 
-  if (!Arguments.args.flags.ci)
+  if (!Arguments.args.flags.ci && !Arguments.args.flags['no-install'])
   {
     if (Arguments.verbose) console.log('running install');
     await Terminal.execute("npm install", originalinfo.root);
