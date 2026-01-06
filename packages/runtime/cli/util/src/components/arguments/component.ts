@@ -21,17 +21,17 @@
  */
 
 type ArgumentsType = { flags: Record<string, string | string[] | true | undefined>, values: string[] };
-export function getArguments(islands:string[] = []) {
+export function getArguments(islands: string[] = []) {
   return extractArguments(process.argv, islands);
 }
 
 export function extractArguments(values: string[], islands: string[]) {
-  const _arguments:ArgumentsType = {
+  const _arguments: ArgumentsType = {
     flags: {},
     values: [],
   };
   let prevWasFlag = null;
-  for (let i=2; i<values.length; i++)
+  for (let i = 2; i < values.length; i++)
   {
     const arg = values[i];
     let match = arg.match(/^(?<flag>--?)(?<name>[^=]+)(=(?<value>.*))?$/);
@@ -55,14 +55,14 @@ export function extractArguments(values: string[], islands: string[]) {
     if (match.groups?.flag == "-" && value)
     {
       // we treat as multiple groups 
-      for (let j=0; j<name.length; j++)
+      for (let j = 0; j < name.length; j++)
       {
         const group = name[j];
         if (!_arguments.flags[group]) _arguments.flags[group] = true;
       }
       continue;
     }
-  
+
     if (!islands.includes(name))
     {
       prevWasFlag = name;
@@ -86,30 +86,38 @@ export function extractArguments(values: string[], islands: string[]) {
   return _arguments;
 }
 
-type Loglevel = "verbose"|"debug"|"info"|"error"|"warning"|"silent";
+type Loglevel = "verbose" | "debug" | "info" | "error" | "warning" | "silent";
 export class Arguments {
   private static _islands: string[] = ["verbose", "debug", "warning", "error", "info"];
   static get islands() {
     return this._islands;
   }
-  static set islands(value:string[]) {
+  static set islands(value: string[]) {
     this._islands = value.concat("verbose", "debug", "warning", "error", "info");
     this._args = undefined;
   }
 
-  private static _args: ReturnType<typeof getArguments>|undefined;
-  static get args():ReturnType<typeof getArguments> {
+  private static _args: ReturnType<typeof getArguments> | undefined;
+  static get args(): ReturnType<typeof getArguments> {
     if (this._args) return this._args;
     this._args = getArguments(this.islands);
     return this._args;
   }
 
-  private static _debug: boolean|undefined;
-  private static _verbose: boolean|undefined;
-  private static _warning: boolean|undefined;
-  private static _error: boolean|undefined;
-  private static _info: boolean|undefined;
-  private static _silent: boolean|undefined;
+  private static _debug: boolean | undefined;
+  private static _verbose: boolean | undefined;
+  private static _warning: boolean | undefined;
+  private static _error: boolean | undefined;
+  private static _info: boolean | undefined;
+  private static _silent: boolean | undefined;
+
+  static get(name: string) {
+    const value = this.args.flags[name];
+    if (typeof value === "string") return [value];
+    if (Array.isArray(value)) return value;
+
+    return [];
+  }
 
   static get silent() {
     return this.getLoglevel("silent");

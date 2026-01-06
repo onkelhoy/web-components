@@ -1,7 +1,7 @@
 // import statements 
 import path from "node:path";
 import fs from "node:fs";
-import { Arguments, DependencyBatch, LocalPackage, Package, Terminal, getDependencyBloodline, getDependencyOrder, getJSON, getPathInfo } from "@papit/util-cli";
+import { Arguments, DependencyBatch, LocalPackage, Package, Terminal, getDependencyBloodline, getDependencyOrder, getJSON, getPathInfo } from "@papit/cli";
 
 import { getMeta } from "./components/meta/get-meta";
 import { jsBundler } from "./components/bundlers/js-bundle";
@@ -14,7 +14,7 @@ const CONTEXTS: BuildContext[] = [];
 
 (async function () {
   if (Arguments.args.flags.live) Arguments.args.flags.dev = true;
-  
+
   const mode = Arguments.args.flags.dev ? "dev" : "prod";
   const location = Arguments.args.flags.location;
   const originalinfo = getPathInfo(typeof location === "string" ? location : undefined);
@@ -34,7 +34,7 @@ const CONTEXTS: BuildContext[] = [];
   {
     process.on("SIGINT", () => {
       if (!Arguments.silent) Terminal.blue("live ended");
-      
+
       CONTEXTS.forEach(ctx => {
         ctx.dispose()
       });
@@ -45,7 +45,7 @@ const CONTEXTS: BuildContext[] = [];
   {
     case "all":
       const { config, ...data } = await getDependencyOrder(
-        async batch => await runPrebuild(batch, originalinfo), 
+        async batch => await runPrebuild(batch, originalinfo),
         { info: originalinfo, silent: true }
       );
 
@@ -55,13 +55,13 @@ const CONTEXTS: BuildContext[] = [];
       }
 
       await getDependencyOrder(
-        async batch => await runBatch(batch, mode, originalinfo), 
+        async batch => await runBatch(batch, mode, originalinfo),
         { ...config, data, silent: false }
       );
       break;
 
     case "individual": {
-      const packageJSON = getPackage(originalinfo.local); 
+      const packageJSON = getPackage(originalinfo.local);
       try 
       {
         const shouldinstall = await runner(mode, originalinfo, packageJSON, originalinfo);
@@ -76,11 +76,11 @@ const CONTEXTS: BuildContext[] = [];
     case "bloodline":
     case "ancestors":
     case "descendants": {
-      const packageJSON = getPackage(originalinfo.local); 
+      const packageJSON = getPackage(originalinfo.local);
 
       const { config, ...data } = await getDependencyBloodline(
-        packageJSON.name, 
-        async batch => await runPrebuild(batch, originalinfo), 
+        packageJSON.name,
+        async batch => await runPrebuild(batch, originalinfo),
         { info: originalinfo, type: buildMode, silent: true }
       );
 
@@ -90,8 +90,8 @@ const CONTEXTS: BuildContext[] = [];
       }
 
       await getDependencyBloodline(
-        packageJSON.name, 
-        async batch => await runBatch(batch, mode, originalinfo), 
+        packageJSON.name,
+        async batch => await runBatch(batch, mode, originalinfo),
         { ...config, data, silent: false }
       );
       break;
@@ -135,7 +135,7 @@ async function runBatch(batch: DependencyBatch[], mode: "dev" | "prod", original
       if (localinstall)
       {
         shouldinstall = true;
-      } 
+      }
     }
     catch (e)
     {
@@ -162,7 +162,7 @@ async function npmInstall(originalinfo: ReturnType<typeof getPathInfo>) {
   }
 }
 
-function getExportsInformation(entry:string, packageJSON:Package) {
+function getExportsInformation(entry: string, packageJSON: Package) {
   if (!packageJSON.exports) return null;
   if (entry === "bundle") entry = ".";
 
@@ -201,7 +201,7 @@ async function runPrebuild(batch: DependencyBatch[], originalinfo: ReturnType<ty
 }
 
 async function runner(
-  mode: "prod"|"dev",
+  mode: "prod" | "dev",
   info: ReturnType<typeof getPathInfo>,
   packageJSON: LocalPackage,
   originalinfo: ReturnType<typeof getPathInfo>,
@@ -229,7 +229,7 @@ async function runner(
   }
 
   const meta = await getMeta(mode, info, packageJSON);
-  
+
   if (Arguments.debug)
   {
     console.log("build-mode:", mode);
@@ -260,11 +260,11 @@ async function runner(
   for (const entryPointKey of meta.entryPoints.keys) 
   {
     const entryPoint = meta.entryPoints.record[entryPointKey];
-  
+
     const exportsInformation = getExportsInformation(entryPointKey, packageJSON);
-    let javascriptFileOutput = path.join(info.local, entryPoint.replace("src", "lib")+".js");
-    let typescriptFileOutput = path.join(info.local, entryPoint.replace("src", "lib")+".d.ts");
-  
+    let javascriptFileOutput = path.join(info.local, entryPoint.replace("src", "lib") + ".js");
+    let typescriptFileOutput = path.join(info.local, entryPoint.replace("src", "lib") + ".d.ts");
+
     if (!exportsInformation) 
     {
       Terminal.warn(`"${entryPointKey}" does not exists in package.exports`);
@@ -281,7 +281,7 @@ async function runner(
       }
     }
 
-    let binEntry: string|null = null;
+    let binEntry: string | null = null;
     if (packageJSON.bin)
     {
       for (const binEntryKey in packageJSON.bin)
@@ -295,24 +295,25 @@ async function runner(
         }
       }
     }
-  
+
     const absoluteEntry = entryPoint.startsWith(info.local) ? entryPoint : path.join(info.local, entryPoint);
     const absoluteTypesEntry = absoluteEntry.replace(info.local, path.join(info.local, ".temp/build")).replace(".ts", ".d.ts");
     if (Arguments.verbose)
     {
-      Terminal.write(`• entryPoint "${Terminal.colorWrap(entryPointKey, "blue")}"`);
-      Terminal.write(`  ↳ (${Terminal.colorWrap("bundle", "red")}) "${Terminal.colorWrap(absoluteEntry.replace(info.local, ""), "blue")}" -> "${Terminal.colorWrap(javascriptFileOutput.replace(info.local, ""), "green")}"`);
-      Terminal.write(`  ↳ (${Terminal.colorWrap("types", "red")}) "${Terminal.colorWrap(absoluteTypesEntry.replace(info.local, ""), "blue")}" -> "${Terminal.colorWrap(typescriptFileOutput.replace(info.local, ""), "green")}"\n`);
+      Terminal.write(`• entryPoint "${Terminal.blue(entryPointKey)}"`);
+      Terminal.write(`  ↳ (${Terminal.red("bundle")}) "${Terminal.blue(absoluteEntry.replace(info.local, ""))}" -> "${Terminal.green(javascriptFileOutput.replace(info.local, ""))}"`);
+      Terminal.write(`  ↳ (${Terminal.red("types")}) "${Terminal.blue(absoluteTypesEntry.replace(info.local, ""))}" -> "${Terminal.green(typescriptFileOutput.replace(info.local, ""))}"\n`);
     }
 
-    try {
+    try
+    {
       const result = await jsBundler(absoluteEntry, javascriptFileOutput, meta, info, packageJSON);
       if (result)
       {
         CONTEXTS.push(result as BuildContext);
       }
 
-      await tsBundler(absoluteTypesEntry, typescriptFileOutput, meta, info);  
+      await tsBundler(absoluteTypesEntry, typescriptFileOutput, meta, info);
     }
     catch (e)
     {
@@ -323,12 +324,12 @@ async function runner(
       }
       throw e;
     }
-  
+
     if (binEntry)
     {
       if (Arguments.debug)
       {
-        Terminal.write(Terminal.colorWrap('bin found', "green"), binEntry, "\n");
+        Terminal.write(Terminal.green('bin found'), binEntry, "\n");
       }
       // add shebang and remove from root/node_modeles/.bin
       if (!Arguments.args.flags.ci)
@@ -342,7 +343,7 @@ async function runner(
 
       const bundle = fs.readFileSync(javascriptFileOutput, { encoding: "utf-8" });
       const updated = bundle.startsWith("#!/usr/bin/env node") ? bundle : `#!/usr/bin/env node\n${bundle}`;
-      fs.writeFileSync(javascriptFileOutput, updated, { mode: 0o755 }); 
+      fs.writeFileSync(javascriptFileOutput, updated, { mode: 0o755 });
       shouldinstall = true;
     }
   }

@@ -63,10 +63,7 @@
   "papit": {
     "publish": true,
     "type": "node",
-    "main": {
-      "name": "VARIABLE_NAME",
-      "className": "VARIABLE_CLASS_NAME"
-    },
+    "main": "VARIABLE_NAME",
     "components": {}
   }
 }

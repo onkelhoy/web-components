@@ -1,5 +1,5 @@
 import { Document } from "@papit/html";
-import { Arguments, getPathInfo, Terminal } from "@papit/util-cli";
+import { Arguments, getPathInfo, Terminal } from "@papit/cli";
 import path from "node:path";
 import fs from "node:fs";
 
@@ -7,7 +7,7 @@ export function getDocument(name: string, info: ReturnType<typeof getPathInfo>) 
   const document = new Document();
   const nameTemplate = `${name}-template`;
   let source = path.join(info.script!, `asset/templates/${name}.html`);
-  
+
   if (typeof Arguments.args.flags[nameTemplate] === "string" && fs.existsSync(Arguments.args.flags[nameTemplate]))
   {
     source = Arguments.args.flags[nameTemplate];

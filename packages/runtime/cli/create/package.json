@@ -47,7 +47,7 @@
     "papit-create": "./lib/bundle.js"
   },
   "dependencies": {
-    "@papit/util-cli": "0.0.1"
+    "@papit/cli": "0.0.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

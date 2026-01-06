@@ -30,6 +30,9 @@
       "types": "./lib/bundle.d.ts"
     }
   },
+  "bin": {
+    "papit-svg-spritesheet": "./lib/bundle.js"
+  },
   "author": "henry",
   "private": false,
   "publishConfig": {
@@ -50,7 +53,10 @@
   "engines": {
     "node": ">=18"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@papit/cli": "^0.0.1",
+    "@papit/html": "^0.0.1"
+  },
   "devDependencies": {
     "@types/node": "^22.10.2",
     "typescript": "^5.7.2"
@@ -63,10 +69,7 @@
   "papit": {
     "publish": true,
     "type": "node",
-    "main": {
-      "name": "svg-spritesheet",
-      "className": "Svg-spritesheet"
-    },
+    "main": "svg-spritesheet",
     "components": {
       "svg-spritesheet": {
         "className": "Svg-spritesheet"

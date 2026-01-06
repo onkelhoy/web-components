@@ -1,4 +1,4 @@
-import { Terminal } from "@papit/util-cli";
+import { Terminal } from "@papit/cli";
 import net from "node:net";
 
 function isPortFree(port: number, host = "0.0.0.0"): Promise<boolean> {
@@ -17,7 +17,8 @@ export async function getPort(
   start: number,
   maxAttempts = 20
 ): Promise<number> {
-  for (let i = 0; i < maxAttempts; i++) {
+  for (let i = 0; i < maxAttempts; i++)
+  {
     const port = start + i;
     if (await isPortFree(port)) return port;
   }

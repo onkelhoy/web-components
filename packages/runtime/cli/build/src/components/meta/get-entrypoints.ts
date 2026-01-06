@@ -1,10 +1,10 @@
 // import statements 
 import path from "node:path";
 import fs from "node:fs";
-import { Arguments, Package, Terminal, getPathInfo } from "@papit/util-cli";
+import { Arguments, Package, Terminal, getPathInfo } from "@papit/cli";
 
-function extractEntryPoint(value:string|string[]|Record<string,string>, outDir: string) {
-  let entryPoints:Record<string,string> = {}
+function extractEntryPoint(value: string | string[] | Record<string, string>, outDir: string) {
+  let entryPoints: Record<string, string> = {}
   if (typeof value === "string")
   {
     entryPoints.bundle = value; // default case
@@ -18,9 +18,9 @@ function extractEntryPoint(value:string|string[]|Record<string,string>, outDir: 
   }
   else 
   {
-    entryPoints = {...value};
+    entryPoints = { ...value };
   }
-  
+
   for (const entry in entryPoints)
   {
     entryPoints[entry] = entryPoints[entry].replace(outDir, "src");
@@ -29,8 +29,8 @@ function extractEntryPoint(value:string|string[]|Record<string,string>, outDir: 
   return entryPoints;
 }
 function mergeEntryPoints(
-  currentEntryPoints: Record<string,string>, 
-  newEntryPoints: Record<string,string>,
+  currentEntryPoints: Record<string, string>,
+  newEntryPoints: Record<string, string>,
   set: Set<string>,
 ) {
   for (let key in newEntryPoints)
@@ -55,18 +55,18 @@ function mergeEntryPoints(
   }
 }
 export function getEntryPoints(
-  info: ReturnType<typeof getPathInfo>, 
-  packageJSON: Package, 
+  info: ReturnType<typeof getPathInfo>,
+  packageJSON: Package,
   outDir: string = "lib",
 ) {
-  const entryPoints:Record<string,string> = {}
+  const entryPoints: Record<string, string> = {}
   const set = new Set<string>();
 
   if (Arguments.args.flags.entry && Arguments.args.flags.entry !== true)
   {
     mergeEntryPoints(entryPoints, extractEntryPoint(Arguments.args.flags.entry, outDir), set);
   }
-  
+
   if (packageJSON.entryPoints)
   {
     mergeEntryPoints(entryPoints, extractEntryPoint(packageJSON.entryPoints, outDir), set);
@@ -74,7 +74,7 @@ export function getEntryPoints(
 
   if (packageJSON.exports)
   {
-    const entryPointsValues:Record<string, string> = {};
+    const entryPointsValues: Record<string, string> = {};
     for (const entry in packageJSON.exports)
     {
       if (entry === ".") entryPointsValues.bundle = "src/index.ts";
@@ -106,7 +106,7 @@ export function getEntryPoints(
       const stat = fs.statSync(entry);
       if (stat.isFile()) continue;
       if (stat.isDirectory()) entry = path.join(entry, "index.ts");
-    } 
+    }
     const joined = path.join(info.local, "src", entry);
 
     if (fs.existsSync(joined) && fs.statSync(joined).isFile()) 

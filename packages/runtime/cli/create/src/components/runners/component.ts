@@ -12,7 +12,7 @@ import {
   RootPackage,
   LocalPackage,
   Arguments,
-} from "@papit/util-cli"
+} from "@papit/cli"
 import { getFolders } from "components/util";
 
 type PackageInfo = {
@@ -23,13 +23,15 @@ type PackageInfo = {
 }
 
 function folderHasFilesSync(path: string): boolean {
-  try {
+  try
+  {
     return fs.readdirSync(path).length > 0;
-  } catch {
+  } catch
+  {
     return false;
   }
 }
-function createFolderIfNotExistSync(url:string) {
+function createFolderIfNotExistSync(url: string) {
   if (!(fs.existsSync(url) && fs.statSync(url).isDirectory()))
   {
     fs.mkdirSync(url);
@@ -63,14 +65,15 @@ export async function componentRunner(
 
   const templateFolders = getFolders(path.join(_info.script!, "asset/component-templates"));
   const localRunnerSet = new Set<string>();
-  try {
+  try
+  {
     getFolders(path.join(info.root, "bin/runners/component"))
       .forEach(f => {
         templateFolders.push(f);
         localRunnerSet.add(f);
       });
   }
-  catch {}
+  catch { }
   let templateIndex = templateFolders.findIndex(f => f === localPackage.papit?.type);
 
   if (templateIndex < 0)
@@ -88,7 +91,7 @@ export async function componentRunner(
   }
   const template = templateFolders[templateIndex]
 
-  let htmlPrefix:string|undefined = undefined;
+  let htmlPrefix: string | undefined = undefined;
   if (Array.isArray(Arguments.args.flags['html-prefix'])) htmlPrefix = Arguments.args.flags['html-prefix'].join("-");
   else if (typeof Arguments.args.flags['html-prefix'] === "string") htmlPrefix = Arguments.args.flags['html-prefix'];
   else htmlPrefix = packageInfo?.htmlPrefix ?? rootPackage.papit.htmlprefix;
@@ -102,7 +105,7 @@ export async function componentRunner(
     const sess = Terminal.createSession();
     while (true)
     {
-      let answer:string;
+      let answer: string;
       if (htmlPrefix !== undefined)
       {
         answer = await Terminal.prompt(`use default "${htmlPrefix}" or override?`);
@@ -133,7 +136,7 @@ export async function componentRunner(
   {
     Terminal.clearSession();
 
-    let input:string|undefined = undefined;
+    let input: string | undefined = undefined;
     if (Array.isArray(Arguments.args.flags.name)) input = Arguments.args.flags.name.join(" ");
     else if (typeof Arguments.args.flags.name === "string") input = Arguments.args.flags.name;
     else input = await Terminal.prompt("(package) name", true);
@@ -171,7 +174,7 @@ export async function componentRunner(
   {
     await execAsync(`git add ${packageJSONLocation}`);
   }
-  
+
   for (const folder of folders)
   {
     let destParent = path.join(info.local, folder);

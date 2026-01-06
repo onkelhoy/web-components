@@ -55,7 +55,7 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@papit/util-cli": "^0.0.1"
+    "@papit/cli": "^0.0.1"
   },
   "peerDependencies": {
     "esbuild": "^0.27.2",

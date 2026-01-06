@@ -1,6 +1,6 @@
 // import statements 
 import path from "node:path";
-import { Arguments, getJSON, getPathInfo, LocalPackage, Terminal } from "@papit/util-cli";
+import { Arguments, getJSON, getPathInfo, LocalPackage, Terminal } from "@papit/cli";
 import { pre } from "./components/pre";
 import { post } from "./components/post";
 

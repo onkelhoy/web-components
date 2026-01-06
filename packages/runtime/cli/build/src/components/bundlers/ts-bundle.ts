@@ -2,15 +2,15 @@
 import path from "node:path";
 import fs from "node:fs";
 import { Extractor, ExtractorConfig } from '@microsoft/api-extractor';
-import { Arguments, Terminal, copyFolder, getPathInfo } from "@papit/util-cli";
+import { Arguments, Terminal, copyFolder, getPathInfo } from "@papit/cli";
 
 import { Meta } from "../meta/types";
 
 export async function tsBundler(
-  inputFile: string, 
-  outputFile: string, 
-  meta: Meta, 
-  info: ReturnType<typeof getPathInfo>, 
+  inputFile: string,
+  outputFile: string,
+  meta: Meta,
+  info: ReturnType<typeof getPathInfo>,
 ) {
   if (!meta.tsconfig.info.declaration) return;
 
@@ -18,31 +18,32 @@ export async function tsBundler(
   {
     const srcName = path.basename(path.dirname(inputFile));
     const outDir = path.dirname(outputFile);
-  
+
     await Terminal.execute(
-      "tsc", 
+      "tsc",
       info.local,
-      ["--emitDeclarationOnly", "-p", meta.tsconfig.path, "--declarationDir", outDir], 
+      ["--emitDeclarationOnly", "-p", meta.tsconfig.path, "--declarationDir", outDir],
     );
 
     // The srcName folder that gets created INSIDE outDir (not in package root)
     const tempDtsDir = path.join(outDir, srcName);
-    
-    if (fs.existsSync(tempDtsDir)) {
+
+    if (fs.existsSync(tempDtsDir))
+    {
       // Copy the generated .d.ts files from the nested folder to outDir
       await copyFolder(tempDtsDir, outDir, content => content);
       // Delete the temporary nested folder
       fs.rmSync(tempDtsDir, { recursive: true, force: true });
     }
-    
+
     return;
   }
 
   const outDir = path.join(info.local, ".temp/build");
   await Terminal.execute(
-    "tsc", 
+    "tsc",
     info.local,
-    ["--emitDeclarationOnly", "-p", meta.tsconfig.path, "--declarationDir",  outDir], 
+    ["--emitDeclarationOnly", "-p", meta.tsconfig.path, "--declarationDir", outDir],
   );
 
   const result = await Terminal.surpress(async () => {
@@ -63,7 +64,7 @@ export async function tsBundler(
       packageJsonFullPath: path.join(info.local, "package.json"),
       // no configObjectFullPath needed if you don’t have a file
     });
-  
+
     // run API Extractor
     return Extractor.invoke(extractorConfig, {
       localBuild: true,
@@ -71,7 +72,8 @@ export async function tsBundler(
     });
   });
 
-  if (!result.succeeded) {
+  if (!result.succeeded)
+  {
     Terminal.error(`API Extractor failed with ${result.errorCount} errors`);
     process.exit(1);
   }

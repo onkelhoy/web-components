@@ -19,90 +19,117 @@ process.stderr.write = (chunk: any, encoding?: any, cb?: any) => {
 
 
 const ANSII_COLORS = {
-  black:    30,
-  red:      31,
-  green:    32,
-  yellow:   33,
-  blue:     34,
-  magenta:  35,
-  cyan:     36,
-  white:    37,
+  black: 30,
+  red: 31,
+  green: 32,
+  yellow: 33,
+  blue: 34,
+  magenta: 35,
+  cyan: 36,
+  white: 37,
 
-  "bright-black":    90,
-  "bright-red":      91,
-  "bright-green":    92,
-  "bright-yellow":   93,
-  "bright-blue":     94,
-  "bright-magenta":  95,
-  "bright-cyan":     96,
-  "bright-white":    97,
+  "bright-black": 90,
+  "bright-red": 91,
+  "bright-green": 92,
+  "bright-yellow": 93,
+  "bright-blue": 94,
+  "bright-magenta": 95,
+  "bright-cyan": 96,
+  "bright-white": 97,
 }
 
 export class Terminal {
   static lines: number = 0;
   static session: number | null = null;
 
-  static colorWrap(value: string, color: keyof typeof ANSII_COLORS) {
-    if (!process.stdout.isTTY) return value;
-    return `\x1b[${ANSII_COLORS[color]}m${value}\x1b[0m`
+  private static getString(joiner: string, value: any[]) {
+    return value.map(v => {
+      if (typeof v === "string") return v;
+      if (typeof v === "number") return String(v);
+      if (typeof v === "boolean") return String(v);
+
+      if ("toString" in v && typeof v.toString === "function")
+      {
+        return v.toString();
+      }
+
+      if (typeof v === "object")
+      {
+        return JSON.stringify(v);
+      }
+
+      return String(v);
+    }).join(joiner);
   }
 
-  static black(value:string) {
-    return Terminal.colorWrap(value, "black");
-  }
-  static red(value:string) {
-    return Terminal.colorWrap(value, "red");
-  }
-  static green(value:string) {
-    return Terminal.colorWrap(value, "green");
-  }
-  static yellow(value:string) {
-    return Terminal.colorWrap(value, "yellow");
-  }
-  static blue(value:string) {
-    return Terminal.colorWrap(value, "blue");
-  }
-  static magenta(value:string) {
-    return Terminal.colorWrap(value, "magenta");
-  }
-  static cyan(value:string) {
-    return Terminal.colorWrap(value, "cyan");
-  }
-  static white(value:string) {
-    return Terminal.colorWrap(value, "white");
-  }
-  static brightBlack(value:string) {
-    return Terminal.colorWrap(value, "bright-black");
-  }
-  static brightRed(value:string) {
-    return Terminal.colorWrap(value, "bright-red");
-  }
-  static brightGreen(value:string) {
-    return Terminal.colorWrap(value, "bright-green");
-  }
-  static brightYellow(value:string) {
-    return Terminal.colorWrap(value, "bright-yellow");
-  }
-  static brightBlue(value:string) {
-    return Terminal.colorWrap(value, "bright-blue");
-  }
-  static brightMagenta(value:string) {
-    return Terminal.colorWrap(value, "bright-magenta");
-  }
-  static brightCyan(value:string) {
-    return Terminal.colorWrap(value, "bright-cyan");
-  }
-  static brightWhite(value:string) {
-    return Terminal.colorWrap(value, "bright-white");
+  static colorWrap(color: keyof typeof ANSII_COLORS, ...value: any[]) {
+    if (!process.stdout.isTTY) return this.getString(" ", value);
+    return `\x1b[${ANSII_COLORS[color]}m${this.getString(" ", value)}\x1b[0m`
   }
 
-  static write(...values: string[]) {
-    const value = values.join(" ");
-    this.printLine(value);
+  static black(...value: any[]) {
+    return Terminal.colorWrap("black", value);
+  }
+  static red(...value: any[]) {
+    return Terminal.colorWrap("red", value);
+  }
+  static green(...value: any[]) {
+    return Terminal.colorWrap("green", value);
+  }
+  static yellow(...value: any[]) {
+    return Terminal.colorWrap("yellow", value);
+  }
+  static blue(...value: any[]) {
+    return Terminal.colorWrap("blue", value);
+  }
+  static magenta(...value: any[]) {
+    return Terminal.colorWrap("magenta", value);
+  }
+  static cyan(...value: any[]) {
+    return Terminal.colorWrap("cyan", value);
+  }
+  static white(...value: any[]) {
+    return Terminal.colorWrap("white", value);
+  }
+  static brightBlack(...value: any[]) {
+    return Terminal.colorWrap("bright-black", value);
+  }
+  static brightRed(...value: any[]) {
+    return Terminal.colorWrap("bright-red", value);
+  }
+  static brightGreen(...value: any[]) {
+    return Terminal.colorWrap("bright-green", value);
+  }
+  static brightYellow(...value: any[]) {
+    return Terminal.colorWrap("bright-yellow", value);
+  }
+  static brightBlue(...value: any[]) {
+    return Terminal.colorWrap("bright-blue", value);
+  }
+  static brightMagenta(...value: any[]) {
+    return Terminal.colorWrap("bright-magenta", value);
+  }
+  static brightCyan(...value: any[]) {
+    return Terminal.colorWrap("bright-cyan", value);
+  }
+  static brightWhite(...value: any[]) {
+    return Terminal.colorWrap("bright-white", value);
   }
 
-  private static semantic(prefix:string, values:string[]) {
-    let value = values.join(" ");
+  static write(...values: any[]) {
+    this.printLine(this.getString(" ", values));
+  }
+
+  static warn(...values: any[]) {
+    this.semantic(`🟡 ${process.stdout.isTTY ? this.colorWrap("yellow", "warn ",) : ""}`, values);
+  }
+
+  static error(...values: any[]) {
+    this.semantic(`🔴 ${process.stdout.isTTY ? this.colorWrap("red", "error ",) : ""}`, values);
+  }
+
+  private static semantic(prefix: string, values: any[]) {
+    let value = this.getString(" ", values);
     const match = value.match(/^(\n)*/);
 
     let leading = "";
@@ -114,15 +141,6 @@ export class Terminal {
 
     this.printLine(`${leading}${prefix}${value}`, "error");
   }
-
-  static warn(...values: string[]) {
-    this.semantic(`🟡 ${process.stdout.isTTY ? this.colorWrap("warn ", "yellow") : ""}`, values);
-  }
-  
-  static error(...values: string[]) {
-    this.semantic(`🔴 ${process.stdout.isTTY ? this.colorWrap("error ", "red") : ""}`, values);
-  }
-
   static print(value: string, type: "info" | "error" = "info") {
     if (type === "error")
     {
@@ -163,10 +181,12 @@ export class Terminal {
     process.stdout.write = () => true; // swallow all stdout
 
     let ans: T;
-    try {
+    try
+    {
       ans = await callback();
     }
-    finally {
+    finally
+    {
       process.stdout.write = originalWrite;
       return ans!;
     }
@@ -263,9 +283,9 @@ export class Terminal {
   static async getAnswer(question: string, acceptables: string[], inline?: boolean): Promise<string>;
   static async getAnswer(question: string, acceptables: ((answer: string) => Promise<boolean>), inline?: boolean): Promise<string>;
   static async getAnswer(question: string, acceptables: string[] | ((answer: string) => Promise<boolean>), inline?: boolean) {
-    return Terminal.sessionBlock(async () => { 
+    return Terminal.sessionBlock(async () => {
       let answer = await this.prompt(question, inline);
-  
+
       while (
         (Array.isArray(acceptables) && !acceptables.includes(answer)) ||
         (typeof acceptables === "function" && !await acceptables(answer))
@@ -281,12 +301,12 @@ export class Terminal {
         }
         answer = await this.prompt(question, inline); // this will increase lines by 3
       }
-  
+
       return answer;
     });
   }
 
-  static async option(options: string[]|string[][], promptText = "↑↓ select • Enter confirm", currentMarker = "●", defaultMarker = "◯") {
+  static async option(options: string[] | string[][], promptText = "↑↓ select • Enter confirm", currentMarker = "●", defaultMarker = "◯") {
     return Terminal.sessionBlock(async () => new Promise<number>((resolve, reject) => {
       readline.emitKeypressEvents(process.stdin);
       if (process.stdin.isTTY) process.stdin.setRawMode(true);
@@ -295,7 +315,7 @@ export class Terminal {
       const spaces = new Set<number>();
       if (Array.isArray(options[0]))
       {
-        for (let i=0; i<options.length - 1; i++)
+        for (let i = 0; i < options.length - 1; i++)
         {
           spaces.add(options[i].length);
         }
@@ -367,9 +387,9 @@ export class Terminal {
   }
 
   static execute(command: string, cwd: string): Promise<void>;
-  static execute(command: string, cwd: string, args:string[]): Promise<void>;
+  static execute(command: string, cwd: string, args: string[]): Promise<void>;
   static execute(command: string, options: Partial<SpawnOptions>): Promise<void>;
-  static execute(command: string, something: Partial<SpawnOptions>|string, args?: string[]) {
+  static execute(command: string, something: Partial<SpawnOptions> | string, args?: string[]) {
 
     let options: Partial<SpawnOptions> = {};
     if (typeof something === "string")
@@ -386,11 +406,12 @@ export class Terminal {
       this.spawn(command, {
         ...options,
         onClose(code, stdout, stderr) {
-          if (code === 0) {
+          if (code === 0)
+          {
             options.onClose?.(0, stdout, stderr);
             return res();
-          } 
-          
+          }
+
           rej(new Error(stderr || stdout || `Process exited with code ${code}`));
         }
       });
@@ -409,7 +430,7 @@ export class Terminal {
       shell: false,
       env: { ...process.env },
     });
-    
+
     child.stdout.on("data", chunk => {
       const text = chunk.toString("utf8");
       stdout += text;
@@ -423,7 +444,7 @@ export class Terminal {
     });
 
     child.on("close", code => options.onClose?.(code, stdout, stderr));
-    
+
     return child;
   }
 }

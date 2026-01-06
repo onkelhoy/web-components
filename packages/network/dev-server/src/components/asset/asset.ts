@@ -1,12 +1,12 @@
 import path from "node:path";
 import fs from "node:fs";
-import { Arguments, getJSON, getPathInfo, Terminal } from "@papit/util-cli";
+import { Arguments, getJSON, getPathInfo, Terminal } from "@papit/cli";
 
 import { Translation, Translations } from "./types";
 import { deepMerge } from "./util";
 import { NotFoundError } from "../errors";
 import { IncomingMessage, ServerResponse } from "node:http";
-import { streamFile } from "./stream-file";
+import { streamFile } from "../file/stream";
 
 async function extractTranslation(folder: string, translations: Translations) {
   const files = fs.readdirSync(folder).filter(name => fs.statSync(path.join(folder, name)).isFile() && name.endsWith(".json"));
@@ -32,9 +32,9 @@ export function getAssetFolders() {
 }
 
 export async function handleAsset(
-  root: string, 
-  location: string, 
-  translations: Record<string, Translation>, 
+  root: string,
+  location: string,
+  translations: Record<string, Translation>,
   assets: Record<string, string[]>,
   folders: string[], // [assets|public|files]
   deep = 0,
@@ -53,21 +53,22 @@ export async function handleAsset(
 
 
     const relativeURL = path.relative(root, url);
-    
+
     const absoluteURL = '/' + relativeURL;
     if (!assets[absoluteURL]) assets[absoluteURL] = [];
     assets[absoluteURL].push(url);
 
     const segments = relativeURL.split(path.sep);
     // Remove first segment if it's an asset folder
-    if (folders.includes(segments[0])) {
+    if (folders.includes(segments[0]))
+    {
       segments.shift();
       const relativeURL = '/' + segments.join('/');
 
       if (!assets[relativeURL]) assets[relativeURL] = [];
       assets[relativeURL].push(url);
     }
-    
+
     if (isDirectory)
     {
       const lowerName = name.toLowerCase();
@@ -90,8 +91,8 @@ export async function handleAsset(
 }
 
 
-export async function sendAsset(
-  translations: Record<string, Translation>, 
+export async function streamAsset(
+  translations: Record<string, Translation>,
   assets: Record<string, string[]>,
   req: IncomingMessage,
   res: ServerResponse<IncomingMessage> & { req: IncomingMessage },

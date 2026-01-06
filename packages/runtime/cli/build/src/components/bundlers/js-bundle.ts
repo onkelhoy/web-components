@@ -1,7 +1,7 @@
 // import statements
 import path from "node:path";
 import esbuild, { BuildOptions, WatchOptions } from "esbuild";
-import { Arguments, getPathInfo, Package, Terminal } from "@papit/util-cli";
+import { Arguments, getPathInfo, Package, Terminal } from "@papit/cli";
 
 import { Meta } from "../meta/types";
 import { ChildProcessWithoutNullStreams } from "node:child_process";
@@ -85,13 +85,13 @@ async function watch(options: BuildOptions, info: ReturnType<typeof getPathInfo>
       name: "rebuild",
       setup(build) {
 
-        const childprocesses:Array<{session:number, process:ChildProcessWithoutNullStreams}> = [];
+        const childprocesses: Array<{ session: number, process: ChildProcessWithoutNullStreams }> = [];
         build.onStart(async () => {
           while (childprocesses.length > 0)
           {
             const child = childprocesses.pop();
             if (!child?.process || child.process.killed) continue;
-            
+
             const kill = child.process.kill("SIGTERM");
             if (kill) Terminal.write("terminated child");
             else 
@@ -126,7 +126,7 @@ async function watch(options: BuildOptions, info: ReturnType<typeof getPathInfo>
             childprocesses.push({
               session: Terminal.createSession(),
               process: Terminal.spawn("node", {
-                cwd: info.package, 
+                cwd: info.package,
                 args: [executable, ...process.argv.slice(2)],
                 onData: text => Terminal.write(text),
                 onError: text => Terminal.write(text),

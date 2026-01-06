@@ -1,6 +1,6 @@
 import path from "node:path";
 import fs from "node:fs";
-import { Arguments, getDependencyBloodline, getJSON, getPathInfo, LocalPackage, Terminal } from "@papit/util-cli"
+import { Arguments, getDependencyBloodline, getJSON, getPathInfo, LocalPackage, Terminal } from "@papit/cli"
 
 import { getAssetFolders, handleAsset, Translation } from "./components/asset";
 import { close as httpExit, start as httpStart } from "./components/http";
@@ -32,9 +32,9 @@ import { close as httpExit, start as httpStart } from "./components/http";
   }
 
   // NOTE: order is reversed -> last is current package, so looking for asset should always start at the end of array of "assets"
-  const { map:ancestors } = await getDependencyBloodline(
-    packageJSON.name, 
-    async batch => { 
+  const { map: ancestors } = await getDependencyBloodline(
+    packageJSON.name,
+    async batch => {
       for (const b of batch) 
       {
         if (!b.location) continue;
@@ -47,7 +47,7 @@ import { close as httpExit, start as httpStart } from "./components/http";
           await handleAsset(b.location, assetLocation, translations, assets, assetFolders);
         }
       }
-    }, 
+    },
     { info, type: "ancestors", silent: true }
   );
 

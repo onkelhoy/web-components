@@ -19,7 +19,7 @@ import {
   RootPackage,
   LocalPackage,
   Arguments,
-} from "@papit/util-cli"
+} from "@papit/cli"
 import { componentRunner } from "./component";
 
 import { createFolderConfig, getFolders, selectFolder } from "../util";
@@ -28,7 +28,7 @@ import { stripRootPath } from "../util";
 const execAsync = promisify(exec);
 
 export async function packageRunner(
-  info: ReturnType<typeof getPathInfo>, 
+  info: ReturnType<typeof getPathInfo>,
 ) {
   const session = Terminal.createSession();
 
@@ -45,13 +45,14 @@ export async function packageRunner(
     {
       ...info,
       scope,
-    }, 
+    },
     rootPackage,
   );
 
   const templateFolders = getFolders(path.join(info.script!, "asset/package-templates/"));
   const localRunnerSet = new Set<string>();
-  try {
+  try
+  {
     getFolders(path.join(info.root, "bin/runners/package"))
       .forEach(f => {
         if (!fs.existsSync(path.join(info.root, "bin/runners/package", f, "package.json"))) return;
@@ -59,7 +60,7 @@ export async function packageRunner(
         localRunnerSet.add(f);
       });
   }
-  catch {}
+  catch { }
 
   const argType = Arguments.args.flags.package ?? Arguments.args.flags.type;
   let templateIndex = templateFolders.findIndex(t => t === argType);
@@ -71,8 +72,8 @@ export async function packageRunner(
   Terminal.clearSession();
 
   const template = templateFolders[templateIndex];
-  
-  let htmlPrefix:string|undefined = undefined;
+
+  let htmlPrefix: string | undefined = undefined;
   if (Array.isArray(Arguments.args.flags['html-prefix'])) htmlPrefix = Arguments.args.flags['html-prefix'].join("-");
   else if (typeof Arguments.args.flags['html-prefix'] === "string") htmlPrefix = Arguments.args.flags['html-prefix'];
   if (htmlPrefix?.trim() === "") htmlPrefix = undefined;
@@ -86,7 +87,7 @@ export async function packageRunner(
     Terminal.createSession();
     while (true) 
     {
-      let answer:string;
+      let answer: string;
       if (htmlPrefix)
       {
         answer = await Terminal.prompt(`use default "${htmlPrefix}" or override?`);
@@ -107,7 +108,7 @@ export async function packageRunner(
           }
         }
       }
-      
+
       if (answer) 
       {
         htmlPrefix = answer;
@@ -154,7 +155,7 @@ export async function packageRunner(
   while (true)
   {
     Terminal.clearSession();
-    let input:string|undefined = undefined;
+    let input: string | undefined = undefined;
     if (Array.isArray(Arguments.args.flags.name)) input = Arguments.args.flags.name.join(" ");
     else if (typeof Arguments.args.flags.name === "string") input = Arguments.args.flags.name;
     else input = await Terminal.prompt("(package) name", true);
@@ -182,13 +183,13 @@ export async function packageRunner(
 
   Terminal.write();
   Terminal.createSession();
-  
+
   const destination = path.join(layer, nameInfo.name);
 
   // Copy package template
   await copyFolder(localRunnerSet.has(template) ? path.join(info.root, "bin/runners/package", template) : path.join(info.script!, "asset/package-templates", template), destination, async (file, src) => {
     if (src.endsWith(".gitkeep")) return false;
-    
+
     const final = file
       .replace(/VARIABLE_NAME/g, nameInfo.name)
       .replace(/VARIABLE_FULL_NAME/g, fullName)
@@ -227,11 +228,13 @@ export async function packageRunner(
   const shouldInstall = 'agree' in Arguments.args.flags || 'install' in Arguments.args.flags || await Terminal.confirm("install package", true);
   if (shouldInstall)
   {
-    try {
+    try
+    {
       await execAsync('npm install');
       Terminal.clearSession();
     }
-    catch {
+    catch
+    {
       Terminal.warn("error during install");
     }
   }
@@ -246,13 +249,15 @@ export async function packageRunner(
 
   if (shouldCommit)
   {
-    try {
+    try
+    {
       await execAsync(`git add ${lockfile_location}`);
       await execAsync(`git add ${destination}`);
       await execAsync(`git commit -m "add: ${fullName} package"`);
       Terminal.clearSession();
-    } 
-    catch {
+    }
+    catch
+    {
       Terminal.warn("error during commit");
     }
   }

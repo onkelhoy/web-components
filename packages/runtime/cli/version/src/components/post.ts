@@ -1,6 +1,6 @@
 import path from "node:path";
 import fs from "node:fs";
-import { Arguments, getDependencyBloodline, getJSON, getPathInfo, LocalPackage, Lockfile, Terminal } from "@papit/util-cli";
+import { Arguments, getDependencyBloodline, getJSON, getPathInfo, LocalPackage, Lockfile, Terminal } from "@papit/cli";
 
 export async function post(packageJSON: LocalPackage, originalinfo: ReturnType<typeof getPathInfo>) {
 
@@ -8,13 +8,13 @@ export async function post(packageJSON: LocalPackage, originalinfo: ReturnType<t
   Arguments.args.flags['include-root'] = true;
   Arguments.args.flags['include-dev'] = true;
 
-  const updateDependencies = new Map<string,string>();
+  const updateDependencies = new Map<string, string>();
   updateDependencies.set(packageJSON.name, packageJSON.version);
   const lockfilepath = path.join(originalinfo.root, "temp-package-lock.json");
   const lockfile = getJSON<Lockfile>(lockfilepath);
 
   await getDependencyBloodline(
-    packageJSON.name, 
+    packageJSON.name,
     async batch => {
       for (const b of batch) 
       {
@@ -32,15 +32,15 @@ export async function post(packageJSON: LocalPackage, originalinfo: ReturnType<t
         {
           packageJSON.remoteVersion = b.remoteversion;
         }
-          
+
         // we do a patch if we need 
-        if (!(b.changedversion || packageJSON.version !== packageJSON.remoteVersion) )
+        if (!(b.changedversion || packageJSON.version !== packageJSON.remoteVersion))
         {
           const match = packageJSON.version.match(/^(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)(?<semver>.*)$/);
           if (match?.groups)
           {
             const { major, minor, patch, semver } = match.groups;
-            packageJSON.version = `${major}.${minor}.${Number(patch)+1}${semver}`;
+            packageJSON.version = `${major}.${minor}.${Number(patch) + 1}${semver}`;
           }
 
           if (Arguments.info)
@@ -71,8 +71,8 @@ export async function post(packageJSON: LocalPackage, originalinfo: ReturnType<t
           }
         }
       }
-    }, 
-    { info: originalinfo, type: "descendants", lockfile:lockfile??undefined }
+    },
+    { info: originalinfo, type: "descendants", lockfile: lockfile ?? undefined }
   );
 
   fs.renameSync(lockfilepath, path.join(originalinfo.root, "package-lock.json"));

@@ -31,7 +31,7 @@
   ],
   "devDependencies": {
     "@papit/version-cli": "0.0.1",
-    "@papit/util-cli": "0.0.1",
+    "@papit/cli": "0.0.1",
     "@papit/build": "0.0.1",
     "@papit/create": "0.0.1",
     "@microsoft/api-extractor": "^7.55.2",

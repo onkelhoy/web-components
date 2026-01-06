@@ -2,7 +2,7 @@
 import path from "node:path";
 import fs from "node:fs";
 
-import { Arguments, getJSON, getPathInfo, LocalPackage, Terminal } from "@papit/util-cli"
+import { Arguments, getJSON, getPathInfo, LocalPackage, Terminal } from "@papit/cli"
 import { packageRunner } from "./components/runners/package";
 import { componentRunner } from "./components/runners/component";
 import { getFolders } from "components/util";
@@ -43,7 +43,8 @@ import { getFolders } from "components/util";
   const localRunnerSet = new Set<string>();
   const localRunnersLocation = path.join(info.root, "bin/runners");
   const options = ["package", "component", "project", "showcase"];
-  try {
+  try
+  {
     const folders = getFolders(localRunnersLocation);
     folders.forEach(folder => {
       if (options.includes(folder)) return;
@@ -55,11 +56,11 @@ import { getFolders } from "components/util";
       options.push(folder);
     });
   }
-  catch {}
-  
+  catch { }
 
-  let option: number|null = null;
-  for (let i=0; i<options.length; i++)
+
+  let option: number | null = null;
+  for (let i = 0; i < options.length; i++)
   {
     if (Arguments.args.flags[options[i]]) 
     {
@@ -67,7 +68,7 @@ import { getFolders } from "components/util";
       break;
     }
   }
-  
+
   if (option === null)
   {
     Terminal.createSession();
@@ -97,7 +98,7 @@ import { getFolders } from "components/util";
       {
         Terminal.write(`running local runner "${runnerName}"`);
       }
-      
+
       const { default: runner } = await import(runnerFile);
       await runner(info, Arguments.args)
       break;

@@ -1,4 +1,4 @@
-import { getPathInfo, LocalPackage } from "@papit/util-cli";
+import { getPathInfo, LocalPackage } from "@papit/cli";
 import { createExplorer } from "./explorer";
 
 export async function getHTML(

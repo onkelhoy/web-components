@@ -8,11 +8,11 @@ import { getJSON } from '../get-json';
 
 // Function to initialize the package relationships
 
-  // info: ReturnType<typeof getPathInfo>,
-  // lockfile: Lockfile,
-  // scope = getScope(),
-  // acceptance?: Set<string>,
-  // remotePackages?: RemotePackages|null
+// info: ReturnType<typeof getPathInfo>,
+// lockfile: Lockfile,
+// scope = getScope(),
+// acceptance?: Set<string>,
+// remotePackages?: RemotePackages|null
 export async function init({
   info,
   lockfile,
@@ -21,25 +21,27 @@ export async function init({
   remotePackages,
   rootPackage,
 }: ReturnType<typeof getBasicConfig>) {
-  
+
   const map: Record<string, MinimalMap> = {};
   const set = new Set<string>();
 
-  for (const key in lockfile.packages) {
+  for (const key in lockfile.packages)
+  {
     if (!key.startsWith("packages")) continue;
-    
+
     const pkg = getJSON<LocalPackage>(path.join(info.root, key, "package.json"));
     if (!pkg) continue;
 
     const name = pkg.name;
-    let changedversion:boolean|undefined = undefined;
+    let changedversion: boolean | undefined = undefined;
 
     if (!name.startsWith(scope)) continue;
     if (pkg.workspaces) continue;
     if (!Arguments.args.flags['include-root'] && name === `${scope}/root`) continue;
     if (acceptance && !acceptance.has(name)) continue;
 
-    if (Arguments.args.flags.remote) {
+    if (Arguments.args.flags.remote)
+    {
 
       if (remotePackages)
       {
@@ -51,7 +53,7 @@ export async function init({
         }
         else 
         {
-          changedversion = true; 
+          changedversion = true;
         }
       }
 
@@ -61,12 +63,12 @@ export async function init({
       }
       else if (!remotePackages)
       {
-        changedversion = true; 
+        changedversion = true;
       }
 
       if (Arguments.verbose)
       {
-        Terminal.write(Terminal.colorWrap(`"${pkg.name}" version ${changedversion ? "changed" : "same"}`, "blue"));
+        Terminal.write(Terminal.blue(`"${pkg.name}" version ${changedversion ? "changed" : "same"}`));
       }
 
       if (!changedversion && !Arguments.args.flags['version-change']) 
@@ -90,7 +92,8 @@ export async function init({
     map[name].layerPriority = priority?.layerPriority;
     map[name].papit = pkg.papit;
 
-    for (const dep in pkg.dependencies) {
+    for (const dep in pkg.dependencies)
+    {
       if (!dep.startsWith(scope) || dep === name) continue;
 
       if (!map[dep]) map[dep] = { dep: [], has: [] };
@@ -98,7 +101,8 @@ export async function init({
       dependencies.push(dep);
     }
 
-    for (const dep in pkg.peerDependencies) {
+    for (const dep in pkg.peerDependencies)
+    {
       if (!dep.startsWith(scope) || dep === name) continue;
 
       if (!map[dep]) map[dep] = { dep: [], has: [] };
@@ -108,7 +112,8 @@ export async function init({
 
     if (Arguments.args.flags['include-dev'])
     {
-      for (const dep in pkg.devDependencies) {
+      for (const dep in pkg.devDependencies)
+      {
         if (!dep.startsWith(scope) || dep === name) continue;
 
         if (!map[dep]) map[dep] = { dep: [], has: [] };
@@ -125,21 +130,23 @@ export async function init({
 
 // Asynchronous generator function to yield batches of package names
 export function* generator(
-  {set, map}: Awaited<ReturnType<typeof init>>, 
+  { set, map }: Awaited<ReturnType<typeof init>>,
   silent?: boolean,
 ): Generator<Batch[], void, unknown> {
 
   function run(arr: string[], _set: Set<string>) {
     const list = [];
-    for (const name of arr) {
-      if (map[name].dep.length === 0) {
+    for (const name of arr)
+    {
+      if (map[name].dep.length === 0)
+      {
         _set.delete(name);
         set.delete(name);
 
-        list.push({ 
-          name, 
-          location: map[name].location, 
-          version: map[name].version, 
+        list.push({
+          name,
+          location: map[name].location,
+          version: map[name].version,
           changedversion: map[name].changedversion,
           remoteversion: map[name].remoteversion,
         });
@@ -148,11 +155,14 @@ export function* generator(
 
     if (list.length === 0) return null;
 
-    for (const info of list) {
+    for (const info of list)
+    {
       // Remove this package as a dependency for the rest
-      for (const other of map[info.name].has) {
+      for (const other of map[info.name].has)
+      {
         // we have to check if we have other in case we have filtered out some packages from the map in the version clensing step 
-        if (map[other]) {
+        if (map[other])
+        {
           map[other].dep = map[other].dep.filter(n => n !== info.name);
         }
       }
@@ -194,7 +204,7 @@ export function* generator(
 
     if (Arguments.info && !silent)
     {
-      Terminal.write(); 
+      Terminal.write();
       Terminal.write(Terminal.yellow("priority batch"), `size=${batch.length}`);
     }
     yield batch;
@@ -202,7 +212,8 @@ export function* generator(
 
   if (Arguments.info) Terminal.write();
 
-  while (set.size > 0) {
+  while (set.size > 0)
+  {
     const arr = Array.from(set);
     const batch = run(arr, set);
 
@@ -218,12 +229,12 @@ export function* generator(
 }
 
 export async function getDependencyOrder(
-  executor:(batch: Batch[]) => Promise<void>, 
+  executor: (batch: Batch[]) => Promise<void>,
   config: Partial<Config> = {},
 ) {
   const _config = getBasicConfig(config);
   // const { info, scope, lockfile, acceptance } = _config;
-  let remotePackages: RemotePackages|null|undefined = config.remotePackages;
+  let remotePackages: RemotePackages | null | undefined = config.remotePackages;
   if (Arguments.args.flags.remote && remotePackages === undefined)
   {
     if (Arguments.info)
@@ -239,13 +250,14 @@ export async function getDependencyOrder(
   const copyset = new Set(data.set);
   const copymap = JSON.parse(JSON.stringify(data.map)) as Record<string, MinimalMap>;
 
-  for (const batch of generator(data, config.silent)) {
+  for (const batch of generator(data, config.silent))
+  {
     await executor(batch);
   }
 
-  return { 
-    map: copymap, 
-    set: copyset, 
+  return {
+    map: copymap,
+    set: copyset,
     config: _config,
   };
 }

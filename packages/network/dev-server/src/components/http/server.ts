@@ -3,12 +3,12 @@ import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 
-import { Arguments, getPathInfo, LocalPackage, Terminal } from "@papit/util-cli";
+import { Arguments, getPathInfo, LocalPackage, Terminal } from "@papit/cli";
 
 // components
 import { HttpError } from "../errors";
-import { streamFile } from "../asset/stream-file";
-import { sendAsset, Translation } from "../asset";
+import { streamFile } from "../file/stream";
+import { streamAsset, Translation } from "../asset";
 import { getHTML } from "../html";
 
 // local imports 
@@ -21,7 +21,7 @@ export let server: null | http.Server = null;
 
 export async function start(
   info: ReturnType<typeof getPathInfo>,
-  translations: Record<string, Translation>, 
+  translations: Record<string, Translation>,
   assets: Record<string, string[]>,
   packageJSON: LocalPackage,
 ) {
@@ -42,7 +42,8 @@ export async function start(
 
   // events 
   server.on("request", async (req, res) => {
-    if (req.method !== "GET") {
+    if (req.method !== "GET")
+    {
       if (Arguments.warning) Terminal.warn("dev-server only accepts GET requests");
       res.statusCode = 500;
       res.setHeader('Content-Type', 'application/json');
@@ -50,7 +51,8 @@ export async function start(
       return;
     }
 
-    if (!req.url) {
+    if (!req.url)
+    {
       if (Arguments.warning) Terminal.warn("no url provided");
       res.statusCode = 500;
       res.setHeader('Content-Type', 'application/json');
@@ -81,14 +83,13 @@ export async function start(
     const status = fs.statSync(currentURL);
     if (status.isFile())
     {
-      console.log('sending file?')
       const status = await streamFile(currentURL, req.url, res);
-      console.log('never finished')
       if (status !== 404) return;
     }
 
-    try {
-      const result = await sendAsset(translations, assets, req, res);
+    try
+    {
+      const result = await streamAsset(translations, assets, req, res);
       if (result) 
       {
         if (!res.headersSent) res.end();

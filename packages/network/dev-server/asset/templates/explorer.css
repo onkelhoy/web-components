@@ -1,10 +1,11 @@
 :root {
-  color-scheme: light dark;
+  color-scheme: dark light;
 
   --color: light-dark(black, white);
   --inverse-color: light-dark(white, black);
   --lighter-color: light-dark(#686868, #b7b7b7);
 }
+
 
 ul {
   list-style: none;
@@ -34,26 +35,9 @@ ul {
         text-decoration: underline;
       }
 
-      span.icon-wrapper {
+      svg {
         width: 1.5rem;
         height: 1.5rem;
-        color: var(--inverse-color);
-
-        svg {
-          width: inherit;
-          height: inherit;
-        }
-        span.icon {
-          width: inherit;
-          height: inherit;
-
-          border-radius: 0.25rem;
-          background-color: #ccc;
-          display: inline-flex;
-          justify-content: center;
-          align-items: center;
-          font-size: 8pt;
-        }
       }
     }
   }

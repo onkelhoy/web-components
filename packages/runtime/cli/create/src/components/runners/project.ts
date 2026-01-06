@@ -8,25 +8,25 @@ import {
   copyFolder,
   getPathInfo,
   Arguments,
-} from "@papit/util-cli"
+} from "@papit/cli"
 const execAsync = promisify(exec);
 
 export async function runner(info: ReturnType<typeof getPathInfo>, packageLocation?: string) {
   Terminal.write("Project Creation\n")
   Terminal.createSession();
   let linebetween = false;
-  let name:string;
+  let name: string;
   if (typeof Arguments.args.flags.name === "string")
-    name = Arguments.args.flags.name; 
+    name = Arguments.args.flags.name;
   else 
   {
     name = await Terminal.prompt("name", true);
     linebetween = true;
   }
 
-  let location:string;
+  let location: string;
   if (typeof Arguments.args.flags.location === "string")
-    location = Arguments.args.flags.location; 
+    location = Arguments.args.flags.location;
   else 
   {
     if (linebetween) Terminal.write();
@@ -52,7 +52,7 @@ export async function runner(info: ReturnType<typeof getPathInfo>, packageLocati
 
   fs.mkdirSync(location, { recursive: true });
 
-  let description:string;
+  let description: string;
   if (typeof Arguments.args.flags.description === "string")
     description = Arguments.args.flags.description;
   else 
@@ -62,7 +62,7 @@ export async function runner(info: ReturnType<typeof getPathInfo>, packageLocati
     linebetween = true;
   }
 
-  let license:string;
+  let license: string;
   if (typeof Arguments.args.flags.license === "string")
     license = Arguments.args.flags.license;
   else 
@@ -72,7 +72,7 @@ export async function runner(info: ReturnType<typeof getPathInfo>, packageLocati
     linebetween = true;
   }
 
-  let licensefilelocation:string;
+  let licensefilelocation: string;
   if (license)
   {
     if (typeof Arguments.args.flags.licensefilelocation === "string")
@@ -98,11 +98,11 @@ export async function runner(info: ReturnType<typeof getPathInfo>, packageLocati
     await execSync("git init", { cwd: location });
   }
 
-  
+
   // Copy package template
   await copyFolder(path.join(info.script!, "asset/project-template"), location, async (file, src) => {
     if (src.endsWith(".gitkeep")) return false;
-    
+
     const final = file
       .replace(/VARIABLE_NAME/g, `@${name}/root`)
       .replace(/VARIABLE_DESCRIPTION/g, description)

@@ -67,7 +67,7 @@ args: {
 }
 ```
 
-For more details on the structure and behavior of these arguments, see the `@papit/util-cli` package.
+For more details on the structure and behavior of these arguments, see the `@papit/cli` package.
 
 ---
 

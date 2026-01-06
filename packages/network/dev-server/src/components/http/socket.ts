@@ -1,7 +1,7 @@
 import http from "node:http";
 import { createHash, randomUUID } from "node:crypto";
 import { Duplex } from "node:stream";
-import { Arguments, Terminal } from "@papit/util-cli";
+import { Arguments, Terminal } from "@papit/cli";
 
 const connectedClients = new Map<string, Duplex>();
 
@@ -33,11 +33,13 @@ export function upgrade(this: http.Server, req: http.IncomingMessage, socket: Du
 
 // event handlers 
 function handleError(this: Duplex, socketid: string, error: any) {
-  if ('code' in error && error.code === 'ECONNRESET') {
-  if (Arguments.info) Terminal.blue("client disconnected");
+  if ('code' in error && error.code === 'ECONNRESET')
+  {
+    if (Arguments.info) Terminal.blue("client disconnected");
     connectedClients.delete(socketid);
   }
-  else if (process.env.LOGLEVEL !== "none") {
+  else if (process.env.LOGLEVEL !== "none")
+  {
     console.log('socket-error', socketid, error);
   }
 }
@@ -58,21 +60,26 @@ function handleEnd(this: Duplex, socketid: string) {
 // exposed functions 
 export function update(filename: string, content: string) {
   // notify all clients 
-  try {
-    if (connectedClients.size === 0) {
+  try
+  {
+    if (connectedClients.size === 0)
+    {
       if (Arguments.verbose) Terminal.write("No clients connected to send update!");
       return
     }
-  
+
     const message = frameWebSocketMessage({ action: 'update', filename, content });
     const MAX_SIZE = 65535; // Maximum size for a UInt16 buffer
     const numChunks = Math.ceil(message.length / MAX_SIZE);
 
     connectedClients.forEach((client) => {
-      if (!client) {
+      if (!client)
+      {
         if (Arguments.verbose) Terminal.error(Terminal.blue("socket"), "[update] could not find client");
-      } else {
-        for (let i = 0; i < numChunks; i++) {
+      } else
+      {
+        for (let i = 0; i < numChunks; i++)
+        {
           const chunk = message.slice(i * MAX_SIZE, (i + 1) * MAX_SIZE);
           client.write(chunk);  // Send chunk to the client
         }
@@ -80,13 +87,15 @@ export function update(filename: string, content: string) {
       }
     });
   }
-  catch (e) {
+  catch (e)
+  {
     console.log('[socket error]', e);
   }
 }
 export function error(filename: string, errors: any[]) {
   // notify all clients 
-  if (connectedClients.size === 0) {
+  if (connectedClients.size === 0)
+  {
     if (Arguments.verbose) Terminal.write("No clients connected to send error!");
   }
 
@@ -97,9 +106,11 @@ export function error(filename: string, errors: any[]) {
 
   const message = frameWebSocketMessage({ action: 'error', filename, error: errors });
   connectedClients.forEach((client) => {
-    if (!client) {
+    if (!client)
+    {
       if (Arguments.verbose) Terminal.error(Terminal.blue("socket"), "[error] could not find client");
-    } else {
+    } else
+    {
       client.write(message);
     }
   });
@@ -113,13 +124,16 @@ function frameWebSocketMessage(jsondata: any): Buffer {
   let lengthByteCount = 0;
   let payloadLength = 0;
 
-  if (jsonByteLength <= 125) {
+  if (jsonByteLength <= 125)
+  {
     lengthByteCount = 0;  // Use 1 byte for payload length
     payloadLength = jsonByteLength;
-  } else if (jsonByteLength <= 65535) {
+  } else if (jsonByteLength <= 65535)
+  {
     lengthByteCount = 2;  // Use 2 bytes for payload length (max 65535)
     payloadLength = 126;
-  } else {
+  } else
+  {
     lengthByteCount = 8;  // Use 8 bytes for payload length (for larger payloads)
     payloadLength = 127;
   }
@@ -133,9 +147,11 @@ function frameWebSocketMessage(jsondata: any): Buffer {
   buffer[1] = payloadLength;
 
   // Set the extended length (2 or 8 bytes depending on size)
-  if (lengthByteCount === 2) {
+  if (lengthByteCount === 2)
+  {
     buffer.writeUInt16BE(jsonByteLength, 2);  // 2-byte length
-  } else if (lengthByteCount === 8) {
+  } else if (lengthByteCount === 8)
+  {
     buffer.writeBigUInt64BE(BigInt(jsonByteLength), 2);  // 8-byte length for large payloads
   }
 
