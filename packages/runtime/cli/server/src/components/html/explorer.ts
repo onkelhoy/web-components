@@ -1,4 +1,4 @@
-import { Arguments, getPathInfo, LocalPackage, Terminal } from "@papit/cli";
+import { Arguments, getPathInfo, LocalPackage, Terminal } from "@papit/util";
 import { getDocument } from "./util";
 import { Document } from "@papit/html";
 

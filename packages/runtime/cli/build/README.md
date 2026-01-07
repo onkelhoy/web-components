@@ -14,14 +14,14 @@ and get a fully bundled JavaScript output **plus rolled-up TypeScript declaratio
 
 ![Type](https://img.shields.io/badge/Type-cli-orange)
 [![Tests](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml/badge.svg)](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml)
-[![NPM version](https://img.shields.io/npm/v/@papit/cli-create.svg?logo=npm)](https://www.npmjs.com/package/@papit/cli-create)
+[![NPM version](https://img.shields.io/npm/v/@papit/util-create.svg?logo=npm)](https://www.npmjs.com/package/@papit/util-create)
 
 ---
 
 ## Installation
 
 ```bash
-npm install @papit/cli-build
+npm install @papit/utill-build
 ```
 
 Or use it directly without installing:

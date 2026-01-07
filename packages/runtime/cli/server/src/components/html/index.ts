@@ -1,6 +1,6 @@
 import path from "node:path";
 import fs from "node:fs";
-import { Arguments, getPathInfo, LocalPackage } from "@papit/cli";
+import { Arguments, getPathInfo, LocalPackage } from "@papit/util";
 
 import { createExplorer } from "./explorer";
 import { createInline } from "./inline";

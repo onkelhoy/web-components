@@ -1,4 +1,4 @@
-# @papit/test-cli
+# @papit/test
 
 A package for testing @papit packages, it will determine the correct testing tool like playwright for browser type packages and simple node test for node packages
 
@@ -6,14 +6,14 @@ A package for testing @papit packages, it will determine the correct testing too
 
 ![Type](https://img.shields.io/badge/Type-cli-orange)
 [![Tests](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml/badge.svg)](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml)
-[![NPM version](https://img.shields.io/npm/v/@papit/test-cli.svg?logo=npm)](https://www.npmjs.com/package/@papit/test-cli)
+[![NPM version](https://img.shields.io/npm/v/@papit/test.svg?logo=npm)](https://www.npmjs.com/package/@papit/test)
 
 ---
 
 ## installation
 
 ```bash
-npm install @papit/test-cli
+npm install @papit/test
 ```
 
 ## Contributing

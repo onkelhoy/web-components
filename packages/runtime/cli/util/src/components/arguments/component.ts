@@ -21,8 +21,8 @@
  */
 
 type ArgumentsType = { flags: Record<string, string | string[] | true | undefined>, values: string[] };
-export function getArguments(islands: string[] = []) {
-  return extractArguments(process.argv, islands);
+export function getArguments(islands: string[] = [], args = process.argv) {
+  return extractArguments(args, islands);
 }
 
 export function extractArguments(values: string[], islands: string[]) {
@@ -117,6 +117,14 @@ export class Arguments {
     if (Array.isArray(value)) return value;
 
     return [];
+  }
+  
+  static string(name: string) {
+    return this.get(name).at(0);
+  }
+
+  static has(name: string) {
+    return this.get(name).length > 0;
   }
 
   static get silent() {

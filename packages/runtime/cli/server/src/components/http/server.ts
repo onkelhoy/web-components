@@ -3,7 +3,7 @@ import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 
-import { Arguments, getPathInfo, LocalPackage, Terminal } from "@papit/cli";
+import { Arguments, getPathInfo, LocalPackage, Terminal } from "@papit/util";
 import { executor } from "@papit/build";
 
 // components

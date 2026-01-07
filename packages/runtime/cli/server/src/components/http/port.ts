@@ -1,4 +1,4 @@
-import { Terminal } from "@papit/cli";
+import { Terminal } from "@papit/util";
 import net from "node:net";
 
 function isPortFree(port: number, host = "0.0.0.0"): Promise<boolean> {

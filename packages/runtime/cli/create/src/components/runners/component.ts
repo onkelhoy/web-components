@@ -12,7 +12,7 @@ import {
   RootPackage,
   LocalPackage,
   Arguments,
-} from "@papit/cli"
+} from "@papit/util"
 import { getFolders } from "components/util";
 
 type PackageInfo = {

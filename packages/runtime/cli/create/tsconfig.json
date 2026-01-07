@@ -21,7 +21,7 @@
     "resolveJsonModule": true,
     "baseUrl": "src",
     "paths": {
-      "@papit/cli-create": ["./index"],
+      "@papit/util-create": ["./index"],
     }
   },
   "include": [

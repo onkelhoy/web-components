@@ -1,4 +1,4 @@
-# @papit/cli
+# @papit/util
 
 Low-level CLI utilities for building consistent, interactive Papit command-line tools.
 
@@ -11,14 +11,14 @@ It provides opinionated primitives so all Papit tools behave consistently in ter
 
 ![Type](https://img.shields.io/badge/Type-cli-orange)
 [![Tests](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml/badge.svg)](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml)
-[![NPM version](https://img.shields.io/npm/v/@papit/cli.svg?logo=npm)](https://www.npmjs.com/package/@papit/cli)
+[![NPM version](https://img.shields.io/npm/v/@papit/util.svg?logo=npm)](https://www.npmjs.com/package/@papit/util)
 
 ---
 
 ## Installation
 
 ```bash
-npm install @papit/cli
+npm install @papit/util
 ```
 
 This package is typically consumed **programmatically** by other Papit tools rather than executed directly.
@@ -38,7 +38,7 @@ A lightweight but flexible argument parser with support for:
 - “Island” flags that **do not consume the next argument**
 
 ```ts
-import { getArguments } from "@papit/cli";
+import { getArguments } from "@papit/util";
 
 const args = getArguments(["verbose", "debug"]);
 
@@ -51,7 +51,7 @@ args.values; // ["positional", "values"]
 The `Arguments` class exposes computed log-level flags with cascading behavior:
 
 ```ts
-import { Arguments } from "@papit/cli";
+import { Arguments } from "@papit/util";
 
 if (Arguments.verbose) {
   // enabled via --verbose or --debug
@@ -130,7 +130,7 @@ Utilities for **monorepo-aware dependency traversal** based on `package-lock.jso
 #### Ordered dependency execution
 
 ```ts
-import { getDependencyOrder } from "@papit/cli";
+import { getDependencyOrder } from "@papit/util";
 
 await getDependencyOrder(async (batch) => {
   for (const pkg of batch) {
@@ -147,7 +147,7 @@ await getDependencyOrder(async (batch) => {
 #### Dependency bloodlines
 
 ```ts
-import { getDependencyBloodline } from "@papit/cli";
+import { getDependencyBloodline } from "@papit/util";
 
 await getDependencyBloodline(
   "@scope/pkg-a",
@@ -171,7 +171,7 @@ Supported modes:
 #### Path & scope utilities
 
 ```ts
-import { getPathInfo, getScope } from "@papit/cli";
+import { getPathInfo, getScope } from "@papit/util";
 
 const info = getPathInfo();
 const scope = getScope();
@@ -184,7 +184,7 @@ const scope = getScope();
 #### Package helpers
 
 ```ts
-import { getPackage } from "@papit/cli";
+import { getPackage } from "@papit/util";
 
 const pkg = getPackage("@scope/pkg", lockfile);
 ```
@@ -199,7 +199,7 @@ const pkg = getPackage("@scope/pkg", lockfile);
 #### Recursive folder copying
 
 ```ts
-import { copyFolder } from "@papit/cli";
+import { copyFolder } from "@papit/util";
 
 await copyFolder(src, dest, (content) => {
   return content.replace("__VERSION__", "1.0.0");

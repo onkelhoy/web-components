@@ -1,7 +1,7 @@
 // import statements
 import path from "node:path";
 import esbuild, { BuildOptions, WatchOptions } from "esbuild";
-import { Arguments, getPathInfo, Package, Terminal } from "@papit/cli";
+import { Arguments, getPathInfo, Package, Terminal } from "@papit/util";
 
 import { Meta } from "../meta/types";
 import { ChildProcessWithoutNullStreams } from "node:child_process";

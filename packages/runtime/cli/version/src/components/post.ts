@@ -1,6 +1,6 @@
 import path from "node:path";
 import fs from "node:fs";
-import { Arguments, getDependencyBloodline, getJSON, getPathInfo, LocalPackage, Lockfile, Terminal } from "@papit/cli";
+import { Arguments, getDependencyBloodline, getJSON, getPathInfo, LocalPackage, Lockfile, Terminal } from "@papit/util";
 
 export async function post(packageJSON: LocalPackage, originalinfo: ReturnType<typeof getPathInfo>) {
 

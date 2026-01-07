@@ -4,12 +4,13 @@
   "description": "VARIABLE_DESCRIPTION",
   "private": true,
   "scripts": {
-    "analyse": "bash ./bin/analyse/run.sh",
+    "analyse": "to come",
+    "publish": "to come",
+    
+    "build": "npx @papit build",
+    "test": "npx @papit/",
     "create": "npm create @papit -- --package",
-    "publish": "bash ./bin/publish/run.sh",
-    "build": "bash ./bin/build/run.sh",
-    "test": "bash ./bin/test/run.sh",
-    "server": "npx @papit/server"
+    "start": "npx @papit/server --serve --port=8080"
   },
   "keywords": [
     "typescript"
@@ -26,7 +27,7 @@
   ],
   "devDependencies": {
     "@papit/version-cli": "0.0.1",
-    "@papit/cli": "0.0.1",
+    "@papit/util": "0.0.1",
     "@papit/build": "0.0.1",
     "@papit/create": "0.0.1",
     "@microsoft/api-extractor": "^7.55.2",

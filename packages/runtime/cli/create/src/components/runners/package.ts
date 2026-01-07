@@ -19,7 +19,7 @@ import {
   RootPackage,
   LocalPackage,
   Arguments,
-} from "@papit/cli"
+} from "@papit/util"
 import { componentRunner } from "./component";
 
 import { createFolderConfig, getFolders, selectFolder } from "../util";

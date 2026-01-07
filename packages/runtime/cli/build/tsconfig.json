@@ -22,7 +22,7 @@
     "resolveJsonModule": true,
     "baseUrl": "src",
     "paths": {
-      "@papit/cli-build": [
+      "@papit/util-build": [
         "./index"
       ],
     }

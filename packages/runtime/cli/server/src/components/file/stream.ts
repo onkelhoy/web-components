@@ -1,7 +1,7 @@
 import { IncomingMessage, ServerResponse } from "node:http";
 import path from "node:path";
 import fs from "node:fs";
-import { Arguments, Terminal } from "@papit/cli";
+import { Arguments, Terminal } from "@papit/util";
 
 import { getFile } from "./get";
 import { FileConstants } from "./types";

@@ -1,7 +1,7 @@
 // import statements 
 import path from "node:path";
 import fs from "node:fs";
-import { Arguments, Package, Terminal, getPathInfo } from "@papit/cli";
+import { Arguments, Package, Terminal, getPathInfo } from "@papit/util";
 
 function extractEntryPoint(value: string | string[] | Record<string, string>, outDir: string) {
   let entryPoints: Record<string, string> = {}

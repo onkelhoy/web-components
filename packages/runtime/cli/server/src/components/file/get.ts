@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { CacheEntry, FileConstants } from "./types";
-import { Arguments, Terminal } from "@papit/cli";
+import { Arguments, Terminal } from "@papit/util";
 
 function isCacheable(size: number, ext: string): boolean {
   // Don't cache large files or video files

@@ -1,4 +1,4 @@
-import { Terminal, RootPackage, getPathInfo, Arguments } from "@papit/cli";
+import { Terminal, RootPackage, getPathInfo, Arguments } from "@papit/util";
 import fs from "node:fs";
 import path from "node:path";
 import { stripRootPath } from "./helper";

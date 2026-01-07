@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { Arguments, getPathInfo, Terminal } from "@papit/cli"
+import { Arguments, getPathInfo, Terminal } from "@papit/util"
 import { Document } from "@papit/html";
 
 (async function () {

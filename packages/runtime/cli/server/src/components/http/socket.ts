@@ -1,7 +1,7 @@
 import http from "node:http";
 import { createHash, randomUUID } from "node:crypto";
 import { Duplex } from "node:stream";
-import { Arguments, Terminal } from "@papit/cli";
+import { Arguments, Terminal } from "@papit/util";
 
 const connectedClients = new Map<string, Duplex>();
 

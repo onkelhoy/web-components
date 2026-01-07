@@ -1,7 +1,7 @@
 import path from "node:path";
 import fs from "node:fs";
 import { Document } from "@papit/html";
-import { getPathInfo, Terminal } from "@papit/cli";
+import { getPathInfo, Terminal } from "@papit/util";
 
 import { getDocument } from "./util";
 

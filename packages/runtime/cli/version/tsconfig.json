@@ -21,7 +21,7 @@
     "incremental": true,
     "resolveJsonModule": true,
     "paths": {
-      "@papit/cli-version": [
+      "@papit/util-version": [
         "./index"
       ],
     }

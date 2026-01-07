@@ -1,6 +1,6 @@
 import path from "node:path";
 import fs from "node:fs";
-import { Arguments, getJSON, getPathInfo, Terminal } from "@papit/cli";
+import { Arguments, getJSON, getPathInfo, Terminal } from "@papit/util";
 
 import { Translation, Translations } from "./types";
 import { deepMerge } from "./util";

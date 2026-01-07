@@ -8,7 +8,7 @@ import {
   copyFolder,
   getPathInfo,
   Arguments,
-} from "@papit/cli"
+} from "@papit/util"
 const execAsync = promisify(exec);
 
 export async function runner(info: ReturnType<typeof getPathInfo>, packageLocation?: string) {

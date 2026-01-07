@@ -1,5 +1,5 @@
 import { Document } from "@papit/html";
-import { Arguments, getPathInfo, Terminal } from "@papit/cli";
+import { Arguments, getPathInfo, Terminal } from "@papit/util";
 import path from "node:path";
 import fs from "node:fs";
 

@@ -1,4 +1,4 @@
-import { Arguments } from "@papit/cli";
+import { Arguments } from "@papit/util";
 
 // Cache configuration
 export type CacheEntry = {
