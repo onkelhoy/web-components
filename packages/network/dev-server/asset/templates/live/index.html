@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>@papit/dev-server</title>
+
+    <meta name="description" content="development server - serve" />
+    <meta name="color-scheme" content="light dark" />
+
+    <link rel="stylesheet" href="/templates/live/style.css" />
+    <script defer data-server-omitter src="/templates/live/main.js">
+      console.log("hello")
+    </script>
+  </head>
+
+  <body>
+    <dialog id="liveservererrorpopup">
+      <span>ERROR</span>
+      <div class="content"></div>
+    </dialog>
+  </body>
+</html>

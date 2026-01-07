@@ -18,12 +18,12 @@ export function upgrade(this: http.Server, req: http.IncomingMessage, socket: Du
     `Sec-WebSocket-Accept: ${hash}`
   ];
   socket.write(responseHeaders.join('\r\n') + '\r\n\r\n');
-
+  
   // keeping track
   const socketid = randomUUID();
   connectedClients.set(socketid, socket);
 
-  if (Arguments.info) Terminal.blue("client connected");
+  if (Arguments.info) Terminal.write(Terminal.blue("client connected"));
 
   // events 
   socket.on('error', handleError.bind(socket, socketid));
@@ -35,7 +35,7 @@ export function upgrade(this: http.Server, req: http.IncomingMessage, socket: Du
 function handleError(this: Duplex, socketid: string, error: any) {
   if ('code' in error && error.code === 'ECONNRESET')
   {
-    if (Arguments.info) Terminal.blue("client disconnected");
+    if (Arguments.info) Terminal.write(Terminal.blue("client disconnected"));
     connectedClients.delete(socketid);
   }
   else if (process.env.LOGLEVEL !== "none")
@@ -51,7 +51,7 @@ function handleData(this: Duplex, socketid: string, buffer: Buffer) {
   this.write(frameWebSocketMessage(message));
 }
 function handleEnd(this: Duplex, socketid: string) {
-  if (Arguments.info) Terminal.blue("client disconnected");
+  if (Arguments.info) Terminal.write(Terminal.blue("client disconnected"));
 
   // TODO: have to find the client-id to be removed so we can remove it from the connectedClients list 
   connectedClients.delete(socketid);
@@ -75,7 +75,7 @@ export function update(filename: string, content: string) {
     connectedClients.forEach((client) => {
       if (!client)
       {
-        if (Arguments.verbose) Terminal.error(Terminal.blue("socket"), "[update] could not find client");
+        if (Arguments.verbose) Terminal.error(Terminal.write(Terminal.blue("socket"), "[update] could not find client"));
       } else
       {
         for (let i = 0; i < numChunks; i++)
@@ -108,7 +108,7 @@ export function error(filename: string, errors: any[]) {
   connectedClients.forEach((client) => {
     if (!client)
     {
-      if (Arguments.verbose) Terminal.error(Terminal.blue("socket"), "[error] could not find client");
+      if (Arguments.verbose) Terminal.error(Terminal.write(Terminal.blue("socket"), "[error] could not find client"));
     } else
     {
       client.write(message);

@@ -6,7 +6,7 @@ import fs from "node:fs";
 export function getDocument(name: string, info: ReturnType<typeof getPathInfo>) {
   const document = new Document();
   const nameTemplate = `${name}-template`;
-  let source = path.join(info.script!, `asset/templates/${name}.html`);
+  let source = path.join(info.script!, `asset/templates/${name}/index.html`);
 
   if (typeof Arguments.args.flags[nameTemplate] === "string" && fs.existsSync(Arguments.args.flags[nameTemplate]))
   {

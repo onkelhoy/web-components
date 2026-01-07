@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { Arguments, getPathInfo, LocalPackage, Terminal } from "@papit/cli";
+import { executor } from "@papit/build";
 
 // components
 import { HttpError } from "../errors";
@@ -27,6 +28,22 @@ export async function start(
 ) {
   PORT = await getPort(PORT);
   server = http.createServer();
+  
+  if (packageJSON.name !== "@papit/dev-server")
+  {
+    if (Arguments.info) Terminal.write(Terminal.blue("listening to file changes"), packageJSON.name)
+    Arguments.args.flags['no-bundle'] = true;
+    Arguments.args.flags.live = true;
+    Arguments.args.flags.location = info.package;
+    Arguments.args.flags.mode = "dev";
+    Arguments.args.flags.buildMode = "ancestors";
+
+    executor({
+      callback(counter, result) {
+        console.log('rebuild')    
+      },
+    });
+  }
 
   server.listen(PORT, () => {
     Arguments.args.flags.port = String(PORT);
@@ -100,8 +117,7 @@ export async function start(
       }
     }
 
-    const FFs = fs.readdirSync(currentURL);
-    const dom = await getHTML(info, assets, packageJSON, FFs, currentURL);
+    const dom = await getHTML(info, assets, packageJSON, currentURL);
 
     res.statusCode = 200;
     res.end(dom.outerHTML);

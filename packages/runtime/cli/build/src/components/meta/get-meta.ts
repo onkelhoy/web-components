@@ -1,6 +1,6 @@
 import path from "node:path";
 import fs from "node:fs";
-import { Arguments, LocalPackage, Terminal, getJSON, getPathInfo } from "@papit/cli";
+import { Arguments, LocalPackage, Terminal, getJSON, getPathInfo, getScope } from "@papit/cli";
 import { getTSinfo } from "./get-tsinfo";
 import { getEntryPoints } from "./get-entrypoints";
 import { Meta } from "./types";
@@ -19,6 +19,7 @@ export async function getMeta(
   }
 
   const config: LocalPackage["papit"] = packageJSON.papit ?? {};
+  const scope = getScope();
 
   const devTSconfig = path.join(info.local, "tsconfig.json");
   const prodTSconfig = path.join(info.local, "tsconfig.prod.json");
@@ -44,16 +45,23 @@ export async function getMeta(
     process.exit(1);
   }
 
+  let externals = [
+    packageJSON.name, 
+    ...Object.keys(packageJSON.dependencies || {}),
+    ...Object.keys(packageJSON.peerDependencies || {}),
+  ];
+
+  if (Arguments.args.flags['no-bundle'])
+  {
+    // externals = externals.filter(name => !name.startsWith(scope));
+  }
+
   const meta: Meta = {
     entryPoints: {
       record: entryPoints,
       keys: entryPointKeys,
     },
-    externals: [
-      packageJSON.name,
-      ...Object.keys(packageJSON.dependencies || {}),
-      ...Object.keys(packageJSON.peerDependencies || {}),
-    ],
+    externals,
     tsconfig: {
       info: tsConfigInfo,
       path: tsconfigFilePath,

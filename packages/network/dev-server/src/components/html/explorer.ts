@@ -65,6 +65,8 @@ export function createExplorer(
 
   FFs.sort((a, b) => a.localeCompare(b)).forEach(name => {
     const url = path.join(currentURL, name);
+    const basename = path.basename(name);
+
     const stat = fs.statSync(url);
     const li = document.createElement("li");
     li.innerHTML = `
@@ -85,45 +87,82 @@ export function createExplorer(
 
     if (stat.isFile())
     {
-      const basename = path.basename(name);
-      const split = basename.split(".");
-      let ext = path.extname(name).replace(".", "");
-      if (split.length === 1) ext = basename;
-      else if (split.length > 2)
-      {
-        const potiential = split.slice(split.length - 2, split.length).join(".");
-        if (SPECIAL_ICONS[potiential]) ext = potiential;
-      }
-
-      let icon = ext;
-      if (basename.startsWith(".git"))
-      {
-        icon = "git";
-      }
-      else if (basename === "package.json")
-      {
-        icon = "package";
-      }
-      else if (basename.startsWith("tsconfig"))
-      {
-        icon = "tsconfig"
-      }
-
-      use?.setAttribute("href", "#" + icon);
-      li.toggleAttribute("data-file");
+      use?.setAttribute("href", "#" + getFileIcon(url, spritesheet_dom));
 
       files.appendChild(li);
       return;
     }
+
     if (stat.isDirectory())
     {
-      use?.setAttribute("href", "#folder");
-      li.toggleAttribute("data-folder");
-
+      use?.setAttribute("href", "#" + getFolderIcon(url, spritesheet_dom));
       anchor.setAttribute("href", name + "/");
+
       folders.appendChild(li);
     }
   });
 
   return document;
+}
+
+
+function getFileIcon(url: string, spritesheet_dom: Document) {
+  const basename = path.basename(url);
+  const split = basename.split(".");
+  let ext = path.extname(basename).replace(".", "");
+  if (split.length === 1) ext = basename;
+  else if (split.length > 2)
+  {
+    const potiential = split.slice(split.length - 2, split.length).join("_");
+    if (SPECIAL_ICONS[potiential]) ext = potiential;
+  }
+
+  let icon = ext;
+  if (basename.startsWith(".git") || /\.git/.test(url))
+  {
+    icon = "git";
+  }
+  else if (basename === "package.json")
+  {
+    icon = "package";
+  }
+  else if (basename.startsWith("tsconfig"))
+  {
+    icon = "tsconfig"
+  }
+  else if (/translation/.test(url))
+  {
+    const name = split.at(0) ?? icon;
+    if (spritesheet_dom.querySelector("symbol#"+name)) return name; // language flag 
+    icon = "language";
+  }
+  else if (/\.vscode/.test(url))
+  {
+    icon = "vscode";
+  }
+
+  if (!spritesheet_dom.querySelector("symbol#"+icon))
+  {
+    icon = "file";
+  }
+
+  return icon;
+}
+
+function getFolderIcon(url: string, spritesheet_dom: Document) {
+  let icon = "folder";
+  if (/\.vscode/.test(url))
+  {
+    icon = "vscode";
+  }
+  else if (/\.git/.test(url))
+  {
+    icon = "git";
+  }
+  else if (/translation/.test(url))
+  {
+    icon = "language";
+  }
+
+  return icon;
 }

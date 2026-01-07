@@ -54,8 +54,9 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@papit/html": "^0.0.1",
-    "@papit/cli": "^0.0.1"
+    "@papit/build": "^0.0.1",
+    "@papit/cli": "^0.0.1",
+    "@papit/html": "^0.0.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

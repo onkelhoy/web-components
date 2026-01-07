@@ -17,22 +17,15 @@ const CONTEXTS: BuildContext[] = [];
 export async function executor(options?: Partial<ExecutorOptions>) {
   if (Arguments.args.flags.live) Arguments.args.flags.dev = true;
 
-  const mode = options?.mode ?? Arguments.args.flags.dev ? "dev" : "prod";
-  const location = options?.location ?? Arguments.args.flags.location;
+  const mode = Arguments.args.flags.dev ? "dev" : "prod";
+  const location = Arguments.args.flags.location;
   const originalinfo = getPathInfo(typeof location === "string" ? location : undefined);
 
   let buildMode = "individual";
-  if (!options?.buildMode)
-  {
-    if (Arguments.args.flags.all) buildMode = "all";
-    else if (Arguments.args.flags.bloodline) buildMode = "bloodline";
-    else if (Arguments.args.flags.ancestors) buildMode = "ancestors";
-    else if (Arguments.args.flags.descendants) buildMode = "descendants";
-  }
-  else 
-  {
-    buildMode = options.buildMode;
-  }
+  if (Arguments.args.flags.all) buildMode = "all";
+  else if (Arguments.args.flags.bloodline) buildMode = "bloodline";
+  else if (Arguments.args.flags.ancestors) buildMode = "ancestors";
+  else if (Arguments.args.flags.descendants) buildMode = "descendants";
 
   if (Arguments.info)
   {
@@ -106,6 +99,8 @@ export async function executor(options?: Partial<ExecutorOptions>) {
       break;
     }
   }
+
+
 }
 
 //#region functions 
