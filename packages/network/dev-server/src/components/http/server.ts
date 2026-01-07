@@ -30,13 +30,6 @@ export async function start(
 
   server.listen(PORT, () => {
     Arguments.args.flags.port = String(PORT);
-    if (Arguments.info)
-    {
-      Terminal.write(Terminal.yellow("root") + ":", info.root);
-      Terminal.write(Terminal.yellow("package") + ":", info.package);
-      Terminal.write(Terminal.yellow("location") + ":", info.local);
-      Terminal.write();
-    }
     if (!Arguments.silent) Terminal.write("server:", Terminal.blue(String(PORT)), Terminal.yellow("- running"));
   });
 
