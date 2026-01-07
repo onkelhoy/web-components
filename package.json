@@ -105,6 +105,7 @@
         "include": "prefix",
         "name": "algorithms"
       }
-    }
+    },
+    "htmlprefix": "pap"
   }
 }
