@@ -4,10 +4,10 @@ import { Document } from "@papit/html";
 
 import path from "node:path";
 import fs from "node:fs";
-import { getFile } from "../file/stream";
 
 const SPECIAL_ICONS: Record<string, true> = {
   "d.ts": true,
+  "test.js": true,
 }
 
 export function createExplorer(
@@ -127,45 +127,3 @@ export function createExplorer(
 
   return document;
 }
-
-// , assets: Record<string, string
-// const extname = path.extname(name);
-
-// const iconMap: Record<string, string> = {
-//   temp: "file",
-//   language: "language",
-//   txt: "text",
-//   "d.ts": "d.ts",
-//   json: "{}",
-//   md: "MD",
-//   html: "</>", // dont think this will even be shown as it should render it
-// }
-
-// function getIcon(name: string, original: string, assets: Record<string, string[]>) {
-//   const split = original.split(".");
-//   split.shift();
-//   const shift1 = split.join(".");
-//   split.shift();
-//   const shift2 = split.join(".");
-
-//   const arr = [original, shift1, shift2, name];
-//   for (const item of arr)
-//   {
-//     if (!item) continue;
-
-//     const url = `/icons/explorer-${item}.svg`;
-//     if (assets[url])
-//     {
-//       const copy = [...assets[url]];
-//       while (copy.length > 0)
-//       {
-//         const icon = getFile(copy.pop()!, url);
-//         if (icon.data) return icon.data.content.toString("utf-8");
-//       }
-//     }
-
-//     if (fallbackIcons[item]) return `<span class="icon">${fallbackIcons[item]}</span>`;
-//   }
-
-//   return `<span class="icon">${name.slice(0, 3).toUpperCase()}</span>`;
-// }
