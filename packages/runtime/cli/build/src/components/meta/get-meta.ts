@@ -13,6 +13,7 @@ export async function getMeta(
   const storedFile = path.join(info.local, `.temp/build-meta/${mode}.json`);
   if (fs.existsSync(storedFile) && !Arguments.args.flags.clean && !Arguments.args.flags.force) 
   {
+    if (Arguments.debug) Terminal.write(Terminal.green('loading stored meta file'), storedFile);
     const json = getJSON<Meta>(storedFile);
     if (json !== null) return json;
   }
@@ -49,6 +50,7 @@ export async function getMeta(
       keys: entryPointKeys,
     },
     externals: [
+      packageJSON.name,
       ...Object.keys(packageJSON.dependencies || {}),
       ...Object.keys(packageJSON.peerDependencies || {}),
     ],

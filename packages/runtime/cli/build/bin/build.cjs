@@ -6,7 +6,7 @@ const externals = [...Object.keys(packageJSON.dependencies || {}), ...Object.key
 (async function () {
 
   const esbuildInfo = await esbuild.build({
-    entryPoints: ["src/index.ts"],
+    entryPoints: ["src/runner.ts"],
     bundle: true,
     outfile: ".temp/bundle.js",
     minify: true,

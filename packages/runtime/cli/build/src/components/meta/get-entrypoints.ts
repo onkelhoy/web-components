@@ -80,7 +80,8 @@ export function getEntryPoints(
       if (entry === ".") entryPointsValues.bundle = "src/index.ts";
       else 
       {
-        entryPointsValues[entry] = `src/${entry}`; // we try this.. 
+        const trimmed = entry.replace(/^\.\//, '');
+        entryPointsValues[entry] = packageJSON.exports[entry]?.import?.replace(/^\.\//, '').replace('.js', '.ts') ?? `src/${trimmed}.ts`;
       }
     }
 

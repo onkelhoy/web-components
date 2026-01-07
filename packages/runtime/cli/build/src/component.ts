@@ -6,24 +6,33 @@ import { Arguments, DependencyBatch, LocalPackage, Package, Terminal, getDepende
 import { getMeta } from "./components/meta/get-meta";
 import { jsBundler } from "./components/bundlers/js-bundle";
 import { tsBundler } from "./components/bundlers/ts-bundle";
+import { ExecutorOptions } from "./types";
+
 import { BuildContext } from "esbuild";
 
 const CACHED_PACKAGE_JSON: Record<string, LocalPackage> = {};
 const PREBUILD_RUNS = new Set<string>();
 const CONTEXTS: BuildContext[] = [];
 
-(async function () {
+export async function executor(options?: Partial<ExecutorOptions>) {
   if (Arguments.args.flags.live) Arguments.args.flags.dev = true;
 
-  const mode = Arguments.args.flags.dev ? "dev" : "prod";
-  const location = Arguments.args.flags.location;
+  const mode = options?.mode ?? Arguments.args.flags.dev ? "dev" : "prod";
+  const location = options?.location ?? Arguments.args.flags.location;
   const originalinfo = getPathInfo(typeof location === "string" ? location : undefined);
 
   let buildMode = "individual";
-  if (Arguments.args.flags.all) buildMode = "all";
-  else if (Arguments.args.flags.bloodline) buildMode = "bloodline";
-  else if (Arguments.args.flags.ancestors) buildMode = "ancestors";
-  else if (Arguments.args.flags.descendants) buildMode = "descendants";
+  if (!options?.buildMode)
+  {
+    if (Arguments.args.flags.all) buildMode = "all";
+    else if (Arguments.args.flags.bloodline) buildMode = "bloodline";
+    else if (Arguments.args.flags.ancestors) buildMode = "ancestors";
+    else if (Arguments.args.flags.descendants) buildMode = "descendants";
+  }
+  else 
+  {
+    buildMode = options.buildMode;
+  }
 
   if (Arguments.info)
   {
@@ -97,7 +106,7 @@ const CONTEXTS: BuildContext[] = [];
       break;
     }
   }
-}());
+}
 
 //#region functions 
 function getPackage(local: string, name?: string) {
@@ -205,6 +214,7 @@ async function runner(
   info: ReturnType<typeof getPathInfo>,
   packageJSON: LocalPackage,
   originalinfo: ReturnType<typeof getPathInfo>,
+  options?: Partial<ExecutorOptions>,
 ) {
   const session = Terminal.createSession();
   if (!packageJSON.scripts?.build)
@@ -307,7 +317,7 @@ async function runner(
 
     try
     {
-      const result = await jsBundler(absoluteEntry, javascriptFileOutput, meta, info, packageJSON);
+      const result = await jsBundler(absoluteEntry, javascriptFileOutput, meta, info, packageJSON, options);
       if (result)
       {
         CONTEXTS.push(result as BuildContext);

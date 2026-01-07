@@ -5,6 +5,7 @@ import { Arguments, getPathInfo, Package, Terminal } from "@papit/cli";
 
 import { Meta } from "../meta/types";
 import { ChildProcessWithoutNullStreams } from "node:child_process";
+import { ExecutorOptions } from "types";
 
 export async function jsBundler(
   inputFile: string,
@@ -12,6 +13,7 @@ export async function jsBundler(
   meta: Meta,
   info: ReturnType<typeof getPathInfo>,
   packageJSON: Package,
+  exoptions?: Partial<ExecutorOptions>,
 ) {
 
   const isDev = !!Arguments.args.flags.dev;
@@ -43,7 +45,7 @@ export async function jsBundler(
 
   if (Arguments.args.flags.live)
   {
-    return watch(options, info);
+    return watch(options, info, exoptions);
   }
 
   return build(options);
@@ -77,7 +79,7 @@ async function build(options: BuildOptions) {
   return esbuildInfo;
 }
 
-async function watch(options: BuildOptions, info: ReturnType<typeof getPathInfo>) {
+async function watch(options: BuildOptions, info: ReturnType<typeof getPathInfo>, exoptions?: Partial<ExecutorOptions>) {
   let counter = 0;
   const ctx = await esbuild.context({
     ...options,
@@ -118,6 +120,11 @@ async function watch(options: BuildOptions, info: ReturnType<typeof getPathInfo>
 
           let executables = Arguments.args.flags.execute;
           if (typeof executables === "string") executables = [executables];
+
+          if (exoptions?.callback)
+          {
+            exoptions.callback(counter, result);
+          }
 
           if (!Array.isArray(executables)) return;
 
