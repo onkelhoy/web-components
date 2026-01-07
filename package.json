@@ -44,11 +44,6 @@
         "include": "false",
         "name": "runtime"
       },
-      "packages/runtime/cli": {
-        "include": "false",
-        "name": "cli",
-        "priority": 1
-      },
       "packages/design-system": {
         "include": false,
         "name": "design-system"

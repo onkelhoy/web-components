@@ -1,7 +1,7 @@
 // import statements 
 import path from "node:path";
 import fs from "node:fs";
-import { Arguments, DependencyBatch, LocalPackage, Package, Terminal, getDependencyBloodline, getDependencyOrder, getJSON, getPathInfo } from "@papit/util";
+import { Arguments, DependencyBatch, LocalPackage, Package, Terminal, getDependencyBloodline, getDependencyOrder, getJSON, getPathInfo } from "../../util/lib";
 
 import { getMeta } from "./components/meta/get-meta";
 import { jsBundler } from "./components/bundlers/js-bundle";
@@ -102,6 +102,11 @@ export async function executor(options?: Partial<ExecutorOptions>) {
 
 
 }
+
+(async function () {
+  console.log('am I run?')
+  if (Arguments.has("run")) await executor();
+}());
 
 //#region functions 
 function getPackage(local: string, name?: string) {

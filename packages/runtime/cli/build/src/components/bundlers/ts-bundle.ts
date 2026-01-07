@@ -2,7 +2,7 @@
 import path from "node:path";
 import fs from "node:fs";
 import { Extractor, ExtractorConfig } from '@microsoft/api-extractor';
-import { Arguments, Terminal, copyFolder, getPathInfo } from "@papit/util";
+import { Arguments, Terminal, copyFolder, getPathInfo } from "../../../../util/lib";
 
 import { Meta } from "../meta/types";
 
