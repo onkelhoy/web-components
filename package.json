@@ -8,13 +8,13 @@
     "url": "https://github.com/onkelhoy/web-components.git"
   },
   "scripts": {
-    "analyse": "bash ./bin/analyse/run.sh",
-    "clean": "bash ./bin/_utils/clean.sh",
-    "publish": "bash ./bin/publish/run.sh",
-    "prebuild": "node ./bin/bootstrap-build.mjs",
-    "build": "npx @papit/build -- --all",
-    "test": "bash ./bin/test/run.sh",
-    "server": "npx @papit/server"
+    "analyse": "to come",
+    "publish": "to come",
+    
+    "build": "npx @papit build",
+    "test": "npx @papit/",
+    "create": "npm create @papit -- --package",
+    "start": "npx @papit/server --serve --port=8080"
   },
   "keywords": [
     "typescript"
@@ -45,7 +45,7 @@
         "name": "runtime"
       },
       "packages/runtime/cli": {
-        "include": "suffix",
+        "include": "false",
         "name": "cli",
         "priority": 1
       },

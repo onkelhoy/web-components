@@ -23,15 +23,13 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
 
   // reporter, with output path for HTML reports.
-  reporter: [
-    process.env.CI ? ['github', {
-      open: 'never',
-      outputFolder: path.join(__dirname, 'test-reports'),
-    }] : ['html', {
-      open: 'never',
-      outputFolder: path.join(__dirname, 'test-reports'),
-    }],
-  ],
+  reporter: [[
+    process.env.CI ? "github" : "html", 
+    {
+      open: "never",
+      outputFolder: path.join(__dirname, "test-reports"),
+    }
+  ]],
 
   outputDir: path.join(__dirname, "test-results"),
 
@@ -74,7 +72,7 @@ export default defineConfig({
   ],
   // running web-server before starting tests 
   webServer: {
-    command: 'npm run server --include-workspace-root=true --workspace="$(npm prefix)" -- --rootdir="$(npm prefix)" --log-level=debug --location=$(pwd) --nosig --port=3500',
+    command: 'npx @papit/server --serve --port=3500',
     url: 'http://localhost:3500',
     reuseExistingServer: true,
     stdout: 'ignore',

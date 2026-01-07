@@ -25,9 +25,13 @@
     "incremental": true,
     "resolveJsonModule": true,
     "paths": {
-      "@papit/web-component": [
-        "./index"
-      ],
+      "@decorators/*": ["./decorators/*"],
+      "@html": ["./html/index"],
+      "@html/*": ["./html/*"],
+      "@element/*": ["./element/*"],
+      "@element": ["./element/index"],
+      "@functions/*": ["./functions/*"],
+      "@papit/web-component": ["./index"],
     }
   },
   "include": [

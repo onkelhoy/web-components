@@ -1,15 +1,19 @@
-import { WebComponent } from './component.js';
+export { html } from "./html";
 
-// export 
-export * from "./component";
-export * from "./types";
+export * from "./element";
 
-// Register the element with the browser
+// functions
+export * from "./functions/debounce";
+export * from "./functions/format-number";
+export * from "./functions/extract-slot-value";
+export * from "./functions/lerp";
+export * from "./functions/uuid";
+export * from "./functions/cumalative-offset";
+export * from "./functions/next-parent";
+export * from "./functions/resolve";
 
-if (!window.customElements) {
-  throw new Error('Custom Elements not supported');
-}
-
-if (!window.customElements.get('pap-web-component')) {
-  window.customElements.define('pap-web-component', WebComponent);
-}
+// decorators 
+export * from "./decorators/bind";
+export * from "./decorators/property";
+export * from "./decorators/debounce";
+export * from "./decorators/query";
