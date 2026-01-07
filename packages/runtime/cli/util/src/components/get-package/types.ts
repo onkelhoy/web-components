@@ -83,6 +83,7 @@ type PackageLockEntry = {
   name?: string;
 };
 export type Lockfile = {
+  name?: string;
   packages: Record<string, PackageLockEntry | Package>;
 }
 

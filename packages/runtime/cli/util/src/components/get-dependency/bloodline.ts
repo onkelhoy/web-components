@@ -32,6 +32,7 @@ export async function getDependencyBloodline(
 // helper functions 
 function ancestorsRecursive(packageName: string, config: Config, set: Set<string>) {
   if (set.has(packageName)) return;
+  if (packageName === config.lockfile.name) return;
 
   const pkg = getPackage<LocalPackage>(packageName, config.lockfile);
   if (!pkg)
