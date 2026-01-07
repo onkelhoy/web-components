@@ -11,12 +11,11 @@
   "scripts": {
     "build": "npx @papit/build",
     "watch": "tsc -w",
-    "start": "",
+    "start": "npx @papit/dev-server",
     "test": "npx playwright test -c tests/playwright.config.ts",
     "preversion": "papit-version",
     "postversion": "papit-version",
     "component": "npm create @papit -- --component",
-
     "test:update-snapshots": "npx playwright test --update-snapshots -c tests/playwright.config.ts",
     "test:chrome": "npm test -- --project=chromium",
     "build:react": "bash ./bin/_utils/react.sh"

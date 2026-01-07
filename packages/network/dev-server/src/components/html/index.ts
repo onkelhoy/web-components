@@ -1,6 +1,6 @@
 import path from "node:path";
 import fs from "node:fs";
-import { getPathInfo, LocalPackage } from "@papit/cli";
+import { Arguments, getPathInfo, LocalPackage } from "@papit/cli";
 
 import { createExplorer } from "./explorer";
 import { createInline } from "./inline";
@@ -12,10 +12,27 @@ export async function getHTML(
   url: string,
 ) {
 
-  const indexhtml_path = path.join(url, "index.html");
-  if (fs.existsSync(indexhtml_path))
+  let htmlSource = path.join(url, "index.html");
+  if (typeof Arguments.args.flags.view === "string")
   {
-    return createInline(indexhtml_path, info);
+    const view = Arguments.args.flags.view.endsWith(".html") ? Arguments.args.flags.view : path.join(Arguments.args.flags.view, "index.html");
+    if (fs.existsSync(view))
+    {
+      htmlSource = view;
+    }
+  }
+  else if (packageJSON.papit?.main)
+  {
+    const view = path.join(info.package, "views", packageJSON.papit.main, "index.html");
+    if (fs.existsSync(view))
+    {
+      htmlSource = view;
+    }
+  }
+
+  if (fs.existsSync(htmlSource))
+  {
+    return createInline(htmlSource, info);
   }
 
   const FFs = fs.readdirSync(url);
