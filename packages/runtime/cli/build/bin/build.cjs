@@ -17,9 +17,9 @@ const externals = [...Object.keys(packageJSON.dependencies || {}), ...Object.key
     external: externals,
   });
 
-  // if (esbuildInfo.errors.length > 0)
-  // {
-  //   console.log("ERRORS", esbuildInfo.errors);
-  //   process.exit(1);
-  // }
+  if (esbuildInfo.errors.length > 0)
+  {
+    console.log("ERRORS", esbuildInfo.errors);
+    process.exit(1);
+  }
 }());
