@@ -9,7 +9,7 @@ import { close as httpExit, start as httpStart } from "./components/http";
   const info = getPathInfo(typeof Arguments.args.flags.location === "string" ? Arguments.args.flags.location : undefined, import.meta.url);
   if (info.script == null)
   {
-    Terminal.error("script location of @papit/dev-server is missing");
+    Terminal.error("script location of @papit/server is missing");
     process.exit(1);
   }
 

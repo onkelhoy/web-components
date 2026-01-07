@@ -29,7 +29,7 @@ export async function start(
   PORT = await getPort(PORT);
   server = http.createServer();
   
-  if (packageJSON.name !== "@papit/dev-server")
+  if (packageJSON.name !== "@papit/server" && !Arguments.args.flags.serve)
   {
     if (Arguments.info) Terminal.write(Terminal.blue("listening to file changes"), packageJSON.name)
     Arguments.args.flags['no-bundle'] = true;

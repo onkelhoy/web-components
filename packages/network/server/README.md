@@ -1,4 +1,4 @@
-# @papit/dev-server
+# @papit/server
 
 a simple but powerful dev server that can locate locale assets and package and even dependency assets
 
@@ -6,14 +6,14 @@ a simple but powerful dev server that can locate locale assets and package and e
 
 ![Type](https://img.shields.io/badge/Type-network-orange)
 [![Tests](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml/badge.svg)](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml)
-[![NPM version](https://img.shields.io/npm/v/@papit/dev-server.svg?logo=npm)](https://www.npmjs.com/package/@papit/dev-server)
+[![NPM version](https://img.shields.io/npm/v/@papit/server.svg?logo=npm)](https://www.npmjs.com/package/@papit/server)
 
 ---
 
 ## installation
 
 ```bash
-npm install @papit/dev-server
+npm install @papit/server
 ```
 
 ## Contributing

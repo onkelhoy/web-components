@@ -23,7 +23,7 @@ export function getDocument(name: string, info: ReturnType<typeof getPathInfo>) 
           <meta charset="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-          <title>@papit/dev-server</title>
+          <title>@papit/server</title>
 
           <meta name="description" content="Development server" />
           <meta name="color-scheme" content="light dark" />

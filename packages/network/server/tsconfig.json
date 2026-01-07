@@ -21,7 +21,7 @@
     "incremental": true,
     "resolveJsonModule": true,
     "paths": {
-      "@papit/dev-server": [
+      "@papit/server": [
         "./index"
       ],
     }

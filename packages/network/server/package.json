@@ -1,5 +1,5 @@
 {
-  "name": "@papit/dev-server",
+  "name": "@papit/server",
   "description": "a simple but powerful dev server that can locate locale assets and package and even dependency assets",
   "keywords": [
     "papit",
