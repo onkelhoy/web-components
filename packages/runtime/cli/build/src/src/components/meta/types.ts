@@ -1,4 +1,4 @@
-import { LocalPackage } from "../../../../util/lib"
+import { LocalPackage } from "@papit/util"
 import { getTSinfo } from "./get-tsinfo";
 
 export type Meta = {

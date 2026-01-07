@@ -11,7 +11,8 @@
     "analyse": "to come",
     "publish": "to come",
     
-    "build": "npx @papit build",
+    "prebuild": "node bin/bootstrap-build.mjs",
+    "build": "npx @papit/build",
     "test": "npx @papit/",
     "create": "npm create @papit -- --package",
     "start": "npx @papit/server --serve --port=8080"

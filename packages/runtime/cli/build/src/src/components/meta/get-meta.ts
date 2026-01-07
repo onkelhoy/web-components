@@ -1,6 +1,6 @@
 import path from "node:path";
 import fs from "node:fs";
-import { Arguments, LocalPackage, Terminal, getJSON, getPathInfo, getScope } from "../../../../util/lib";
+import { Arguments, LocalPackage, Terminal, getJSON, getPathInfo, getScope } from "@papit/util";
 import { getTSinfo } from "./get-tsinfo";
 import { getEntryPoints } from "./get-entrypoints";
 import { Meta } from "./types";
