@@ -247,7 +247,7 @@ describe("Node / Element", () => {
     });
 
 
-    it.only("should assign title", () => {
+    it("should assign title", () => {
       doc.innerHTML = `
         <!doctype html>
         <html>
@@ -383,11 +383,58 @@ describe("Node / Element", () => {
       assert.strictEqual(p[1].tagName, "br");
     });
 
-    it.only("should access same element multiple times", () => {
+    it("should access same element multiple times", () => {
       assert.strictEqual(doc.querySelector("body > p").innerHTML, "text 1")
       assert.strictEqual(doc.querySelector("body > p").innerHTML, "text 1")
       assert.strictEqual(doc.querySelector("body > p").innerHTML, "text 1")
       assert.strictEqual(doc.querySelector("body > p").innerHTML, "text 1")
     });
   });
+
+  describe.only("edge cases", () => {
+    let doc;
+
+    beforeEach(() => {
+      doc = new Document();
+    });
+
+    it("should parse with tag that has no content", () => {
+      doc.innerHTML = `
+        <html>
+          <div></div>
+          <div>hejsan</div>
+          <div/>
+        </html>
+      `;
+
+      assert.strictEqual(doc.documentElement.children.length, 3);
+      assert.strictEqual(doc.innerHTML, "<html><div /><div>hejsan</div><div /></html>");
+    });
+
+    it("should parse with script tag", () => {
+      doc.innerHTML = `
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Core Decorator test</title>
+
+            <script defer src="main.js"></script>
+          </head>
+
+          <body>
+            <core-decorators data-testid="a"></core-decorators>
+            <core-decorators data-testid="b" initial-value-2="initial-attribute"></core-decorators>
+          </body>
+
+        </html>
+      `;
+
+      assert.strictEqual(doc.innerHTML, '<html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Core Decorator test</title><script defer src="main.js"></script></head><body><core-decorators data-testid="a"></core-decorators><core-decorators data-testid="b" initial-value-2="initial-attribute"></core-decorators></body></html>')
+
+      assert.strictEqual(doc.documentElement.children.length, 2);
+      assert.strictEqual(doc.body.children.length, 2);
+      assert.strictEqual(doc.head.children.length, 4);
+    });
+  })
 });

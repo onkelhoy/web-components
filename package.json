@@ -12,7 +12,7 @@
     "publish": "to come",
     
     "prebuild": "node bin/bootstrap-build.mjs",
-    "build": "npx @papit/build -- --run --all",
+    "build": "npx @papit/build --run --all",
     "test": "npx @papit/",
     "create": "npm create @papit -- --package",
     "start": "npx @papit/server --serve --port=8080"

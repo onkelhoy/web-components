@@ -4,6 +4,7 @@ import fs from "node:fs";
 import { Arguments, DependencyBatch, LocalPackage, Package, Terminal, getDependencyBloodline, getDependencyOrder, getJSON, getPathInfo } from "@papit/util";
 import { BuildContext } from "esbuild";
 
+import { Meta } from "./components/meta/types";
 import { getMeta } from "./components/meta/get-meta";
 import { jsBundler } from "./components/bundlers/js-bundle";
 import { tsBundler } from "./components/bundlers/ts-bundle";
@@ -99,8 +100,6 @@ export async function executor(options?: Partial<ExecutorOptions>) {
       break;
     }
   }
-
-
 }
 
 (async function () {
@@ -237,8 +236,14 @@ async function runner(
       console.log(`${packageJSON.name} - running prebuild script`);
     }
   }
-
-  const meta = await getMeta(mode, info, packageJSON);
+  let meta: Meta;
+  try {
+    meta = await getMeta(mode, info, packageJSON);
+  }
+  catch (e) {
+    Terminal.error((e as Error).message);
+    process.exit(1);
+  }
 
   if (Arguments.debug)
   {

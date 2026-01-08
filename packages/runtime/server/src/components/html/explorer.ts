@@ -4,6 +4,7 @@ import { Document } from "@papit/html";
 
 import path from "node:path";
 import fs from "node:fs";
+import { getURL } from "../http/url";
 
 const SPECIAL_ICONS: Record<string, true> = {
   "d_ts": true,
@@ -15,7 +16,7 @@ export function createExplorer(
   info: ReturnType<typeof getPathInfo>,
   packageJSON: LocalPackage,
   FFs: string[],
-  currentURL: string,
+  url: ReturnType<typeof getURL>,
 ) {
   const document = getDocument("explorer", info);
 
@@ -44,14 +45,14 @@ export function createExplorer(
 
   // NOTE nt step is to make sire the "data-location" shou
   const location = document.querySelector("[data-location]")!;
-  const relative = path.relative(info.package, currentURL);
+  const relative = path.relative(info.package, url.absolute);
   if (relative) location.innerHTML = relative
   else location.parentElement?.removeChild(location);
 
   const folders = document.querySelector("ul[data-folders]")!;
   const files = document.querySelector("ul[data-files]")!;
 
-  if (path.relative(info.package, currentURL) !== "")
+  if (url.relative !== "")
   {
     folders.innerHTML = `
       <li class="hidden">
@@ -64,10 +65,10 @@ export function createExplorer(
   }
 
   FFs.sort((a, b) => a.localeCompare(b)).forEach(name => {
-    const url = path.join(currentURL, name);
+    const _url = path.join(url.absolute, name);
     const basename = path.basename(name);
 
-    const stat = fs.statSync(url);
+    const stat = fs.statSync(_url);
     const li = document.createElement("li");
     li.innerHTML = `
       <a href="${name}">
@@ -87,7 +88,7 @@ export function createExplorer(
 
     if (stat.isFile())
     {
-      use?.setAttribute("href", "#" + getFileIcon(url, spritesheet_dom));
+      use?.setAttribute("href", "#" + getFileIcon(_url, spritesheet_dom));
 
       files.appendChild(li);
       return;
@@ -95,7 +96,7 @@ export function createExplorer(
 
     if (stat.isDirectory())
     {
-      use?.setAttribute("href", "#" + getFolderIcon(url, spritesheet_dom));
+      use?.setAttribute("href", "#" + getFolderIcon(_url, spritesheet_dom));
       anchor.setAttribute("href", name + "/");
 
       folders.appendChild(li);

@@ -10,7 +10,7 @@ export async function getMeta(
   info: ReturnType<typeof getPathInfo>,
   packageJSON: LocalPackage,
 ) {
-  const storedFile = path.join(info.local, `.temp/build-meta/${mode}.json`);
+  const storedFile = path.join(info.package, `.temp/build-meta/${mode}.json`);
   if (fs.existsSync(storedFile) && !Arguments.args.flags.clean && !Arguments.args.flags.force) 
   {
     if (Arguments.debug) Terminal.write(Terminal.green('loading stored meta file'), storedFile);
@@ -19,10 +19,9 @@ export async function getMeta(
   }
 
   const config: LocalPackage["papit"] = packageJSON.papit ?? {};
-  const scope = getScope();
 
-  const devTSconfig = path.join(info.local, "tsconfig.json");
-  const prodTSconfig = path.join(info.local, "tsconfig.prod.json");
+  const devTSconfig = path.join(info.package, "tsconfig.json");
+  const prodTSconfig = path.join(info.package, "tsconfig.prod.json");
 
   let tsconfigFilePath = devTSconfig;
   if (mode === "prod" && fs.existsSync(prodTSconfig) && fs.statSync(prodTSconfig).isFile())
@@ -39,10 +38,9 @@ export async function getMeta(
     console.log({
       entryPoints,
       name: packageJSON.name,
-      local: info.local
+      package: info.package
     })
-    Terminal.error("could not find any build entries");
-    process.exit(1);
+    throw new Error("could not find any build entries");
   }
 
   let externals = [

@@ -1,13 +1,16 @@
 import path from "node:path";
 import fs from "node:fs";
-import { Document } from "@papit/html";
+import { Document, Element, Node } from "@papit/html";
 import { getPathInfo, Terminal } from "@papit/util";
 
 import { getDocument } from "./util";
+import { Cache } from "../file/cache";
+import { getURL } from "../http/url";
 
 export function createInline(
-  url: string,
+  url: ReturnType<typeof getURL>,
   info: ReturnType<typeof getPathInfo>,
+  cache: Cache,
 ) {
   const document = getDocument("live", info)
   if (!document.body) 
@@ -23,24 +26,46 @@ export function createInline(
   }
 
   const sourceDocument = new Document();
-  const source = fs.readFileSync(url, { encoding: "utf-8" });
-  sourceDocument.innerHTML = source;
+  const cached = cache.get(url);
+  if (cached)
+  {
+    sourceDocument.innerHTML = cached.buffer.toString("utf-8");
+  }
+  else 
+  {
+    const source = fs.readFileSync(url.absolute);
+    cache.add(url, source);
+    sourceDocument.innerHTML = source.toString("utf-8");
+  }
 
   if (sourceDocument.head)
   {
-    sourceDocument.head.childNodes.forEach(node => {
-      // check if element exist? (maybe append will work swell? 2 titles and it takes the latest?)
-      document.head?.appendChild(node);
-    });
+    sourceDocument.head.childNodes.forEach(node => appendNode(node, document.head!));
   }
 
   if (sourceDocument.body)
   {
-    sourceDocument.body.childNodes.forEach(node => {
-      // check if element exist?
-      document.body!.appendChild(node)
-    });
+    sourceDocument.body.childNodes.forEach(node => appendNode(node, document.body!));
   }
 
   return document;
+}
+
+function appendNode(node: Node, target: Element) {
+  // check if element exist? (maybe append will work swell? 2 titles and it takes the latest?)
+  if (node instanceof Element)
+  {
+    const query = `${node.tagName}${node.className ? "." + node.className : ""}${node.id ? "#"+node.id : ""}${Array.from(node.attributes).map(([key, value]) => {
+      return `[${key}${typeof value === "string" ? `="${value}"` : ""}]`;
+    }).join("")}`;
+
+    const child = target.querySelector(query);
+    if (child)
+    {
+      target.replaceChild(node, child)
+      return;
+    }
+  }
+
+  target.appendChild(node);
 }

@@ -117,7 +117,7 @@ export default class Element extends Node {
       this._dirty.delete("outerHTML");
     }
 
-    return `${this._outerHTML}${this.innerHTML ? `>${this.innerHTML}</${this.tagName}>` : " />"}`;
+    return `${this._outerHTML}${(this.innerHTML || this.tagName === "script" || this.tagName.includes("-")) ? `>${this.innerHTML ?? ""}</${this.tagName}>` : " />"}`;
   }
   private _outerHTML: string|null = null;
 

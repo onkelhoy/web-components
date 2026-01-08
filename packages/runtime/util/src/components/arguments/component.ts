@@ -123,6 +123,10 @@ export class Arguments {
     return this.get(name).at(0);
   }
 
+  static number(name: string) {
+    return Number(this.string(name));
+  }
+
   static has(name: string) {
     return !!this.args.flags[name]
   }

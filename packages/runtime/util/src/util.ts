@@ -26,9 +26,22 @@ function isRoot(dir: string) {
 export function getPathInfo(location?: string, importurl?: string) {
   const local = location ?? process.cwd();
 
+  let packageLocation = process.env.npm_package_json ? path.dirname(process.env.npm_package_json) : local;
+  if (location)
+  {
+    packageLocation = location;
+    while (!["/", ""].includes(packageLocation)) 
+    {
+      if (fs.existsSync(path.join(packageLocation, "package.json")))
+        break;
+      
+      packageLocation = path.dirname(packageLocation);
+    }
+  }
+
   return {
     root: findWorkspaceRoot(local),
-    package: location ?? (process.env.npm_package_json ? path.dirname(process.env.npm_package_json) : local),
+    package: packageLocation,
     local,
     script: getScriptPackageLocation(importurl),
   }

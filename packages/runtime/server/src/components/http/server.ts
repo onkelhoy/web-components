@@ -1,13 +1,13 @@
 // import statements 
-import http from "node:http";
+import http, { ServerResponse } from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 
-import { Arguments, getPathInfo, LocalPackage, Terminal } from "@papit/util";
-import { executor } from "@papit/build";
+import { Arguments, getJSON, getPathInfo, LocalPackage, Terminal } from "@papit/util";
+import { executor, getMeta } from "@papit/build";
 
 // components
-import { HttpError } from "../errors";
+import { HttpError, MethodNotAllowedError } from "../errors";
 import { streamFile } from "../file/stream";
 import { streamAsset, Translation } from "../asset";
 import { getHTML } from "../html";
@@ -15,6 +15,11 @@ import { getHTML } from "../html";
 // local imports 
 import { upgrade } from "./socket";
 import { getPort } from "./port";
+import { bundler } from "../file/bundler";
+// import { handleRequest } from "./request";
+import { getURL } from "./url";
+import { Cache } from "../file/cache";
+import { FileConstants } from "../file/types";
 
 let PORT = Number(Arguments.args.flags.port || 3000);
 
@@ -28,6 +33,13 @@ export async function start(
 ) {
   PORT = await getPort(PORT);
   server = http.createServer();
+
+  const filecache = new Cache("file");
+  filecache.maxSize = Arguments.number("cache-file") ?? 50; // MB
+  const htmlcache = new Cache("html");
+  htmlcache.maxSize = Arguments.number("cache-html") ?? 50; // MB
+  const bundlecache = new Cache("bundle");
+  bundlecache.maxSize = Arguments.number("cache-bundle") ?? 150; // MB
   
   if (packageJSON.name !== "@papit/server" && !Arguments.args.flags.serve)
   {
@@ -45,89 +57,99 @@ export async function start(
     });
   }
 
-  server.listen(PORT, () => {
+  server.listen(PORT, () => 
+  {
     Arguments.args.flags.port = String(PORT);
     if (!Arguments.silent) Terminal.write("server:", Terminal.blue(String(PORT)), Terminal.yellow("- running"));
   });
 
   // events 
-  server.on("request", async (req, res) => {
-    if (req.method !== "GET")
-    {
-      if (Arguments.warning) Terminal.warn("dev-server only accepts GET requests");
-      res.statusCode = 500;
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ error: `only accept GET requests, got: "${req.method}"`, code: "no-get" }));
-      return;
-    }
+  server.on("request", async (req, res) => 
+  {
 
-    if (!req.url)
-    {
-      if (Arguments.warning) Terminal.warn("no url provided");
-      res.statusCode = 500;
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ error: "no url provided", code: "no-url" }));
-      return;
-    }
+    res.setHeader('Content-Type', FileConstants.MimeTypes[".json"]);
+    res.end(JSON.stringify({assets}))
+    return;
 
-    if (req.url === "/favicon.ico")
-    {
-      return res.end("ok");
-    }
+    // try 
+    // {
+    //   if (req.method !== "GET") 
+    //   {
+    //     res.setHeader("Allow", "GET");
+    //     throw new MethodNotAllowedError();
+    //   }
 
-    if (req.url === "/.well-known/appspecific/com.chrome.devtools.json")
-    {
-      return res.end("ok");
-    }
+    //   try 
+    //   {
+    //     // we assume asset by this point 
+    //     const asset = await streamAsset(
+    //       req.url!,
+    //       translations,
+    //       assets,
+    //       filecache,
+    //       res,
+    //     ); // this will throw if failed 
 
-    if (Arguments.verbose) Terminal.write(Terminal.blue("incomming request"), req.url);
+    //     if (asset === "streamed") return;
 
-    let currentURL = path.join(info.local, req.url);
-    if (!fs.existsSync(currentURL))
-      currentURL = path.join(info.package, req.url);
-    if (!fs.existsSync(currentURL))
-      currentURL = info.local;
-    if (!fs.existsSync(currentURL))
-      currentURL = info.package;
+    //     res.statusCode = 200;
+    //     res.setHeader('Content-Type', asset.mimeType);
+    //     res.end(asset.buffer);
+    //   }
+    //   catch {}
 
-    const status = fs.statSync(currentURL);
-    if (status.isFile())
-    {
-      const status = await streamFile(currentURL, req.url, res);
-      if (status !== 404) return;
-    }
+    //   const url = getURL(req, info);
+    //   console.log('incoming url', req.url, url)
+    //   const stat = fs.statSync(url.absolute);
+    //   if (stat.isDirectory() || path.extname(url.absolute) === ".html")
+    //   {
+    //     const document = await getHTML(info, assets, packageJSON, url, htmlcache);
+    //     res.statusCode = 200;
+        
+    //     if (htmlcache.get(url))
+    //     {
+    //       res.setHeader('X-Cache', "HIT");
+    //     }
+    //     else 
+    //     {
+    //       res.setHeader('X-Cache', "MISS");
+    //     }
 
-    try
-    {
-      const result = await streamAsset(translations, assets, req, res);
-      if (result) 
-      {
-        if (!res.headersSent) res.end();
-        return
-      }
-    }
-    catch (e) 
-    {
-      if (e instanceof HttpError)
-      {
-        res.statusCode = e.status;
-        res.write(e.message);
-        res.end();
-        return;
-      }
-    }
+    //     res.end(document.outerHTML);
+    //     return;
+    //   }
 
-    const dom = await getHTML(info, assets, packageJSON, currentURL);
+    //   const cached = htmlcache.get(url) ?? filecache.get(url) ?? bundlecache.get(url);
 
-    res.statusCode = 200;
-    res.end(dom.outerHTML);
+    //   if (cached)
+    //   {
+    //     if (Arguments.info) Terminal.write(Terminal.yellow(url.relative), "found in cache")
+    //     res.statusCode = 200;
+    //     res.setHeader('Content-Type', cached.mimeType);
+    //     res.setHeader('X-Cache', "HIT");
+    //     return res.end(cached.buffer);
+    //   }
+
+    //   res.setHeader('X-Cache', "MISS");
+
+    //   if (/\.tsx?/.test(url.absolute) && (req.headers.referer?.endsWith(".js") || req.headers['sec-fetch-dest'] === "script") && !Arguments.has("no-bundle"))
+    //   {
+    //     // const localInfo = getPathInfo(path.join(info.root, res.url));
+    //     // const localPackage = getJSON<LocalPackage>(path.join(localInfo.package, "package.json"));
+    //     // if (!localPackage) throw "missing package.json";
+    //     // const meta = await getMeta("dev", localInfo, localPackage);
+    //     // // return bundler(currentURL, localInfo, meta, res, localPackage);
+        
+    //     // we put this into its own cache (bundlecache)
+    //     const bundle = bundler(url, res, bundlecache);
+    //   }
+    // }
+    // catch (e) { handleError(e, res) }
   });
 
-  server.on('error', (error: Error) => {
-    if (Arguments.error)
-    {
-      Terminal.error(error.name, error.message, error.stack ?? "");
-    }
+  server.on('error', (error: Error) => 
+  {
+    if (Arguments.error) Terminal.error(error.name, error.message, error.stack ?? "");
   });
 
   // socket related
@@ -137,4 +159,33 @@ export async function start(
 export function close() {
   server?.close();
   if (!Arguments.silent) Terminal.write("server:", Terminal.blue(String(PORT)), Terminal.yellow("- shutdown"));
+}
+
+function handleError(e: unknown, res: ServerResponse) 
+{
+  if (Arguments.error) console.trace(e);
+
+  if (e instanceof HttpError)
+  {
+    res.statusCode = e.status;
+  }
+  else 
+  {
+    res.statusCode = 500;
+  }
+
+  if (typeof e === "string")
+  {
+    res.write(e);
+  }
+  else if (e && typeof e === "object" && "message" in e)
+  {
+    res.write(e.message);
+  }
+  else 
+  {
+    res.write("something went wrong");
+  }
+
+  res.end();
 }

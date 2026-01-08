@@ -7,6 +7,9 @@ import { deepMerge } from "./util";
 import { NotFoundError } from "../errors";
 import { IncomingMessage, ServerResponse } from "node:http";
 import { streamFile } from "../file/stream";
+import { getURL } from "../http/url";
+import { getFILE } from "../file/get";
+import { Cache } from "../file/cache";
 
 async function extractTranslation(folder: string, translations: Translations) {
   const files = fs.readdirSync(folder).filter(name => fs.statSync(path.join(folder, name)).isFile() && name.endsWith(".json"));
@@ -92,32 +95,22 @@ export async function handleAsset(
 
 
 export async function streamAsset(
+  url: string,
   translations: Record<string, Translation>,
   assets: Record<string, string[]>,
-  req: IncomingMessage,
-  res: ServerResponse<IncomingMessage> & { req: IncomingMessage },
+  cache: Cache,
+  res: ServerResponse,
   signal?: AbortSignal,
 ) {
-  const url = req.url;
-
-  if (!url) return null;
-  if (path.extname(url) === "") return null;
-
-  if (Arguments.debug) console.log('requesting', url)
-
-  if (assets[url]) 
+  const files = [...assets[url]];
+  while (files.length > 0)
   {
-    const files = [...assets[url]];
-    while (files.length > 0)
+    const filelocation = files.pop()!;
+    try
     {
-      const filelocation = files.pop()!;
-      const status = await streamFile(filelocation, req.url ?? url, res, signal);
-
-      if (status === 200)
-      {
-        return true;
-      }
+      return getFILE({ absolute: filelocation, relative: url }, cache, res, signal);
     }
+    catch { } // we try the next then
   }
 
   // we need to check translations 

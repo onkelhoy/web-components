@@ -1,4 +1,4 @@
-export abstract class HttpError extends Error {
+export class HttpError extends Error {
   status!: number;
 
   constructor(message?: string, options?: ErrorOptions) {
@@ -24,3 +24,13 @@ export class NotFoundError extends HttpError {
     this.status = 404;
   }
 }
+
+export class MethodNotAllowedError extends HttpError {
+  constructor(message?: string, options?: ErrorOptions) {
+    super(message ?? "method not allowed", options);
+
+    this.name = "Method not allowed";
+    this.status = 405;
+  }
+}
+

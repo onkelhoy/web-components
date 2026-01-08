@@ -9,7 +9,7 @@ import { ExecutorOptions } from "types";
 
 export async function jsBundler(
   inputFile: string,
-  outputFile: string,
+  outputFile: string|undefined,
   meta: Meta,
   info: ReturnType<typeof getPathInfo>,
   packageJSON: Package,
@@ -28,6 +28,7 @@ export async function jsBundler(
     bundle: true,
     entryPoints: [inputFile],
     outfile: outputFile,
+    write: outputFile !== undefined,
     external: meta.externals,
 
     // 🔥 DEV vs PROD behavior

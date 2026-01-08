@@ -55,8 +55,9 @@
   },
   "dependencies": {
     "@papit/build": "^0.0.1",
+    "@papit/html": "^0.0.1",
     "@papit/util": "^0.0.1",
-    "@papit/html": "^0.0.1"
+    "esbuild": "^0.27.2"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

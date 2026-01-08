@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
   // Navigate to your test page
-  await page.goto('decorators');
+  await page.goto('tests/decorators');
   await page.waitForTimeout(1); // wait for wc to load
 });
 

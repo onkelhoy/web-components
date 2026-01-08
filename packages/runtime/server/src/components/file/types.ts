@@ -1,11 +1,5 @@
 import { Arguments } from "@papit/util";
 
-// Cache configuration
-export type CacheEntry = {
-  content: Buffer;
-  contentType: string;
-  mtime: number; // Modified time for cache invalidation
-}
 
 export class FileConstants {
   static MimeTypes: Record<string, string> = {
@@ -74,10 +68,8 @@ export class FileConstants {
     '.rar': 'application/vnd.rar',
   };
 
-  static readonly fileCache = new Map<string, CacheEntry>();
   private static readonly _MAX_CACHE_SIZE = 50 * 1024 * 1024; // 50MB max cache
   private static readonly _MAX_FILE_SIZE_TO_CACHE = 1024 * 1024; // Only cache files under 1MB
-  static currentCacheSize = 0;
 
   static readonly BinaryExtensions = new Set([
     '.png', '.jpg', '.jpeg', '.gif', '.ico', '.webp', '.bmp', '.tiff', '.tif',
@@ -89,21 +81,10 @@ export class FileConstants {
   ]);
   
   static get MAX_CACHE_SIZE() {
-    return this.getValue("MAX_CACHE_SIZE", this._MAX_CACHE_SIZE);
+    return Number(Arguments.string("MAX_CACHE_SIZE")) ?? this._MAX_CACHE_SIZE;
   }
 
   static get MAX_FILE_SIZE_TO_CACHE() {
-    return this.getValue("MAX_FILE_SIZE_TO_CACHE", this._MAX_FILE_SIZE_TO_CACHE);
+    return Number(Arguments.string("MAX_FILE_SIZE_TO_CACHE")) ?? this._MAX_FILE_SIZE_TO_CACHE;
   }
-
-  private static getValue(name: string, fallback: number) {
-    const arg = Arguments.args.flags[name];
-    if (typeof arg === "string")
-    {
-      const num = Number(arg);
-      if (!Number.isNaN(num)) return num;
-    }
-
-    return fallback;
-  }  
 }

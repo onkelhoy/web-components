@@ -135,6 +135,16 @@ export default abstract class Node extends EventTargetPublic {
     this.dirty("innerHTML");
     this.childNodes = this._childNodes.slice(0, index).concat(node).concat(this._childNodes.slice(index, this._childNodes.length));
   }
+  remove() {
+    if (this.parentNode)
+    {
+      this.parentNode.removeChild(this);
+    }
+  }
+  replaceChild(node: Node, child: Node) {
+    this.insertBefore(node, child);
+    child.remove();
+  }
 
   protected _dirty = new Set<string>();
   protected dirty(key: string) {

@@ -1,6 +1,5 @@
 import { html, CustomElement, property, query, bind, debounce, } from "@papit/web-component";
 
-
 class Component extends CustomElement {
 
   // properties
