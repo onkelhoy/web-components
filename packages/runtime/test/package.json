@@ -1,24 +1,21 @@
 {
-  "name": "@papit/web-component",
-  "description": "the root component for @papit web components, this package deals with all the heavy lifting such as reactive rendering, properties etc",
+  "name": "@papit/test",
+  "description": "A package for testing @papit packages, it will determine the correct testing tool like playwright for browser type packages and simple node test for node packages",
   "keywords": [
     "papit",
-    "web-component",
+    "node",
     "typescript",
-    "web-component"
+    "test"
   ],
   "version": "0.0.1",
   "scripts": {
     "build": "npx @papit/build -- --run",
     "watch": "tsc -w",
-    "start": "npx @papit/server",
-    "test": "npx playwright test -c tests/playwright.config.ts",
+    "start": "npm run build -- --dev && node ./lib/bundle.js",
+    "test": "node --test",
     "preversion": "papit-version",
     "postversion": "papit-version",
-    "component": "npm create @papit -- --component",
-    "test:update-snapshots": "npx playwright test --update-snapshots -c tests/playwright.config.ts",
-    "test:chrome": "npm test -- --project=chromium",
-    "build:react": "bash ./bin/_utils/react.sh"
+    "component": "npm create @papit -- --component"
   },
   "main": "./lib/bundle.js",
   "types": "./lib/bundle.d.ts",
@@ -33,6 +30,9 @@
       "types": "./lib/bundle.d.ts"
     }
   },
+  "bin": {
+    "papit-test": "./lib/bundle.js"
+  },
   "author": "henry",
   "private": false,
   "publishConfig": {
@@ -40,23 +40,25 @@
     "registry": "https://registry.npmjs.org/"
   },
   "license": "LicenseRef-Papit-1.0",
-  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/design-system/web-component",
+  "homepage": "https://github.com/onkelhoy/web-components/tree/main/packages/runtime/cli/test",
   "bugs": {
     "url": "https://github.com/onkelhoy/web-components/issues"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/onkelhoy/web-components.git",
-    "directory": "packages/design-system/web-component"
+    "directory": "packages/runtime/cli/test"
   },
   "sideEffects": true,
   "engines": {
     "node": ">=18"
   },
-  "devDependencies": {
+  "dependencies": {
     "@papit/util": "^0.0.1",
-    "@playwright/test": "^1.57.0",
-    "playwright": "^1.57.0",
+    "@playwright/test": "^1.57.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
     "typescript": "^5.7.2"
   },
   "browserslist": [
@@ -66,12 +68,11 @@
   ],
   "papit": {
     "publish": true,
-    "type": "web-component",
-    "main": "web-component",
-    "htmlprefix": "pap",
+    "type": "node",
+    "main": "test",
     "components": {
-      "web-component": {
-        "className": "WebComponent",
+      "test": {
+        "className": "Test",
         "htmlprefix": "pap"
       }
     }

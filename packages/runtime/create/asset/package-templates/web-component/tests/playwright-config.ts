@@ -3,7 +3,7 @@ import { defineConfig, devices } from '@playwright/test';
 import path from "node:path";
 
 const info = getPathInfo();
-const dirname = path.join(info.package, "tests");
+const dirname = path.join(info.package, "test");
 const relative = path.relative(info.root, info.package);
 
 export default defineConfig({
