@@ -1,97 +1,81 @@
-import { IncomingMessage, ServerResponse } from "node:http";
-import path from "node:path";
-import fs from "node:fs";
-import { Arguments, getPathInfo, LocalPackage, Terminal } from "@papit/util";
+import { Arguments, Terminal } from "@papit/util";
 // import { getFile } from "./get";
 import { getMeta, jsBundler } from "@papit/build";
-import esbuild from "esbuild";
-import { getURL } from "../http/url";
+import { BuildContext } from "esbuild";
+import { getPACKAGE, getURL } from "../http/url";
 import { Cache } from "./cache";
-// import { BuildResult } from "esbuild";
+import { error, update } from "../http/socket";
+import { BuildResult } from "esbuild";
+import { InternalServerError, NotFoundError } from "../errors";
+import { FileConstants } from "./types";
 
 export async function bundler(
-  url: ReturnType<typeof getURL>, 
-  res: ServerResponse,
+  url: ReturnType<typeof getURL>,
   cache: Cache
 ) {
   Terminal.write("bundler running", url.relative)
-  // at this point this is not a in a cache 
-  return "alirhgty"
+  const { info, packageJSON } = getPACKAGE(url);
 
-  // const now = performance.now();
-  // const file = getFile(currentURL, req.url!, true);
-  // if (file.data === null)
-  // {
-  //   res.statusCode = 404;
-  //   res.end("file not found");
-  //   return;
-  // }
+  const meta = await getMeta(Arguments.has("prod") ? "prod" : "dev", info, packageJSON);
+  const bundle = await jsBundler(
+    url.absolute,
+    undefined,
+    meta,
+    info,
+    packageJSON,
+    {
+      callback(counter, result) {
+        if (result.errors.length > 0)
+        {
+          return void error(url.absolute, result.errors);
+        }
+        const content = result.outputFiles?.at(0)?.text;
+        if (content)
+        {
+          cache.add(
+            url,
+            Buffer.from(content, "utf8"),
+            FileConstants.MimeTypes[".js"],
+            null,
+          );
 
-  
-  // const result = await jsBundler(url, undefined, meta, info, packageJSON) as BuildResult;
+          return void update("/" + url.relative, "");
+        }
+      }
+    }
+  );
 
-  // const result = esbuild.buildSync({
-  //   bundle: true,
-  //   minify: false,
-  //   external: Object.keys(packageJSON.dependencies ?? {}).concat(Object.keys(packageJSON.devDependencies ?? {})).concat(Object.keys(packageJSON.peerDependencies ?? {})),
-  //   // entryPoints: []
-  //   format: "esm",
-  //   platform: "browser",
-  //   tsconfig: path.join.tsconfig.path,
-  //   stdin: {
-  //     contents: file.data.content,
-  //   }
-  // });
+  let result: BuildResult;
+  if (!Arguments.has("serve"))
+  {
+    // we should store the context so we can dispose of it?
+    const context = bundle as BuildContext;
+    result = await context.rebuild();
+    // should we do something with it?
+  }
+  else 
+  {
+    result = bundle as BuildResult;
+  }
 
-  // FOMR THERE 
+  if (result.errors.length > 0)
+  {
+    if (Arguments.error) Terminal.error("something went wrong to bundle file", result.errors);
+    throw new InternalServerError("something went wrong to bundle file: " + url.relative);
+  }
 
-  // const result = await esbuild.build({
-  //   bundle: true,
-  //   stdin: {
-  //     contents: fileContent,  // your JS string
-  //     resolveDir: info.package,
-  //     sourcefile: url,        // virtual filename for sourcemaps & debugging
-  //     loader: 'ts',           // or 'js'
-  //   },
-  //   write: false,
-  //   format: 'esm',
-  //   platform: 'browser',
-  //   external: meta.externals,
-  // });
+  const content = result.outputFiles?.at(0)?.text;
+  if (content) 
+  {
+    cache.add(
+      url,
+      Buffer.from(content, "utf8"),
+      FileConstants.MimeTypes[".js"],
+      null,
+    );
 
-  // if (result.errors.length > 0)
-  // {
-  //   res.statusCode = 500;
-  //   res.end(JSON.stringify(result.errors, null, 2));
-  //   return;
-  // }
+    return content;
+  }
 
-  // const data = result.outputFiles?.at(0);
-  // if (!data)
-  // {
-  //   console.log('eee?', result)
-  //   res.statusCode = 404;
-  //   res.end("file could not be bundled found");
-  //   return;
-  // }
-
-  // console.log('it took', performance.now() - now);
-
-  // res.setHeader('Content-Type', "text/javascript");
-  // res.setHeader('X-Cache', "MISS");
-  // res.setHeader('Content-Length', data.text.length);
-  // res.statusCode = 200;
-  // res.end(data.text);
-
-  // TO HERE
-
-  // res.end(file.data.content);
-  // return resolve(res.statusCode);
-  // res.se
-  return;
-
-  // bundle it with esbuild 
-  // executor((
-  //   input: 
-  // ))
+  throw new NotFoundError("file not found: " + url.relative);
 }

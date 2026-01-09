@@ -7,12 +7,13 @@ window.onload = () => {
     console.log('live-server socket connected', 'ws://localhost:' + location.port ?? window.PAPIT_PORT);
   }
   ws.onmessage = (message) => {
-    const data = JSON.parse(message.data);
+    const data = JSON.parse(message.data); // { action: 'update', filename, content }
 
     switch (data.action)
     {
       case "update":
-        window.location.reload();
+        if (data.filename.startsWith(window.location.pathname))
+          window.location.reload();
         break;
       case "error":
         console.log('wonk wonk an error..');

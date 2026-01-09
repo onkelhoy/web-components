@@ -1,9 +1,10 @@
+import { HtmlToken } from "@papit/lexer";
+
 import Node from "./node";
 import { DOMTokenList } from "./utility";
 import type Document from "./document";
 import type DocumentType from "./document-type";
 
-import type { Token } from "../tokenise";
 import { Builder, Queue } from "../util";
 import { Query } from "../query";
 
@@ -24,45 +25,45 @@ export default class Element extends Node {
     return super.removeChild(child);
   }
 
-  private _children: Element[]|null = null;
-  get children() { 
+  private _children: Element[] | null = null;
+  get children() {
     if (this._children === null || this._dirty.has("children"))
     {
       this._dirty.delete("children");
-      this._children = Array.from(this._childNodes).filter(node => node instanceof Element) 
+      this._children = Array.from(this._childNodes).filter(node => node instanceof Element)
     }
 
     return this._children;
   }
 
-  get previousElementSibling():Element|null {
+  get previousElementSibling(): Element | null {
     if (!this.parentElement) return null;
     const children = this.parentElement.children;
     const index = this.parentElement.getChildPosition(this);
     return children[index + 1] ?? null;
   }
-  get nextElementSibling():Element|null {
+  get nextElementSibling(): Element | null {
     if (!this.parentElement) return null;
     const children = this.parentElement.children;
     const index = this.parentElement.getChildPosition(this);
     return children[index - 1] ?? null;
   }
 
-  get firstElementChild(): Element|null { return this.children.pop() ?? null }
-  get lastElementChild(): Element|null { return this.children[0] ?? null }
+  get firstElementChild(): Element | null { return this.children.pop() ?? null }
+  get lastElementChild(): Element | null { return this.children[0] ?? null }
 
-  get className() { 
+  get className() {
     const value = this._attributes.get("class");
     if (typeof value === "string") return value;
     return "";
   }
-  set className(value:string) { 
-    this.setAttribute("class", value) 
+  set className(value: string) {
+    this.setAttribute("class", value)
     this._classList = null;
   }
 
-  private _classList: DOMTokenList|null = null;
-  get classList() { 
+  private _classList: DOMTokenList | null = null;
+  get classList() {
     if (!this._classList) 
     {
       this._classList = new DOMTokenList(this.className.split(" "));
@@ -74,8 +75,8 @@ export default class Element extends Node {
   }
 
   get tagName() { return this._tagName ?? "" }
-  private _tagName:string|null = null;
-  set tagName(value:string) { this._tagName = value }
+  private _tagName: string | null = null;
+  set tagName(value: string) { this._tagName = value }
 
   get innerHTML() {
     if (!this._innerHTML || this._dirty.has("innerHTML"))
@@ -92,15 +93,15 @@ export default class Element extends Node {
     }
     return this._innerHTML;
   }
-  private _innerHTML: string|null = null;
-  set innerHTML(value:string) {
+  private _innerHTML: string | null = null;
+  set innerHTML(value: string) {
     this._innerHTML = value;
     this._dirty.delete("innerHTML");
     this.dirty("innerHTML");
     this.setHTML(value);
   }
 
-  get outerHTML():string {
+  get outerHTML(): string {
     if (!this._outerHTML || this._dirty.has("outerHTML"))
     {
       const attributes = Array
@@ -119,31 +120,31 @@ export default class Element extends Node {
 
     return `${this._outerHTML}${(this.innerHTML || this.tagName === "script" || this.tagName.includes("-")) ? `>${this.innerHTML ?? ""}</${this.tagName}>` : " />"}`;
   }
-  private _outerHTML: string|null = null;
+  private _outerHTML: string | null = null;
 
-  get id():string {
+  get id(): string {
     const value = this._attributes.get("id");
     if (typeof value === "string") return value;
     return "";
   }
   set id(value: string) { this.setAttribute("id", value) }
 
-  get attributes():Map<string, string|true> { return new Map(this._attributes) };
-  private _attributes = new Map<string, string|true>();
-  protected set attributes(attributes: Record<string, string|true>) {
+  get attributes(): Map<string, string | true> { return new Map(this._attributes) };
+  private _attributes = new Map<string, string | true>();
+  protected set attributes(attributes: Record<string, string | true>) {
     this._attributes = new Map();
     for (const key in attributes)
     {
       this._attributes.set(key, attributes[key]);
     }
     this.dirty("innerHTML");
-  } 
+  }
 
   // expose tokens for whatever reason
-  private _tokens: Token[] = [];
+  private _tokens: HtmlToken[] = [];
   get tokens() { return this._tokens }
 
-  setHTML(value:string) { 
+  setHTML(value: string) {
     this._tokens = Builder(this, value);
     this._outerHTML = null;
   }
@@ -179,7 +180,7 @@ export default class Element extends Node {
       return Element.matches(this, last);
     }
   }
-  querySelector(selector: string|QueryQueue) {
+  querySelector(selector: string | QueryQueue) {
     const queue = Element.getQuery("querySelector", selector);
     // return Element.queryInternal(this, query, false);
     // return Element.matchesDeep(this, queue);
@@ -191,9 +192,9 @@ export default class Element extends Node {
 
     return allmatches.at(0) ?? null;
   }
-  querySelectorAll(selector: string|QueryQueue) {
+  querySelectorAll(selector: string | QueryQueue) {
     const queue = Element.getQuery("querySelectorAll", selector);
-    
+
     const allmatches: Element[] = [];
     this.children.forEach(child => {
       Element.findChain(child, queue, true, allmatches);
@@ -201,23 +202,25 @@ export default class Element extends Node {
 
     return allmatches;
   }
-  closest(selector: string|QueryQueue) {
+  closest(selector: string | QueryQueue) {
     const query = Element.getQuery("closest", selector).pop();
     if (!query) return null;
-    
+
     let current: Element | null = this;
 
-    while (current) {
-      if (Element.matches(current, query)) {
+    while (current)
+    {
+      if (Element.matches(current, query))
+      {
         return current;
       }
       current = current.parentElement;
     }
-    
+
     return null;
   }
 
-  private static getQuery(name: string, selector:string|QueryQueue) {
+  private static getQuery(name: string, selector: string | QueryQueue) {
     if (selector === "") throw new SyntaxError(`Failed to execute '${name}' on 'Element': The provided selector is empty.`);
     if (typeof selector === "string")
     {
@@ -228,12 +231,13 @@ export default class Element extends Node {
   }
   private static matches(elm: Element, query: ReturnType<typeof Query>[number]): boolean {
     if (query.tag && elm.tagName !== query.tag) return false;
-    
-    if (query.id && elm.id !== query.id) return false; 
+
+    if (query.id && elm.id !== query.id) return false;
 
     if (query.class && !query.class.every(className => elm.classList.contains(className))) return false;
 
-    if (query.attribute) {
+    if (query.attribute)
+    {
       const value = elm.getAttribute(query.attribute.name);
       if (!value) return false;
 
@@ -259,9 +263,9 @@ export default class Element extends Node {
       this.findChain(child, queue, all, allmatches);
       if (!all && allmatches.length > 0) return allmatches;
     }
-  } 
+  }
 
-  private static checkChain(element: Element, queue: QueryQueue, isdescendant = false): Element|null {
+  private static checkChain(element: Element, queue: QueryQueue, isdescendant = false): Element | null {
     const query = queue.pop();
     if (!query) return element;
 
@@ -270,12 +274,14 @@ export default class Element extends Node {
     // If queue is now empty, we matched the full selector
     if (queue.length === 0) return element;
 
-    if (query.relation === "sibling") {
+    if (query.relation === "sibling")
+    {
       if (!element.nextElementSibling) return null;
       return this.checkChain(element.nextElementSibling, queue);
     }
 
-    for (const child of element.children) {
+    for (const child of element.children)
+    {
       const copy = queue.copy();
       const matched = this.checkChain(child, copy, query.relation === "descendant");
       if (matched) return matched;

@@ -4,13 +4,12 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { Arguments, getJSON, getPathInfo, LocalPackage, Terminal } from "@papit/util";
-import { executor, getMeta } from "@papit/build";
+import { executor } from "@papit/build";
 
 // components
 import { HttpError, MethodNotAllowedError } from "../errors";
-import { streamFile } from "../file/stream";
 import { streamAsset, Translation } from "../asset";
-import { getHTML } from "../html";
+import { getHTML } from "../html/html";
 
 // local imports 
 import { upgrade } from "./socket";
@@ -19,7 +18,6 @@ import { bundler } from "../file/bundler";
 // import { handleRequest } from "./request";
 import { getURL } from "./url";
 import { Cache } from "../file/cache";
-import { FileConstants } from "../file/types";
 import { getFILE } from "../file/get";
 
 let PORT = Number(Arguments.args.flags.port || 3000);
@@ -31,9 +29,12 @@ export async function start(
   translations: Record<string, Translation>,
   assets: Record<string, string[]>,
   packageJSON: LocalPackage,
+  importmap: { imports: Record<string, string> },
 ) {
   PORT = await getPort(PORT);
   server = http.createServer();
+
+  const lockfile = getJSON
 
   const filecache = new Cache("file");
   filecache.maxSize = Arguments.number("cache-file") ?? 50; // MB
@@ -41,7 +42,7 @@ export async function start(
   htmlcache.maxSize = Arguments.number("cache-html") ?? 50; // MB
   const bundlecache = new Cache("bundle");
   bundlecache.maxSize = Arguments.number("cache-bundle") ?? 150; // MB
-  
+
   if (packageJSON.name !== "@papit/server" && !Arguments.args.flags.serve)
   {
     if (Arguments.info) Terminal.write(Terminal.blue("listening to file changes"), packageJSON.name)
@@ -53,31 +54,35 @@ export async function start(
 
     executor({
       callback(counter, result) {
-        console.log('rebuild')    
+        console.log('rebuild')
       },
     });
   }
 
-  server.listen(PORT, () => 
-  {
+  server.listen(PORT, () => {
     Arguments.args.flags.port = String(PORT);
     if (!Arguments.silent) Terminal.write("server:", Terminal.blue(String(PORT)), Terminal.yellow("- running"));
   });
 
   // events 
-  server.on("request", async (req, res) => 
-  {
-
-    // res.setHeader('Content-Type', FileConstants.MimeTypes[".json"]);
-    // res.end(JSON.stringify({assets}))
-    // return;
-
+  server.on("request", async (req, res) => {
     try 
     {
       if (req.method !== "GET") 
       {
         res.setHeader("Allow", "GET");
         throw new MethodNotAllowedError();
+      }
+
+      if (req.url?.startsWith("/.well-known"))
+      {
+        return res.end("ok");
+      }
+
+
+      if (req.url === "/favicon.ico")
+      {
+        req.url = "/favicon.svg";
       }
 
       const url = getURL(req, info);
@@ -100,29 +105,9 @@ export async function start(
         res.end(asset.buffer);
         return;
       }
-      catch {}
+      catch { }
 
-      const stat = fs.statSync(url.absolute);
-
-      if (stat.isDirectory() || path.extname(url.absolute) === ".html")
-      {
-        const document = await getHTML(info, assets, packageJSON, url, htmlcache);
-        res.statusCode = 200;
-        
-        if (htmlcache.get(url))
-        {
-          res.setHeader('X-Cache', "HIT");
-        }
-        else 
-        {
-          res.setHeader('X-Cache', "MISS");
-        }
-
-        res.end(document.outerHTML);
-        return;
-      }
-
-      const cached = htmlcache.get(url) ?? filecache.get(url) ?? bundlecache.get(url);
+      const cached = htmlcache.get(url) ?? bundlecache.get(url) ?? filecache.get(url);
 
       if (cached)
       {
@@ -135,19 +120,22 @@ export async function start(
 
       res.setHeader('X-Cache', "MISS");
 
+      const stat = fs.statSync(url.absolute);
+      if (stat.isDirectory() || path.extname(url.absolute) === ".html")
+      {
+        const document = await getHTML(url, assets, importmap, info.script!, htmlcache);
+        res.statusCode = 200;
+        res.end(document.outerHTML);
+        return;
+      }
+
       if (/\.tsx?/.test(url.absolute) && (req.headers.referer?.endsWith(".js") || req.headers['sec-fetch-dest'] === "script") && !Arguments.has("no-bundle"))
       {
-        // const localInfo = getPathInfo(path.join(info.root, res.url));
-        // const localPackage = getJSON<LocalPackage>(path.join(localInfo.package, "package.json"));
-        // if (!localPackage) throw "missing package.json";
-        // const meta = await getMeta("dev", localInfo, localPackage);
-        // // return bundler(currentURL, localInfo, meta, res, localPackage);
-        
         // we put this into its own cache (bundlecache)
-        const bundle = bundler(url, res, bundlecache);
+        const bundle = await bundler(url, bundlecache);
         res.statusCode = 200;
         res.setHeader('Content-Type', "text/javascript");
-        res.end("console.log('ALRIGHT')")
+        res.end(bundle);
         return;
       }
 
@@ -160,8 +148,7 @@ export async function start(
     catch (e) { handleError(e, res) }
   });
 
-  server.on('error', (error: Error) => 
-  {
+  server.on('error', (error: Error) => {
     if (Arguments.error) Terminal.error(error.name, error.message, error.stack ?? "");
   });
 
@@ -174,8 +161,7 @@ export function close() {
   if (!Arguments.silent) Terminal.write("server:", Terminal.blue(String(PORT)), Terminal.yellow("- shutdown"));
 }
 
-function handleError(e: unknown, res: ServerResponse) 
-{
+function handleError(e: unknown, res: ServerResponse) {
   if (Arguments.error) console.trace(e);
 
   if (e instanceof HttpError)

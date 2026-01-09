@@ -19,7 +19,7 @@ type BasePackage = {
   main?: string;
   types?: string;
   type: "module" | "commonjs";
-  entryPoints?: string|Record<string,string>;
+  entryPoints?: string | Record<string, string>;
   exports?: Partial<Record<"." | (string & {}), Partial<Record<"import" | "types" | "require" | (string & {}), string>>>>;
 }
 
@@ -29,9 +29,9 @@ export type RootPackage = BasePackage & {
    * Used by Papit tooling — avoid manual modification.
    */
   papit: {
-    layers: Record<string, { 
-      name: string; 
-      include: false|"prefix"|"suffix"; 
+    layers: Record<string, {
+      name: string;
+      include: false | "prefix" | "suffix";
       /**
        * Layer priority (GLOBAL precedence).
        *
@@ -70,14 +70,14 @@ export type LocalPackage = BasePackage & {
      * Must match a key in `components`.
      */
     main: string;
-    components: Record<string, {className: string, htmlprefix?: string}>;
+    components: Record<string, { className: string, htmlprefix?: string }>;
     htmlprefix?: string;
   };
 }
 
 export type Package = RootPackage | LocalPackage;
 
-type PackageLockEntry = {
+export type PackageLockEntry = {
   link: boolean;
   resolved: string;
   name?: string;
@@ -93,8 +93,8 @@ export type RemotePackage = {
     latest: string;
   };
   versions: Record<string, {
-    name: string, 
-    version: string 
+    name: string,
+    version: string
   }>;
 }
 

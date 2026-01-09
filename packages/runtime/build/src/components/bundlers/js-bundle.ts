@@ -9,7 +9,7 @@ import { ExecutorOptions } from "types";
 
 export async function jsBundler(
   inputFile: string,
-  outputFile: string|undefined,
+  outputFile: string | undefined,
   meta: Meta,
   info: ReturnType<typeof getPathInfo>,
   packageJSON: Package,

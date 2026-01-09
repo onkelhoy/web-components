@@ -95,7 +95,7 @@ export function getEntryPoints(
 
   if (Object.keys(entryPoints).length === 0) 
   {
-    entryPoints.bundle = path.join(info.local, "src/index.ts");
+    entryPoints.bundle = path.join(info.package, "src/index.ts");
   }
 
   // now we should "fix" the entires to actual locations. we only check inside "src" flattly
@@ -108,7 +108,7 @@ export function getEntryPoints(
       if (stat.isFile()) continue;
       if (stat.isDirectory()) entry = path.join(entry, "index.ts");
     }
-    const joined = path.join(info.local, "src", entry);
+    const joined = path.join(info.package, "src", entry);
 
     if (fs.existsSync(joined) && fs.statSync(joined).isFile()) 
     {

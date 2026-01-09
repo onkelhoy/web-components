@@ -1,12 +1,17 @@
 import path from "node:path";
 import fs from "node:fs";
-import { Arguments, getDependencyBloodline, getJSON, getPathInfo, LocalPackage, Terminal } from "@papit/util"
+import { Arguments, DependencyBatch, getDependencyBloodline, getDependencyOrder, getJSON, getPackage, getPathInfo, getScope, LocalPackage, Lockfile, PackageLockEntry, Terminal } from "@papit/util"
 
 import { getAssetFolders, handleAsset, Translation } from "./components/asset";
 import { close as httpExit, start as httpStart } from "./components/http";
+import { getMeta } from "@papit/build";
 
 (async function () {
-  const info = getPathInfo(typeof Arguments.args.flags.location === "string" ? Arguments.args.flags.location : undefined, import.meta.url);
+  const info = getPathInfo(
+    typeof Arguments.args.flags.location === "string" ? Arguments.args.flags.location : undefined,
+    import.meta.url
+  );
+
   if (info.script == null)
   {
     Terminal.error("script location of @papit/server is missing");
@@ -31,25 +36,58 @@ import { close as httpExit, start as httpStart } from "./components/http";
     await handleAsset(info.script, assetLocation, translations, assets, assetFolders);
   }
 
-  // NOTE: order is reversed -> last is current package, so looking for asset should always start at the end of array of "assets"
-  const { map: ancestors } = await getDependencyBloodline(
-    packageJSON.name,
-    async batch => {
-      for (const b of batch) 
-      {
-        if (!b.location) continue;
-        const _pkgJSON = getJSON<LocalPackage>(path.join(b.location, "package.json"));
-        if (!Arguments.args.flags["include-node"] && _pkgJSON?.papit.type === "node") continue;
+  const importmap: { imports: Record<string, string> } = {
+    imports: {}
+  }
 
-        for (const asset of assetFolders)
+  async function runBatch(batch: DependencyBatch[]) {
+    for (const b of batch) 
+    {
+      if (!b.location) continue;
+      const _pkgJSON = getJSON<LocalPackage>(path.join(b.location, "package.json"));
+      if (!_pkgJSON) continue;
+
+      if (_pkgJSON.exports)
+      {
+        for (const key in _pkgJSON.exports)
         {
-          const assetLocation = path.join(b.location, asset);
-          await handleAsset(b.location, assetLocation, translations, assets, assetFolders);
+          let name = _pkgJSON.name;
+          if (key !== ".")
+          {
+            name += "/" + key;
+          }
+
+          importmap.imports[name] = path.join(b.location, _pkgJSON.exports[key]?.import!);
         }
       }
-    },
-    { info, type: "ancestors", silent: true }
-  );
+      else if (_pkgJSON.main)
+      {
+        importmap.imports[_pkgJSON.name] = path.join(b.location, _pkgJSON.main);
+      }
+
+      if (!Arguments.args.flags["include-node"] && _pkgJSON?.papit.type === "node") continue;
+
+      for (const asset of assetFolders)
+      {
+        const assetLocation = path.join(b.location, asset);
+        await handleAsset(b.location, assetLocation, translations, assets, assetFolders);
+      }
+    }
+  }
+
+  if (packageJSON.workspaces)
+  {
+    await getDependencyOrder(runBatch, { info, silent: true });
+  }
+  else
+  {
+    // NOTE: order is reversed -> last is current package, so looking for asset should always start at the end of array of "assets"
+    await getDependencyBloodline(
+      packageJSON.name,
+      runBatch,
+      { info, type: "ancestors", silent: true }
+    );
+  }
 
   const shutdown = () => {
     console.log(); // spacing for Ctrl+C
@@ -61,5 +99,6 @@ import { close as httpExit, start as httpStart } from "./components/http";
   process.on("SIGTERM", shutdown);  // kill <pid>, Docker stop
   process.on("SIGHUP", shutdown);   // terminal closed
 
-  await httpStart(info, translations, assets, packageJSON);
+  if (!Arguments.has("serve")) Arguments.args.flags.live = true;
+  await httpStart(info, translations, assets, packageJSON, importmap);
 })();

@@ -1,13 +1,11 @@
 import path from "node:path";
 import fs from "node:fs";
-import { Arguments, getJSON, getPathInfo, Terminal } from "@papit/util";
+import { Arguments, getJSON, Terminal } from "@papit/util";
 
 import { Translation, Translations } from "./types";
 import { deepMerge } from "./util";
 import { NotFoundError } from "../errors";
-import { IncomingMessage, ServerResponse } from "node:http";
-import { streamFile } from "../file/stream";
-import { getURL } from "../http/url";
+import { ServerResponse } from "node:http";
 import { getFILE } from "../file/get";
 import { Cache } from "../file/cache";
 
@@ -51,21 +49,21 @@ export async function handleAsset(
   {
     const url = path.join(location, name);
     const stat = fs.statSync(url);
-    
+
     if (stat.isFile())
     {
       const relativeURL = path.relative(root, url);
       const absoluteURL = '/' + relativeURL;
       if (!assets[absoluteURL]) assets[absoluteURL] = [];
       assets[absoluteURL].push(url);
-  
+
       const segments = relativeURL.split(path.sep);
       // Remove first segment if it's an asset folder
       if (folders.includes(segments[0]))
       {
         segments.shift();
         const relativeURL = '/' + segments.join('/');
-  
+
         if (!assets[relativeURL]) assets[relativeURL] = [];
         assets[relativeURL].push(url);
       }

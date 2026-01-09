@@ -1,18 +1,16 @@
-import path from "node:path";
 import fs from "node:fs";
 import { Document, Element, Node } from "@papit/html";
-import { getPathInfo, Terminal } from "@papit/util";
+import { Terminal } from "@papit/util";
 
 import { getDocument } from "./util";
-import { Cache } from "../file/cache";
 import { getURL } from "../http/url";
 
 export function createInline(
   url: ReturnType<typeof getURL>,
-  info: ReturnType<typeof getPathInfo>,
-  cache: Cache,
+  importmap: { imports: Record<string, string> },
+  devServerScript: string,
 ) {
-  const document = getDocument("live", info)
+  const document = getDocument("live", devServerScript)
   if (!document.body) 
   {
     Terminal.error("live document template is missing body");
@@ -26,17 +24,8 @@ export function createInline(
   }
 
   const sourceDocument = new Document();
-  const cached = cache.get(url);
-  if (cached)
-  {
-    sourceDocument.innerHTML = cached.buffer.toString("utf-8");
-  }
-  else 
-  {
-    const source = fs.readFileSync(url.absolute);
-    cache.add(url, source);
-    sourceDocument.innerHTML = source.toString("utf-8");
-  }
+  const source = fs.readFileSync(url.absolute, { encoding: "utf-8" });
+  sourceDocument.innerHTML = source;
 
   if (sourceDocument.head)
   {
@@ -48,6 +37,36 @@ export function createInline(
     sourceDocument.body.childNodes.forEach(node => appendNode(node, document.body!));
   }
 
+  const firstScriptTag = document.head.querySelector("script");
+  let importmapScript = document.head.querySelector('script[type="importmap"]');
+
+  if (!importmapScript)
+  {
+    importmapScript = document.createElement("script");
+    importmapScript.setAttribute("type", "importmap");
+  }
+
+  const _importmap = JSON.parse(importmapScript.textContent || "{}");
+  if (!_importmap.imports) _importmap.imports = {};
+
+  _importmap.imports = {
+    ..._importmap.imports,
+    ...importmap.imports,
+  };
+
+  importmapScript.textContent = JSON.stringify(_importmap);
+
+  if (firstScriptTag)
+  {
+    if (firstScriptTag !== importmapScript)
+      document.head.insertBefore(importmapScript, firstScriptTag);
+    // else we dont have to do anything 
+  }
+  else 
+  {
+    document.head.appendChild(importmapScript);
+  }
+
   return document;
 }
 
@@ -55,9 +74,7 @@ function appendNode(node: Node, target: Element) {
   // check if element exist? (maybe append will work swell? 2 titles and it takes the latest?)
   if (node instanceof Element)
   {
-    const query = `${node.tagName}${node.className ? "." + node.className : ""}${node.id ? "#"+node.id : ""}${Array.from(node.attributes).map(([key, value]) => {
-      return `[${key}${typeof value === "string" ? `="${value}"` : ""}]`;
-    }).join("")}`;
+    const query = `${node.tagName}${node.className ? "." + node.className : ""}${node.id ? "#" + node.id : ""}${Array.from(node.attributes).map(([key, value]) => `[${key}${typeof value === "string" ? `="${value}"` : ""}]`).join("")}`;
 
     const child = target.querySelector(query);
     if (child)

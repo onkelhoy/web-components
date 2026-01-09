@@ -6,31 +6,21 @@ import path from "node:path";
 import fs from "node:fs";
 import { getURL } from "../http/url";
 
-const SPECIAL_ICONS: Record<string, true> = {
-  "d_ts": true,
-  "test_js": true,
-}
-
 export function createExplorer(
-  assets: Record<string, string[]>,
   info: ReturnType<typeof getPathInfo>,
   packageJSON: LocalPackage,
   FFs: string[],
   url: ReturnType<typeof getURL>,
+  devServerScript: string,
 ) {
-  const document = getDocument("explorer", info);
+  const document = getDocument("explorer", devServerScript);
 
   if (typeof packageJSON.name === "string")
   {
     document.title = packageJSON.name
   }
 
-  if (info.local !== info.package)
-  {
-    document.title = `${document.title} ${path.dirname(info.local)}`
-  }
-
-  const spritesheet_source = Arguments.get("explorer-spritesheet").at(0) ?? path.join(info.script!, "asset/icons/explorer-spritesheet.svg");
+  const spritesheet_source = Arguments.get("explorer-spritesheet").at(0) ?? path.join(devServerScript, "asset/icons/explorer-spritesheet.svg");
   const spritesheet_content = fs.readFileSync(spritesheet_source, { encoding: "utf-8" });
   const spritesheet_dom = new Document();
   spritesheet_dom.innerHTML = spritesheet_content;
@@ -54,28 +44,15 @@ export function createExplorer(
 
   if (url.relative !== "")
   {
-    folders.innerHTML = `
-      <li class="hidden">
-        <a href="..">
-          <svg><use href="#folder" /></svg>
-          <span class="name">..</span>
-        </a>
-      </li>
-    `;
+    folders.innerHTML = `<li class="hidden"><a href=".."><svg><use href="#folder" /></svg><span class="name">..</span></a></li>`;
   }
 
   FFs.sort((a, b) => a.localeCompare(b)).forEach(name => {
     const _url = path.join(url.absolute, name);
-    const basename = path.basename(name);
 
     const stat = fs.statSync(_url);
     const li = document.createElement("li");
-    li.innerHTML = `
-      <a href="${name}">
-        <svg><use href="" /></svg>
-        <span class="name">${name}</span>
-      </a>
-    `;
+    li.innerHTML = `<a href="${name}"><svg><use href="" /></svg><span class="name">${name}</span></a>`;
 
 
     const anchor = li.querySelector("a")!;
@@ -120,22 +97,22 @@ function getFileIcon(url: string, spritesheet_dom: Document) {
   else if (filename.startsWith("eslint")) icon = "eslint"
   else if (/translation/.test(url))
   {
-    if (spritesheet_dom.querySelector("symbol#"+filename)) return filename; // language flag 
+    if (spritesheet_dom.querySelector("symbol#" + filename)) return filename; // language flag 
     icon = "language";
   }
   else if (/\.vscode/.test(url))
   {
     icon = "vscode";
   }
-  
-  if (spritesheet_dom.querySelector("symbol#"+icon)) return icon;
+
+  if (spritesheet_dom.querySelector("symbol#" + icon)) return icon;
 
   const twolast = split.slice(split.length - 2).join("_");
-  if (spritesheet_dom.querySelector("symbol#"+twolast)) return twolast;
+  if (spritesheet_dom.querySelector("symbol#" + twolast)) return twolast;
 
   const ext = split.pop() ?? basename;
-  if (spritesheet_dom.querySelector("symbol#"+ext)) return ext;
-  
+  if (spritesheet_dom.querySelector("symbol#" + ext)) return ext;
+
   return "file"; // fallback
 }
 

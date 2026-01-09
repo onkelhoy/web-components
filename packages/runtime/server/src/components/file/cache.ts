@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import { FileConstants } from "./types";
-import path from "node:path";
 import { Arguments, Terminal } from "@papit/util";
 import { getURL } from "../http/url";
 
@@ -8,7 +7,7 @@ import { getURL } from "../http/url";
 type CacheEntry = {
   buffer: Buffer;
   mimeType: string;
-  mtime: number; // Modified time for cache invalidation
+  mtime: number | null; // Modified time for cache invalidation
 }
 
 export class Cache {
@@ -16,8 +15,7 @@ export class Cache {
   private _size = 0;
 
   name = "cache";
-  constructor(name?: string)
-  {
+  constructor(name?: string) {
     if (name) this.name = name;
   }
 
@@ -25,12 +23,13 @@ export class Cache {
 
   private _maxSize = FileConstants.MAX_FILE_SIZE_TO_CACHE;
   get maxSize() { return this._maxSize }
-  set maxSize(value:number) { this._maxSize = value * 1024 * 1024 } // in MB
+  set maxSize(value: number) { this._maxSize = value * 1024 * 1024 } // in MB
 
-  get(url: ReturnType<typeof getURL>) 
-  {
+  get(url: ReturnType<typeof getURL>) {
     const cached = this.map.get(url.absolute);
     if (!cached) return null;
+
+    if (cached.mtime === null) return cached;
 
     const stats = fs.statSync(url.absolute);
     if (stats.mtimeMs === cached.mtime) return cached;
@@ -39,11 +38,11 @@ export class Cache {
     return null;
   }
 
-  delete(url: ReturnType<typeof getURL>) {
+  delete(url: ReturnType<typeof getURL>, noprint = false) {
     const cached = this.map.get(url.absolute);
     if (cached)
     {
-      if (Arguments.info) Terminal.write(Terminal.yellow(url.relative), "removed from cache:" + Terminal.blue(this.name))
+      if (Arguments.info && !noprint) Terminal.write(Terminal.yellow(url.relative), "removed from cache:" + Terminal.blue(this.name))
       this._size -= cached.buffer.length;
       this.map.delete(url.absolute);
     }
@@ -54,16 +53,16 @@ export class Cache {
     this._size = 0;
   }
 
-  add(url: ReturnType<typeof getURL>, buffer: Buffer, mimeType?: string, mtime?: number) 
-  {
-    this.delete(url); // making sure to clean 
+  add(url: ReturnType<typeof getURL>, buffer: Buffer, mimeType?: string, mtime?: number | null) {
+    if (Arguments.has("no-cache")) return;
+    this.delete(url, true); // making sure to clean 
     this._size += buffer.length;
-    
+
     if (Arguments.info) Terminal.write(Terminal.yellow(url.relative), "added to cache:" + Terminal.blue(this.name))
     this.map.set(url.absolute, {
       mimeType: mimeType ?? FileConstants.MimeTypes[url.absolute] ?? "text/plain",
       buffer,
-      mtime: mtime ?? fs.statSync(url.absolute).mtimeMs,
+      mtime: mtime === undefined ? fs.statSync(url.absolute).mtimeMs : mtime,
     });
   }
 

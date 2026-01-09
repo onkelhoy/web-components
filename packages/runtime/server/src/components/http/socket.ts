@@ -3,7 +3,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { Duplex } from "node:stream";
 import { Arguments, Terminal } from "@papit/util";
 
-const connectedClients = new Map<string, Duplex>();
+const connectedClients = new Set<Duplex>();
 
 export function upgrade(this: http.Server, req: http.IncomingMessage, socket: Duplex, head: Buffer) {
   // handshake
@@ -18,43 +18,18 @@ export function upgrade(this: http.Server, req: http.IncomingMessage, socket: Du
     `Sec-WebSocket-Accept: ${hash}`
   ];
   socket.write(responseHeaders.join('\r\n') + '\r\n\r\n');
-  
+
   // keeping track
-  const socketid = randomUUID();
-  connectedClients.set(socketid, socket);
+  connectedClients.add(socket);
 
   if (Arguments.info) Terminal.write(Terminal.blue("client connected"));
 
   // events 
-  socket.on('error', handleError.bind(socket, socketid));
-  socket.on('data', handleData.bind(socket, socketid));
-  socket.on('end', handleEnd.bind(socket, socketid));
-}
-
-// event handlers 
-function handleError(this: Duplex, socketid: string, error: any) {
-  if ('code' in error && error.code === 'ECONNRESET')
-  {
-    if (Arguments.info) Terminal.write(Terminal.blue("client disconnected"));
-    connectedClients.delete(socketid);
-  }
-  else if (process.env.LOGLEVEL !== "none")
-  {
-    console.log('socket-error', socketid, error);
-  }
-}
-function handleData(this: Duplex, socketid: string, buffer: Buffer) {
-  const message = buffer.toString();
-  if (Arguments.verbose) Terminal.write("Received:", message);
-
-  // Echoing back the received message (simplified, not handling actual WebSocket frames)
-  this.write(frameWebSocketMessage(message));
-}
-function handleEnd(this: Duplex, socketid: string) {
-  if (Arguments.info) Terminal.write(Terminal.blue("client disconnected"));
-
-  // TODO: have to find the client-id to be removed so we can remove it from the connectedClients list 
-  connectedClients.delete(socketid);
+  socket.on("end", () => connectedClients.delete(socket));
+  socket.on("close", () => connectedClients.delete(socket));
+  socket.on("error", (err: any) => {
+    if (err.code === "ECONNRESET") connectedClients.delete(socket);
+  });
 }
 
 // exposed functions 
@@ -69,29 +44,14 @@ export function update(filename: string, content: string) {
     }
 
     const message = frameWebSocketMessage({ action: 'update', filename, content });
-    const MAX_SIZE = 65535; // Maximum size for a UInt16 buffer
-    const numChunks = Math.ceil(message.length / MAX_SIZE);
-
-    connectedClients.forEach((client) => {
-      if (!client)
-      {
-        if (Arguments.verbose) Terminal.error(Terminal.write(Terminal.blue("socket"), "[update] could not find client"));
-      } else
-      {
-        for (let i = 0; i < numChunks; i++)
-        {
-          const chunk = message.slice(i * MAX_SIZE, (i + 1) * MAX_SIZE);
-          client.write(chunk);  // Send chunk to the client
-        }
-        client.write(message);
-      }
-    });
+    write(message);
   }
   catch (e)
   {
     console.log('[socket error]', e);
   }
 }
+
 export function error(filename: string, errors: any[]) {
   // notify all clients 
   if (connectedClients.size === 0)
@@ -99,64 +59,56 @@ export function error(filename: string, errors: any[]) {
     if (Arguments.verbose) Terminal.write("No clients connected to send error!");
   }
 
-  // connectedClients.forEach(client => {
-  //   if (!client) client.write(JSON.stringify({ action: 'error', filename, error: errors }));
-  //   else console.log('errorina?')
-  // });
-
   const message = frameWebSocketMessage({ action: 'error', filename, error: errors });
-  connectedClients.forEach((client) => {
-    if (!client)
-    {
-      if (Arguments.verbose) Terminal.error(Terminal.write(Terminal.blue("socket"), "[error] could not find client"));
-    } else
-    {
-      client.write(message);
-    }
-  });
+  write(message);
 }
 
 // helper functions
-function frameWebSocketMessage(jsondata: any): Buffer {
-  const json = JSON.stringify(jsondata);
-  const jsonByteLength = Buffer.byteLength(json);
+function write(message: Buffer<ArrayBufferLike>) {
+  connectedClients.forEach((socket) => {
+    if (!socket || !socket.writable)
+    {
+      if (Arguments.verbose) Terminal.error(Terminal.blue("socket"), "[error] could not find client");
+      connectedClients.delete(socket);
+      return;
+    }
 
-  let lengthByteCount = 0;
-  let payloadLength = 0;
+    socket.write(message);
+  });
+}
 
-  if (jsonByteLength <= 125)
+function frameWebSocketMessage(data: unknown): Buffer {
+  const payload = Buffer.from(JSON.stringify(data), "utf8");
+  const len = payload.length;
+
+  let headerLength = 2;
+
+  if (len > 125 && len <= 0xffff) headerLength += 2;
+  else if (len > 0xffff) headerLength += 8;
+
+  const frame = Buffer.alloc(headerLength + len);
+
+  // FIN + text frame
+  frame[0] = 0x81;
+
+  let offset = 2;
+
+  if (len <= 125)
   {
-    lengthByteCount = 0;  // Use 1 byte for payload length
-    payloadLength = jsonByteLength;
-  } else if (jsonByteLength <= 65535)
+    frame[1] = len;
+  } else if (len <= 0xffff)
   {
-    lengthByteCount = 2;  // Use 2 bytes for payload length (max 65535)
-    payloadLength = 126;
+    frame[1] = 126;
+    frame.writeUInt16BE(len, offset);
+    offset += 2;
   } else
   {
-    lengthByteCount = 8;  // Use 8 bytes for payload length (for larger payloads)
-    payloadLength = 127;
+    frame[1] = 127;
+    frame.writeBigUInt64BE(BigInt(len), offset);
+    offset += 8;
   }
 
-  const buffer = Buffer.alloc(2 + lengthByteCount + jsonByteLength);
+  payload.copy(frame, offset);
 
-  // Set the first byte to indicate a text frame
-  buffer[0] = 0b10000001;
-
-  // Set the payload length
-  buffer[1] = payloadLength;
-
-  // Set the extended length (2 or 8 bytes depending on size)
-  if (lengthByteCount === 2)
-  {
-    buffer.writeUInt16BE(jsonByteLength, 2);  // 2-byte length
-  } else if (lengthByteCount === 8)
-  {
-    buffer.writeBigUInt64BE(BigInt(jsonByteLength), 2);  // 8-byte length for large payloads
-  }
-
-  // Write the JSON data to the buffer
-  buffer.write(json, 2 + lengthByteCount);
-
-  return buffer;
+  return frame;
 }

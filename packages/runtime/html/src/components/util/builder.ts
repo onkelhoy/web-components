@@ -1,18 +1,20 @@
-import { Tokenise } from "../tokenise";
+import { html as lexer } from "@papit/lexer";
 import type Element from "../element/element";
 
-export function Builder(root: Element, html:string) {
-  const tokens = Tokenise(html);
+export function Builder(root: Element, html: string) {
+  const tokens = lexer(html);
 
   const stack: Element[] = [root];
 
-  for (const token of tokens) {
+  for (const token of tokens)
+  {
     const current = stack[stack.length - 1];
 
-    switch (token.type) {
+    switch (token.type)
+    {
       case "text": {
         if (!token.value.trim()) break;
-        const node = root.ownerDocument.createTextNode(token.value); 
+        const node = root.ownerDocument.createTextNode(token.value);
         current.appendChild(node);
         break;
       }
@@ -28,7 +30,8 @@ export function Builder(root: Element, html:string) {
 
         current.appendChild(el);
 
-        if (!token.selfClosing) {
+        if (!token.selfClosing)
+        {
           stack.push(el);
         }
         break;
@@ -47,8 +50,10 @@ export function Builder(root: Element, html:string) {
 
       case "endTag": {
         // Pop until matching tag (simple error recovery)
-        for (let i = stack.length - 1; i > 0; i--) {
-          if (stack[i].tagName === token.name) {
+        for (let i = stack.length - 1; i > 0; i--)
+        {
+          if (stack[i].tagName === token.name)
+          {
             stack.length = i;
             break;
           }
