@@ -24,6 +24,8 @@ export async function jsBundler(
   else if (Arguments.verbose) logLevel = "info";
   else if (Arguments.debug) logLevel = "info";
 
+  console.log(meta.tsconfig.path)
+
   const options = {
     bundle: true,
     entryPoints: [inputFile],

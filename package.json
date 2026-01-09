@@ -15,7 +15,7 @@
     "build": "npx @papit/build --run --all",
     "test": "npx @papit/",
     "create": "npm create @papit -- --package",
-    "start": "npx @papit/server --serve --port=8080"
+    "start": "npx @papit/server --serve --port=8080 --info"
   },
   "keywords": [
     "typescript"
