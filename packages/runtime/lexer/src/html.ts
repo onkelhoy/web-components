@@ -1,4 +1,4 @@
-import { Lexer, StateRules } from "./lexer-generator";
+import { Lexer, StateRules } from "./lexer";
 
 type CTX = {
   attrName: string;

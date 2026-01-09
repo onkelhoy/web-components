@@ -15,7 +15,8 @@
     "test": "node --test",
     "preversion": "papit-version",
     "postversion": "papit-version",
-    "component": "npm create @papit -- --component"
+    "component": "npm create @papit -- --component",
+    "generate-explorer-icons": "npx @papit/svg-spritesheet --input ./explorer-icons --output ./asset/icons/explorer-spritesheet.svg"
   },
   "bin": {
     "papit-server": "./lib/bundle.js"

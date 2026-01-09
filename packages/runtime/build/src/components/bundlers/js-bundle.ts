@@ -24,8 +24,6 @@ export async function jsBundler(
   else if (Arguments.verbose) logLevel = "info";
   else if (Arguments.debug) logLevel = "info";
 
-  console.log(meta.tsconfig.path)
-
   const options = {
     bundle: true,
     entryPoints: [inputFile],
@@ -46,7 +44,7 @@ export async function jsBundler(
     logLevel: logLevel,
   } as BuildOptions
 
-  if (Arguments.args.flags.live)
+  if ((Arguments.args.flags.live && exoptions?.watch !== false) || exoptions?.watch === true)
   {
     return watch(options, info, exoptions);
   }
@@ -55,9 +53,7 @@ export async function jsBundler(
 }
 
 async function build(options: BuildOptions) {
-  const esbuildInfo = await esbuild.build({
-    ...options
-  });
+  const esbuildInfo = await esbuild.build(options);
   if (esbuildInfo.errors.length > 0)
   {
     if (Arguments.verbose)

@@ -1,6 +1,6 @@
 # @papit/svg-spritesheet
 
-a simple tool that will merge multiple svg files into one 
+Merge multiple SVG files into a single SVG spritesheet using <symbol> elements.
 
 ---
 
@@ -8,12 +8,60 @@ a simple tool that will merge multiple svg files into one
 [![Tests](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml/badge.svg)](https://github.com/onkelhoy/web-components/actions/workflows/pull-request.yml)
 [![NPM version](https://img.shields.io/npm/v/@papit/svg-spritesheet.svg?logo=npm)](https://www.npmjs.com/package/@papit/svg-spritesheet)
 
+Here’s a **tight, minimal README**—npm-friendly and consistent with your other @papit packages:
+
 ---
 
-## installation
+# @papit/svg-spritesheet
+
+Merge multiple SVG files into a single SVG spritesheet using `<symbol>` elements.
+
+---
+
+![Type](https://img.shields.io/badge/Type-runtime-orange)
+[![NPM version](https://img.shields.io/npm/v/@papit/svg-spritesheet.svg?logo=npm)](https://www.npmjs.com/package/@papit/svg-spritesheet)
+
+---
+
+## Install
 
 ```bash
 npm install @papit/svg-spritesheet
+```
+
+---
+
+## Usage
+
+```bash
+svg-spritesheet --input ./icons --output ./spritesheet.svg
+```
+
+Defaults:
+
+* **input**: current directory
+* **output**: `<input>/spritesheet.svg`
+* **symbol name**: `<title>` in SVG → fallback to filename
+
+---
+
+## Options
+
+```text
+--input <dir>        SVG directory
+--output <file>     Output file
+--name-query <sel>  Name selector (default: title)
+--info              Show progress
+```
+
+---
+
+## Output
+
+```html
+<svg xmlns="http://www.w3.org/2000/svg">
+  <symbol id="icon-name">…</symbol>
+</svg>
 ```
 
 ## Contributing

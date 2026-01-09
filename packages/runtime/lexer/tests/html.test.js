@@ -2,7 +2,7 @@ import {describe, it} from "node:test";
 import assert from "node:assert";
 import {html as lexer} from "@papit/lexer";
 
-describe("Tokenise", () => {
+describe("html", () => {
 
   describe("text", () => {
     it("should tokenize plain text", () => {
