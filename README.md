@@ -47,8 +47,8 @@ If you want to understand how to build, extend, and optimize components, start h
 
 Enhance your understanding and utilization of the `@papit` ecosystem with these resources:
 
-1. [How to Use `@papit`](./documentation/how-to-use.md)
-2. [A Closer Look at `@papit`](./documentation/global.md)
-3. [Individual Packages Overview](./documentation/package.md)
+1. [How to Use `@papit`](./docs/how-to-use.md)
+2. [A Closer Look at `@papit`](./docs/global.md)
+3. [Individual Packages Overview](./docs/package.md)
 4. [Theming with `@papit`](./themes/README.md)
 5. [Understanding Versioning in `@papit`](./scripts/versioning/README.md)
