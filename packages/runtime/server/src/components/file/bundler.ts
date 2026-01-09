@@ -14,11 +14,9 @@ export async function bundler(
   res: ServerResponse,
   cache: Cache
 ) {
-
+  Terminal.write("bundler running", url.relative)
   // at this point this is not a in a cache 
-  res.statusCode = 200;
-  res.setHeader('Content-Type', "text/javascript");
-  res.end("console.log('ALRIGHT')")
+  return "alirhgty"
 
   // const now = performance.now();
   // const file = getFile(currentURL, req.url!, true);

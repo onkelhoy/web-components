@@ -51,28 +51,27 @@ export async function handleAsset(
   {
     const url = path.join(location, name);
     const stat = fs.statSync(url);
-    const isDirectory = stat.isDirectory();
-    if (!(stat.isFile() || isDirectory)) return;
-
-
-    const relativeURL = path.relative(root, url);
-
-    const absoluteURL = '/' + relativeURL;
-    if (!assets[absoluteURL]) assets[absoluteURL] = [];
-    assets[absoluteURL].push(url);
-
-    const segments = relativeURL.split(path.sep);
-    // Remove first segment if it's an asset folder
-    if (folders.includes(segments[0]))
+    
+    if (stat.isFile())
     {
-      segments.shift();
-      const relativeURL = '/' + segments.join('/');
-
-      if (!assets[relativeURL]) assets[relativeURL] = [];
-      assets[relativeURL].push(url);
+      const relativeURL = path.relative(root, url);
+      const absoluteURL = '/' + relativeURL;
+      if (!assets[absoluteURL]) assets[absoluteURL] = [];
+      assets[absoluteURL].push(url);
+  
+      const segments = relativeURL.split(path.sep);
+      // Remove first segment if it's an asset folder
+      if (folders.includes(segments[0]))
+      {
+        segments.shift();
+        const relativeURL = '/' + segments.join('/');
+  
+        if (!assets[relativeURL]) assets[relativeURL] = [];
+        assets[relativeURL].push(url);
+      }
     }
 
-    if (isDirectory)
+    if (stat.isDirectory())
     {
       const lowerName = name.toLowerCase();
       if (lowerName.startsWith("translation"))

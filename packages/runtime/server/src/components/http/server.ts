@@ -20,6 +20,7 @@ import { bundler } from "../file/bundler";
 import { getURL } from "./url";
 import { Cache } from "../file/cache";
 import { FileConstants } from "../file/types";
+import { getFILE } from "../file/get";
 
 let PORT = Number(Arguments.args.flags.port || 3000);
 
@@ -67,84 +68,96 @@ export async function start(
   server.on("request", async (req, res) => 
   {
 
-    res.setHeader('Content-Type', FileConstants.MimeTypes[".json"]);
-    res.end(JSON.stringify({assets}))
-    return;
+    // res.setHeader('Content-Type', FileConstants.MimeTypes[".json"]);
+    // res.end(JSON.stringify({assets}))
+    // return;
 
-    // try 
-    // {
-    //   if (req.method !== "GET") 
-    //   {
-    //     res.setHeader("Allow", "GET");
-    //     throw new MethodNotAllowedError();
-    //   }
+    try 
+    {
+      if (req.method !== "GET") 
+      {
+        res.setHeader("Allow", "GET");
+        throw new MethodNotAllowedError();
+      }
 
-    //   try 
-    //   {
-    //     // we assume asset by this point 
-    //     const asset = await streamAsset(
-    //       req.url!,
-    //       translations,
-    //       assets,
-    //       filecache,
-    //       res,
-    //     ); // this will throw if failed 
+      const url = getURL(req, info);
 
-    //     if (asset === "streamed") return;
+      try 
+      {
+        // we assume asset by this point 
+        const asset = await streamAsset(
+          req.url!,
+          translations,
+          assets,
+          filecache,
+          res,
+        ); // this will throw if failed 
 
-    //     res.statusCode = 200;
-    //     res.setHeader('Content-Type', asset.mimeType);
-    //     res.end(asset.buffer);
-    //   }
-    //   catch {}
+        if (asset === "streamed") return;
 
-    //   const url = getURL(req, info);
-    //   console.log('incoming url', req.url, url)
-    //   const stat = fs.statSync(url.absolute);
-    //   if (stat.isDirectory() || path.extname(url.absolute) === ".html")
-    //   {
-    //     const document = await getHTML(info, assets, packageJSON, url, htmlcache);
-    //     res.statusCode = 200;
+        res.statusCode = 200;
+        res.setHeader('Content-Type', asset.mimeType);
+        res.end(asset.buffer);
+        return;
+      }
+      catch {}
+
+      const stat = fs.statSync(url.absolute);
+
+      if (stat.isDirectory() || path.extname(url.absolute) === ".html")
+      {
+        const document = await getHTML(info, assets, packageJSON, url, htmlcache);
+        res.statusCode = 200;
         
-    //     if (htmlcache.get(url))
-    //     {
-    //       res.setHeader('X-Cache', "HIT");
-    //     }
-    //     else 
-    //     {
-    //       res.setHeader('X-Cache', "MISS");
-    //     }
+        if (htmlcache.get(url))
+        {
+          res.setHeader('X-Cache', "HIT");
+        }
+        else 
+        {
+          res.setHeader('X-Cache', "MISS");
+        }
 
-    //     res.end(document.outerHTML);
-    //     return;
-    //   }
+        res.end(document.outerHTML);
+        return;
+      }
 
-    //   const cached = htmlcache.get(url) ?? filecache.get(url) ?? bundlecache.get(url);
+      const cached = htmlcache.get(url) ?? filecache.get(url) ?? bundlecache.get(url);
 
-    //   if (cached)
-    //   {
-    //     if (Arguments.info) Terminal.write(Terminal.yellow(url.relative), "found in cache")
-    //     res.statusCode = 200;
-    //     res.setHeader('Content-Type', cached.mimeType);
-    //     res.setHeader('X-Cache', "HIT");
-    //     return res.end(cached.buffer);
-    //   }
+      if (cached)
+      {
+        if (Arguments.info) Terminal.write(Terminal.yellow(url.relative), "found in cache")
+        res.statusCode = 200;
+        res.setHeader('Content-Type', cached.mimeType);
+        res.setHeader('X-Cache', "HIT");
+        return res.end(cached.buffer);
+      }
 
-    //   res.setHeader('X-Cache', "MISS");
+      res.setHeader('X-Cache', "MISS");
 
-    //   if (/\.tsx?/.test(url.absolute) && (req.headers.referer?.endsWith(".js") || req.headers['sec-fetch-dest'] === "script") && !Arguments.has("no-bundle"))
-    //   {
-    //     // const localInfo = getPathInfo(path.join(info.root, res.url));
-    //     // const localPackage = getJSON<LocalPackage>(path.join(localInfo.package, "package.json"));
-    //     // if (!localPackage) throw "missing package.json";
-    //     // const meta = await getMeta("dev", localInfo, localPackage);
-    //     // // return bundler(currentURL, localInfo, meta, res, localPackage);
+      if (/\.tsx?/.test(url.absolute) && (req.headers.referer?.endsWith(".js") || req.headers['sec-fetch-dest'] === "script") && !Arguments.has("no-bundle"))
+      {
+        // const localInfo = getPathInfo(path.join(info.root, res.url));
+        // const localPackage = getJSON<LocalPackage>(path.join(localInfo.package, "package.json"));
+        // if (!localPackage) throw "missing package.json";
+        // const meta = await getMeta("dev", localInfo, localPackage);
+        // // return bundler(currentURL, localInfo, meta, res, localPackage);
         
-    //     // we put this into its own cache (bundlecache)
-    //     const bundle = bundler(url, res, bundlecache);
-    //   }
-    // }
-    // catch (e) { handleError(e, res) }
+        // we put this into its own cache (bundlecache)
+        const bundle = bundler(url, res, bundlecache);
+        res.statusCode = 200;
+        res.setHeader('Content-Type', "text/javascript");
+        res.end("console.log('ALRIGHT')")
+        return;
+      }
+
+      const file = getFILE(url, filecache, res);
+      if (file === "streamed") return;
+      res.statusCode = 200;
+      res.setHeader('Content-Type', file.mimeType);
+      res.end(file.buffer);
+    }
+    catch (e) { handleError(e, res) }
   });
 
   server.on('error', (error: Error) => 

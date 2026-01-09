@@ -23,6 +23,7 @@ export function getFILE(
   const stats = fs.statSync(url.absolute);
   if (!cache.isCacheable(stats.size, extname)) 
   {
+    console.log('streamed', stats.size)
     streamFile(url.absolute, res, signal)
     return "streamed";
   }

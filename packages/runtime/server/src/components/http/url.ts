@@ -14,8 +14,7 @@ export function getURL(
   {
     const absolute = path.join(potential, ...rest);
     if (fs.existsSync(absolute)) return { absolute, relative: path.relative(potential, absolute) || path.relative(info.local, info.root) || "/" };
-    if (fs.existsSync(info.local)) return { absolute: info.local, relative: path.relative(info.local, info.root) || "/" };
   }
 
-  return { absolute: info.root, relative: "/" };
+  return { absolute: info.package, relative: request.url ?? "/" };
 }
