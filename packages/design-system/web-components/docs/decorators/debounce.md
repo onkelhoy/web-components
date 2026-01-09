@@ -16,7 +16,7 @@ This decorator is a thin wrapper over the standalone `debounceFn` utility. See: 
 ## Usage
 
 ```ts
-import { debounce } from "@papit/core";
+import { debounce } from "@papit/web-component";
 
 class SearchBox {
   // Replace the original method with a debounced version

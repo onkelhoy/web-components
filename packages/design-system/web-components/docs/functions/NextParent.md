@@ -48,7 +48,7 @@ function nextParent<T = HTMLElement>(element: HTMLElement): T | null;
 ## Example
 
 ```ts
-import { nextParent } from "@papit/core";
+import { nextParent } from "@papit/web-component";
 
 const child = document.querySelector("#child") as HTMLElement;
 const parent = nextParent(child);

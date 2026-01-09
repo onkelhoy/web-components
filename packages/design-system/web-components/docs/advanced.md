@@ -6,7 +6,7 @@
 
 ## Overview
 
-This doc explains the engine internals powering `@papit/core`:
+This doc explains the engine internals powering `@papit/web-component`:
 - the `html()` compile/getValues flow,
 - `TemplateInstance` and `partFactory`,
 - **Parts** (value, list, nested, attribute, event),

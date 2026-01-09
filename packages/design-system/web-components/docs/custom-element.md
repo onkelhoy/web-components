@@ -8,7 +8,7 @@
 
 ## Introduction
 
-The `CustomElement` base class in `@papit/core` provides:
+The `CustomElement` base class in `@papit/web-component` provides:
 
 * A **declarative rendering system** using the [`html`](./html/README.md) tagged template.
 * **Efficient DOM updates** via `TemplateInstance` and the [parts system](./parts.md).

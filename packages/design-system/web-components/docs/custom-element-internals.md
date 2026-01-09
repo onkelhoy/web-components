@@ -131,9 +131,9 @@ These map directly to the native [`ElementInternals`](https://developer.mozilla.
 ## 6. Usage Example
 
 ```ts
-import { html } from "@papit/core/html";
-import { CustomElementInternals } from "@papit/core/custom-element-internals";
-import { property } from "@papit/core/decorators";
+import { html } from "@papit/web-component/html";
+import { CustomElementInternals } from "@papit/web-component/custom-element-internals";
+import { property } from "@papit/web-component/decorators";
 
 class MyInput extends CustomElementInternals {
   @property({ type: String }) value = "";

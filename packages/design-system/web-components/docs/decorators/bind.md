@@ -11,7 +11,7 @@ Ensures that class methods always use the correct `this` context, even when pass
 ## Quick start
 
 ```ts
-import { bind } from "@papit/core";
+import { bind } from "@papit/web-component";
 
 class MyEl extends HTMLElement {
   @bind

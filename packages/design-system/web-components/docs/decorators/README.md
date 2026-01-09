@@ -1,6 +1,6 @@
 # Decorators
 
-`@papit/core` provides decorators that simplify building reactive, maintainable web components.
+`@papit/web-component` provides decorators that simplify building reactive, maintainable web components.
 
 - [@property](./property.md) — Define reactive properties that sync with attributes.
 - [@query](./query.md) — Select and assign DOM elements directly to class fields after render.

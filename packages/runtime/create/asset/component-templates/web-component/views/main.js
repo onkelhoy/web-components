@@ -1,5 +1,5 @@
 // core
-import '@papit/core';
+import '@papit/web-component';
 import '@papit/translator';
 import "@papit/typography";
 import "@papit/card";

@@ -1,6 +1,6 @@
-# @papit/core — Documentation
+# @papit/web-component — Documentation
 
-Welcome to the official documentation for **@papit/core** — a lightweight toolkit for building modern, reactive, and ergonomic web components.
+Welcome to the official documentation for **@papit/web-component** — a lightweight toolkit for building modern, reactive, and ergonomic web components.
 
 The documentation is organized into focused sections so you can quickly find what you need.
 
@@ -10,7 +10,7 @@ The documentation is organized into focused sections so you can quickly find wha
 
 ### 1. [Getting Started](./getting-started.md)
 
-A quick introduction to installing, importing, and using `@papit/core` in your project.
+A quick introduction to installing, importing, and using `@papit/web-component` in your project.
 
 ### 2. [Decorators](./decorators/README.md)
 

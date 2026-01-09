@@ -12,7 +12,7 @@ It performs the query lazily (on first access) and stores the result for future 
 ## Quick start
 
 ```ts
-import { query } from "@papit/core";
+import { query } from "@papit/web-component";
 
 class MyEl extends HTMLElement {
   @query('button.submit')

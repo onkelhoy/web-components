@@ -47,7 +47,7 @@ An object containing:
 ## Example
 
 ```ts
-import { CumulativeOffset } from "@papit/core";
+import { CumulativeOffset } from "@papit/web-component";
 
 const el = document.querySelector("#my-element") as HTMLElement;
 const { top, left } = CumulativeOffset(el);

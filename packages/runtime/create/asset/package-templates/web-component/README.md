@@ -35,7 +35,7 @@ See the [LICENSE](https://github.com/onkelhoy/web-components/blob/main/LICENSE) 
 
 ## Related Components
 
-- [@papit/core](https://github.com/onkelhoy/web-components/tree/main/packages/system/core): Core utilities, decorators, and base component class
+- [@papit/web-component](https://github.com/onkelhoy/web-components/tree/main/packages/system/core): Core utilities, decorators, and base component class
 
 ## Support
 

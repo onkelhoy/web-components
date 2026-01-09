@@ -1,4 +1,4 @@
-# Parts: The Building Blocks of @papit/core Rendering
+# Parts: The Building Blocks of @papit/web-component Rendering
 
 > File: `docs/parts.md`  
 > Author: Henry Pap (GitHub: @onkelhoy)  
@@ -8,7 +8,7 @@
 
 ## Introduction
 
-A **Part** is a small unit of dynamic DOM control in the `@papit/core` templating system.  
+A **Part** is a small unit of dynamic DOM control in the `@papit/web-component` templating system.  
 Every `<!--marker-->` or `<!--list-marker-->` in a compiled template becomes one or more **Part** instances in a `TemplateInstance`.
 
 The job of a part is to:

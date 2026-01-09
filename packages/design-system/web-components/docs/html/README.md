@@ -8,7 +8,7 @@
 
 ## Introduction
 
-`@papit/core` uses a **tagged template literal** system to turn HTML-like syntax into a **DOM fragment** with **dynamic value placeholders** (markers).  
+`@papit/web-component` uses a **tagged template literal** system to turn HTML-like syntax into a **DOM fragment** with **dynamic value placeholders** (markers).  
 This is the foundation for efficient, partial DOM updates.
 
 The key pieces are:
@@ -24,7 +24,7 @@ The key pieces are:
 ## 1. `html()` Usage
 
 ```ts
-import { html } from "@papit/core/html";
+import { html } from "@papit/web-component/html";
 
 const template = html`
   <div class="card">

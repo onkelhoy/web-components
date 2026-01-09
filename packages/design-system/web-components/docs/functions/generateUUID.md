@@ -46,7 +46,7 @@ Where:
 ## Example
 
 ```ts
-import { generateUUID } from "@papit/core";
+import { generateUUID } from "@papit/web-component";
 
 const id1 = generateUUID(); // "f65c57f6-a6aa-4d5a-9f4d-7b7e3e6b1b0c"
 const id2 = generateUUID(); // "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"

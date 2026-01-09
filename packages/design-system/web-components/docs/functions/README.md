@@ -1,4 +1,4 @@
-# Functions — @papit/core
+# Functions — @papit/web-component
 
 Utility functions that can be used independently from decorators or components.
 

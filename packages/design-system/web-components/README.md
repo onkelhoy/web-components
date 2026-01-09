@@ -87,7 +87,7 @@ This launches a demo server from the `views` folder.
 
 ## Example — Creating a Counter Component
 
-Below is a small but complete example showing several key features in `@papit/core`:
+Below is a small but complete example showing several key features in `@papit/web-component`:
 
 - **Reactive properties** via `@property`
 - **DOM queries** via `@query`
@@ -157,7 +157,7 @@ See the [LICENSE](https://github.com/onkelhoy/web-components/blob/main/LICENSE) 
 
 ## Related Components
 
-- [@papit/core](https://github.com/onkelhoy/web-components/tree/main/packages/system/core): Core utilities, decorators, and base component class
+- [@papit/web-component](https://github.com/onkelhoy/web-components/tree/main/packages/system/core): Core utilities, decorators, and base component class
 
 ## Support
 

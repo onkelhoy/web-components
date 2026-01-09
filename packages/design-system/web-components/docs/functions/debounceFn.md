@@ -47,8 +47,8 @@ A **new function** that:
 ## Example
 
 ```ts
-import { debounceFn } from "@papit/core";
-import { STANDARD_DELAY } from "@papit/core/constants";
+import { debounceFn } from "@papit/web-component";
+import { STANDARD_DELAY } from "@papit/web-component/constants";
 
 function saveToServer(data: string) {
   console.log("Saving:", data);
@@ -79,7 +79,7 @@ debouncedSave("abc");
 
 ## Under the Hood
 
-The implementation in `@papit/core` is:
+The implementation in `@papit/web-component` is:
 
 ```ts
 export function debounceFn<T extends (...args: any[]) => any>(

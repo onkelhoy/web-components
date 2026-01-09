@@ -18,7 +18,7 @@ This decorator:
 ## Quick start
 
 ```ts
-import { property } from "@papit/core";
+import { property } from "@papit/web-component";
 
 class MyEl extends HTMLElement {
   @property({ type: Number, attribute: "counter", rerender: true })

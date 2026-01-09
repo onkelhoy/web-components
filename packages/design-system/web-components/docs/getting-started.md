@@ -3,13 +3,13 @@
 ## Installation
 
 ```bash
-npm install @papit/core
+npm install @papit/web-component
 ````
 
 ## Your First Component
 
 ```ts
-import { CustomElement, html } from "@papit/core";
+import { CustomElement, html } from "@papit/web-component";
 
 class HelloWorld extends CustomElement {
   render() {
@@ -35,7 +35,7 @@ customElements.define("hello-world", HelloWorld);
 > NOTE: react suppoet is not yet implemented 
 
 ```jsx
-import { HelloWorld } from "@papit/core/react";
+import { HelloWorld } from "@papit/web-component/react";
 
 export default function App() {
   return <HelloWorld />;
