@@ -7,98 +7,118 @@ import { close as httpExit, start as httpStart } from "./components/http";
 import { getMeta } from "@papit/build";
 
 (async function () {
-  const info = getPathInfo(
-    typeof Arguments.args.flags.location === "string" ? Arguments.args.flags.location : undefined,
-    import.meta.url
-  );
-
-  if (info.script == null)
-  {
-    Terminal.error("script location of @papit/server is missing");
-    process.exit(1);
-  }
-
-  const packageJSON = getJSON<LocalPackage>(path.join(info.package, "package.json"));
-  if (!packageJSON)
-  {
-    Terminal.error("location is not a package, missing package.json");
-    process.exit(1);
-  }
-
-  const translations: Record<string, Translation> = {};
-  const assets: Record<string, string[]> = {};
-  const assetFolders = getAssetFolders();
-
-  // we start by loading assets from dev-server (so we allow for overrides)
-  for (const asset of assetFolders)
-  {
-    const assetLocation = path.join(info.script, asset);
-    await handleAsset(info.script, assetLocation, translations, assets, assetFolders);
-  }
-
-  const importmap: { imports: Record<string, string> } = {
-    imports: {}
-  }
-
-  async function runBatch(batch: DependencyBatch[]) {
-    for (const b of batch) 
-    {
-      if (!b.location) continue;
-      const _pkgJSON = getJSON<LocalPackage>(path.join(b.location, "package.json"));
-      if (!_pkgJSON) continue;
-
-      if (_pkgJSON.exports)
-      {
-        for (const key in _pkgJSON.exports)
-        {
-          let name = _pkgJSON.name;
-          if (key !== ".")
-          {
-            name += "/" + key;
-          }
-
-          importmap.imports[name] = path.join(b.location, _pkgJSON.exports[key]?.import!);
-        }
-      }
-      else if (_pkgJSON.main)
-      {
-        importmap.imports[_pkgJSON.name] = path.join(b.location, _pkgJSON.main);
-      }
-
-      if (!Arguments.args.flags["include-node"] && _pkgJSON?.papit.type === "node") continue;
-
-      for (const asset of assetFolders)
-      {
-        const assetLocation = path.join(b.location, asset);
-        await handleAsset(b.location, assetLocation, translations, assets, assetFolders);
-      }
-    }
-  }
-
-  if (packageJSON.workspaces)
-  {
-    await getDependencyOrder(runBatch, { info, silent: true });
-  }
-  else
-  {
-    // NOTE: order is reversed -> last is current package, so looking for asset should always start at the end of array of "assets"
-    await getDependencyBloodline(
-      packageJSON.name,
-      runBatch,
-      { info, type: "ancestors", silent: true }
+    const info = getPathInfo(
+        typeof Arguments.args.flags.location === "string" ? Arguments.args.flags.location : undefined,
+        import.meta.url
     );
-  }
 
-  const shutdown = () => {
-    console.log(); // spacing for Ctrl+C
-    httpExit();
-    process.exit(0);
-  };
+    if (info.script == null)
+    {
+        Terminal.error("script location of @papit/server is missing");
+        process.exit(1);
+    }
 
-  process.on("SIGINT", shutdown);   // Ctrl+C
-  process.on("SIGTERM", shutdown);  // kill <pid>, Docker stop
-  process.on("SIGHUP", shutdown);   // terminal closed
+    const packageJSON = getJSON<LocalPackage>(path.join(info.package, "package.json"));
+    if (!packageJSON)
+    {
+        Terminal.error("location is not a package, missing package.json");
+        process.exit(1);
+    }
 
-  if (!Arguments.has("serve")) Arguments.args.flags.live = true;
-  await httpStart(info, translations, assets, packageJSON, importmap);
+    const translations: Record<string, Translation> = {};
+    const assets: Record<string, string[]> = {};
+    const assetFolders = getAssetFolders();
+
+    // we start by loading assets from dev-server (so we allow for overrides)
+    for (const asset of assetFolders)
+    {
+        const assetLocation = path.join(info.script, asset);
+        await handleAsset(info.script, assetLocation, translations, assets, assetFolders);
+    }
+
+    const importmap: { imports: Record<string, string> } = {
+        imports: {}
+    }
+
+    const importmapFolder = !Arguments.has("bundle") ? path.join(info.local, Arguments.string("import-map") ?? ".temp/dependencies") : null;
+    if (importmapFolder && !fs.existsSync(importmapFolder))
+    {
+        fs.mkdirSync(importmapFolder);
+    }
+
+    function addImportmap(name: string, location: string) {
+        if (importmap.imports[name]) return;
+        // copy to importmapfolder
+        const destination = path.join(importmapFolder!, path.basename(location));
+        fs.copyFileSync(location, destination);
+
+        importmap.imports[name] = "/" + path.relative(info.local, destination);
+    }
+
+    async function runBatch(batch: DependencyBatch[]) {
+        for (const b of batch) 
+        {
+            if (!b.location) continue;
+            const _pkgJSON = getJSON<LocalPackage>(path.join(b.location, "package.json"));
+            if (!_pkgJSON) continue;
+
+            if (importmapFolder)
+            {
+                if (_pkgJSON.exports)
+                {
+                    for (const key in _pkgJSON.exports)
+                    {
+                        let name = _pkgJSON.name;
+                        if (key !== ".")
+                        {
+                            name += "/" + key;
+                        }
+
+                        addImportmap(name, path.join(b.location, _pkgJSON.exports[key]?.import!))
+                        // importmap.imports[name] = "/" + path.relative(info.package, );
+                    }
+                }
+                else if (_pkgJSON.main)
+                {
+                    addImportmap(_pkgJSON.name, path.join(b.location, _pkgJSON.main))
+                    // importmap.imports[_pkgJSON.name] = "/" + path.relative(info.package, );
+                }
+            }
+
+            if (!Arguments.args.flags["include-node"] && _pkgJSON?.papit.type === "node") continue;
+
+            for (const asset of assetFolders)
+            {
+                const assetLocation = path.join(b.location, asset);
+                await handleAsset(b.location, assetLocation, translations, assets, assetFolders);
+            }
+        }
+    }
+
+    if (packageJSON.workspaces)
+    {
+        await getDependencyOrder(runBatch, { info, silent: true });
+    }
+    else
+    {
+        // NOTE: order is reversed -> last is current package, so looking for asset should always start at the end of array of "assets"
+        await getDependencyBloodline(
+            packageJSON.name,
+            runBatch,
+            { info, type: "ancestors", silent: true }
+        );
+    }
+
+    const shutdown = () => {
+        console.log(); // spacing for Ctrl+C
+        httpExit();
+        process.exit(0);
+    };
+
+    process.on("SIGINT", shutdown);   // Ctrl+C
+    process.on("SIGTERM", shutdown);  // kill <pid>, Docker stop
+    process.on("SIGHUP", shutdown);   // terminal closed
+
+    if (!Arguments.has("serve")) Arguments.args.flags.live = true;
+    await httpStart(info, translations, assets, packageJSON, importmap);
 })();
