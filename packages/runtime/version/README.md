@@ -2,6 +2,8 @@
 
 monorepo version flood helper, making sure descendants get patched
 
+![Logo](https://github.com/onkelhoy/web-components/blob/main/asset/logo.svg)
+
 ---
 
 ![Type](https://img.shields.io/badge/Type-cli-orange)

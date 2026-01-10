@@ -2,6 +2,8 @@
 
 Low-level CLI utilities for building consistent, interactive Papit command-line tools.
 
+![Logo](https://github.com/onkelhoy/web-components/blob/main/asset/logo.svg)
+
 Shared CLI utilities for Papit tooling — focused on **argument parsing**, **terminal interaction**, **workspace introspection**, and **dependency graph execution** inside monorepos.
 
 This package is **not a CLI by itself**, but a foundational library used by Papit CLIs such as `@papit/build`.

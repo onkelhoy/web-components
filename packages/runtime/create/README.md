@@ -2,6 +2,8 @@
 
 Project and package scaffolding tool for @papit — opinionated, consistent, and designed to kickstart Papit-based projects with the correct structure from day one.
 
+![Logo](https://github.com/onkelhoy/web-components/blob/main/asset/logo.svg)
+
 This package is intended to be used **from within a workspace or an empty directory**. Simply run:
 
 ```bash

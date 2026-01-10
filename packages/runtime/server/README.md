@@ -2,6 +2,8 @@
 
 A simple but powerful development server for modern JavaScript/TypeScript projects.
 
+![Logo](https://github.com/onkelhoy/web-components/blob/main/asset/logo.svg)
+
 `@papit/server` can serve your **local assets, package files, dependency assets**, and automatically handle **live updates, bundling, and caching**. It’s ideal for developers who want a **fast, flexible dev environment** with **asset localization, HTML/JS bundling, import maps, and dependency-aware serving**.
 
 **Key features:**

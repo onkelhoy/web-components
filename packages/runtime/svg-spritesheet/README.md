@@ -2,6 +2,8 @@
 
 Merge multiple SVG files into a single SVG spritesheet using <symbol> elements.
 
+![Logo](https://github.com/onkelhoy/web-components/blob/main/asset/logo.svg)
+
 ---
 
 ![Type](https://img.shields.io/badge/Type-runtime-orange)

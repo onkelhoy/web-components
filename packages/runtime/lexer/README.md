@@ -2,6 +2,8 @@
 
 the lexer used for a couple of packages including the @papit/html 
 
+![Logo](https://github.com/onkelhoy/web-components/blob/main/asset/logo.svg)
+
 ---
 
 ![Type](https://img.shields.io/badge/Type-runtime-orange)

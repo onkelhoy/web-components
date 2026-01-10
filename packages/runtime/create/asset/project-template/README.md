@@ -1,5 +1,7 @@
 # VARIABLE_NAME
 
+![Logo](VARIABLE_GITHUB_REPO/blob/main/asset/logo.svg)
+
 ## Introduction
 
 [Provide a brief description of your project. Explain what it does and what makes it unique or valuable. Mention the key features and any important technologies used.]

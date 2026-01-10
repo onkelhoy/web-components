@@ -1,5 +1,7 @@
 # @papit
 
+![papIT Logo](/asset/logo.svg)
+
 ![GitHub contributors](https://img.shields.io/github/contributors/onkelhoy/web-components)
 ![GitHub Release Date](https://img.shields.io/github/release-date/onkelhoy/web-components)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/onkelhoy/web-components)

@@ -2,6 +2,8 @@
 
 A lightweight, deterministic HTML and DOM-like implementation for Node.js.
 
+![Logo](https://github.com/onkelhoy/web-components/blob/main/asset/logo.svg)
+
 This library provides a minimal, predictable subset of the DOM focused on:
 
 - Server-side HTML generation
