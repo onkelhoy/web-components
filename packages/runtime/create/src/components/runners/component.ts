@@ -5,7 +5,6 @@ import { promisify } from "node:util";
 
 import {
   Terminal,
-  getName,
   copyFolder,
   getPathInfo,
   getJSON,
@@ -13,7 +12,8 @@ import {
   LocalPackage,
   Arguments,
 } from "@papit/util"
-import { getFolders } from "components/util";
+import { getFolders } from "../util";
+import { getName } from "../util/name";
 
 type PackageInfo = {
   destination: string;

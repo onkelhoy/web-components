@@ -7,14 +7,9 @@ import {
   getJSON,
   getScope,
   getPackage,
-  getName,
   copyFolder,
   Terminal,
-  // getPackageInfo,
-  // getConfig,
-  // getScriptScope,
   type Lockfile,
-  type Package,
   getPathInfo,
   RootPackage,
   LocalPackage,
@@ -24,6 +19,7 @@ import { componentRunner } from "./component";
 
 import { createFolderConfig, getFolders, selectFolder } from "../util";
 import { stripRootPath } from "../util";
+import { getName } from "../util/name";
 
 const execAsync = promisify(exec);
 

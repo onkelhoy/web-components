@@ -4,7 +4,6 @@ import { Arguments, DependencyBatch, getDependencyBloodline, getDependencyOrder,
 
 import { getAssetFolders, handleAsset, Translation } from "./components/asset";
 import { close as httpExit, start as httpStart } from "./components/http";
-import { getMeta } from "@papit/build";
 
 (async function () {
     const info = getPathInfo(
