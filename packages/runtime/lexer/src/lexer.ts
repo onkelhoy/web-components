@@ -70,7 +70,6 @@ export class Lexer<Ctx = any, Token = any> {
 
         if (match)
         {
-          console.log('match', char, rule.condition)
           matched = true;
           if (rule.action)
           {
