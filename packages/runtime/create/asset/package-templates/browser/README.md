@@ -18,17 +18,6 @@ VARIABLE_DESCRIPTION
 npm install VARIABLE_FULL_NAME
 ```
 
-### to use in **html**
-
-```html
-<script type="module" defer>
-  import "VARIABLE_FULL_NAME";
-</script>
-
-<VARIABLE_HTML_NAME></VARIABLE_HTML_NAME>
-```
-
-
 ## Contributing
 
 Contributions are welcome! Please follow the development guidelines above and ensure all tests pass before submitting a pull request.
