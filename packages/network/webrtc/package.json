@@ -62,7 +62,7 @@
     "@papit/typography": "^*",
     "@playwright/test": "^1.45.3",
     "playwright": "^1.45.3",
-    "typescript": "^5.7.2"
+    "typescript": "^5.9.3"
   },
   "browserslist": [
     "defaults",

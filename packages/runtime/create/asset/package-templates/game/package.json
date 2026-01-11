@@ -59,7 +59,7 @@
     "@papit/game-engine": "^*",
     "@papit/game-input-events": "^*",
     "@papit/game-vector": "^*",
-    "typescript": "^5.7.2",
+    "typescript": "^5.9.3",
     "playwright": "^1.45.3"
   },
   "browserslist": [
