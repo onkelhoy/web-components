@@ -76,6 +76,10 @@
       "webrtc": {
         "className": "Webrtc",
         "htmlprefix": "pap"
+      },
+      "socket": {
+        "className": "Socket",
+        "htmlprefix": "pap"
       }
     }
   }
