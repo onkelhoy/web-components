@@ -88,6 +88,10 @@
       "network": {
         "className": "Network",
         "htmlprefix": "pap"
+      },
+      "handshake": {
+        "className": "Handshake",
+        "htmlprefix": "pap"
       }
     }
   }
