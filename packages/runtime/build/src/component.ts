@@ -1,39 +1,48 @@
 // import statements 
 import path from "node:path";
 import fs from "node:fs";
-import { Arguments, DependencyBatch, LocalPackage, Package, Terminal, getDependencyBloodline, getDependencyOrder, getJSON, getPathInfo } from "@papit/util";
+import {
+  Arguments,
+  DependencyBatch,
+  LocalPackage,
+  Package,
+  Terminal,
+  getDependencyBloodline,
+  getDependencyOrder,
+  getJSON,
+  getModifiedTime,
+  getPathInfo
+} from "@papit/util";
 import { BuildContext } from "esbuild";
 
-import { Meta } from "./components/meta/types";
-import { getMeta } from "./components/meta/get-meta";
+import { getMeta, getMetaPath, saveMeta } from "./components/meta/get-meta";
 import { jsBundler } from "./components/bundlers/js-bundle";
 import { tsBundler } from "./components/bundlers/ts-bundle";
 import { ExecutorOptions } from "./types";
-
 
 const CACHED_PACKAGE_JSON: Record<string, LocalPackage> = {};
 const PREBUILD_RUNS = new Set<string>();
 const CONTEXTS: BuildContext[] = [];
 
 export async function executor(options?: Partial<ExecutorOptions>) {
-  if (Arguments.args.flags.live) Arguments.args.flags.dev = true;
+  if (Arguments.has("live")) Arguments.args.flags.dev = true;
 
   const mode = Arguments.args.flags.dev ? "dev" : "prod";
   const location = Arguments.args.flags.location;
   const originalinfo = getPathInfo(typeof location === "string" ? location : undefined);
 
   let buildMode = "individual";
-  if (Arguments.args.flags.all) buildMode = "all";
-  else if (Arguments.args.flags.bloodline) buildMode = "bloodline";
-  else if (Arguments.args.flags.ancestors) buildMode = "ancestors";
-  else if (Arguments.args.flags.descendants) buildMode = "descendants";
+  if (Arguments.has("all")) buildMode = "all";
+  else if (Arguments.has("bloodline")) buildMode = "bloodline";
+  else if (Arguments.has("ancestors")) buildMode = "ancestors";
+  else if (Arguments.has("descendants")) buildMode = "descendants";
 
   if (Arguments.info)
   {
     Terminal.write("building mode:", Terminal.green(buildMode));
   }
 
-  if (Arguments.args.flags.live)
+  if (Arguments.has("live"))
   {
     process.on("SIGINT", () => {
       if (!Arguments.silent) Terminal.blue("live ended");
@@ -222,6 +231,21 @@ async function runner(
     return;
   }
 
+  const meta = await getMeta(mode, info, packageJSON);
+
+  const src = path.join(info.package, path.basename(meta.tsconfig.info.srcFolder));
+  const modifiedTime = getModifiedTime(src);
+  if (
+    !Arguments.has("force") &&
+    !Arguments.has("live") &&
+    !Arguments.has("ci") &&
+    !fs.existsSync(path.join(info.package, meta.tsconfig.info.outDir)) &&
+    modifiedTime === meta.lastModified
+  )
+  {
+    return Terminal.write("📦", packageJSON.name, Terminal.blue("skipped"));
+  }
+
   if (packageJSON.scripts.prebuild && info.local !== originalinfo.local && !PREBUILD_RUNS.has(info.local))
   {
     PREBUILD_RUNS.add(info.local);
@@ -236,14 +260,6 @@ async function runner(
       console.log(`${packageJSON.name} - running prebuild script`);
     }
   }
-  let meta: Meta;
-  try {
-    meta = await getMeta(mode, info, packageJSON);
-  }
-  catch (e) {
-    Terminal.error((e as Error).message);
-    process.exit(1);
-  }
 
   if (Arguments.debug)
   {
@@ -255,7 +271,7 @@ async function runner(
     console.log();
   }
 
-  if (meta.tsconfig.info.outDir && Arguments.args.flags.clean)
+  if (meta.tsconfig.info.outDir && Arguments.has("clean"))
   {
     if (Arguments.debug)
     {
@@ -265,7 +281,7 @@ async function runner(
     fs.mkdirSync(meta.tsconfig.info.outDir, { recursive: true });
   }
 
-  if (Arguments.args.flags.live && meta.entryPoints.keys.length > 1 && !Arguments.args.flags.force)
+  if (Arguments.has("live") && meta.entryPoints.keys.length > 1 && !Arguments.has("force"))
   {
     Terminal.error("you have multiple entry points in watch mode, consider using --force if its intentianal");
     process.exit(1);
@@ -363,12 +379,17 @@ async function runner(
     }
   }
 
-  if (!Arguments.args.flags.live && !Arguments.verbose && !Arguments.debug && !Arguments.args.flags.all && !Arguments.args.flags.bloodline && !Arguments.args.flags.ancestors && !Arguments.args.flags.descendants)
+  if (!Arguments.has("live") && !Arguments.verbose && !Arguments.debug && !Arguments.has("all") && !Arguments.has("bloodline") && !Arguments.has("ancestors") && !Arguments.has("descendants"))
   {
     Terminal.clearSession(session);
   }
 
-  Terminal.write("📦", packageJSON.name, Terminal.green("successfully built"), Arguments.args.flags.live ? Terminal.cyan("- watching") : "");
+  // save the modified time on successful run
+  const location = getMetaPath(info, mode);
+  meta.lastModified = modifiedTime;
+  saveMeta(meta, location);
+
+  Terminal.write("📦", packageJSON.name, Terminal.green("successfully built"), Arguments.has("live") ? Terminal.cyan("- watching") : "");
   return shouldinstall;
 }
 //#endregion

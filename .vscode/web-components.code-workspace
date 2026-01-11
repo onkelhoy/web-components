@@ -6,14 +6,7 @@
   ],
   "settings": {
     "files.exclude": {
-      "**/node_modules": true,
-      "**/.git": true,
-      "**/lib": true,
-      "**/.gitignore": true,
       "**/tsconfig.prod.json": true,
-      ".eslintrc": true,
-      "CONTRIBUTING.md": true,
-      "LICENSE": true,
     },
   }
 }

@@ -1,7 +1,6 @@
 import path from "node:path";
 import fs from "node:fs";
-import { Arguments, LocalPackage, Terminal, getJSON, getPathInfo, getScope } from "@papit/util";
-import { getTSinfo } from "./get-tsinfo";
+import { Arguments, LocalPackage, Terminal, getJSON, getPackageTsconfig, getPathInfo, getScope } from "@papit/util";
 import { getEntryPoints } from "./get-entrypoints";
 import { Meta } from "./types";
 
@@ -9,8 +8,9 @@ export async function getMeta(
   mode: "prod" | "dev",
   info: ReturnType<typeof getPathInfo>,
   packageJSON: LocalPackage,
+  tsconfig?: ReturnType<typeof getPackageTsconfig>,
 ) {
-  const storedFile = path.join(info.package, `.temp/build-meta/${mode}.json`);
+  const storedFile = getMetaPath(info, mode);
   if (fs.existsSync(storedFile) && !Arguments.args.flags.clean && !Arguments.args.flags.force) 
   {
     if (Arguments.debug) Terminal.write(Terminal.green('loading stored meta file'), storedFile);
@@ -29,7 +29,14 @@ export async function getMeta(
     tsconfigFilePath = prodTSconfig;
   }
 
-  const tsConfigInfo = getTSinfo(tsconfigFilePath);
+  if (!tsconfig) tsconfig = getPackageTsconfig(tsconfigFilePath);
+
+  const tsConfigInfo = {
+    declaration: Boolean(tsconfig.options.declaration),
+    outDir: tsconfig.options.outDir ?? "lib",
+    srcFolder: tsconfig.options.baseUrl ?? "src",
+  };
+
   const entryPoints = getEntryPoints(info, packageJSON);
   const entryPointKeys = Object.keys(entryPoints);
 
@@ -44,7 +51,7 @@ export async function getMeta(
   }
 
   let externals = [
-    packageJSON.name, 
+    packageJSON.name,
     ...Object.keys(packageJSON.dependencies || {}),
     ...Object.keys(packageJSON.peerDependencies || {}),
   ];
@@ -67,11 +74,17 @@ export async function getMeta(
     config,
   }
 
-  if (!Arguments.args.flags.ci)
-  {
-    fs.mkdirSync(path.dirname(storedFile), { recursive: true });
-    fs.writeFileSync(storedFile, JSON.stringify(meta));
-  }
-
+  saveMeta(meta, storedFile);
   return meta;
+}
+
+export function getMetaPath(info: ReturnType<typeof getPathInfo>, mode: "dev" | "prod") {
+  return path.join(info.package, `.temp/build-meta/${mode}.json`);
+}
+
+export function saveMeta(meta: Meta, location: string) {
+  if (Arguments.has("ci")) return;
+
+  fs.mkdirSync(path.dirname(location), { recursive: true });
+  fs.writeFileSync(location, JSON.stringify(meta));
 }

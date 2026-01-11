@@ -1,5 +1,4 @@
 import { LocalPackage } from "@papit/util"
-import { getTSinfo } from "./get-tsinfo";
 
 export type Meta = {
   entryPoints: {
@@ -7,8 +6,13 @@ export type Meta = {
     keys: string[];
   };
   externals: string[];
+  lastModified?: number;
   tsconfig: {
-    info: ReturnType<typeof getTSinfo>;
+    info: {
+      declaration: boolean;
+      outDir: string;
+      srcFolder: string;
+    };
     path: string;
   };
   config: LocalPackage['papit'];
