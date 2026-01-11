@@ -12,7 +12,7 @@
 
 ## Ecosystem: An Overview
 
-Welcome to the `@pap-framework` ecosystem, an innovative framework designed to revolutionize the development and deployment of web components. Developed by Henry Pap, this ecosystem is built on a zero-dependency philosophy in production environments, promoting modular development, performance enhancement, and security. It offers a comprehensive toolkit for developers, encouraging efficiency and creativity in web application development.
+Welcome to the `@papit` ecosystem, an innovative framework designed to revolutionize the development and deployment of web components. Developed by me (Henry Pap), this ecosystem is built on a zero-dependency philosophy in production environments, promoting modular development, performance enhancement, and security. It offers a comprehensive toolkit for developers, encouraging efficiency and creativity in web application development.
 
 **Author**: Henry Pap\
 **GitHub**: [onkelhoy](https://github.com/onkelhoy/web-components)\
@@ -28,7 +28,7 @@ For further guidance on developing components, managing assets, and utilizing fr
 
 ## Abstract
 
-The `@papit` ecosystem exemplifies the strength of community collaboration and open-source innovation. By minimizing external dependencies, it ensures lean and efficient applications while providing developers the freedom to build, customize, and extend web components effortlessly. This document aims to be your detailed guide through the `@papit` landscape, from understanding its structure to creating, developing, and publishing your web components.
+By minimizing external dependencies, papIT ensures lean and efficient applications while providing developers the freedom to build, customize, and extend web components effortlessly. This document aims to be your detailed guide through the `@papit` landscape, from understanding its structure to creating, developing, and publishing your web components.
 
 Dive into the following sections for a deep dive into `@papit`, and join us in shaping the future of web development.
 
