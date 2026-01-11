@@ -80,6 +80,10 @@
       "socket": {
         "className": "Socket",
         "htmlprefix": "pap"
+      },
+      "peer": {
+        "className": "Peer",
+        "htmlprefix": "pap"
       }
     }
   }
