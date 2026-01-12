@@ -11,6 +11,7 @@
     "analyse": "to come",
     "publish": "to come",
     "prebuild": "node bin/prebuild.mjs",
+    "clean": "node bin/clean.mjs",
     "build": "npx @papit/build --run --all",
     "test": "npx @papit/",
     "create": "npm create @papit -- --package",
@@ -44,6 +45,10 @@
         "include": "false",
         "name": "runtime",
         "priority": 1
+      },
+      "packages/runtime/cli": {
+        "include": "false",
+        "name": "cli"
       },
       "packages/design-system": {
         "include": false,
