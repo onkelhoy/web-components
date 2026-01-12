@@ -7,6 +7,7 @@
     "analyse": "to come",
     "publish": "to come",
     
+    "clean": "node bin/clean.mjs",
     "build": "npx @papit build",
     "test": "npx @papit/test",
     "create": "npm create @papit -- --package",
