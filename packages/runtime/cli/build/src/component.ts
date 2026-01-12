@@ -231,6 +231,7 @@ async function runner(
     return;
   }
 
+  const hasMeta = fs.existsSync(path.join(info.package, `.temp/build-meta/${mode}.json`));
   const meta = await getMeta(mode, info, packageJSON);
 
   const src = path.join(info.package, path.basename(meta.tsconfig.info.srcFolder));
@@ -239,7 +240,8 @@ async function runner(
     !Arguments.has("force") &&
     !Arguments.has("live") &&
     !Arguments.has("ci") &&
-    !fs.existsSync(path.join(info.package, meta.tsconfig.info.outDir)) &&
+    fs.existsSync(path.join(info.package, path.basename(meta.tsconfig.info.outDir))) &&
+    hasMeta && // to make sure the outDir doesnt simply have a dev bundle or something (prebuild of util)
     modifiedTime === meta.lastModified
   )
   {

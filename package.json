@@ -44,11 +44,12 @@
       "packages/runtime": {
         "include": "false",
         "name": "runtime",
-        "priority": 1
+        "priority": 2
       },
       "packages/runtime/cli": {
         "include": "false",
-        "name": "cli"
+        "name": "cli",
+        "priority": 1
       },
       "packages/design-system": {
         "include": false,

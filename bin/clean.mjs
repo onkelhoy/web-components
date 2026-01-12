@@ -1,22 +1,28 @@
 import fs from "node:fs";
 import path from "node:path";
+import { spawnCommand } from "./spawn-command.mjs";
 
-const libs = fs.globSync("packages/**/lib/", {
-  cwd: process.cwd(),
-  absolute: true,
-});
+(async function () {
 
-const temps = fs.globSync("packages/**/.temp/", {
-  cwd: process.cwd(),
-  absolute: true,
-});
+  const folders = fs.globSync("packages/**/package.json", {
+    cwd: process.cwd(),
+    absolute: true,
+    ignore: [
+      "packages/**/asset/**", // unforthunally does not work
+    ],
+  });
 
-for (const dir of libs)
-{
-  fs.rmSync(dir, { recursive: true, force: true });
-}
+  let finds = 0; // if the ignore was to work we could avoid doing like this
+  for (const dir of folders)
+  {
+    if (/packages.*\/asset.*/.test(dir)) continue;
+    finds++;
 
-for (const temp of temps)
-{
-  fs.rmSync(temp, { recursive: true, force: true });
-}
+    const dirname = path.dirname(dir);
+    fs.rmSync(path.join(dirname, ".temp"), { recursive: true, force: true });
+    fs.rmSync(path.join(dirname, "lib"), { recursive: true, force: true });
+  }
+
+  if (finds > 0)
+    await spawnCommand("npm install", process.cwd());
+}())
