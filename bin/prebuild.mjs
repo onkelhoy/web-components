@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import {spawn} from "node:child_process";
+import { spawn } from "node:child_process";
 
 const root = process.cwd();
 
@@ -15,8 +15,8 @@ function spawnCommand(command, cwd, args = []) {
     const child = spawn(cmd, _args.concat(args), {
       cwd,
       stdio: "pipe",
-      shell: false,
-      env: {...process.env},
+      shell: true,
+      env: { ...process.env },
     });
 
     // child.stdout.on("data", () => { });
