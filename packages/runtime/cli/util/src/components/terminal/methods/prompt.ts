@@ -121,6 +121,24 @@ export async function prompt(
       restoreCursor();
     };
 
+    const word_minus = () => {
+      // move to spaces 
+      let moved:number|undefined;
+      for (let i=cursor-1; i>=0; i--)
+      {
+        if (/\s/.test(input[i])) 
+        {
+          moved = i;
+        }
+        else if (moved !== undefined)
+        {
+          break;
+        }
+      }
+
+      cursor = moved ?? 0;
+    }
+    
     const handleKeydown = (str: string, key: any) => {
       const enter = key.name === "return";
 
@@ -130,6 +148,7 @@ export async function prompt(
         (key.ctrl && key.name === "d")
       ) {
         cleanup();
+        instance.error("\ncancelled");
         process.exit();
       }
 
@@ -138,24 +157,6 @@ export async function prompt(
         process.stdout.write("\n");
         resolve(new Output(input, ""));
         return;
-      }
-
-      const word_minus = () => {
-        // move to spaces 
-        let moved:number|undefined;
-        for (let i=cursor-1; i>=0; i--)
-        {
-          if (/\s/.test(input[i])) 
-          {
-            moved = i;
-          }
-          else if (moved !== undefined)
-          {
-            break;
-          }
-        }
-
-        cursor = moved ?? 0;
       }
 
       if (key.sequence === "\x1bb") // option + left (move words)
