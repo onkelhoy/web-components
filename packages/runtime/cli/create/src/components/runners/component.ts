@@ -11,6 +11,7 @@ import {
   RootPackage,
   LocalPackage,
   Arguments,
+  option,
 } from "@papit/util"
 import { getFolders } from "../util";
 import { getName } from "../util/name";
@@ -74,22 +75,21 @@ export async function componentRunner(
       });
   }
   catch { }
-  let templateIndex = templateFolders.findIndex(f => f === localPackage.papit?.type);
+  let template: option = { index: templateFolders.findIndex(f => f === localPackage.papit?.type), text: "" };
 
-  if (templateIndex < 0)
+  if (template.index < 0)
   {
     const argType = Arguments.args.flags.component ?? Arguments.args.flags.type;
-    templateIndex = templateFolders.findIndex(f => f === argType);
+    template.index = templateFolders.findIndex(f => f === argType);
 
-    if (templateIndex < 0)
+    if (template.index < 0)
     {
       Terminal.createSession();
       Terminal.write("type of component");
-      templateIndex = await Terminal.option(templateFolders);
+      template = await Terminal.option(templateFolders);
       Terminal.clearSession();
     }
   }
-  const template = templateFolders[templateIndex]
 
   let htmlPrefix: string | undefined = undefined;
   if (Array.isArray(Arguments.args.flags['html-prefix'])) htmlPrefix = Arguments.args.flags['html-prefix'].join("-");
@@ -98,7 +98,7 @@ export async function componentRunner(
 
   if (htmlPrefix?.trim() === "") htmlPrefix = undefined;
 
-  if (htmlPrefix === undefined && /web-components?/i.test(template))
+  if (htmlPrefix === undefined && /web-components?/i.test(template.text))
   {
     if (htmlPrefix === undefined) htmlPrefix = localPackage.papit.htmlprefix;
 
@@ -108,12 +108,14 @@ export async function componentRunner(
       let answer: string;
       if (htmlPrefix !== undefined)
       {
-        answer = await Terminal.prompt(`use default "${htmlPrefix}" or override?`);
+        const ans = await Terminal.prompt(`use default "${htmlPrefix}" or override?`);
+        answer = ans.input;
         if (!answer) answer = htmlPrefix;
       }
       else
       {
-        answer = await Terminal.prompt("html prefix", true);
+        const ans = await Terminal.prompt("html prefix", true);
+        answer = ans.input;
       }
 
       if (answer)
@@ -139,7 +141,11 @@ export async function componentRunner(
     let input: string | undefined = undefined;
     if (Array.isArray(Arguments.args.flags.name)) input = Arguments.args.flags.name.join(" ");
     else if (typeof Arguments.args.flags.name === "string") input = Arguments.args.flags.name;
-    else input = await Terminal.prompt("(package) name", true);
+    else 
+    {
+      const ans = await Terminal.prompt("(package) name", true);
+      input = ans.input;
+    }
 
     nameInfo = getName(input);
 
@@ -162,7 +168,7 @@ export async function componentRunner(
   const shouldCommit = packageInfo?.shouldCommit === undefined ? ('agree' in Arguments.args.flags || 'commit' in Arguments.args.flags || await Terminal.confirm("git commit", true)) : packageInfo.shouldCommit;
   Terminal.clearSession();
 
-  const templateSrc = localRunnerSet.has(template) ? path.join(info.root, "bin/runners/component", template) : path.join(_info.script!, "asset/component-templates", template);
+  const templateSrc = localRunnerSet.has(template.text) ? path.join(info.root, "bin/runners/component", template.text) : path.join(_info.script!, "asset/component-templates", template.text);
   const folders = getFolders(templateSrc)
 
   localPackage.papit.components[nameInfo.name] = {

@@ -1,12 +1,10 @@
 // import statements 
-import readline from "node:readline";
-import os from "node:os";
-import path from "node:path";
-import fs from "node:fs";
 import { spawn } from "node:child_process";
 
 import { SpawnOptions } from "./types";
-import { Printer } from "./printer";
+import { prompt } from "./methods/prompt";
+import { option } from "./methods/option";
+import { Colors } from "./color";
 
 const originalStdoutWrite = process.stdout.write.bind(process.stdout);
 const originalStderrWrite = process.stderr.write.bind(process.stderr);
@@ -21,214 +19,123 @@ process.stderr.write = (chunk: any, encoding?: any, cb?: any) => {
   return originalStderrWrite(chunk, encoding, cb);
 };
 
-export class Terminal extends Printer {
-  private static prompt_completer(line: string): [string[], string] {
-    try {
-      const startsWithTilde = line.startsWith('~');
-      const isEmpty = line.trim() === '';
+export class Terminal extends Colors {
 
-      // Expand ~ to home directory for processing
-      let absolutePath = line.startsWith('~') 
-        ? line.replace(/^~/, os.homedir())
-        : line;
+  static lines: number = 0;
+  static session: number | null = null;
 
-      // If path is relative or empty, resolve it from cwd
-      if (!absolutePath.startsWith('/')) {
-        absolutePath = path.resolve(process.cwd(), absolutePath);
-      }
-
-      const dir = absolutePath.endsWith('/') ? absolutePath : path.dirname(absolutePath);
-      const partial = absolutePath.endsWith('/') ? '' : path.basename(absolutePath);
-
-      // Read directory contents
-      const files = fs.readdirSync(dir);
-
-      // Filter files that match the partial input
-      const hits = files
-        .filter(f => f.startsWith(partial) && !f.startsWith("."))
-        .map(f => {
-          const fullPath = path.join(dir, f);
-          try {
-            const isDir = fs.statSync(fullPath).isDirectory();
-            return isDir ? f + '/' : f;
-          } catch {
-            return f;
-          }
-        });
-
-      // Format completions to preserve user's input style
-      const completions = hits.map(hit => {
-        if (startsWithTilde) {
-          // If user typed ~, show paths relative to home with ~
-          const homeRelative = path.relative(os.homedir(), path.join(dir, hit));
-          return '~/' + homeRelative;
-        } 
-        
-        if (isEmpty || !line.startsWith('/')) {
-          // If relative path or empty, show relative to cwd
-          const base = line.endsWith('/') ? line : (path.dirname(line) === '.' ? '' : path.dirname(line) + '/');
-          return base + hit;
-        } 
-        
-        // If absolute path, show absolute
-        return path.join(dir, hit);
-      });
-
-      return [completions.length ? completions : [], line];
-    }
-    catch { return [[], line] }
+  static write(...values: any[]) {
+    this.printLine(this.getString(" ", values));
   }
-  static async prompt(promptText: string, inline?: boolean): Promise<string> {
-    return new Promise<string>((resolve) => {
-      let answered = false;
 
-      // Create a readline interface - this handles all cursor movement, 
-      // line editing, and terminal features automatically
-      const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-        terminal: true,
-        completer: this.prompt_completer // Enable tab completion
-      });
+  static warn(...values: any[]) {
+    this.semantic(`🟡 ${process.stdout.isTTY ? this.yellow("warn ") : ""}`, values);
+  }
 
-      const printer = (answer: string) => {
-        answered = true;
-        rl.close();
-        
-        // Convert to absolute path before resolving
-        let finalPath = answer.trim();
-        if (finalPath.startsWith('~')) {
-          finalPath = finalPath.replace(/^~/, os.homedir());
-        }
-        if (!finalPath.startsWith('/')) {
-          finalPath = path.resolve(process.cwd(), finalPath);
-        }
-        
-        resolve(finalPath);
-      }
+  static error(...values: any[]) {
+    this.semantic(`🔴 ${process.stdout.isTTY ? this.red("error ") : ""}`, values);
+  }
 
-      // If not inline, print the prompt text on a separate line first
-      if (!inline) {
-        this.write(promptText);
-        rl.question("> ", printer);
-      } else {
-        // For inline, include prompt text with the question
-        rl.question(`${promptText}: `, printer);
-      }
+  private static semantic(prefix: string, values: any[]) {
+    let value = this.getString(" ", values);
+    const match = value.match(/^(\n)*/);
 
-      // Handle Ctrl+C gracefully
-      rl.on('SIGINT', () => {
-        rl.close();
-        this.error("\ncancelled");
-        process.exit();
-      });
+    let leading = "";
+    if (match)
+    {
+      leading = match[0];
+      value = value.slice(Math.max(0, leading.length * 2 - 1));
+    }
 
-      // Handle Ctrl+D (EOF) - only exit if user didn't answer normally
-      rl.on('close', () => {
-        if (!answered) {
-          this.error("\ncancelled");
-          process.exit();
-        }
-      });
-    });
+    this.printLine(`${leading}${prefix}${value}`, "error");
+  }
+  static print(value: string, type: "info" | "error" = "info") {
+    if (type === "error")
+    {
+      process.stderr.write(value);
+    }
+    else 
+    {
+      process.stdout.write(value);
+    }
+  }
+
+  static track(value: string) {
+    // Count newlines in the string
+    const newlineCount = (value.match(/\n/g) || []).length;
+    this.lines += newlineCount;
+  }
+
+  static printLine(value: string = "", type: "info" | "error" = "info") {
+    this.print(value + "\n", type);
+  }
+
+  static clear(start: number = 0, end?: number) {
+    const e = end ?? this.lines;
+    this.lines = start;
+
+    for (let i = start; i < e; i++)
+    {
+      process.stdout.write('\x1b[2K'); // clear entire line
+      process.stdout.write('\x1b[1A'); // move cursor up one line
+    }
+
+    process.stdout.write('\x1b[2K');
+    process.stdout.write('\r');
+  }
+
+  static async surpress<T = any>(callback: () => Promise<T>): Promise<T> {
+    const originalWrite = process.stdout.write;
+    process.stdout.write = () => true; // swallow all stdout
+
+    let ans: T;
+    try
+    {
+      ans = await callback();
+    }
+    finally
+    {
+      process.stdout.write = originalWrite;
+      return ans!;
+    }
+  }
+
+  static async sessionBlock<T = any>(callback: (session: number) => Promise<T>): Promise<T> {
+    const previousSession = this.session;
+    const session = this.createSession();
+    const ans = await callback(session);
+    this.clearSession();
+    this.session = previousSession;
+
+    return ans;
+  }
+
+  static createSession() {
+    this.session = this.lines;
+
+    return this.session;
+  }
+
+  static closeSession() {
+    this.session = null;
+  }
+
+  static clearSession(session?: number) {
+    const index = session ?? this.session;
+    if (index === null) return;
+
+    this.clear(index);
+    this.closeSession();
+
+    this.createSession();
   }
   
-  static async getAnswer(question: string, acceptables: string[], inline?: boolean): Promise<string>;
-  static async getAnswer(question: string, acceptables: ((answer: string) => Promise<boolean>), inline?: boolean): Promise<string>;
-  static async getAnswer(question: string, acceptables: string[] | ((answer: string) => Promise<boolean>), inline?: boolean) {
-    return Terminal.sessionBlock(async () => {
-      let answer = await this.prompt(question, inline);
-
-      while (
-        (Array.isArray(acceptables) && !acceptables.includes(answer)) ||
-        (typeof acceptables === "function" && !await acceptables(answer))
-      )
-      {
-        this.clearSession(); // this will restart session 
-        if (Array.isArray(acceptables))
-        {
-          this.warn(`acceptable answer: [${acceptables.join(", ")}]`); // this will increase lines by 1 
-        } else
-        {
-          this.warn("answer did not pass validation, try again"); // this will increase lines by 1 
-        }
-        answer = await this.prompt(question, inline); // this will increase lines by 3
-      }
-
-      return answer;
-    });
+  static prompt(promptText: string, inline?: boolean) {
+    return prompt(Terminal, promptText, inline);
   }
 
   static async option(options: string[] | string[][], promptText = "↑↓ select • Enter confirm", currentMarker = "●", defaultMarker = "◯") {
-    return Terminal.sessionBlock(async () => new Promise<number>((resolve, reject) => {
-      readline.emitKeypressEvents(process.stdin);
-      if (process.stdin.isTTY) process.stdin.setRawMode(true);
-
-      const _options = options.flat();
-      const spaces = new Set<number>();
-      if (Array.isArray(options[0]))
-      {
-        for (let i = 0; i < options.length - 1; i++)
-        {
-          spaces.add(options[i].length);
-        }
-      }
-
-      this.write(promptText);
-      this.createSession();
-
-      function printoptions(clear = true) {
-        if (clear) Terminal.clearSession();
-
-        for (let i = 0; i < _options.length; i++)
-        {
-          if (spaces.has(i)) 
-          {
-            Terminal.write();
-          }
-
-          const prefix = i === index ? currentMarker : defaultMarker;
-          Terminal.write(`${prefix} ${_options[i]}`);
-        }
-      }
-
-      let index = 0;
-      printoptions(false);
-
-      function handleKeydown(str: string, key: any) {
-
-        const enter = /return/i.test(key.name) || /space/i.test(key.name);
-        if (key.ctrl && key.name === "c" || str === "\x04" || key.ctrl && key.name === "d" || enter)
-        {
-          process.stdin.setRawMode(false);
-          process.stdin.removeListener("keypress", handleKeydown);
-
-          if (enter)
-          {
-            resolve(index);
-            return;
-          }
-
-          Terminal.error("\ncancelled");
-          process.exit();
-        }
-
-        if (/up/i.test(key.name) || key.shift && /tab/i.test(key.name))
-        {
-          index--;
-          if (index < 0) index = _options.length - 1;
-          printoptions();
-        }
-        else if (/down/i.test(key.name) || /tab/i.test(key.name))
-        {
-          index++;
-          if (index >= _options.length) index = 0;
-          printoptions();
-        }
-      };
-
-      process.stdin.on("keypress", handleKeydown);
-    }));
+    return this.sessionBlock(async () => await option(Terminal, options, promptText, currentMarker, defaultMarker));
   }
 
   static async confirm(question: string, defaultValue = false) {
@@ -236,7 +143,7 @@ export class Terminal extends Printer {
 
     const answer = await this.option(options, question);
 
-    return defaultValue ? answer === 0 : answer === 1;
+    return defaultValue ? answer.index === 0 : answer.index === 1;
   }
 
   static execute(command: string, cwd: string): Promise<void>;

@@ -14,6 +14,7 @@ import {
   RootPackage,
   LocalPackage,
   Arguments,
+  option,
 } from "@papit/util"
 import { componentRunner } from "./component";
 
@@ -59,22 +60,20 @@ export async function packageRunner(
   catch { }
 
   const argType = Arguments.args.flags.package ?? Arguments.args.flags.type;
-  let templateIndex = templateFolders.findIndex(t => t === argType);
-  if (templateIndex < 0)
+  let template: option = { index: templateFolders.findIndex(t => t === argType), text: "" };
+  if (template.index < 0)
   {
     Terminal.write("type of package");
-    templateIndex = await Terminal.option(templateFolders);
+    template = await Terminal.option(templateFolders);
   }
   Terminal.clearSession();
-
-  const template = templateFolders[templateIndex];
 
   let htmlPrefix: string | undefined = undefined;
   if (Array.isArray(Arguments.args.flags['html-prefix'])) htmlPrefix = Arguments.args.flags['html-prefix'].join("-");
   else if (typeof Arguments.args.flags['html-prefix'] === "string") htmlPrefix = Arguments.args.flags['html-prefix'];
   if (htmlPrefix?.trim() === "") htmlPrefix = undefined;
 
-  if (!htmlPrefix && /web-components?/i.test(template))
+  if (!htmlPrefix && /web-components?/i.test(template.text))
   {
     // const rootConfig = getConfig(path.join(info.root, ".config"));
 
@@ -86,12 +85,14 @@ export async function packageRunner(
       let answer: string;
       if (htmlPrefix)
       {
-        answer = await Terminal.prompt(`use default "${htmlPrefix}" or override?`);
+        const ans = await Terminal.prompt(`use default "${htmlPrefix}" or override?`);
+        answer = ans.input;
         if (!answer) answer = htmlPrefix;
       }
       else 
       {
-        answer = await Terminal.prompt("html prefix", true);
+        const ans = await Terminal.prompt("html prefix", true);
+        answer = ans.input;
 
         if (!rootPackage.papit?.htmlprefix)
         {
@@ -154,7 +155,11 @@ export async function packageRunner(
     let input: string | undefined = undefined;
     if (Array.isArray(Arguments.args.flags.name)) input = Arguments.args.flags.name.join(" ");
     else if (typeof Arguments.args.flags.name === "string") input = Arguments.args.flags.name;
-    else input = await Terminal.prompt("(package) name", true);
+    else 
+    {
+      const ans = await Terminal.prompt("(package) name", true);
+      input = ans.input;
+    }
 
     nameInfo = getName(input);
 
@@ -175,7 +180,11 @@ export async function packageRunner(
 
   const fullName = `${scope}/${layerConfig.include === "prefix" ? layerConfig.name + "-" : ""}${nameInfo.name}${layerConfig.include === "suffix" ? "-" + layerConfig.name : ""}`;
   let description = Array.isArray(Arguments.args.flags.description) ? Arguments.args.flags.description.join(" ") : Arguments.args.flags.description;
-  if (!description || description === true) description = await Terminal.prompt("description", true);
+  if (!description || description === true) 
+  {
+    const ans = await Terminal.prompt("description", true);
+    description = ans.input;
+  }
 
   Terminal.write();
   Terminal.createSession();
@@ -183,7 +192,7 @@ export async function packageRunner(
   const destination = path.join(layer, nameInfo.name);
 
   // Copy package template
-  await copyFolder(localRunnerSet.has(template) ? path.join(info.root, "bin/runners/package", template) : path.join(info.script!, "asset/package-templates", template), destination, async (file, src) => {
+  await copyFolder(localRunnerSet.has(template.text) ? path.join(info.root, "bin/runners/package", template.text) : path.join(info.script!, "asset/package-templates", template.text), destination, async (file, src) => {
     if (src.endsWith(".gitkeep")) return false;
 
     const final = file
@@ -216,7 +225,7 @@ export async function packageRunner(
       main: nameInfo.name,
       components: {},
       publish: true,
-      type: template,
+      type: template.text,
     }
   }
 

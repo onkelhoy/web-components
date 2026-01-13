@@ -95,23 +95,17 @@ Terminal.error("Something went wrong");
 
 ##### Prompting for input
 
+where input is the user input and path is the potential path output 
 ```ts
-const name = await Terminal.prompt("Package name");
+const { input, path } = await Terminal.prompt("Package name");
 ```
 
-##### Validated answers
-
-```ts
-const answer = await Terminal.getAnswer("Continue?", ["yes", "no"]);
-```
+where text is the is the selected text & index -> the position of the options 
 
 ##### Interactive selection
 
 ```ts
-const index = await Terminal.option(
-  ["small", "medium", "large"],
-  "Select size"
-);
+const { index, text } = await Terminal.option(["yes", "no", "maybe"], "Continue?");
 ```
 
 ##### Scoped terminal sessions

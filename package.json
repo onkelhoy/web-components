@@ -1,7 +1,7 @@
 {
   "name": "@papit/root",
   "version": "0.0.0",
-  "description": "framework/ecosystem",
+  "description": "A ecosystem designed to be generic and easy to extend. Intended use for creating packages in a monorepo setup",
   "private": true,
   "repository": {
     "type": "git",

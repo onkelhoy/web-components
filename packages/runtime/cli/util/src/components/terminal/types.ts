@@ -5,3 +5,7 @@ export type SpawnOptions = {
   onError(text:string): void; 
   onClose(code: number|null, stdout: string, stderr: string): void; 
 }
+export type option = {
+  index: number;
+  text: string;
+}

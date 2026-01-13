@@ -39,28 +39,30 @@ export async function selectFolder(
 
       const option = await Terminal.option([["Choose Folder", "Create Folder"], target === original ? folders : ["..", ...folders]]);
 
-      if (option === 0)
+      if (option.index === 0)
       {
         break;
       }
-      if (option === 1)
+      if (option.index === 1)
       {
-        const name = await Terminal.prompt("Name of the folder?");
-        const url = path.join(target, name);
-        const created = await createFolder(url, name, info, rootPackage);
+        const answer = await Terminal.prompt("Folder path");
+        const basename = path.basename(answer.path);
+
+        const url = path.join(target, answer.path);
+        const created = await createFolder(url, basename, info, rootPackage);
 
         if (created)
         {
-          target = path.join(target, name);
+          target = path.join(target, answer.path);
         }
       }
-      else if (option === 2 && target !== original)
+      else if (option.index === 2 && target !== original)
       {
         target = path.resolve(target, "..");
       }
       else 
       {
-        target = path.join(target, folders[option - (target === original ? 2 : 3)]);
+        target = path.join(target, folders[option.index - (target === original ? 2 : 3)]);
       }
       Terminal.clearSession(session);
     }
@@ -100,18 +102,17 @@ export async function createFolderConfig(
     Terminal.clearSession();
 
     const prefixSuffix = ["false", "prefix", "suffix"];
-    const ps_index = await Terminal.option(prefixSuffix, `include "${overrideName}" in packages`);
-    const includeMode = prefixSuffix[ps_index];
+    const mode = await Terminal.option(prefixSuffix, `include "${overrideName.input}" in packages`);
 
     if (!rootPackage.papit) rootPackage.papit = { layers: {} };
     const localFolder = stripRootPath(info.root, url);
     rootPackage.papit.layers[localFolder] = {
-      include: includeMode === "false" ? false : includeMode as "prefix" | "suffix",
+      include: mode.text === "false" ? false : mode.text as "prefix" | "suffix",
       name,
     }
 
     // its create new mode 
-    fs.mkdirSync(url);
+    fs.mkdirSync(url, { recursive: true, });
     fs.writeFileSync(path.join(info.root, "package.json"), JSON.stringify(rootPackage, null, 2), { encoding: "utf-8" });
   });
 }

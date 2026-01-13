@@ -26,7 +26,7 @@ const ANSII_STYLES = {
   italic: 3,
   underline: 4,
   blink: 5,      // Blinking text (rarely supported)
-  reverse: 7,    // Swap foreground/background
+  inverse: 7,    // Swap foreground/background
   hidden: 8,     // Hidden text
   strikethrough: 9,
 }
@@ -129,8 +129,8 @@ export class Colors {
   static strikethrough(...value: any[]) {
     return this.wrap([ANSII_STYLES.strikethrough], value);
   }
-  static reverse(...value: any[]) {
-    return this.wrap([ANSII_STYLES.reverse], value);
+  static inverse(...value: any[]) {
+    return this.wrap([ANSII_STYLES.inverse], value);
   }
 
   // [Symbol.toPrimitive]() {
