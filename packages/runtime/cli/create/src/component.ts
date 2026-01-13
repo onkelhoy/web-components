@@ -6,6 +6,7 @@ import { Arguments, getJSON, getPathInfo, LocalPackage, Terminal } from "@papit/
 import { packageRunner } from "./components/runners/package";
 import { componentRunner } from "./components/runners/component";
 import { getFolders } from "./components/util";
+import { projectRunner } from "components/runners/project";
 
 (async function () {
     Arguments.islands = ["install", "commit", "agree"]
@@ -83,6 +84,9 @@ import { getFolders } from "./components/util";
             break;
         case 1:
             await componentRunner(info);
+            break;
+        case 2:
+            await projectRunner(info);
             break;
         default: {
             const runnerName = options[option];

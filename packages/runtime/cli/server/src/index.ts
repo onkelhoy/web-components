@@ -1,9 +1,11 @@
 import path from "node:path";
 import fs from "node:fs";
-import { Arguments, DependencyBatch, getDependencyBloodline, getDependencyOrder, getJSON, getPackage, getPathInfo, getScope, LocalPackage, Lockfile, PackageLockEntry, Terminal } from "@papit/util"
+import { Arguments, DependencyBatch, getDependencyBloodline, getDependencyOrder, getJSON, getPathInfo, LocalPackage, Lockfile, Terminal } from "@papit/util"
 
 import { getAssetFolders, handleAsset, Translation } from "./components/asset";
 import { close as httpExit, start as httpStart } from "./components/http";
+import { Importmap } from "./components/importmap/types";
+import { extractImportmap } from "./components/importmap/import-map";
 
 (async function () {
     const info = getPathInfo(
@@ -17,6 +19,7 @@ import { close as httpExit, start as httpStart } from "./components/http";
         process.exit(1);
     }
 
+    const lockfile = getJSON<Lockfile>(path.join(info.package, "package-lock.json"));
     const packageJSON = getJSON<LocalPackage>(path.join(info.package, "package.json"));
     if (!packageJSON)
     {
@@ -35,24 +38,24 @@ import { close as httpExit, start as httpStart } from "./components/http";
         await handleAsset(info.script, assetLocation, translations, assets, assetFolders);
     }
 
-    const importmap: { imports: Record<string, string> } = {
+    const importmap: Importmap = {
         imports: {}
     }
 
-    const importmapFolder = !Arguments.has("bundle") ? path.join(info.local, Arguments.string("import-map") ?? ".temp/dependencies") : null;
+    let importmapFolder:string|null = null; 
+    if (!Arguments.has("bundle")) 
+    {
+      if (info.root === info.local)
+        importmapFolder = path.join(info.root, "node_modules");
+      else 
+        importmapFolder = path.join(info.local, Arguments.string("import-map") ?? ".temp/dependencies");
+    }
+    // !Arguments.has("bundle") ? path.join(info.local, Arguments.string("import-map") ?? ".temp/dependencies") : null;
     if (importmapFolder && !fs.existsSync(importmapFolder))
     {
-        fs.mkdirSync(importmapFolder);
+        fs.mkdirSync(importmapFolder, { recursive: true });
     }
 
-    function addImportmap(name: string, location: string) {
-        if (importmap.imports[name]) return;
-        // copy to importmapfolder
-        const destination = path.join(importmapFolder!, path.basename(location));
-        fs.copyFileSync(location, destination);
-
-        importmap.imports[name] = "/" + path.relative(info.local, destination);
-    }
 
     async function runBatch(batch: DependencyBatch[]) {
         for (const b of batch) 
@@ -63,25 +66,7 @@ import { close as httpExit, start as httpStart } from "./components/http";
 
             if (importmapFolder)
             {
-                if (_pkgJSON.exports)
-                {
-                    for (const key in _pkgJSON.exports)
-                    {
-                        let name = _pkgJSON.name;
-                        if (key !== ".")
-                        {
-                            name += "/" + key;
-                        }
-
-                        addImportmap(name, path.join(b.location, _pkgJSON.exports[key]?.import!))
-                        // importmap.imports[name] = "/" + path.relative(info.package, );
-                    }
-                }
-                else if (_pkgJSON.main)
-                {
-                    addImportmap(_pkgJSON.name, path.join(b.location, _pkgJSON.main))
-                    // importmap.imports[_pkgJSON.name] = "/" + path.relative(info.package, );
-                }
+                extractImportmap(info, _pkgJSON, lockfile, b.location, importmap, importmapFolder);
             }
 
             if (!Arguments.args.flags["include-node"] && _pkgJSON?.papit.type === "node") continue;
@@ -120,4 +105,5 @@ import { close as httpExit, start as httpStart } from "./components/http";
 
     if (!Arguments.has("serve")) Arguments.args.flags.live = true;
     await httpStart(info, translations, assets, packageJSON, importmap);
-})();
+}());
+

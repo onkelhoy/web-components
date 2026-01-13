@@ -20,7 +20,7 @@ type BasePackage = {
   types?: string;
   type: "module" | "commonjs";
   entryPoints?: string | Record<string, string>;
-  exports?: Partial<Record<"." | (string & {}), Partial<Record<"import" | "types" | "require" | (string & {}), string>>>>;
+  exports?: string | Partial<Record<"." | (string & {}), string | Partial<Record<"import" | "types" | "require" | (string & {}), string>>>>;
 }
 
 export type RootPackage = BasePackage & {

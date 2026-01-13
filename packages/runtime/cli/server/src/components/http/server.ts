@@ -133,6 +133,7 @@ export async function start(
             {
                 // we put this into its own cache (bundlecache)
                 const bundle = await bundler(url, bundlecache);
+                console.log('bundle?', url, bundle)
                 res.statusCode = 200;
                 res.setHeader('Content-Type', "text/javascript");
                 res.end(bundle);

@@ -75,13 +75,23 @@ export function getEntryPoints(
   if (packageJSON.exports)
   {
     const entryPointsValues: Record<string, string> = {};
-    for (const entry in packageJSON.exports)
+    if (typeof packageJSON.exports === "string")
     {
-      if (entry === ".") entryPointsValues.bundle = "src/index.ts";
-      else 
+      const trimmed = packageJSON.exports.replace(/^\.\//, '');
+      entryPointsValues[packageJSON.exports] =packageJSON.exports.replace(/^\.\//, '').replace('.js', '.ts') ?? `src/${trimmed}.ts`;
+    }
+    else 
+    {
+      for (const entry in packageJSON.exports)
       {
-        const trimmed = entry.replace(/^\.\//, '');
-        entryPointsValues[entry] = packageJSON.exports[entry]?.import?.replace(/^\.\//, '').replace('.js', '.ts') ?? `src/${trimmed}.ts`;
+        if (entry === ".") entryPointsValues.bundle = "src/index.ts";
+        else 
+        {
+          const trimmed = entry.replace(/^\.\//, '');
+          const value = typeof packageJSON.exports[entry] === "string" ? packageJSON.exports[entry] : packageJSON.exports[entry]?.import;
+          if (!value) continue;
+          entryPointsValues[entry] = value?.replace(/^\.\//, '').replace('.js', '.ts') ?? `src/${trimmed}.ts`;
+        }
       }
     }
 

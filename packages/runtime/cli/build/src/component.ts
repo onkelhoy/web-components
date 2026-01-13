@@ -180,10 +180,16 @@ async function npmInstall(originalinfo: ReturnType<typeof getPathInfo>) {
 }
 
 function getExportsInformation(entry: string, packageJSON: Package) {
-  if (!packageJSON.exports) return null;
+  const { exports } = packageJSON;
+  if (!exports) return null;
+  if (typeof exports === "string") return { import: exports, types: null };
   if (entry === "bundle") entry = ".";
 
-  return packageJSON.exports[entry] ?? null;
+  const exportsEntry = exports[entry];
+  if (!exportsEntry) return null;
+  if (typeof exportsEntry === "string") return { import: exportsEntry, types: null };
+
+  return exportsEntry;
 }
 
 async function runPrebuild(batch: DependencyBatch[], originalinfo: ReturnType<typeof getPathInfo>) {

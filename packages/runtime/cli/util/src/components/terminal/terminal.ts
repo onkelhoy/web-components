@@ -1,8 +1,12 @@
 // import statements 
 import readline from "node:readline";
-import { ChildProcessWithoutNullStreams, spawn } from "node:child_process";
-import { Arguments } from "../arguments";
+import os from "node:os";
+import path from "node:path";
+import fs from "node:fs";
+import { spawn } from "node:child_process";
+
 import { SpawnOptions } from "./types";
+import { Printer } from "./printer";
 
 const originalStdoutWrite = process.stdout.write.bind(process.stdout);
 const originalStderrWrite = process.stderr.write.bind(process.stderr);
@@ -17,269 +21,118 @@ process.stderr.write = (chunk: any, encoding?: any, cb?: any) => {
   return originalStderrWrite(chunk, encoding, cb);
 };
 
+export class Terminal extends Printer {
+  private static prompt_completer(line: string): [string[], string] {
+    try {
+      const startsWithTilde = line.startsWith('~');
+      const isEmpty = line.trim() === '';
 
-const ANSII_COLORS = {
-  black: 30,
-  red: 31,
-  green: 32,
-  yellow: 33,
-  blue: 34,
-  magenta: 35,
-  cyan: 36,
-  white: 37,
+      // Expand ~ to home directory for processing
+      let absolutePath = line.startsWith('~') 
+        ? line.replace(/^~/, os.homedir())
+        : line;
 
-  "bright-black": 90,
-  "bright-red": 91,
-  "bright-green": 92,
-  "bright-yellow": 93,
-  "bright-blue": 94,
-  "bright-magenta": 95,
-  "bright-cyan": 96,
-  "bright-white": 97,
-}
-
-export class Terminal {
-  static lines: number = 0;
-  static session: number | null = null;
-
-  private static getString(joiner: string, value: any[]) {
-    return value.map(v => {
-      if (typeof v === "string") return v;
-      if (typeof v === "number") return String(v);
-      if (typeof v === "boolean") return String(v);
-
-      if ("toString" in v && typeof v.toString === "function")
-      {
-        return v.toString();
+      // If path is relative or empty, resolve it from cwd
+      if (!absolutePath.startsWith('/')) {
+        absolutePath = path.resolve(process.cwd(), absolutePath);
       }
 
-      if (typeof v === "object")
-      {
-        return JSON.stringify(v);
-      }
+      const dir = absolutePath.endsWith('/') ? absolutePath : path.dirname(absolutePath);
+      const partial = absolutePath.endsWith('/') ? '' : path.basename(absolutePath);
 
-      return String(v);
-    }).join(joiner);
-  }
+      // Read directory contents
+      const files = fs.readdirSync(dir);
 
-  static colorWrap(color: keyof typeof ANSII_COLORS, ...value: any[]) {
-    if (!process.stdout.isTTY) return this.getString(" ", value);
-    return `\x1b[${ANSII_COLORS[color]}m${this.getString(" ", value)}\x1b[0m`
-  }
+      // Filter files that match the partial input
+      const hits = files
+        .filter(f => f.startsWith(partial) && !f.startsWith("."))
+        .map(f => {
+          const fullPath = path.join(dir, f);
+          try {
+            const isDir = fs.statSync(fullPath).isDirectory();
+            return isDir ? f + '/' : f;
+          } catch {
+            return f;
+          }
+        });
 
-  static black(...value: any[]) {
-    return Terminal.colorWrap("black", value);
-  }
-  static red(...value: any[]) {
-    return Terminal.colorWrap("red", value);
-  }
-  static green(...value: any[]) {
-    return Terminal.colorWrap("green", value);
-  }
-  static yellow(...value: any[]) {
-    return Terminal.colorWrap("yellow", value);
-  }
-  static blue(...value: any[]) {
-    return Terminal.colorWrap("blue", value);
-  }
-  static magenta(...value: any[]) {
-    return Terminal.colorWrap("magenta", value);
-  }
-  static cyan(...value: any[]) {
-    return Terminal.colorWrap("cyan", value);
-  }
-  static white(...value: any[]) {
-    return Terminal.colorWrap("white", value);
-  }
-  static brightBlack(...value: any[]) {
-    return Terminal.colorWrap("bright-black", value);
-  }
-  static brightRed(...value: any[]) {
-    return Terminal.colorWrap("bright-red", value);
-  }
-  static brightGreen(...value: any[]) {
-    return Terminal.colorWrap("bright-green", value);
-  }
-  static brightYellow(...value: any[]) {
-    return Terminal.colorWrap("bright-yellow", value);
-  }
-  static brightBlue(...value: any[]) {
-    return Terminal.colorWrap("bright-blue", value);
-  }
-  static brightMagenta(...value: any[]) {
-    return Terminal.colorWrap("bright-magenta", value);
-  }
-  static brightCyan(...value: any[]) {
-    return Terminal.colorWrap("bright-cyan", value);
-  }
-  static brightWhite(...value: any[]) {
-    return Terminal.colorWrap("bright-white", value);
-  }
+      // Format completions to preserve user's input style
+      const completions = hits.map(hit => {
+        if (startsWithTilde) {
+          // If user typed ~, show paths relative to home with ~
+          const homeRelative = path.relative(os.homedir(), path.join(dir, hit));
+          return '~/' + homeRelative;
+        } 
+        
+        if (isEmpty || !line.startsWith('/')) {
+          // If relative path or empty, show relative to cwd
+          const base = line.endsWith('/') ? line : (path.dirname(line) === '.' ? '' : path.dirname(line) + '/');
+          return base + hit;
+        } 
+        
+        // If absolute path, show absolute
+        return path.join(dir, hit);
+      });
 
-  static write(...values: any[]) {
-    this.printLine(this.getString(" ", values));
-  }
-
-  static warn(...values: any[]) {
-    this.semantic(`🟡 ${process.stdout.isTTY ? this.colorWrap("yellow", "warn ",) : ""}`, values);
-  }
-
-  static error(...values: any[]) {
-    this.semantic(`🔴 ${process.stdout.isTTY ? this.colorWrap("red", "error ",) : ""}`, values);
-  }
-
-  private static semantic(prefix: string, values: any[]) {
-    let value = this.getString(" ", values);
-    const match = value.match(/^(\n)*/);
-
-    let leading = "";
-    if (match)
-    {
-      leading = match[0];
-      value = value.slice(Math.max(0, leading.length * 2 - 1));
+      return [completions.length ? completions : [], line];
     }
-
-    this.printLine(`${leading}${prefix}${value}`, "error");
+    catch { return [[], line] }
   }
-  static print(value: string, type: "info" | "error" = "info") {
-    if (type === "error")
-    {
-      process.stderr.write(value);
-    }
-    else 
-    {
-      process.stdout.write(value);
-    }
-  }
-
-  static track(value: string) {
-    // Count newlines in the string
-    const newlineCount = (value.match(/\n/g) || []).length;
-    this.lines += newlineCount;
-  }
-
-  static printLine(value: string = "", type: "info" | "error" = "info") {
-    this.print(value + "\n", type);
-  }
-
-  static clear(start: number = 0, end?: number) {
-    const e = end ?? this.lines;
-    this.lines = start;
-
-    for (let i = start; i < e; i++)
-    {
-      process.stdout.write('\x1b[2K'); // clear entire line
-      process.stdout.write('\x1b[1A'); // move cursor up one line
-    }
-
-    process.stdout.write('\x1b[2K');
-    process.stdout.write('\r');
-  }
-
-  static async surpress<T = any>(callback: () => Promise<T>): Promise<T> {
-    const originalWrite = process.stdout.write;
-    process.stdout.write = () => true; // swallow all stdout
-
-    let ans: T;
-    try
-    {
-      ans = await callback();
-    }
-    finally
-    {
-      process.stdout.write = originalWrite;
-      return ans!;
-    }
-  }
-
-  static async sessionBlock<T = any>(callback: (session: number) => Promise<T>): Promise<T> {
-    const previousSession = this.session;
-    const session = this.createSession();
-    const ans = await callback(session);
-    this.clearSession();
-    this.session = previousSession;
-
-    return ans;
-  }
-
-  static createSession() {
-    this.session = this.lines;
-
-    return this.session;
-  }
-
-  static closeSession() {
-    this.session = null;
-  }
-
-  static clearSession(session?: number) {
-    const index = session ?? this.session;
-    if (index === null) return;
-
-    this.clear(index);
-    this.closeSession();
-
-    this.createSession();
-  }
-
   static async prompt(promptText: string, inline?: boolean): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      let input = "";
+    return new Promise<string>((resolve) => {
+      let answered = false;
 
-      readline.emitKeypressEvents(process.stdin);
-      if (process.stdin.isTTY) process.stdin.setRawMode(true);
+      // Create a readline interface - this handles all cursor movement, 
+      // line editing, and terminal features automatically
+      const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+        terminal: true,
+        completer: this.prompt_completer // Enable tab completion
+      });
 
-      if (!inline)
-      {
-        this.write(promptText); // -> line 1
-        this.print("\r\x1b[2K> ");
+      const printer = (answer: string) => {
+        answered = true;
+        rl.close();
+        
+        // Convert to absolute path before resolving
+        let finalPath = answer.trim();
+        if (finalPath.startsWith('~')) {
+          finalPath = finalPath.replace(/^~/, os.homedir());
+        }
+        if (!finalPath.startsWith('/')) {
+          finalPath = path.resolve(process.cwd(), finalPath);
+        }
+        
+        resolve(finalPath);
       }
-      else 
-      {
-        this.print(promptText + ": ");
+
+      // If not inline, print the prompt text on a separate line first
+      if (!inline) {
+        this.write(promptText);
+        rl.question("> ", printer);
+      } else {
+        // For inline, include prompt text with the question
+        rl.question(`${promptText}: `, printer);
       }
 
-      const onKeypress = (str: string, key: any) => {
-        if (key.ctrl && key.name === "c" || str === "\x04" || key.ctrl && key.name === "d")
-        {
-          process.stdin.setRawMode(false);
-          process.stdin.removeListener("keypress", onKeypress);
+      // Handle Ctrl+C gracefully
+      rl.on('SIGINT', () => {
+        rl.close();
+        this.error("\ncancelled");
+        process.exit();
+      });
+
+      // Handle Ctrl+D (EOF) - only exit if user didn't answer normally
+      rl.on('close', () => {
+        if (!answered) {
           this.error("\ncancelled");
           process.exit();
         }
-
-        if (key.name === "return")
-        {
-          process.stdin.setRawMode(false);
-          process.stdin.removeListener("keypress", onKeypress);
-          this.print("\n");
-          resolve(input);
-          return;
-        }
-
-        if (key.name === "backspace")
-        {
-          input = input.slice(0, -1);
-        } else if (!key.ctrl && !key.meta)
-        {
-          input += str;
-        }
-
-        // redraw current line in-place
-        if (!inline) 
-        {
-          this.print(`\r\x1b[2K> ${input}`);
-        }
-        else 
-        {
-          this.print(`\r\x1b[2K${promptText}: ${input}`);
-        }
-      };
-
-      process.stdin.on("keypress", onKeypress);
+      });
     });
   }
-
+  
   static async getAnswer(question: string, acceptables: string[], inline?: boolean): Promise<string>;
   static async getAnswer(question: string, acceptables: ((answer: string) => Promise<boolean>), inline?: boolean): Promise<string>;
   static async getAnswer(question: string, acceptables: string[] | ((answer: string) => Promise<boolean>), inline?: boolean) {

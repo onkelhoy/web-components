@@ -275,6 +275,18 @@ export class MatrixN extends Matrix {
 
   public get size() { return this.cols }
 
+  public identity() {
+    for (let i=0; i<this.length; i++)
+    {
+      this[i] = 0;
+    }
+
+    for (let i = 0; i < this.size; i++)
+    {
+      this[i * this.size + i] = 1;
+    }
+  }
+
   public getTranslation() {
     const size = this.cols - 1;
     const output = new Float32Array(size);
@@ -424,7 +436,6 @@ export class MatrixN extends Matrix {
 
     return this.multiply(m);
   }
-
 
   static inverse<T extends typeof MatrixN>(this: T, mat: T | Value, ...args: Parameters<InstanceType<T>['inverse']>): InstanceType<T> {
     if (mat instanceof MatrixN)
